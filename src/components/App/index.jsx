@@ -28,7 +28,9 @@ function App() {
         <PauseBtn />
       </div>
       <p className="App-footer">
-        <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624" target="_blank" rel="noreferrer">Consult the guide</a>
+        Consult the
+        {' '}
+        <a href="https://github.com/folklorelabs/pockest-helper/#readme" target="_blank" rel="noreferrer">README</a>
         {' '}
         if you need help.
       </p>

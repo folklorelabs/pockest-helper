@@ -52,7 +52,7 @@ function SimpleControls() {
       <Timer label="Feed" timestamp={nextFeed} />
       <Timer label="Train" timestamp={data?.monster?.training_time} />
       <Timer label="Match" timestamp={data?.monster?.exchange_time} />
-      <Timer label="Age" timestamp={data?.next_big_event_timer} />
+      <Timer label={`Age ${data?.monster?.age ? data.monster.age + 1 : 0}`} timestamp={data?.next_big_event_timer} />
     </div>
   );
 }
