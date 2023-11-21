@@ -91,6 +91,7 @@
   transform-origin: bottom left;
   bottom: 100%;
   left: 100%;
+  width: 100px;
 }
 
 .Controls .TimerLine {

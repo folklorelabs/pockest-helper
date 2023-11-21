@@ -25,6 +25,9 @@ function Controls() {
     autoClean,
     autoFeed,
     autoTrain,
+    cleanFrequency,
+    feedFrequency,
+    stat,
   } = pockestState;
   if (!data || !data.monster) return '';
   return (
@@ -46,6 +49,7 @@ function Controls() {
           onChange={(e) => {
             pockestDispatch(pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
           }}
+          defaultValue={cleanFrequency}
         >
           {Object.keys(CLEAN_INTERVAL).map((k) => (
             <option key={k} value={k}>
@@ -71,6 +75,7 @@ function Controls() {
           onChange={(e) => {
             pockestDispatch(pockestSettings({ feedFrequency: parseInt(e.target.value, 10) }));
           }}
+          defaultValue={feedFrequency}
         >
           {Object.keys(FEED_INTERVAL).map((k) => (
             <option key={k} value={k}>
@@ -93,6 +98,7 @@ function Controls() {
         </label>
         <select
           className="ControlsSelect"
+          defaultValue={stat}
           onChange={(e) => {
             pockestDispatch(pockestSettings({ stat: parseInt(e.target.value, 10) }));
           }}
@@ -111,13 +117,13 @@ function Controls() {
       </div>
       <Timer label="Next Training" timestamp={data?.monster?.training_time} />
       <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
-      <button
+      {/* <button
         className="ControlsButton ControlsButton--side"
         type="button"
         onClick={() => pockestDispatch(pockestMode('simple'))}
       >
-        Simple Controls
-      </button>
+        Manual Care
+      </button> */}
     </div>
   );
 }

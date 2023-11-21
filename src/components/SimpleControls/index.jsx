@@ -29,7 +29,6 @@ function SimpleControls() {
     data,
   } = pockestState;
   if (!data || !data.monster) return '';
-  console.log(pockestState);
   return (
     <div className="SimpleControls">
       <Timer label={`Age ${data?.monster?.age}`} timestamp={data?.next_big_event_timer} />
@@ -39,7 +38,11 @@ function SimpleControls() {
             id="PockestHelper_AutoFeed"
             className="SimpleControlsCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
+            onChange={(e) => pockestDispatch(pockestSettings({
+              autoFeed: e.target.checked,
+              autoClean: e.target.checked,
+              autoTrain: e.target.checked,
+            }))}
           />
           <span className="SimpleControlsCheck-text">Auto-Care</span>
         </label>
@@ -53,9 +56,6 @@ function SimpleControls() {
               stat: route.slice(2, 3),
               feedFrequency: plan.feedFrequency,
               cleanFrequency: plan.cleanFrequency,
-              autoFeed: true,
-              autoClean: true,
-              autoTrain: true,
             };
             pockestDispatch(pockestSettings(newSettings));
           }}
@@ -81,7 +81,7 @@ function SimpleControls() {
         type="button"
         onClick={() => pockestDispatch(pockestMode('advanced'))}
       >
-        Advanced Controls
+        Auto Care
       </button>
     </div>
   );
