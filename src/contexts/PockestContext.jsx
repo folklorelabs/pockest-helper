@@ -143,7 +143,7 @@ function REDUCER(state, [type, payload]) {
   }
 }
 
-const stateFromStorage = window.sessionStorage.getItem('PockestHelper');
+const stateFromStorage = window.localStorage.getItem('PockestHelper');
 const initialState = stateFromStorage && JSON.parse(stateFromStorage);
 const PockestContext = createContext({
   pockestState: initialState ?? INITIAL_STATE,
@@ -156,7 +156,7 @@ export function PockestProvider({
   const [pockestState, pockestDispatch] = useReducer(REDUCER, initialState ?? INITIAL_STATE);
 
   useEffect(() => {
-    window.sessionStorage.setItem('PockestHelper', JSON.stringify(pockestState));
+    window.localStorage.setItem('PockestHelper', JSON.stringify(pockestState));
   }, [pockestState]);
 
   // grab data on init
