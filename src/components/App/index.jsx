@@ -1,8 +1,8 @@
 import React from 'react';
 import Lifecycle from './Lifecycle';
 import Status from '../Status';
-import Timers from '../Timers';
 import './index.css';
+import Controls from '../Controls';
 
 function App() {
   return (
@@ -11,7 +11,7 @@ function App() {
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
         <Status />
-        <Timers />
+        <Controls />
       </header>
     </div>
   );

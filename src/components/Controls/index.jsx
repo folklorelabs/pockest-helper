@@ -7,6 +7,9 @@ import {
   pockestSettings,
   usePockestContext,
 } from '../../contexts/PockestContext';
+import Timer from '../Timer';
+import useNextFeed from '../../hooks/useNextFeed';
+import useNextClean from '../../hooks/useNextClean';
 import './index.css';
 
 function Controls() {
@@ -14,11 +17,15 @@ function Controls() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const nextFeed = useNextFeed();
+  const nextClean = useNextClean();
   const {
     data,
   } = pockestState;
+  if (!data || !data.monster) return '';
   return (
     <div className="Controls">
+      <Timer label="Next Cleaning" timestamp={nextClean} />
       <div className="ControlsLine">
         <label className="ControlsCheck" htmlFor="PockestHelper_AutoClean">
           <input
@@ -42,6 +49,7 @@ function Controls() {
           ))}
         </select>
       </div>
+      <Timer label="Next Feeding" timestamp={nextFeed} />
       <div className="ControlsLine">
         <label className="ControlsCheck" htmlFor="PockestHelper_AutoFeed">
           <input
@@ -65,6 +73,7 @@ function Controls() {
           ))}
         </select>
       </div>
+      <Timer label="Next Training" timestamp={data?.monster?.training_time} />
       <div className="ControlsLine">
         <label className="ControlsCheck" htmlFor="PockestHelper_AutoTrain">
           <input
@@ -93,6 +102,8 @@ function Controls() {
           ))}
         </select>
       </div>
+      <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
+      <Timer label="Next Evolution" timestamp={data?.next_big_event_timer} />
     </div>
   );
 }
