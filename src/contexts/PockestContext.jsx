@@ -35,6 +35,7 @@ const INITIAL_STATE = {
   data: {},
   paused: true,
   monsterId: null,
+  autoPlan: true,
   autoFeed: false,
   feedFrequency: 4,
   cleanFrequency: 2,

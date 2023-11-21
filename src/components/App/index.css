@@ -6,6 +6,23 @@
   font-family: "Noto Sans", sans-serif;
   padding: 1em;
   width: 226px;
+  transition: 0.5s transform;
+}
+
+.App--minimized {
+  transform: translate(-90%, 90%);
+}
+
+.AppMinBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: 0;
+  color: #fff;
+  padding: 0.3rem;
+  opacity: 0.3;
+  cursor: pointer;
 }
 
 .App-title {
