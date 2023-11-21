@@ -5,10 +5,12 @@
   line-height: 1.2;
   font-family: "Noto Sans", sans-serif;
   padding: 1em;
+  width: 226px;
 }
 
 .App-title {
   font-size: 2em;
   font-family: Oswald, sans-serif;
   text-transform: uppercase;
+  text-align: center;
 }

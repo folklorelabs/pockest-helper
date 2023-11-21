@@ -5,6 +5,7 @@ import {
   FEED_INTERVAL,
   CLEAN_INTERVAL,
   pockestSettings,
+  pockestMode,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import Timer from '../Timer';
@@ -21,11 +22,17 @@ function Controls() {
   const nextClean = useNextClean();
   const {
     data,
+    autoClean,
+    autoFeed,
+    autoTrain,
+    cleanFrequency,
+    feedFrequency,
+    stat,
   } = pockestState;
   if (!data || !data.monster) return '';
   return (
     <div className="Controls">
-      <Timer label="Next Cleaning" timestamp={nextClean} />
+      <Timer label={`Age ${data?.monster?.age}`} timestamp={data?.next_big_event_timer} />
       <div className="ControlsLine">
         <label className="ControlsCheck" htmlFor="PockestHelper_AutoClean">
           <input
@@ -33,14 +40,16 @@ function Controls() {
             className="ControlsCheck-input"
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoClean: e.target.checked }))}
+            defaultChecked={autoClean}
           />
           <span className="ControlsCheck-text">Clean</span>
         </label>
         <select
           className="ControlsSelect"
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ cleanInterval: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
           }}
+          defaultValue={cleanFrequency}
         >
           {Object.keys(CLEAN_INTERVAL).map((k) => (
             <option key={k} value={k}>
@@ -49,7 +58,7 @@ function Controls() {
           ))}
         </select>
       </div>
-      <Timer label="Next Feeding" timestamp={nextFeed} />
+      <Timer label="Next Cleaning" timestamp={nextClean} />
       <div className="ControlsLine">
         <label className="ControlsCheck" htmlFor="PockestHelper_AutoFeed">
           <input
@@ -57,14 +66,16 @@ function Controls() {
             className="ControlsCheck-input"
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
+            defaultChecked={autoFeed}
           />
           <span className="ControlsCheck-text">Feed</span>
         </label>
         <select
           className="ControlsSelect"
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ feedInterval: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestSettings({ feedFrequency: parseInt(e.target.value, 10) }));
           }}
+          defaultValue={feedFrequency}
         >
           {Object.keys(FEED_INTERVAL).map((k) => (
             <option key={k} value={k}>
@@ -73,7 +84,7 @@ function Controls() {
           ))}
         </select>
       </div>
-      <Timer label="Next Training" timestamp={data?.monster?.training_time} />
+      <Timer label="Next Feeding" timestamp={nextFeed} />
       <div className="ControlsLine">
         <label className="ControlsCheck" htmlFor="PockestHelper_AutoTrain">
           <input
@@ -81,11 +92,13 @@ function Controls() {
             className="ControlsCheck-input"
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoTrain: e.target.checked }))}
+            defaultChecked={autoTrain}
           />
           <span className="ControlsCheck-text">Train</span>
         </label>
         <select
           className="ControlsSelect"
+          defaultValue={stat}
           onChange={(e) => {
             pockestDispatch(pockestSettings({ stat: parseInt(e.target.value, 10) }));
           }}
@@ -102,8 +115,15 @@ function Controls() {
           ))}
         </select>
       </div>
+      <Timer label="Next Training" timestamp={data?.monster?.training_time} />
       <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
-      <Timer label="Next Evolution" timestamp={data?.next_big_event_timer} />
+      {/* <button
+        className="ControlsButton ControlsButton--side"
+        type="button"
+        onClick={() => pockestDispatch(pockestMode('simple'))}
+      >
+        Manual Care
+      </button> */}
     </div>
   );
 }

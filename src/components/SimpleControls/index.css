@@ -1,17 +1,17 @@
-.ControlsLine {
+.SimpleControlsLine {
   display: flex;
   justify-content: space-between;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
 
-.ControlsSelect,
-.ControlsButton {
+.SimpleControlsSelect,
+.SimpleControlsButton {
   text-transform: capitalize;
   cursor: pointer;
 }
 
-.ControlsSelect {
+.SimpleControlsSelect {
   border: 1px solid hsla(0, 0%, 100%, .5);
   background: hsla(0, 0%, 100%, .2);
   color: #fcfcfc;
@@ -19,11 +19,11 @@
   line-height: 1;
 }
 
-.ControlsSelect option {
+.SimpleControlsSelect option {
   color: #000;
 }
 
-.ControlsCheck {
+.SimpleControlsCheck {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -31,7 +31,7 @@
   cursor: pointer;
 }
 
-.ControlsCheck-input {
+.SimpleControlsCheck-input {
   top: 0;
   left: 0;
   width: 1em;
@@ -49,12 +49,12 @@
   border: initial;
 }
 
-.ControlsCheck-text {
+.SimpleControlsCheck-text {
   display: flex;
   align-items: center;
 }
 
-.ControlsCheck-text::before {
+.SimpleControlsCheck-text::before {
   width: 1em;
   height: 1em;
   margin: 0 min(0.5208333333vw, 10px) 0 0;
@@ -68,12 +68,12 @@
   cursor: pointer;
 }
 
-.ControlsCheck-input:checked~.ControlsCheck-text::before {
+.SimpleControlsCheck-input:checked~.SimpleControlsCheck-text::before {
   background: url(/6/buckler/assets/images/auth/icon_check.png) no-repeat 50%;
   background-size: contain;
 }
 
-.ControlsButton {
+.SimpleControlsButton {
   font-size: 0.9em;
   font-weight: 700;
   font-family: Oswald, sans-serif;
@@ -82,7 +82,7 @@
   font-size: min(1.0416666667vw, 20px);
 }
 
-.ControlsButton--side {
+.SimpleControlsButton--side {
   font-size: 0.667em;
   text-transform: uppercase;
   clip-path: polygon(min(0.5208333333vw, 10px) 0, 100% 0, 100% 100%, calc(100% - min(0.5208333333vw, 10px)) 100%, 0 100%, 0 min(0.5208333333vw, 10px));
@@ -94,11 +94,18 @@
   width: 100px;
 }
 
-.Controls .TimerLine {
+.SimpleControlsButton--off {
+  filter: grayscale();
+  opacity: 0.5;
+}
+
+.SimpleControls .TimerLine {
   margin-top: 0.2rem;
 }
 
-.ControlsButton--off {
-  filter: grayscale();
-  opacity: 0.5;
+.SimpleControls-footer {
+  opacity: 0.6667;
+  font-size: 0.8em;
+  margin-top: 1rem;
+  text-align: center;
 }

@@ -6,7 +6,6 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import getNextInterval from '../utils/getNextInterval';
 
 // CONSTS
 export const STAT_ICON = {
@@ -34,11 +33,10 @@ export const CLEAN_INTERVAL = {
 // STATE
 const INITIAL_STATE = {
   data: {},
+  mode: 'manual',
   autoFeed: false,
-  feedInterval: 4,
-  nextFeed: null,
-  cleanInterval: 2,
-  nextClean: null,
+  feedFrequency: 4,
+  cleanFrequency: 2,
   autoClean: false,
   autoTrain: false,
   stat: 1,
@@ -56,10 +54,18 @@ export const ACTIONS = {
 export function pockestLoading() {
   return [ACTIONS.LOADING];
 }
-export function pockestSettings(settings) {
+export function pockestMode(mode) {
   return [ACTIONS.SETTINGS, {
-    ...settings,
+    ...INITIAL_STATE,
+    mode,
   }];
+}
+export function pockestSettings(settings) {
+  const newSettings = {
+    ...settings,
+  };
+  delete newSettings.mode;
+  return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
@@ -115,10 +121,10 @@ function REDUCER(state, [type, payload]) {
         autoFeed: payload.autoFeed ?? state.autoFeed,
         autoClean: payload.autoClean ?? state.autoClean,
         autoTrain: payload.autoTrain ?? state.autoTrain,
-        feedInterval: payload.feedInterval ?? state.feedInterval,
-        cleanInterval: payload.cleanInterval ?? state.cleanInterval,
+        feedFrequency: payload.feedFrequency ?? state.feedFrequency,
+        cleanFrequency: payload.cleanFrequency ?? state.cleanFrequency,
         stat: payload.stat ?? state.stat,
-        error: null,
+        mode: payload.mode ?? state.mode,
       };
     case ACTIONS.REFRESH:
       return {
@@ -137,15 +143,21 @@ function REDUCER(state, [type, payload]) {
   }
 }
 
+const stateFromStorage = window.sessionStorage.getItem('PockestHelper');
+const initialState = stateFromStorage && JSON.parse(stateFromStorage);
 const PockestContext = createContext({
-  pockestState: INITIAL_STATE,
+  pockestState: initialState ?? INITIAL_STATE,
   pockestDispatch: () => { },
 });
 
 export function PockestProvider({
   children,
 }) {
-  const [pockestState, pockestDispatch] = useReducer(REDUCER, INITIAL_STATE);
+  const [pockestState, pockestDispatch] = useReducer(REDUCER, initialState ?? INITIAL_STATE);
+
+  useEffect(() => {
+    window.sessionStorage.setItem('PockestHelper', JSON.stringify(pockestState));
+  }, [pockestState]);
 
   // grab data on init
   useEffect(() => {

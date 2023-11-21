@@ -4,14 +4,14 @@ import getNextInterval from '../utils/getNextInterval';
 
 function useNextClean() {
   const { pockestState } = usePockestContext();
-  const { data, cleanInterval } = pockestState;
+  const { data, cleanFrequency } = pockestState;
   const nextClean = React.useMemo(() => {
-    if (cleanInterval === 2) return data?.next_small_event_timer;
+    if (cleanFrequency === 2) return data?.next_small_event_timer;
     return getNextInterval(
       data?.monster?.live_time,
-      cleanInterval,
+      cleanFrequency,
     ).getTime();
-  }, [data, cleanInterval]);
+  }, [data, cleanFrequency]);
 
   return nextClean;
 }

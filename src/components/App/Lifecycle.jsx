@@ -18,8 +18,8 @@ function LifeCycle() {
         autoClean,
         autoFeed,
         autoTrain,
-        cleanInterval,
-        feedInterval,
+        cleanFrequency,
+        feedFrequency,
         stat,
       } = pockestState;
       if (loading) return;
@@ -29,12 +29,14 @@ function LifeCycle() {
       } = data;
       const alive = parseDuration(now - new Date(monster.live_time));
       const aliveH = Math.floor(alive.h);
-      if (autoClean && monster && monster?.garbage > 0 && aliveH % cleanInterval === 0) {
+      const attemptToClean = autoClean && monster && monster?.garbage > 0;
+      if (attemptToClean && (cleanFrequency === 2 || aliveH % cleanFrequency === 0)) {
         console.log(now, 'CLEAN');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestClean());
       }
-      if (autoFeed && monster && monster?.stomach < 6 && aliveH % feedInterval === 0) {
+      const attemptToFeed = autoFeed && monster && monster?.stomach < 6;
+      if (attemptToFeed && (feedFrequency === 4 || aliveH % feedFrequency === 0)) {
         console.log(now, 'FEED');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestFeed());
