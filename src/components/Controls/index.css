@@ -1,0 +1,13 @@
+.ControlsHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.ControlsButton {
+  font-size: 1em;
+}
+
+.ControlsButton--off {
+  filter: grayscale();
+  opacity: 0.5;
+}
