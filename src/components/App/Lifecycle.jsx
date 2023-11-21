@@ -6,6 +6,7 @@ import {
   pockestTrain,
   usePockestContext,
 } from '../../contexts/PockestContext';
+import { parseDuration } from '../../utils/parseDuration';
 
 function LifeCycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
@@ -17,32 +18,34 @@ function LifeCycle() {
         autoClean,
         autoFeed,
         autoTrain,
+        cleanInterval,
+        feedInterval,
         stat,
       } = pockestState;
       if (loading) return;
-      if (autoClean && data?.monster && data?.monster?.garbage > 0) {
-        console.log('CLEAN');
+      const now = new Date();
+      const {
+        monster,
+      } = data;
+      const alive = parseDuration(now - new Date(monster.live_time));
+      const aliveH = Math.floor(alive.h);
+      if (autoClean && monster && monster?.garbage > 0 && aliveH % cleanInterval === 0) {
+        console.log(now, 'CLEAN');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestClean());
       }
-      if (autoFeed && data?.monster && data?.monster?.stomach < 6) {
-        console.log('FEED');
+      if (autoFeed && monster && monster?.stomach < 6 && aliveH % feedInterval === 0) {
+        console.log(now, 'FEED');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestFeed());
       }
-      const now = new Date();
-      const nextTrainingTime = data?.monster?.training_time
-        && new Date(data?.monster?.training_time);
+      const nextTrainingTime = monster?.training_time
+        && new Date(monster?.training_time);
       if (autoTrain && nextTrainingTime && now >= nextTrainingTime) {
-        console.log('TRAIN', stat);
+        console.log(now, 'TRAIN', stat);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
       }
-      // const nextMatchTime = data?.monster?.exchange_time
-      //   && new Date(data?.monster?.exchange_time);
-      // if (nextMatchTime && now >= nextMatchTime) {
-      //   console.log('MATCH');
-      // }
     }, 1000);
     return () => {
       window.clearInterval(interval);

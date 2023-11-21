@@ -1,33 +1,14 @@
 import React from 'react';
 import cx from 'classnames';
-import { ACTIONS, usePockestContext } from '../../contexts/PockestContext';
+import {
+  STAT_ICON,
+  STAT_ID,
+  FEED_INTERVAL,
+  CLEAN_INTERVAL,
+  pockestSettings,
+  usePockestContext,
+} from '../../contexts/PockestContext';
 import './index.css';
-
-function getStatIcon(stat) {
-  if (stat === 1) {
-    return '🥊';
-  }
-  if (stat === 2) {
-    return '👟';
-  }
-  if (stat === 3) {
-    return '🪵';
-  }
-  return '';
-}
-
-function getStatId(stat) {
-  if (stat === 1) {
-    return 'power';
-  }
-  if (stat === 2) {
-    return 'speed';
-  }
-  if (stat === 3) {
-    return 'technic';
-  }
-  return '';
-}
 
 function Status() {
   const {
@@ -47,16 +28,14 @@ function Status() {
         <select
           className="ControlsSelect"
           onChange={(e) => {
-            pockestDispatch([ACTIONS.SETTINGS, { stat: parseInt(e.target.value, 10) }]);
+            pockestDispatch(pockestSettings({ stat: parseInt(e.target.value, 10) }));
           }}
         >
-          {[1, 2, 3].map((s) => (
+          {Object.keys(STAT_ID).map((s) => (
             <option key={s} value={s}>
-              {getStatIcon(s)}
-              {' '}
-              {getStatId(s)}
+              {STAT_ID[s]}
               {' ('}
-              {data?.monster?.[getStatId(s)]}
+              {data?.monster?.[STAT_ID[s]]}
               )
             </option>
           ))}
@@ -64,31 +43,57 @@ function Status() {
         <button
           type="button"
           className={cx('ControlsButton', autoTrain ? 'ControlsButton--on' : 'ControlsButton--off')}
-          onClick={() => pockestDispatch([ACTIONS.SETTINGS, { autoTrain: !autoTrain }])}
+          onClick={() => pockestDispatch(pockestSettings({ autoTrain: !autoTrain }))}
         >
-          {getStatIcon(stat)}
-          {' '}
-          Auto-train
+          {/* {STAT_ICON[stat]}
+          {' '} */}
+          Auto-Train
         </button>
       </div>
       <div className="ControlsHeader">
+        <select
+          className="ControlsSelect"
+          onChange={(e) => {
+            pockestDispatch(pockestSettings({ feedInterval: parseInt(e.target.value, 10) }));
+          }}
+        >
+          {Object.keys(FEED_INTERVAL).map((k) => (
+            <option key={k} value={k}>
+              {FEED_INTERVAL[k]}
+            </option>
+          ))}
+        </select>
         <button
           type="button"
           className={cx('ControlsButton', autoFeed ? 'ControlsButton--on' : 'ControlsButton--off')}
-          onClick={() => pockestDispatch([ACTIONS.SETTINGS, { autoFeed: !autoFeed }])}
+          onClick={() => pockestDispatch(pockestSettings({ autoFeed: !autoFeed }))}
         >
-          🍎
-          {' '}
-          Auto-feed
+          {/* 🍎
+          {' '} */}
+          Auto-Feed
         </button>
+      </div>
+      <div className="ControlsHeader">
+        <select
+          className="ControlsSelect"
+          onChange={(e) => {
+            pockestDispatch(pockestSettings({ cleanInterval: parseInt(e.target.value, 10) }));
+          }}
+        >
+          {Object.keys(CLEAN_INTERVAL).map((k) => (
+            <option key={k} value={k}>
+              {CLEAN_INTERVAL[k]}
+            </option>
+          ))}
+        </select>
         <button
           type="button"
           className={cx('ControlsButton', autoClean ? 'ControlsButton--on' : 'ControlsButton--off')}
-          onClick={() => pockestDispatch([ACTIONS.SETTINGS, { autoClean: !autoClean }])}
+          onClick={() => pockestDispatch(pockestSettings({ autoClean: !autoClean }))}
         >
-          🛁
-          {' '}
-          Auto-clean
+          {/* 🛁
+          {' '} */}
+          Auto-Clean
         </button>
       </div>
     </div>

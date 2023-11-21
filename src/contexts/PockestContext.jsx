@@ -6,11 +6,39 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
+import getNextInterval from '../utils/getNextInterval';
+
+// CONSTS
+export const STAT_ICON = {
+  1: '🥊',
+  2: '👟',
+  3: '🪵',
+};
+export const STAT_ID = {
+  1: 'power',
+  2: 'speed',
+  3: 'technic',
+};
+export const FEED_INTERVAL = {
+  4: 'Every 4h',
+  12: 'Every 12h',
+  24: 'Every 24h',
+};
+export const CLEAN_INTERVAL = {
+  2: 'Every 2h',
+  4: 'Every 4h',
+  12: 'Every 12h',
+  24: 'Every 24h',
+};
 
 // STATE
 const INITIAL_STATE = {
   data: {},
   autoFeed: false,
+  feedInterval: 4,
+  nextFeed: null,
+  cleanInterval: 2,
+  nextClean: null,
   autoClean: false,
   autoTrain: false,
   stat: 1,
@@ -27,6 +55,11 @@ export const ACTIONS = {
 };
 export function pockestLoading() {
   return [ACTIONS.LOADING];
+}
+export function pockestSettings(settings) {
+  return [ACTIONS.SETTINGS, {
+    ...settings,
+  }];
 }
 export async function pockestRefresh() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
@@ -82,6 +115,8 @@ function REDUCER(state, [type, payload]) {
         autoFeed: payload.autoFeed ?? state.autoFeed,
         autoClean: payload.autoClean ?? state.autoClean,
         autoTrain: payload.autoTrain ?? state.autoTrain,
+        feedInterval: payload.feedInterval ?? state.feedInterval,
+        cleanInterval: payload.cleanInterval ?? state.cleanInterval,
         stat: payload.stat ?? state.stat,
         error: null,
       };

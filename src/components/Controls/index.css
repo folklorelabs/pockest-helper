@@ -3,8 +3,33 @@
   justify-content: space-between;
 }
 
+.ControlsSelect,
 .ControlsButton {
-  font-size: 1em;
+  width: 50%;
+  text-transform: capitalize;
+  margin-top: 0.2rem;
+}
+
+.ControlsSelect {
+  border: 1px solid hsla(0, 0%, 100%, .5);
+  background: hsla(0, 0%, 100%, .2);
+  color: #fcfcfc;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ControlsSelect option {
+  color: #000;
+}
+
+.ControlsButton {
+  font-size: 0.9em;
+  font-weight: 700;
+  font-family: Oswald, sans-serif;
+  height: 2em;
+  -webkit-clip-path: polygon(min(0.5208333333vw, 10px) 0, 100% 0, 100% calc(100% - min(0.5208333333vw, 10px)), calc(100% - min(0.5208333333vw, 10px)) 100%, 0 100%, 0 min(0.5208333333vw, 10px));
+  clip-path: polygon(min(0.5208333333vw, 10px) 0, 100% 0, 100% calc(100% - min(0.5208333333vw, 10px)), calc(100% - min(0.5208333333vw, 10px)) 100%, 0 100%, 0 min(0.5208333333vw, 10px));
+  font-size: min(1.0416666667vw, 20px);
 }
 
 .ControlsButton--off {
