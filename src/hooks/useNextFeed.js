@@ -4,11 +4,11 @@ import getNextInterval from '../utils/getNextInterval';
 
 function useNextFeed() {
   const { pockestState } = usePockestContext();
-  const { data, feedInterval } = pockestState;
+  const { data, feedFrequency } = pockestState;
   const nextFeed = React.useMemo(() => getNextInterval(
     data?.monster?.live_time,
-    feedInterval,
-  ).getTime(), [data, feedInterval]);
+    feedFrequency,
+  ).getTime(), [data, feedFrequency]);
 
   return nextFeed;
 }

@@ -35,9 +35,9 @@ export const CLEAN_INTERVAL = {
 const INITIAL_STATE = {
   data: {},
   autoFeed: false,
-  feedInterval: 4,
+  feedFrequency: 4,
   nextFeed: null,
-  cleanInterval: 2,
+  cleanFrequency: 2,
   nextClean: null,
   autoClean: false,
   autoTrain: false,
@@ -115,8 +115,8 @@ function REDUCER(state, [type, payload]) {
         autoFeed: payload.autoFeed ?? state.autoFeed,
         autoClean: payload.autoClean ?? state.autoClean,
         autoTrain: payload.autoTrain ?? state.autoTrain,
-        feedInterval: payload.feedInterval ?? state.feedInterval,
-        cleanInterval: payload.cleanInterval ?? state.cleanInterval,
+        feedFrequency: payload.feedFrequency ?? state.feedFrequency,
+        cleanFrequency: payload.cleanFrequency ?? state.cleanFrequency,
         stat: payload.stat ?? state.stat,
         error: null,
       };

@@ -39,7 +39,7 @@ function Controls() {
         <select
           className="ControlsSelect"
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ cleanInterval: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
           }}
         >
           {Object.keys(CLEAN_INTERVAL).map((k) => (
@@ -63,7 +63,7 @@ function Controls() {
         <select
           className="ControlsSelect"
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ feedInterval: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestSettings({ feedFrequency: parseInt(e.target.value, 10) }));
           }}
         >
           {Object.keys(FEED_INTERVAL).map((k) => (
