@@ -109,8 +109,19 @@ export async function pockestTrain(type) {
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
 }
-export async function pockestMatch() {
-  return [ACTIONS.ERROR, '[pockestMatch] NYI'];
+export async function pockestMatch(type) {
+  if (type < 1) {
+    return [ACTIONS.ERROR, '[pockestTrain] type needs to be > 1'];
+  }
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/start', {
+    body: `{"type":${type}}`,
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  const { data } = await response.json();
+  return [ACTIONS.REFRESH, data];
 }
 
 // REDUCER

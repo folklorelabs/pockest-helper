@@ -4,10 +4,12 @@ import {
   pockestClean,
   pockestFeed,
   pockestTrain,
+  pockestMatch,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { parseDuration } from '../../utils/parseDuration';
 import { getMonsterPlan, getPlanRoute, getPlanStat } from '../../utils/getMonsterPlan';
+import getMatchFever from '../../utils/getMatchFever';
 
 function LifeCycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
@@ -67,6 +69,15 @@ function LifeCycle() {
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
       }
+
+      const nextMatchTime = monster?.exchange_time
+        && new Date(monster?.exchange_time);
+      if (autoPlan && new Date() >= nextMatchTime) {
+        const match = await getMatchFever(monsterId) || 1;
+        console.log(now, 'MATCH', match?.slot, match?.name_en);
+        pockestDispatch(pockestLoading());
+        pockestDispatch(await pockestMatch(match?.slot));
+      }
     }, 1000);
     return () => {
       window.clearInterval(interval);
@@ -74,6 +85,7 @@ function LifeCycle() {
   }, [
     loading,
     autoPlan,
+    monsterId,
     data,
     autoClean,
     cleanFrequency,
@@ -82,6 +94,7 @@ function LifeCycle() {
     autoTrain,
     stat,
     pockestDispatch,
+    paused,
   ]);
 }
 
