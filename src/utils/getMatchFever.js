@@ -12,5 +12,5 @@ export default async function getMatchFever(monsterId) {
   if (!matchFeverOptions || !matchFeverOptions.length) return null;
   const { exchangeList } = await fetchMatchList();
   const match = exchangeList.find((opp) => matchFeverOptions.includes(opp.monster_id));
-  return match;
+  return match?.slot;
 }

@@ -73,10 +73,10 @@ function LifeCycle() {
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (autoPlan && new Date() >= nextMatchTime) {
-        const match = await getMatchFever(monsterId) || 1;
-        console.log(now, 'MATCH', match?.slot, match?.name_en);
+        const matchSlot = await getMatchFever(monsterId);
+        console.log(now, 'MATCH', matchSlot);
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestMatch(match?.slot));
+        pockestDispatch(await pockestMatch(matchSlot || 1));
       }
     }, 1000);
     return () => {
