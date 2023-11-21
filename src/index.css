@@ -4,3 +4,7 @@
   left: 0;
   z-index: 99;
 }
+
+#PockestHelperExtension a {
+  text-decoration: underline;
+}
