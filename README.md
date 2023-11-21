@@ -2,7 +2,7 @@
 
 ## What is this?
 
-This is a [Chrome Extension](chrome://extensions/) that automatically cares for [Street Fighter Pockest Monsters](https://www.streetfighter.com/6/buckler/minigame).
+This is a [Chrome Extension](chrome://extensions/) that tracks and automatically cares for [Street Fighter Pockest Monsters](https://www.streetfighter.com/6/buckler/minigame).
 
 ![A screenshot of Pockest Helper in action](https://i.imgur.com/WJaKG8c.jpg)
 
