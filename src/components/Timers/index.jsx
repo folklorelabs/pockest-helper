@@ -34,8 +34,8 @@ function Timers() {
 
   return (
     <div className="Timers">
-      <TimerLine label="Next Feeding" value={parseDurationStr(nextFeed - now)} />
       <TimerLine label="Next Cleaning" value={parseDurationStr(nextClean - now)} />
+      <TimerLine label="Next Feeding" value={parseDurationStr(nextFeed - now)} />
       <TimerLine label="Next Training" value={parseDurationStr(nextTrain - now)} />
       <TimerLine label="Next Match" value={parseDurationStr(nextMatch - now)} />
       <TimerLine label="Next Evolution" value={parseDurationStr(nextEvolution - now)} />

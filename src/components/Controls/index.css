@@ -1,13 +1,12 @@
-.ControlsHeader {
+.ControlsLine {
   display: flex;
   justify-content: space-between;
 }
 
 .ControlsSelect,
 .ControlsButton {
-  width: 50%;
   text-transform: capitalize;
-  margin-top: 0.2rem;
+  margin-top: 0.25rem;
 }
 
 .ControlsSelect {
@@ -20,6 +19,56 @@
 
 .ControlsSelect option {
   color: #000;
+}
+
+.ControlsCheck {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.ControlsCheck-input {
+  top: 0;
+  left: 0;
+  width: 1em;
+  height: 1em;
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  transform: translateY(-50%);
+  background-color: initial;
+  cursor: default;
+  appearance: auto;
+  box-sizing: border-box;
+  margin: 3px 3px 3px 4px;
+  padding: initial;
+  border: initial;
+}
+
+.ControlsCheck-text {
+  display: flex;
+  align-items: center;
+}
+
+.ControlsCheck-text::before {
+  width: 1em;
+  height: 1em;
+  margin: 0 min(0.5208333333vw, 10px) 0 0;
+  display: block;
+  content: "";
+  border: 2px solid #d5a613;
+  background: hsla(0, 0%, 64%, .2);
+  box-sizing: border-box;
+  font-size: min(1.0416666667vw, 20px);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ControlsCheck-input:checked~.ControlsCheck-text::before {
+  background: url(/6/buckler/assets/images/auth/icon_check.png) no-repeat 50%;
+  background-size: contain;
 }
 
 .ControlsButton {
