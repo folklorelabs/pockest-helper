@@ -1,45 +1,15 @@
 const routes = {
-  AL: {
-    1: 'left',
-    2: 'left',
-    3: 'left',
-    4: 'left',
-    5: 'left',
+  left: {
+    feedFrequency: 4,
+    cleanFrequency: 2,
   },
-  AR: {
-    1: 'left',
-    2: 'left',
-    3: 'left',
-    4: 'right',
-    5: 'left',
+  mid: {
+    feedFrequency: 4,
+    cleanFrequency: 24,
   },
-  BL: {
-    1: 'mid',
-    2: 'mid',
-    3: 'mid',
-    4: 'left',
-    5: 'left',
-  },
-  BR: {
-    1: 'mid',
-    2: 'mid',
-    3: 'mid',
-    4: 'right',
-    5: 'left',
-  },
-  CL: {
-    1: 'right',
-    2: 'right',
-    3: 'right',
-    4: 'left',
-    5: 'left',
-  },
-  CR: {
-    1: 'right',
-    2: 'right',
-    3: 'right',
-    4: 'right',
-    5: 'left',
+  right: {
+    feedFrequency: 24,
+    cleanFrequency: 24,
   },
 };
 

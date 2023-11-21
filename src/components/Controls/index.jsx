@@ -5,13 +5,14 @@ import {
   FEED_INTERVAL,
   CLEAN_INTERVAL,
   pockestSettings,
-  pockestMode,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import Timer from '../Timer';
 import useNextFeed from '../../hooks/useNextFeed';
 import useNextClean from '../../hooks/useNextClean';
 import './index.css';
+import useNow from '../../hooks/useNow';
+import { parseDurationStr } from '../../utils/parseDuration';
 
 function Controls() {
   const {
@@ -20,11 +21,13 @@ function Controls() {
   } = usePockestContext();
   const nextFeed = useNextFeed();
   const nextClean = useNextClean();
+  const now = useNow();
   const {
     data,
     autoClean,
     autoFeed,
     autoTrain,
+    autoPlan,
     cleanFrequency,
     feedFrequency,
     stat,
@@ -32,24 +35,56 @@ function Controls() {
   if (!data || !data.monster) return '';
   return (
     <div className="Controls">
-      <Timer label={`Age ${data?.monster?.age}`} timestamp={data?.next_big_event_timer} />
-      <div className="ControlsLine">
-        <label className="ControlsCheck" htmlFor="PockestHelper_AutoClean">
+      <Timer label="Next Age" timestamp={data?.next_big_event_timer} />
+      <div className="PockestLine">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoClean">
           <input
             id="PockestHelper_AutoClean"
-            className="ControlsCheck-input"
+            className="PockestCheck-input"
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoClean: e.target.checked }))}
             defaultChecked={autoClean}
           />
-          <span className="ControlsCheck-text">Clean</span>
+          <span className="PockestCheck-text">Clean</span>
         </label>
+        <span className="PockestText">{parseDurationStr(nextClean - now)}</span>
+      </div>
+      <div className="PockestLine">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoFeed">
+          <input
+            id="PockestHelper_AutoFeed"
+            className="PockestCheck-input"
+            type="checkbox"
+            onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
+            defaultChecked={autoFeed}
+          />
+          <span className="PockestCheck-text">Feed</span>
+        </label>
+        <span className="PockestText">{parseDurationStr(nextFeed - now)}</span>
+      </div>
+      <div className="PockestLine">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoTrain">
+          <input
+            id="PockestHelper_AutoTrain"
+            className="PockestCheck-input"
+            type="checkbox"
+            onChange={(e) => pockestDispatch(pockestSettings({ autoTrain: e.target.checked }))}
+            defaultChecked={autoTrain}
+          />
+          <span className="PockestCheck-text">Train</span>
+        </label>
+        <span className="PockestText">{parseDurationStr(data?.monster?.training_time ? data.monster.training_time - now : 0)}</span>
+      </div>
+      <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
+      <div className="PockestLine">
+        <span className="PockestText">Clean Frequency</span>
         <select
-          className="ControlsSelect"
+          className="PockestSelect"
           onChange={(e) => {
             pockestDispatch(pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
           }}
           defaultValue={cleanFrequency}
+          disabled={autoPlan}
         >
           {Object.keys(CLEAN_INTERVAL).map((k) => (
             <option key={k} value={k}>
@@ -58,24 +93,15 @@ function Controls() {
           ))}
         </select>
       </div>
-      <Timer label="Next Cleaning" timestamp={nextClean} />
-      <div className="ControlsLine">
-        <label className="ControlsCheck" htmlFor="PockestHelper_AutoFeed">
-          <input
-            id="PockestHelper_AutoFeed"
-            className="ControlsCheck-input"
-            type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
-            defaultChecked={autoFeed}
-          />
-          <span className="ControlsCheck-text">Feed</span>
-        </label>
+      <div className="PockestLine">
+        <span className="PockestText">Feed Frequency</span>
         <select
-          className="ControlsSelect"
+          className="PockestSelect"
           onChange={(e) => {
             pockestDispatch(pockestSettings({ feedFrequency: parseInt(e.target.value, 10) }));
           }}
           defaultValue={feedFrequency}
+          disabled={autoPlan}
         >
           {Object.keys(FEED_INTERVAL).map((k) => (
             <option key={k} value={k}>
@@ -84,46 +110,25 @@ function Controls() {
           ))}
         </select>
       </div>
-      <Timer label="Next Feeding" timestamp={nextFeed} />
-      <div className="ControlsLine">
-        <label className="ControlsCheck" htmlFor="PockestHelper_AutoTrain">
-          <input
-            id="PockestHelper_AutoTrain"
-            className="ControlsCheck-input"
-            type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoTrain: e.target.checked }))}
-            defaultChecked={autoTrain}
-          />
-          <span className="ControlsCheck-text">Train</span>
-        </label>
+      <div className="PockestLine">
+        <span className="PockestText">Train Stat</span>
         <select
-          className="ControlsSelect"
+          className="PockestSelect"
           defaultValue={stat}
           onChange={(e) => {
             pockestDispatch(pockestSettings({ stat: parseInt(e.target.value, 10) }));
           }}
+          disabled={autoPlan}
         >
           {Object.keys(STAT_ID).map((s) => (
             <option key={s} value={s}>
               {STAT_ICON[s]}
               {' '}
               {STAT_ID[s]}
-              {' ('}
-              {data?.monster?.[STAT_ID[s]]}
-              )
             </option>
           ))}
         </select>
       </div>
-      <Timer label="Next Training" timestamp={data?.monster?.training_time} />
-      <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
-      {/* <button
-        className="ControlsButton ControlsButton--side"
-        type="button"
-        onClick={() => pockestDispatch(pockestMode('simple'))}
-      >
-        Manual Care
-      </button> */}
     </div>
   );
 }

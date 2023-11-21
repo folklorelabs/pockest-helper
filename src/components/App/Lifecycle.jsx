@@ -7,22 +7,41 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { parseDuration } from '../../utils/parseDuration';
+import { getMonsterPlan, getPlanRoute, getPlanStat } from '../../utils/getMonsterPlan';
 
 function LifeCycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
+  const {
+    data,
+    loading,
+    autoPlan,
+    autoClean,
+    autoFeed,
+    autoTrain,
+    monsterId,
+    paused,
+  } = pockestState;
+  const monsterPlan = React.useMemo(() => autoPlan
+    && getMonsterPlan(monsterId), [autoPlan, monsterId]);
+  const planRoute = React.useMemo(() => autoPlan && getPlanRoute(
+    monsterPlan,
+    data?.monster?.age,
+  ), [autoPlan, data?.monster?.age, monsterPlan]);
+  const stat = React.useMemo(() => {
+    if (!autoPlan) return pockestState.stat;
+    return getPlanStat(monsterPlan);
+  }, [monsterPlan, autoPlan, pockestState]);
+  const cleanFrequency = React.useMemo(() => {
+    if (!autoPlan) return pockestState.cleanFrequency;
+    return planRoute.cleanFrequency;
+  }, [autoPlan, pockestState.cleanFrequency, planRoute.cleanFrequency]);
+  const feedFrequency = React.useMemo(() => {
+    if (!autoPlan) return pockestState.feedFrequency;
+    return planRoute.feedFrequency;
+  }, [autoPlan, pockestState.feedFrequency, planRoute.feedFrequency]);
   React.useEffect(() => {
     const interval = window.setInterval(async () => {
-      const {
-        data,
-        loading,
-        autoClean,
-        autoFeed,
-        autoTrain,
-        cleanFrequency,
-        feedFrequency,
-        stat,
-      } = pockestState;
-      if (loading) return;
+      if (loading || paused) return;
       const now = new Date();
       const {
         monster,
@@ -52,7 +71,18 @@ function LifeCycle() {
     return () => {
       window.clearInterval(interval);
     };
-  }, [pockestState, pockestDispatch]);
+  }, [
+    loading,
+    autoPlan,
+    data,
+    autoClean,
+    cleanFrequency,
+    autoFeed,
+    feedFrequency,
+    autoTrain,
+    stat,
+    pockestDispatch,
+  ]);
 }
 
 export default LifeCycle;

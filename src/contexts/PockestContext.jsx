@@ -33,7 +33,8 @@ export const CLEAN_INTERVAL = {
 // STATE
 const INITIAL_STATE = {
   data: {},
-  mode: 'manual',
+  paused: true,
+  monsterId: null,
   autoFeed: false,
   feedFrequency: 4,
   cleanFrequency: 2,
@@ -48,24 +49,20 @@ const INITIAL_STATE = {
 export const ACTIONS = {
   REFRESH: 'POCKEST_REFRESH',
   LOADING: 'POCKEST_LOADING',
+  PAUSE: 'POCKEST_PAUSE',
   ERROR: 'POCKEST_ERROR',
   SETTINGS: 'POCKEST_SETTINGS',
 };
 export function pockestLoading() {
   return [ACTIONS.LOADING];
 }
-export function pockestMode(mode) {
-  return [ACTIONS.SETTINGS, {
-    ...INITIAL_STATE,
-    mode,
+export function pockestPause(paused) {
+  return [ACTIONS.PAUSE, {
+    paused,
   }];
 }
 export function pockestSettings(settings) {
-  const newSettings = {
-    ...settings,
-  };
-  delete newSettings.mode;
-  return [ACTIONS.SETTINGS, newSettings];
+  return [ACTIONS.SETTINGS, settings];
 }
 export async function pockestRefresh() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
@@ -76,6 +73,9 @@ export async function pockestFeed() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/serving', {
     body: '{"type":1}',
     method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
   });
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
@@ -87,6 +87,9 @@ export async function pockestClean() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cleaning', {
     body: '{"type":1}',
     method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
   });
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
@@ -98,6 +101,9 @@ export async function pockestTrain(type) {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/training', {
     body: `{"type":${type}}`,
     method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
   });
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
@@ -118,13 +124,19 @@ function REDUCER(state, [type, payload]) {
     case ACTIONS.SETTINGS:
       return {
         ...state,
+        monsterId: payload.monsterId ?? state.monsterId,
+        autoPlan: payload.autoPlan ?? state.autoPlan,
         autoFeed: payload.autoFeed ?? state.autoFeed,
         autoClean: payload.autoClean ?? state.autoClean,
         autoTrain: payload.autoTrain ?? state.autoTrain,
         feedFrequency: payload.feedFrequency ?? state.feedFrequency,
         cleanFrequency: payload.cleanFrequency ?? state.cleanFrequency,
         stat: payload.stat ?? state.stat,
-        mode: payload.mode ?? state.mode,
+      };
+    case ACTIONS.PAUSE:
+      return {
+        ...state,
+        paused: payload.paused ?? state.paused,
       };
     case ACTIONS.REFRESH:
       return {
@@ -145,6 +157,7 @@ function REDUCER(state, [type, payload]) {
 
 const stateFromStorage = window.localStorage.getItem('PockestHelper');
 const initialState = stateFromStorage && JSON.parse(stateFromStorage);
+initialState.paused = true;
 const PockestContext = createContext({
   pockestState: initialState ?? INITIAL_STATE,
   pockestDispatch: () => { },

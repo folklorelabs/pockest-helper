@@ -14,3 +14,131 @@
   text-transform: uppercase;
   text-align: center;
 }
+
+.App-button {
+  display: flex;
+  margin: 1rem 0;
+}
+
+.App-button .PockestButton {
+  width: 100%;
+}
+
+.App-footer {
+  opacity: 0.6667;
+  font-size: 0.8em;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.PockestLine,
+.TimerLine {
+  margin-top: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.PockestLine {
+  display: flex;
+  justify-content: space-between;
+}
+
+.PockestButton {
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.PockestSelect {
+  border: 1px solid hsla(0, 0%, 100%, .5);
+  background: hsla(0, 0%, 100%, .2);
+  color: #fcfcfc;
+  font-weight: 700;
+  line-height: 1;
+  width: 100px;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.PockestSelect:disabled {
+  cursor: default;
+}
+
+.PockestSelect option {
+  color: #000;
+}
+
+.PockestCheck {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.PockestCheck-input {
+  top: 0;
+  left: 0;
+  width: 1em;
+  height: 1em;
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  background-color: initial;
+  cursor: default;
+  appearance: auto;
+  box-sizing: border-box;
+  margin: 3px 3px 3px 4px;
+  padding: initial;
+  border: initial;
+}
+
+.PockestCheck-text {
+  display: flex;
+  align-items: center;
+}
+
+.PockestCheck-text::before {
+  width: 1em;
+  height: 1em;
+  margin: 0 min(0.5208333333vw, 10px) 0 0;
+  display: block;
+  content: "";
+  border: 2px solid #d5a613;
+  background: hsla(0, 0%, 64%, .2);
+  box-sizing: border-box;
+  font-size: min(1.0416666667vw, 20px);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.PockestCheck-input:checked~.PockestCheck-text::before {
+  background: url(/6/buckler/assets/images/auth/icon_check.png) no-repeat 50%;
+  background-size: contain;
+}
+
+.PockestButton {
+  font-size: 0.9em;
+  font-weight: 700;
+  font-family: Oswald, sans-serif;
+  height: 2em;
+  clip-path: polygon(min(0.5208333333vw, 10px) 0, 100% 0, 100% calc(100% - min(0.5208333333vw, 10px)), calc(100% - min(0.5208333333vw, 10px)) 100%, 0 100%, 0 min(0.5208333333vw, 10px));
+  font-size: min(1.0416666667vw, 20px);
+}
+
+@keyframes buttonOn {
+  from {
+    opacity: 0.75;
+  }
+
+  to {
+    opacity: 0.95;
+  }
+}
+
+.PockestButton--off {
+  opacity: 0.85;
+}
+
+.PockestButton--on {
+  opacity: 0.85;
+  animation: 2s infinite alternate buttonOn;
+}
