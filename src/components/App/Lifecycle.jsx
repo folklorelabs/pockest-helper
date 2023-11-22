@@ -59,29 +59,35 @@ function LifeCycle() {
       } = data;
       const alive = parseDuration(now - new Date(monster.live_time));
       const aliveH = Math.floor(alive.h);
-      const attemptToClean = autoClean && monster && monster?.garbage > 0;
-      if (attemptToClean && (cleanFrequency === 2 || aliveH % cleanFrequency === 0)) {
+      const attemptToClean = autoClean || autoPlan;
+      const hasGarbage = monster && monster?.garbage > 0;
+      if (attemptToClean
+        && ((cleanFrequency === 2 && hasGarbage) || aliveH % cleanFrequency === 0)) {
         console.log(now, 'CLEAN');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestClean());
       }
-      const attemptToFeed = autoFeed && monster && monster?.stomach < 6;
-      if (attemptToFeed && (feedFrequency === 4 || aliveH % feedFrequency === 0)) {
+      const attemptToFeed = autoFeed || autoPlan;
+      const missingHearts = monster && monster?.stomach < 6;
+      if (attemptToFeed
+        && ((feedFrequency === 4 && missingHearts) || aliveH % feedFrequency === 0)) {
         console.log(now, 'FEED');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestFeed());
       }
+      const attemptToTrain = autoTrain || autoPlan;
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
-      if (autoTrain && nextTrainingTime && now >= nextTrainingTime) {
+      if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
         console.log(now, 'TRAIN', stat);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
       }
 
+      const attemptToMatch = autoPlan;
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
-      if (autoPlan && new Date() >= nextMatchTime) {
+      if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
         const matchSlot = await getMatchFever(monsterId);
         console.log(now, 'MATCH', matchSlot);
         pockestDispatch(pockestLoading());
