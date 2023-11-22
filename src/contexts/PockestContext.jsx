@@ -109,16 +109,16 @@ export async function pockestTrain(type) {
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
 }
-export async function pockestMatch(type) {
-  if (type < 1) {
-    return [ACTIONS.ERROR, '[pockestTrain] type needs to be > 1'];
+export async function pockestMatch(slot) {
+  if (slot < 1) {
+    return [ACTIONS.ERROR, '[pockestTrain] slot needs to be > 1'];
   }
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/start', {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
     },
-    body: JSON.stringify({ type }),
+    body: JSON.stringify({ slot }),
   });
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
