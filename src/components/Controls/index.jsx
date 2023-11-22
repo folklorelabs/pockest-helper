@@ -27,10 +27,10 @@ function Controls() {
     autoClean,
     autoFeed,
     autoTrain,
-    autoPlan,
     cleanFrequency,
     feedFrequency,
     stat,
+    paused,
   } = pockestState;
   if (!data || !data.monster) return '';
   return (
@@ -44,6 +44,7 @@ function Controls() {
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoClean: e.target.checked }))}
             defaultChecked={autoClean}
+            disabled={!paused}
           />
           <span className="PockestCheck-text">Clean</span>
         </label>
@@ -57,6 +58,7 @@ function Controls() {
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
             defaultChecked={autoFeed}
+            disabled={!paused}
           />
           <span className="PockestCheck-text">Feed</span>
         </label>
@@ -70,6 +72,7 @@ function Controls() {
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoTrain: e.target.checked }))}
             defaultChecked={autoTrain}
+            disabled={!paused}
           />
           <span className="PockestCheck-text">Train</span>
         </label>
@@ -84,7 +87,7 @@ function Controls() {
             pockestDispatch(pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
           }}
           defaultValue={cleanFrequency}
-          disabled={autoPlan}
+          disabled={!paused}
         >
           {Object.keys(CLEAN_INTERVAL).map((k) => (
             <option key={k} value={k}>
@@ -101,7 +104,7 @@ function Controls() {
             pockestDispatch(pockestSettings({ feedFrequency: parseInt(e.target.value, 10) }));
           }}
           defaultValue={feedFrequency}
-          disabled={autoPlan}
+          disabled={!paused}
         >
           {Object.keys(FEED_INTERVAL).map((k) => (
             <option key={k} value={k}>
@@ -118,13 +121,13 @@ function Controls() {
           onChange={(e) => {
             pockestDispatch(pockestSettings({ stat: parseInt(e.target.value, 10) }));
           }}
-          disabled={autoPlan}
+          disabled={!paused}
         >
           {Object.keys(STAT_ID).map((s) => (
             <option key={s} value={s}>
-              {STAT_ICON[s]}
-              {' '}
               {STAT_ID[s]}
+              {' '}
+              {STAT_ICON[s]}
             </option>
           ))}
         </select>

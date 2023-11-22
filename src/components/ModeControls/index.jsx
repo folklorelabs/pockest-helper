@@ -13,6 +13,7 @@ function Controls() {
   const {
     data,
     autoPlan,
+    paused,
   } = pockestState;
   if (!data || !data.monster) return '';
   return (
@@ -26,6 +27,7 @@ function Controls() {
             type="radio"
             onChange={(e) => pockestDispatch(pockestSettings({ autoPlan: !e.target.checked }))}
             defaultChecked={!autoPlan}
+            disabled={!paused}
           />
           <span className="PockestCheck-text">Manual</span>
         </label>
@@ -37,6 +39,7 @@ function Controls() {
             type="radio"
             onChange={(e) => pockestDispatch(pockestSettings({ autoPlan: e.target.checked }))}
             defaultChecked={autoPlan}
+            disabled={!paused}
           />
           <span className="PockestCheck-text">Auto-Plan</span>
         </label>

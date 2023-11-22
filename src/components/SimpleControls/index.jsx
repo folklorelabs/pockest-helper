@@ -21,6 +21,7 @@ function SimpleControls() {
   const {
     data,
     monsterId,
+    paused,
   } = pockestState;
   const nextFeed = useNextFeed();
   const nextClean = useNextClean();
@@ -36,6 +37,7 @@ function SimpleControls() {
             pockestDispatch(pockestSettings({ monsterId: e.target.value }));
           }}
           defaultValue={monsterId}
+          disabled={!paused}
         >
           {monsters.map((mon) => (
             <option key={mon.id} value={mon.id}>

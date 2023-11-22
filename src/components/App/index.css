@@ -65,7 +65,7 @@
 }
 
 .PockestSelect {
-  border: 1px solid hsla(0, 0%, 100%, .5);
+  border: 2px solid #d5a613;
   background: hsla(0, 0%, 100%, .2);
   color: #fcfcfc;
   font-weight: 700;
@@ -77,6 +77,8 @@
 
 .PockestSelect:disabled {
   cursor: default;
+  border-color: rgba(255, 255, 255, 0.8);
+  opacity: 0.5;
 }
 
 .PockestSelect option {
@@ -125,6 +127,16 @@
   font-size: min(1.0416666667vw, 20px);
   font-weight: 700;
   cursor: pointer;
+}
+
+.PockestCheck-input:disabled~.PockestCheck-text {
+  cursor: default;
+}
+
+.PockestCheck-input:disabled~.PockestCheck-text::before {
+  cursor: default;
+  border-color: rgba(255, 255, 255, 0.8);
+  opacity: 0.5;
 }
 
 .PockestCheck-input:checked~.PockestCheck-text::before {
