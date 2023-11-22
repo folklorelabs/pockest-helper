@@ -3,7 +3,7 @@ import monsters from '../config/monsters';
 import routes from '../config/routes';
 
 export function getMonsterPlan(monsterId) {
-  const monster = monsters.find((m) => `${m.id}` === `${monsterId}`);
+  const monster = monsters.find((m) => m.monster_id === monsterId);
   return monster?.plan;
 }
 

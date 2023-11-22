@@ -9,13 +9,17 @@ function Timer({ label, timestamp }) {
   const now = useNow();
   const date = new Date(timestamp);
   return (
-    <TimerLine label={label} value={parseDurationStr(date - now)} />
+    <TimerLine label={label} value={timestamp ? parseDurationStr(date - now) : '--'} />
   );
 }
 
+Timer.defaultProps = {
+  timestamp: null,
+};
+
 Timer.propTypes = {
   label: PropTypes.string.isRequired,
-  timestamp: PropTypes.number.isRequired,
+  timestamp: PropTypes.number,
 };
 
 export default Timer;

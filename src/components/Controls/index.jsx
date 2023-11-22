@@ -38,49 +38,6 @@ function Controls() {
     <div className="Controls">
       <Timer label={`Age ${data?.monster?.age ? data.monster.age + 1 : 0}`} timestamp={data?.next_big_event_timer} />
       <div className="PockestLine">
-        <label className="PockestCheck" htmlFor="PockestHelper_AutoClean">
-          <input
-            id="PockestHelper_AutoClean"
-            className="PockestCheck-input"
-            type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoClean: e.target.checked }))}
-            defaultChecked={autoClean}
-            disabled={!paused}
-          />
-          <span className="PockestCheck-text">Clean</span>
-        </label>
-        <span className="PockestText">{parseDurationStr(nextClean - now)}</span>
-      </div>
-      <div className="PockestLine">
-        <label className="PockestCheck" htmlFor="PockestHelper_AutoFeed">
-          <input
-            id="PockestHelper_AutoFeed"
-            className="PockestCheck-input"
-            type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
-            defaultChecked={autoFeed}
-            disabled={!paused}
-          />
-          <span className="PockestCheck-text">Feed</span>
-        </label>
-        <span className="PockestText">{parseDurationStr(nextFeed - now)}</span>
-      </div>
-      <div className="PockestLine">
-        <label className="PockestCheck" htmlFor="PockestHelper_AutoTrain">
-          <input
-            id="PockestHelper_AutoTrain"
-            className="PockestCheck-input"
-            type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoTrain: e.target.checked }))}
-            defaultChecked={autoTrain}
-            disabled={!paused}
-          />
-          <span className="PockestCheck-text">Train</span>
-        </label>
-        <span className="PockestText">{parseDurationStr(data?.monster?.training_time ? data.monster.training_time - now : 0)}</span>
-      </div>
-      <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
-      <div className="PockestLine">
         <span className="PockestText">Clean Frequency</span>
         <select
           className="PockestSelect"
@@ -98,6 +55,20 @@ function Controls() {
         </select>
       </div>
       <div className="PockestLine">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoClean">
+          <input
+            id="PockestHelper_AutoClean"
+            className="PockestCheck-input"
+            type="checkbox"
+            onChange={(e) => pockestDispatch(pockestSettings({ autoClean: e.target.checked }))}
+            defaultChecked={autoClean}
+            disabled={!paused}
+          />
+          <span className="PockestCheck-text">Clean</span>
+        </label>
+        <span className="PockestText">{parseDurationStr(nextClean - now)}</span>
+      </div>
+      <div className="PockestLine">
         <span className="PockestText">Feed Frequency</span>
         <select
           className="PockestSelect"
@@ -113,6 +84,20 @@ function Controls() {
             </option>
           ))}
         </select>
+      </div>
+      <div className="PockestLine">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoFeed">
+          <input
+            id="PockestHelper_AutoFeed"
+            className="PockestCheck-input"
+            type="checkbox"
+            onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
+            defaultChecked={autoFeed}
+            disabled={!paused}
+          />
+          <span className="PockestCheck-text">Feed</span>
+        </label>
+        <span className="PockestText">{parseDurationStr(nextFeed - now)}</span>
       </div>
       <div className="PockestLine">
         <span className="PockestText">Train Stat</span>
@@ -133,6 +118,21 @@ function Controls() {
           ))}
         </select>
       </div>
+      <div className="PockestLine">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoTrain">
+          <input
+            id="PockestHelper_AutoTrain"
+            className="PockestCheck-input"
+            type="checkbox"
+            onChange={(e) => pockestDispatch(pockestSettings({ autoTrain: e.target.checked }))}
+            defaultChecked={autoTrain}
+            disabled={!paused}
+          />
+          <span className="PockestCheck-text">Train</span>
+        </label>
+        <span className="PockestText">{parseDurationStr(data?.monster?.training_time ? data.monster.training_time - now : 0)}</span>
+      </div>
+      <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
     </div>
   );
 }

@@ -7,7 +7,7 @@ export async function fetchMatchList() {
 }
 
 export default async function getMatchFever(monsterId) {
-  const monster = monsters.find((m) => `${m.id}` === `${monsterId}`);
+  const monster = monsters.find((m) => m.monster_id === monsterId);
   const matchFeverOptions = monster?.matchFever;
   if (!matchFeverOptions || !matchFeverOptions.length) return null;
   const { exchangeList } = await fetchMatchList();

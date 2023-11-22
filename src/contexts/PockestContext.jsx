@@ -157,7 +157,7 @@ export function getMonsterId(state) {
 
 export async function getMonsterMatchFever(state) {
   const monsterId = getMonsterId(state);
-  const monster = monsters.find((m) => `${m.id}` === `${monsterId}`);
+  const monster = monsters.find((m) => m.monster_id === monsterId);
   const matchFeverOptions = monster?.matchFever;
   if (!matchFeverOptions || !matchFeverOptions.length) return null;
   const { exchangeList } = await fetchMatchList();
@@ -167,7 +167,7 @@ export async function getMonsterMatchFever(state) {
 
 export function getTargetPlan(state) {
   const monsterId = state?.monsterId;
-  const monster = monsters.find((m) => `${m.id}` === `${monsterId}`);
+  const monster = monsters.find((m) => m.monster_id === monsterId);
   const planId = monster?.plan;
   const age = state?.data?.monster?.age;
   if (!age) return {};

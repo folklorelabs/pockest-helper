@@ -1,12 +1,11 @@
 import React from 'react';
 import {
   getCurrentPlanTimes,
-  pockestSettings,
   usePockestContext,
 } from '../../contexts/PockestContext';
+import TargetMonsterSelect from '../TargetMonsterSelect';
 import './index.css';
 import Timer from '../Timer';
-import monsters from '../../config/monsters';
 import {
   getMonsterPlan,
 } from '../../utils/getMonsterPlan';
@@ -14,12 +13,10 @@ import {
 function SimpleControls() {
   const {
     pockestState,
-    pockestDispatch,
   } = usePockestContext();
   const {
     data,
     monsterId,
-    paused,
   } = pockestState;
   const {
     nextFeed,
@@ -31,24 +28,11 @@ function SimpleControls() {
     <div className="SimpleControls">
       <div className="PockestLine">
         <span className="PockestText">Target</span>
-        <select
-          className="PockestSelect"
-          onChange={(e) => {
-            pockestDispatch(pockestSettings({ monsterId: e.target.value }));
-          }}
-          defaultValue={monsterId}
-          disabled={!paused}
-        >
-          {monsters.map((mon) => (
-            <option key={mon.id} value={mon.id}>
-              {mon.name}
-            </option>
-          ))}
-        </select>
+        <TargetMonsterSelect />
       </div>
       <div className="PockestLine">
         <span className="PockestText">Plan</span>
-        <span className="PockestText">{monsterPlan ?? '[MISSING]'}</span>
+        <span className="PockestText">{monsterPlan ?? '--'}</span>
       </div>
       <Timer label="Clean" timestamp={nextClean} />
       <Timer label="Feed" timestamp={nextFeed} />
