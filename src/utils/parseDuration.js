@@ -1,11 +1,12 @@
 import leadingZero from './leadingZero';
 
-export function parseDuration(t) {
-  const s = t / 1000;
+export function parseDuration(ms) {
+  const s = ms / 1000;
   const m = s / 60;
   const h = m / 60;
   const d = h / 24;
   return {
+    ms,
     s,
     m,
     h,

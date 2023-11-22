@@ -6,10 +6,9 @@ import {
   CLEAN_INTERVAL,
   pockestSettings,
   usePockestContext,
+  getCurrentPlanTimes,
 } from '../../contexts/PockestContext';
 import Timer from '../Timer';
-import useNextFeed from '../../hooks/useNextFeed';
-import useNextClean from '../../hooks/useNextClean';
 import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
@@ -19,8 +18,10 @@ function Controls() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const nextFeed = useNextFeed();
-  const nextClean = useNextClean();
+  const {
+    nextFeed,
+    nextClean,
+  } = getCurrentPlanTimes(pockestState);
   const now = useNow();
   const {
     data,

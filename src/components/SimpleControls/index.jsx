@@ -1,13 +1,11 @@
 import React from 'react';
 import {
-  STAT_ID,
+  getCurrentPlanTimes,
   pockestSettings,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import './index.css';
 import Timer from '../Timer';
-import useNextFeed from '../../hooks/useNextFeed';
-import useNextClean from '../../hooks/useNextClean';
 import monsters from '../../config/monsters';
 import {
   getMonsterPlan,
@@ -23,8 +21,10 @@ function SimpleControls() {
     monsterId,
     paused,
   } = pockestState;
-  const nextFeed = useNextFeed();
-  const nextClean = useNextClean();
+  const {
+    nextFeed,
+    nextClean,
+  } = getCurrentPlanTimes(pockestState);
   const monsterPlan = React.useMemo(() => getMonsterPlan(monsterId), [monsterId]);
   if (!data || !data.monster) return '';
   return (

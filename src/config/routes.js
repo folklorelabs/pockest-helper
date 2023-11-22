@@ -1,13 +1,21 @@
 const routes = {
-  left: {
+  A: {
     feedFrequency: 4,
     cleanFrequency: 2,
   },
-  mid: {
+  B: {
     feedFrequency: 4,
     cleanFrequency: 24,
   },
-  right: {
+  C: {
+    feedFrequency: 24,
+    cleanFrequency: 24,
+  },
+  L: {
+    feedFrequency: 4,
+    cleanFrequency: 2,
+  },
+  R: {
     feedFrequency: 24,
     cleanFrequency: 24,
   },
