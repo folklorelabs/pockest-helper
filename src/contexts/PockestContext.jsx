@@ -193,7 +193,7 @@ export function PockestProvider({
       pockestDispatch([ACTIONS.LOADING]);
       pockestDispatch(await pockestRefresh());
     })();
-  }, [pockestDispatch]);
+  }, []);
 
   // wrap value in memo so we only re-render when necessary
   const providerValue = useMemo(() => ({

@@ -48,7 +48,7 @@ function LifeCycle() {
       if (loading || paused) return;
       const now = new Date();
       if (!lastRefresh.current) lastRefresh.current = now;
-      if (now - lastRefresh.current > (1000 * 60 * 30)) {
+      if ((now - lastRefresh.current) > (1000 * 60 * 30)) {
         lastRefresh.current = now;
         console.log(now, 'REFRESH');
         pockestDispatch(pockestLoading());
@@ -59,18 +59,16 @@ function LifeCycle() {
       } = data;
       const alive = parseDuration(now - new Date(monster.live_time));
       const aliveH = Math.floor(alive.h);
-      const attemptToClean = autoClean || autoPlan;
-      const hasGarbage = monster && monster?.garbage > 0;
+      const attemptToClean = (autoClean || autoPlan) && (monster && monster?.garbage > 0);
       if (attemptToClean
-        && ((cleanFrequency === 2 && hasGarbage) || aliveH % cleanFrequency === 0)) {
+        && (cleanFrequency === 2 || aliveH % cleanFrequency === 0)) {
         console.log(now, 'CLEAN');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestClean());
       }
-      const attemptToFeed = autoFeed || autoPlan;
-      const missingHearts = monster && monster?.stomach < 6;
+      const attemptToFeed = (autoFeed || autoPlan) && (monster && monster?.stomach < 6);
       if (attemptToFeed
-        && ((feedFrequency === 4 && missingHearts) || aliveH % feedFrequency === 0)) {
+        && (feedFrequency === 4 || aliveH % feedFrequency === 0)) {
         console.log(now, 'FEED');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestFeed());
