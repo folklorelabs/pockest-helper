@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import monsters from '../config/monsters';
 import routes from '../config/routes';
 import getNextInterval from '../utils/getNextInterval';
+import getTimeIntervals from '../utils/getTimeIntervals';
 
 // CONSTS
 export const STAT_ICON = {
@@ -213,6 +214,37 @@ export function getCurrentPlanTimes(state) {
   return {
     nextClean,
     nextFeed: getNextInterval(birth, feedFrequency),
+  };
+}
+
+export function getCurrentPlanSchedule(state) {
+  const { cleanFrequency, feedFrequency } = getCurrentPlan(state);
+  const birth = state?.data?.monster?.live_time;
+  const death = birth + (1000 * 60 * 60 * 24 * 7);
+  const cleanSchedule = getTimeIntervals(birth, death, cleanFrequency);
+  const feedSchedule = getTimeIntervals(birth, death, feedFrequency);
+  return {
+    cleanSchedule,
+    feedSchedule,
+  };
+}
+
+export function getCurrentPlanScheduleWindows(state) {
+  const { cleanSchedule, feedSchedule } = getCurrentPlanSchedule(state);
+  const now = new Date();
+  const nextCleanWindow = cleanSchedule?.find((scheduleWindow) => now < scheduleWindow.start);
+  const currentCleanWindow = cleanSchedule?.find(
+    (scheduleWindow) => now >= scheduleWindow.start && now <= scheduleWindow.end,
+  );
+  const nextFeedWindow = feedSchedule?.find((scheduleWindow) => now < scheduleWindow.start);
+  const currentFeedWindow = feedSchedule?.find(
+    (scheduleWindow) => now >= scheduleWindow.start && now <= scheduleWindow.end,
+  );
+  return {
+    nextCleanWindow,
+    currentCleanWindow,
+    nextFeedWindow,
+    currentFeedWindow,
   };
 }
 
