@@ -49,6 +49,7 @@ function LifeCycle() {
       const now = new Date();
       if (!lastRefresh.current) lastRefresh.current = now;
       if (now - lastRefresh.current > (1000 * 60 * 30)) {
+        lastRefresh.current = now;
         console.log(now, 'REFRESH');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestRefresh());
