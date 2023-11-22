@@ -41,21 +41,22 @@ function LifeCycle() {
       } = data;
       const now = new Date();
       if (!lastRefresh.current) lastRefresh.current = now;
-      if ((now - lastRefresh.current) > (1000 * 60 * 10)) {
+      const refreshExpired = (now - lastRefresh.current) > (1000 * 60 * 10);
+      const nextCleanTime = nextFeed && new Date(nextClean);
+      const nextFeedTime = nextFeed && new Date(nextFeed);
+      if (refreshExpired || now >= nextCleanTime || now >= nextFeedTime) {
         lastRefresh.current = now;
         console.log(now.toLocaleString(), 'refresh');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestRefresh());
       }
       const attemptToClean = (autoClean || autoPlan) && (monster && monster?.garbage > 0);
-      const nextCleanTime = nextFeed && new Date(nextClean);
       if (attemptToClean && (cleanFrequency === 2 || now >= nextCleanTime)) {
         console.log(now.toLocaleString(), 'CLEAN');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestClean());
       }
       const attemptToFeed = (autoFeed || autoPlan) && (monster && monster?.stomach < 6);
-      const nextFeedTime = nextFeed && new Date(nextFeed);
       if (attemptToFeed && (feedFrequency === 4 || now >= nextFeedTime)) {
         console.log(now.toLocaleString(), 'FEED');
         pockestDispatch(pockestLoading());
