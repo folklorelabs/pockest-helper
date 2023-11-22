@@ -37,11 +37,11 @@ function LifeCycle() {
   const cleanFrequency = React.useMemo(() => {
     if (!autoPlan) return pockestState?.cleanFrequency;
     return planRoute?.cleanFrequency;
-  }, [autoPlan, pockestState.cleanFrequency, planRoute.cleanFrequency]);
+  }, [autoPlan, pockestState?.cleanFrequency, planRoute?.cleanFrequency]);
   const feedFrequency = React.useMemo(() => {
     if (!autoPlan) return pockestState?.feedFrequency;
     return planRoute?.feedFrequency;
-  }, [autoPlan, pockestState.feedFrequency, planRoute.feedFrequency]);
+  }, [autoPlan, pockestState?.feedFrequency, planRoute?.feedFrequency]);
   const lastRefresh = React.useRef(null);
   React.useEffect(() => {
     const interval = window.setInterval(async () => {
