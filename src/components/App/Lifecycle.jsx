@@ -46,7 +46,7 @@ function LifeCycle() {
       const nextFeedTime = nextFeed && new Date(nextFeed);
       if (refreshExpired || now >= nextCleanTime || now >= nextFeedTime) {
         lastRefresh.current = now;
-        console.log(now.toLocaleString(), 'refresh');
+        console.log(now.toLocaleString(), `REFRESH, stale?=${refreshExpired}, cleanTime?=${now >= nextCleanTime}, feedTime?=${now >= nextFeedTime}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestRefresh());
       }
@@ -66,7 +66,7 @@ function LifeCycle() {
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
       if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
-        console.log(now.toLocaleString(), 'TRAIN', stat);
+        console.log(now.toLocaleString(), `TRAIN, stat=${stat}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
       }
@@ -76,7 +76,7 @@ function LifeCycle() {
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
         const matchSlot = await getMonsterMatchFever(pockestState);
-        console.log(now.toLocaleString(), 'MATCH', matchSlot);
+        console.log(now.toLocaleString(), `MATCH, matchSlot=${matchSlot}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestMatch(matchSlot || 1));
       }
