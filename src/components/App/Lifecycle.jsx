@@ -6,6 +6,7 @@ import {
   pockestTrain,
   pockestMatch,
   usePockestContext,
+  pockestRefresh,
 } from '../../contexts/PockestContext';
 import { parseDuration } from '../../utils/parseDuration';
 import { getMonsterPlan, getPlanRoute, getPlanStat } from '../../utils/getMonsterPlan';
@@ -41,10 +42,17 @@ function LifeCycle() {
     if (!autoPlan) return pockestState.feedFrequency;
     return planRoute.feedFrequency;
   }, [autoPlan, pockestState.feedFrequency, planRoute.feedFrequency]);
+  const lastRefresh = React.useRef(null);
   React.useEffect(() => {
     const interval = window.setInterval(async () => {
       if (loading || paused) return;
       const now = new Date();
+      if (!lastRefresh.current) lastRefresh.current = now;
+      if (now - lastRefresh.current > (1000 * 60 * 30)) {
+        console.log(now, 'REFRESH');
+        pockestDispatch(pockestLoading());
+        pockestDispatch(await pockestRefresh());
+      }
       const {
         monster,
       } = data;
