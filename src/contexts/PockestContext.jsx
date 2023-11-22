@@ -155,7 +155,7 @@ export function getMonsterId(state) {
   return parseInt(hashId.slice(0, 4), 10);
 }
 
-export default async function getMonsterMatchFever(state) {
+export async function getMonsterMatchFever(state) {
   const monsterId = getMonsterId(state);
   const monster = monsters.find((m) => `${m.id}` === `${monsterId}`);
   const matchFeverOptions = monster?.matchFever;

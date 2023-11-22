@@ -9,21 +9,11 @@ import {
   pockestRefresh,
   getCurrentPlan,
   getCurrentPlanTimes,
+  getMonsterMatchFever,
 } from '../../contexts/PockestContext';
-import getMatchFever from '../../utils/getMatchFever';
 
 function LifeCycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
-  const {
-    data,
-    loading,
-    autoPlan,
-    autoClean,
-    autoFeed,
-    autoTrain,
-    monsterId,
-    paused,
-  } = pockestState;
   const {
     stat,
     cleanFrequency,
@@ -37,28 +27,37 @@ function LifeCycle() {
   React.useEffect(() => {
     const interval = window.setInterval(async () => {
       const {
+        data,
+        loading,
+        autoPlan,
+        autoClean,
+        autoFeed,
+        autoTrain,
+        paused,
+      } = pockestState;
+      if (!data || loading || paused) return;
+      const {
         monster,
       } = data;
-      if (loading || paused) return;
       const now = new Date();
       if (!lastRefresh.current) lastRefresh.current = now;
       if ((now - lastRefresh.current) > (1000 * 60 * 10)) {
         lastRefresh.current = now;
-        console.log(now, 'REFRESH');
+        console.log(now.toLocaleString(), 'refresh');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestRefresh());
       }
       const attemptToClean = (autoClean || autoPlan) && (monster && monster?.garbage > 0);
       const nextCleanTime = nextFeed && new Date(nextClean);
       if (attemptToClean && (cleanFrequency === 2 || now >= nextCleanTime)) {
-        console.log(now, 'CLEAN');
+        console.log(now.toLocaleString(), 'CLEAN');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestClean());
       }
       const attemptToFeed = (autoFeed || autoPlan) && (monster && monster?.stomach < 6);
       const nextFeedTime = nextFeed && new Date(nextFeed);
       if (attemptToFeed && (feedFrequency === 4 || now >= nextFeedTime)) {
-        console.log(now, 'FEED');
+        console.log(now.toLocaleString(), 'FEED');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestFeed());
       }
@@ -66,7 +65,7 @@ function LifeCycle() {
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
       if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
-        console.log(now, 'TRAIN', stat);
+        console.log(now.toLocaleString(), 'TRAIN', stat);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
       }
@@ -75,8 +74,8 @@ function LifeCycle() {
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
-        const matchSlot = await getMatchFever(monsterId);
-        console.log(now, 'MATCH', matchSlot);
+        const matchSlot = await getMonsterMatchFever(pockestState);
+        console.log(now.toLocaleString(), 'MATCH', matchSlot);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestMatch(matchSlot || 1));
       }
@@ -84,21 +83,7 @@ function LifeCycle() {
     return () => {
       window.clearInterval(interval);
     };
-  }, [loading,
-    autoPlan,
-    monsterId,
-    data,
-    autoClean,
-    cleanFrequency,
-    autoFeed,
-    feedFrequency,
-    autoTrain,
-    stat,
-    pockestDispatch,
-    paused,
-    nextFeed,
-    nextClean,
-  ]);
+  }, [pockestState, cleanFrequency, feedFrequency, stat, pockestDispatch, nextFeed, nextClean]);
 }
 
 export default LifeCycle;
