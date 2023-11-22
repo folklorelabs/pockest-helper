@@ -27,7 +27,6 @@ export default async function fetchAllMonsters() {
         ...geneMatches,
       ];
     }, []);
-    if (matches.length > 1) console.log(matches);
     return matches[0];
   });
   monsterCache = monsters;
