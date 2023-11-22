@@ -31,16 +31,16 @@ function LifeCycle() {
     data?.monster?.age,
   ), [autoPlan, data?.monster?.age, monsterPlan]);
   const stat = React.useMemo(() => {
-    if (!autoPlan) return pockestState.stat;
+    if (!autoPlan) return pockestState?.stat;
     return getPlanStat(monsterPlan);
   }, [monsterPlan, autoPlan, pockestState]);
   const cleanFrequency = React.useMemo(() => {
-    if (!autoPlan) return pockestState.cleanFrequency;
-    return planRoute.cleanFrequency;
+    if (!autoPlan) return pockestState?.cleanFrequency;
+    return planRoute?.cleanFrequency;
   }, [autoPlan, pockestState.cleanFrequency, planRoute.cleanFrequency]);
   const feedFrequency = React.useMemo(() => {
-    if (!autoPlan) return pockestState.feedFrequency;
-    return planRoute.feedFrequency;
+    if (!autoPlan) return pockestState?.feedFrequency;
+    return planRoute?.feedFrequency;
   }, [autoPlan, pockestState.feedFrequency, planRoute.feedFrequency]);
   const lastRefresh = React.useRef(null);
   React.useEffect(() => {
