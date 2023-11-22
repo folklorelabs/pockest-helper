@@ -111,7 +111,7 @@ export async function pockestTrain(type) {
 }
 export async function pockestMatch(slot) {
   if (slot < 1) {
-    return [ACTIONS.ERROR, '[pockestTrain] slot needs to be > 1'];
+    return [ACTIONS.ERROR, '[pockestMatch] slot needs to be > 1'];
   }
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/start', {
     method: 'POST',
@@ -119,6 +119,20 @@ export async function pockestMatch(slot) {
       'content-type': 'application/json',
     },
     body: JSON.stringify({ slot }),
+  });
+  const { data } = await response.json();
+  return [ACTIONS.REFRESH, data];
+}
+export async function pockestSelectEgg(id) {
+  if (id < 1 || id > 4) {
+    return [ACTIONS.ERROR, '[pockestSelectEgg] id needs to be 1, 2, 3, or 4'];
+  }
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/eggs', {
+    body: `{"id":${id}}`,
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
   });
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
