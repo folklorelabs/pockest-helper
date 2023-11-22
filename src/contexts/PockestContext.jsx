@@ -114,11 +114,11 @@ export async function pockestMatch(type) {
     return [ACTIONS.ERROR, '[pockestTrain] type needs to be > 1'];
   }
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/start', {
-    body: `{"type":${type}}`,
     method: 'POST',
     headers: {
       'content-type': 'application/json',
     },
+    body: JSON.stringify({ type }),
   });
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
@@ -136,19 +136,19 @@ function REDUCER(state, [type, payload]) {
     case ACTIONS.SETTINGS:
       return {
         ...state,
-        monsterId: payload.monsterId ?? state.monsterId,
-        autoPlan: payload.autoPlan ?? state.autoPlan,
-        autoFeed: payload.autoFeed ?? state.autoFeed,
-        autoClean: payload.autoClean ?? state.autoClean,
-        autoTrain: payload.autoTrain ?? state.autoTrain,
-        feedFrequency: payload.feedFrequency ?? state.feedFrequency,
-        cleanFrequency: payload.cleanFrequency ?? state.cleanFrequency,
-        stat: payload.stat ?? state.stat,
+        monsterId: payload.monsterId ?? state?.monsterId,
+        autoPlan: payload.autoPlan ?? state?.autoPlan,
+        autoFeed: payload.autoFeed ?? state?.autoFeed,
+        autoClean: payload.autoClean ?? state?.autoClean,
+        autoTrain: payload.autoTrain ?? state?.autoTrain,
+        feedFrequency: payload.feedFrequency ?? state?.feedFrequency,
+        cleanFrequency: payload.cleanFrequency ?? state?.cleanFrequency,
+        stat: payload.stat ?? state?.stat,
       };
     case ACTIONS.PAUSE:
       return {
         ...state,
-        paused: payload.paused ?? state.paused,
+        paused: payload.paused ?? state?.paused,
       };
     case ACTIONS.REFRESH:
       return {
@@ -169,7 +169,10 @@ function REDUCER(state, [type, payload]) {
 
 const stateFromStorage = window.localStorage.getItem('PockestHelper');
 const initialState = stateFromStorage && JSON.parse(stateFromStorage);
-initialState.paused = true;
+if (initialState) {
+  delete initialState.data;
+  initialState.paused = true;
+}
 const PockestContext = createContext({
   pockestState: initialState ?? INITIAL_STATE,
   pockestDispatch: () => { },
