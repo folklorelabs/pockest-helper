@@ -5,6 +5,10 @@
   margin-bottom: 0.5rem;
 }
 
-.Status-timer {
-  opacity: 0.6667;
+.Status-item--garbage .Status-icon {
+  color: #bf6952;
+}
+
+.Status-item--stomach .Status-icon {
+  color: #ff0000;
 }
