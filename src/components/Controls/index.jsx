@@ -183,7 +183,7 @@ function Controls() {
           {parseDurationStr(data?.monster?.exchange_time ? data.monster.exchange_time - now.getTime() : '--')}
         </span>
       </div>
-      <Timer label="Poop" timestamp={data?.next_small_event_timer} />
+      <Timer label="Poop/Hunger" timestamp={data?.next_small_event_timer} />
       <Timer label={`Age ${data?.monster?.age ? data.monster.age + 1 : 0}`} timestamp={data?.next_big_event_timer} />
     </div>
   );
