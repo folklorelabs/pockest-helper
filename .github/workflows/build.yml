@@ -42,7 +42,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_TOKEN }}
           prerelease: true
           generate_release_notes: true
           files: |
