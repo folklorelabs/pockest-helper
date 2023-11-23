@@ -77,7 +77,7 @@ function Controls() {
             defaultChecked={autoClean}
             disabled={!paused}
           />
-          <span className="PockestCheck-text">{currentFeedWindow || cleanFrequency === 2 ? 'Cleaning' : 'Clean'}</span>
+          <span className="PockestCheck-text">{currentCleanWindow || cleanFrequency === 2 ? 'Cleaning' : 'Clean'}</span>
         </label>
         <span className="PockestText">{cleanFrequency === 2 ? '∞' : parseDurationStr(cleanEventTime - now.getTime())}</span>
       </div>

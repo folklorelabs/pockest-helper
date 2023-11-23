@@ -54,9 +54,9 @@ function SimpleControls() {
         <span className="PockestText">{monsterPlan ?? '--'}</span>
       </div>
       <Timer
-        label={currentFeedWindow || cleanFrequency === 2 ? 'Cleaning' : 'Clean'}
+        label={currentCleanWindow || cleanFrequency === 2 ? 'Cleaning' : 'Clean'}
         timestamp={cleanEventTime}
-        value={feedFrequency === 2 ? '∞' : null}
+        value={cleanFrequency === 2 ? '∞' : null}
       />
       <Timer
         label={currentFeedWindow || feedFrequency === 4 ? 'Feeding' : 'Feed'}
