@@ -1,15 +1,14 @@
 ---
-name: "tagged-release"
+name: "tagged-pre-release"
 
 on:
   push:
     tags:
-      - "v*"
-      - "!v*-rc*"
+      - "v*-rc*"
 
 jobs:
   tagged-release:
-    name: "Tagged Release"
+    name: "Tagged Pre-Release"
     runs-on: "ubuntu-latest"
 
     steps:
@@ -22,9 +21,9 @@ jobs:
       - name: "Build"
         run: |
           npm run build
-      - name: "Create release"
+      - name: "Create pre-release"
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
-          prerelease: false
+          prerelease: true
           files: |
             ./dist/PockestHelper.zip
