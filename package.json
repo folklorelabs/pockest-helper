@@ -6,8 +6,8 @@
     "dev": "vite",
     "build": "vite build && cd ./dist && zip -r9 ./PockestHelper.zip ./*",
     "preview": "vite preview",
-    "prerelease": "npm version prerelease --preid=rc && node ./scripts/updateManfiestVersion.js && git add -A && git commit --amend",
-    "release": "npm version patch && node ./scripts/updateManfiestVersion.js && git add -A && git commit --amend"
+    "prerelease": "npm version prerelease --preid=rc && node ./scripts/syncManfiestVersion.js && git add -A && git commit --amend",
+    "release": "npm version patch && node ./scripts/syncManfiestVersion.js && git add -A && git commit --amend"
   },
   "dependencies": {
     "classnames": "^2.3.2",
