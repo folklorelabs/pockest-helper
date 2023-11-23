@@ -5,21 +5,27 @@ import TimerLine from './TimerLine';
 import './index.css';
 import useNow from '../../hooks/useNow';
 
-function Timer({ label, timestamp }) {
+function Timer({ label, timestamp, value }) {
   const now = useNow();
-  const date = new Date(timestamp);
+  const v = (() => {
+    if (value) return value;
+    if (timestamp) return parseDurationStr(timestamp - now.getTime());
+    return '--';
+  })();
   return (
-    <TimerLine label={label} value={timestamp ? parseDurationStr(date - now) : '--'} />
+    <TimerLine label={label} value={v} />
   );
 }
 
 Timer.defaultProps = {
   timestamp: null,
+  value: null,
 };
 
 Timer.propTypes = {
   label: PropTypes.string.isRequired,
   timestamp: PropTypes.number,
+  value: PropTypes.string,
 };
 
 export default Timer;

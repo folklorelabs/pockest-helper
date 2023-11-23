@@ -7,6 +7,7 @@ import {
   pockestSettings,
   usePockestContext,
   getCurrentPlanTimes,
+  getCurrentPlanScheduleWindows,
 } from '../../contexts/PockestContext';
 import Timer from '../Timer';
 import './index.css';
@@ -18,11 +19,13 @@ function Controls() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const {
-    nextFeed,
-    nextClean,
-  } = getCurrentPlanTimes(pockestState);
   const now = useNow();
+  const {
+    currentCleanWindow,
+    nextCleanWindow,
+    currentFeedWindow,
+    nextFeedWindow,
+  } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
   const {
     data,
     autoClean,
@@ -34,6 +37,16 @@ function Controls() {
     paused,
   } = pockestState;
   if (!data || !data.monster) return '';
+  const cleanEventTime = (() => {
+    if (cleanFrequency === 2) return null;
+    if (currentCleanWindow) return currentCleanWindow.end;
+    return nextCleanWindow.start;
+  })();
+  const feedEventTime = (() => {
+    if (feedFrequency === 4) return null;
+    if (currentFeedWindow) return currentFeedWindow.end;
+    return nextFeedWindow.start;
+  })();
   return (
     <div className="Controls">
       <Timer label={`Age ${data?.monster?.age ? data.monster.age + 1 : 0}`} timestamp={data?.next_big_event_timer} />
@@ -64,9 +77,9 @@ function Controls() {
             defaultChecked={autoClean}
             disabled={!paused}
           />
-          <span className="PockestCheck-text">Clean</span>
+          <span className="PockestCheck-text">{currentFeedWindow || cleanFrequency === 2 ? 'Cleaning' : 'Clean'}</span>
         </label>
-        <span className="PockestText">{parseDurationStr(nextClean - now)}</span>
+        <span className="PockestText">{cleanFrequency === 2 ? '∞' : parseDurationStr(cleanEventTime - now.getTime())}</span>
       </div>
       <div className="PockestLine">
         <span className="PockestText">Feed Frequency</span>
@@ -95,9 +108,9 @@ function Controls() {
             defaultChecked={autoFeed}
             disabled={!paused}
           />
-          <span className="PockestCheck-text">Feed</span>
+          <span className="PockestCheck-text">{currentFeedWindow || feedFrequency === 4 ? 'Feeding' : 'Feed'}</span>
         </label>
-        <span className="PockestText">{parseDurationStr(nextFeed - now)}</span>
+        <span className="PockestText">{feedFrequency === 4 ? '∞' : parseDurationStr(feedEventTime - now.getTime())}</span>
       </div>
       <div className="PockestLine">
         <span className="PockestText">Train Stat</span>

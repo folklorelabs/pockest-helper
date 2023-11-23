@@ -16,13 +16,21 @@ function LifeCycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
   const {
     cleanFrequency,
+    feedFrequency,
   } = React.useMemo(() => getCurrentPlan(pockestState), [pockestState]);
   const {
     currentCleanWindow,
     currentFeedWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
 
-  const lastRefresh = React.useRef();
+  const getNextRefresh = () => {
+    const now = new Date();
+    const staticOffset = 1000 * 60 * 5; // 7m
+    const dynamicOffset = Math.round(Math.random() * 1000 * 60 * 5); // 0-3m
+    return new Date(now.getTime() + staticOffset + dynamicOffset);
+  };
+  const nextRandomReset = React.useRef(getNextRefresh());
+
   React.useEffect(() => {
     // Random refresh cycle
     const interval = window.setInterval(async () => {
@@ -36,6 +44,7 @@ function LifeCycle() {
         console.log(now.toLocaleString(), 'REFRESH, next_small_event_timer');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestRefresh());
+        return;
       }
 
       // Big event refresh
@@ -43,16 +52,16 @@ function LifeCycle() {
         console.log(now.toLocaleString(), 'REFRESH, next_big_event_timer');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestRefresh());
+        return;
       }
 
       // Random refresh
-      if (!lastRefresh.current) lastRefresh.current = now; // we have data on the first cycle
-      const shouldRandomlyCheck = currentCleanWindow || currentFeedWindow;
-      const refreshExpired = (now - lastRefresh.current) > (1000 * 60 * 7);
-      if (shouldRandomlyCheck && refreshExpired) {
-        lastRefresh.current = now;
-        lastRefresh.current += ((Math.random() * 3 * 60 * 1000)); // add extra time just in case
-        console.log(now.toLocaleString(), `REFRESH, stale?=${refreshExpired}`);
+      const shouldRandomReset = currentCleanWindow || currentFeedWindow
+        || cleanFrequency === 2 || feedFrequency === 4;
+      nextRandomReset.current = getNextRefresh();
+      if (shouldRandomReset && now > nextRandomReset.current) {
+        nextRandomReset.current = getNextRefresh();
+        console.log(now.toLocaleString(), 'REFRESH, random reset');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestRefresh());
       }
@@ -60,7 +69,14 @@ function LifeCycle() {
     return () => {
       window.clearInterval(interval);
     };
-  }, [currentCleanWindow, currentFeedWindow, pockestDispatch, pockestState]);
+  }, [
+    cleanFrequency,
+    feedFrequency,
+    currentCleanWindow,
+    currentFeedWindow,
+    pockestDispatch,
+    pockestState,
+  ]);
   React.useEffect(() => {
     const interval = window.setInterval(async () => {
       const {
@@ -87,6 +103,7 @@ function LifeCycle() {
         console.log(now.toLocaleString(), 'CLEAN');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestClean());
+        return;
       }
 
       // Feed
@@ -97,6 +114,7 @@ function LifeCycle() {
         console.log(now.toLocaleString(), 'FEED');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestFeed());
+        return;
       }
 
       // Train
@@ -107,6 +125,7 @@ function LifeCycle() {
         console.log(now.toLocaleString(), `TRAIN, stat=${stat}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
+        return;
       }
 
       // Match
