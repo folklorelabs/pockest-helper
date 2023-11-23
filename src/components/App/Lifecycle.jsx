@@ -58,7 +58,6 @@ function LifeCycle() {
       // Random refresh
       const shouldRandomReset = currentCleanWindow || currentFeedWindow
         || cleanFrequency === 2 || feedFrequency === 4;
-      nextRandomReset.current = getNextRefresh();
       if (shouldRandomReset && now > nextRandomReset.current) {
         nextRandomReset.current = getNextRefresh();
         console.log(now.toLocaleString(), 'REFRESH, random reset');
