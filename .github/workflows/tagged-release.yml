@@ -1,0 +1,29 @@
+---
+name: "tagged-release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+      - name: "Install dependencies"
+        run: |
+          npm run ci
+      - name: "Build"
+        run: |
+          npm run build
+      - name: "Create release"
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          prerelease: false
+          files: |
+            ./dist/PockestHelper.zip
