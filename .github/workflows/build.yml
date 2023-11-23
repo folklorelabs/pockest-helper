@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  Environment:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
