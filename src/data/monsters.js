@@ -128,10 +128,12 @@ const monsters = [
   {
     monster_id: 4004,
     name_en: 'Chun-Li',
+    plan: 'W5BRS',
   },
   {
     monster_id: 4005,
     name_en: 'Cammy',
+    plan: 'G5BRS',
   },
   {
     monster_id: 4006,
@@ -186,6 +188,7 @@ const monsters = [
   {
     monster_id: 4016,
     name_en: 'Dee Jay',
+    plan: 'G5BRT',
   },
   {
     monster_id: 4018,
@@ -266,6 +269,7 @@ const monsters = [
   {
     monster_id: 4074,
     name_en: 'Crimson Viper',
+    plan: 'G5ART',
   },
   {
     monster_id: 4079,
@@ -280,6 +284,7 @@ const monsters = [
   {
     monster_id: 4083,
     name_en: 'Luke',
+    plan: 'G5BRP',
   },
   {
     monster_id: 4084,
@@ -310,6 +315,7 @@ const monsters = [
   {
     monster_id: 4089,
     name_en: 'Lily',
+    plan: 'G5ARS',
   },
   {
     monster_id: 4090,
