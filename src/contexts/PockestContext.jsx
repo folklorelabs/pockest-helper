@@ -6,33 +6,11 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import monsters from '../config/monsters';
-import routes from '../config/routes';
+import monsters from '../data/monsters';
+import routes from '../data/routes';
 import getNextInterval from '../utils/getNextInterval';
 import getTimeIntervals from '../utils/getTimeIntervals';
-
-// CONSTS
-export const STAT_ICON = {
-  1: '🥊',
-  2: '👟',
-  3: '🪵',
-};
-export const STAT_ID = {
-  1: 'power',
-  2: 'speed',
-  3: 'technic',
-};
-export const FEED_INTERVAL = {
-  4: 'Every 4h',
-  12: 'Every 12h',
-  24: 'Every 24h',
-};
-export const CLEAN_INTERVAL = {
-  2: 'Every 2h',
-  4: 'Every 4h',
-  12: 'Every 12h',
-  24: 'Every 24h',
-};
+import getMonsterPlan from '../utils/getMonsterPlan';
 
 // STATE
 const INITIAL_STATE = {
@@ -166,54 +144,29 @@ export async function getMonsterMatchFever(state) {
   return match?.slot;
 }
 
-export function getTargetPlan(state) {
-  const monsterId = state?.monsterId;
-  const monster = monsters.find((m) => m.monster_id === monsterId);
-  const planId = monster?.plan;
-  const age = state?.data?.monster?.age;
-  if (!age) return {};
-
-  const statLetter = planId?.slice(3, 4);
-  const stat = Object.keys(STAT_ID)
-    .find((k) => STAT_ID[k].slice(0, 1).toUpperCase() === statLetter);
-
-  let route = routes.L;
-  if (age < 4) {
-    const divergence = planId?.slice(1, 2);
-    route = routes[divergence];
-  } else if (age < 5) {
-    const divergence = planId?.slice(2, 3);
-    route = routes[divergence];
-  }
-
-  return {
-    id: planId,
-    stat,
-    ...route,
-  };
-}
-
 export function getCurrentPlan(state) {
   if (state?.autoPlan) {
-    return getTargetPlan(state);
+    const age = state?.data?.monster?.age;
+    const targetPlan = getMonsterPlan(state?.monsterId);
+    const targetPlanSpecs = (() => {
+      if (age < 4) {
+        return targetPlan?.planDiv1;
+      }
+      if (age < 5) {
+        return targetPlan?.planDiv2;
+      }
+      return targetPlan?.planDiv3;
+    })();
+    return {
+      stat: targetPlan?.stat,
+      feedFrequency: targetPlanSpecs?.feedFrequency,
+      cleanFrequency: targetPlanSpecs?.cleanFrequency,
+    };
   }
   return {
     stat: state?.stat,
     feedFrequency: state?.feedFrequency,
     cleanFrequency: state?.cleanFrequency,
-  };
-}
-
-export function getCurrentPlanTimes(state) {
-  const { cleanFrequency, feedFrequency } = getCurrentPlan(state);
-  const birth = state?.data?.monster?.live_time;
-
-  const nextClean = cleanFrequency === 2 ? state?.data?.next_small_event_timer
-    : getNextInterval(birth, cleanFrequency);
-
-  return {
-    nextClean,
-    nextFeed: getNextInterval(birth, feedFrequency),
   };
 }
 

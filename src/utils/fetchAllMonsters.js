@@ -1,4 +1,4 @@
-import MONSTERS from '../config/monsters';
+import MONSTERS from '../data/monsters';
 
 let monsterCache;
 export default async function fetchAllMonsters() {

@@ -1,29 +1,33 @@
-import { STAT_ID } from '../contexts/PockestContext';
-import monsters from '../config/monsters';
-import routes from '../config/routes';
+import { STAT_ID } from '../data/stats';
+import monsters from '../data/monsters';
+import routes from '../data/routes';
 
-export function getMonsterPlan(monsterId) {
+export default function getMonsterPlan(monsterId) {
   const monster = monsters.find((m) => m.monster_id === monsterId);
-  return monster?.plan;
-}
+  const planId = monster?.plan;
+  if (!planId) return {};
 
-export function getPlanStat(plan) {
-  if (!plan) return null;
-  const statLetter = plan?.slice(3, 4);
-  return Object.keys(STAT_ID).find((k) => STAT_ID[k].slice(0, 1).toUpperCase() === statLetter);
-}
+  const planEgg = planId.slice(0, 1);
 
-export function getPlanRoute(plan, age) {
-  if (age < 4) {
-    const divergence = plan?.slice(1, 2);
-    if (divergence === 'C') return routes.right;
-    if (divergence === 'B') return routes.mid;
-    return routes.left;
-  }
-  if (age < 5) {
-    const divergence = plan?.slice(2, 3);
-    if (divergence === 'R') return routes.right;
-    return routes.left;
-  }
-  return routes.left;
+  const planAge = parseInt(planId.slice(1, 2), 10);
+
+  const div1 = planId.slice(2, 3);
+  const planDiv1 = routes[div1];
+  const div2 = planId.slice(3, 4);
+  const planDiv2 = routes[div2];
+  const planDiv3 = routes.L;
+
+  const statLetter = planId.slice(4, 5);
+  const planStat = Object.keys(STAT_ID)
+    .find((k) => STAT_ID[k].slice(0, 1).toUpperCase() === statLetter);
+
+  return {
+    planId,
+    planEgg,
+    planAge,
+    planDiv1,
+    planDiv2,
+    planDiv3,
+    planStat,
+  };
 }

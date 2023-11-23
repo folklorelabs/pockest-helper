@@ -2,15 +2,12 @@ import React from 'react';
 import {
   getCurrentPlan,
   getCurrentPlanScheduleWindows,
-  getCurrentPlanTimes,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import TargetMonsterSelect from '../TargetMonsterSelect';
 import './index.css';
 import Timer from '../Timer';
-import {
-  getMonsterPlan,
-} from '../../utils/getMonsterPlan';
+import getMonsterPlan from '../../utils/getMonsterPlan';
 
 function SimpleControls() {
   const {
@@ -26,11 +23,11 @@ function SimpleControls() {
     currentFeedWindow,
     nextFeedWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
+  const targetPlan = React.useMemo(() => getMonsterPlan(monsterId), [monsterId]);
   const {
     cleanFrequency,
     feedFrequency,
   } = React.useMemo(() => getCurrentPlan(pockestState), [pockestState]);
-  const monsterPlan = React.useMemo(() => getMonsterPlan(monsterId), [monsterId]);
   const cleanEventTime = (() => {
     if (cleanFrequency === 2) return null;
     if (currentCleanWindow) return currentCleanWindow.end;
@@ -49,7 +46,7 @@ function SimpleControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">Plan</span>
-        <span className="PockestText">{monsterPlan ?? '--'}</span>
+        <span className="PockestText">{targetPlan.planId ?? '--'}</span>
       </div>
       <Timer
         label={currentCleanWindow || cleanFrequency === 2 ? 'Cleaning' : 'Clean'}

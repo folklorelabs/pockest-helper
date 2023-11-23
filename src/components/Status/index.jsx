@@ -1,5 +1,6 @@
 import React from 'react';
-import { STAT_ICON, STAT_ID, usePockestContext } from '../../contexts/PockestContext';
+import { STAT_ICON, STAT_ID } from '../../data/stats';
+import { usePockestContext } from '../../contexts/PockestContext';
 import './index.css';
 
 function Status() {

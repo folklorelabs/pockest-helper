@@ -110,17 +110,17 @@ const monsters = [
   {
     monster_id: 4000,
     name_en: 'Ryu',
-    plan: 'WBRP',
+    plan: 'W5BRP',
   },
   {
     monster_id: 4002,
     name_en: 'Violent Ken',
-    plan: 'BCRT',
+    plan: 'B5CRT',
   },
   {
     monster_id: 4003,
     name_en: 'Ken',
-    plan: 'WBRT',
+    plan: 'W5BRT',
   },
   {
     monster_id: 4004,
@@ -149,13 +149,13 @@ const monsters = [
   {
     monster_id: 4010,
     name_en: 'E. Honda',
-    plan: 'YALT',
+    plan: 'Y5ALT',
     matchFever: [4030, 4005, 4092],
   },
   {
     monster_id: 4012,
     name_en: 'Balrog',
-    plan: 'GBLP',
+    plan: 'G5BLP',
     matchFever: [4083, 4004, 4008],
   },
   {

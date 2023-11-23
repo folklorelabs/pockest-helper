@@ -1,18 +1,28 @@
 import React from 'react';
 import {
-  STAT_ICON,
-  STAT_ID,
-  FEED_INTERVAL,
-  CLEAN_INTERVAL,
   pockestSettings,
   usePockestContext,
-  getCurrentPlanTimes,
   getCurrentPlanScheduleWindows,
 } from '../../contexts/PockestContext';
+import { STAT_ICON, STAT_ID } from '../../data/stats';
 import Timer from '../Timer';
 import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
+
+// CONSTS
+const FEED_INTERVAL = {
+  4: 'Every 4h',
+  12: 'Every 12h',
+  24: 'Every 24h',
+};
+
+const CLEAN_INTERVAL = {
+  2: 'Every 2h',
+  4: 'Every 4h',
+  12: 'Every 12h',
+  24: 'Every 24h',
+};
 
 function Controls() {
   const {

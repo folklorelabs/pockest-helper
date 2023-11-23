@@ -1,4 +1,4 @@
-import monsters from '../config/monsters';
+import monsters from '../data/monsters';
 
 export async function fetchMatchList() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/list');
