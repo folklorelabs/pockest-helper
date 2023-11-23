@@ -97,7 +97,8 @@ function LifeCycle() {
       const now = new Date();
 
       // Clean
-      const attemptToClean = (autoClean || autoPlan) && (monster && monster?.garbage > 0);
+      const attemptToClean = (autoClean || autoPlan) && cleanFrequency
+        && (monster && monster?.garbage > 0);
       const inCleanWindow = cleanFrequency === 2
         || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
@@ -108,7 +109,8 @@ function LifeCycle() {
       }
 
       // Feed
-      const attemptToFeed = (autoFeed || autoPlan) && (monster && monster?.stomach < 6);
+      const attemptToFeed = (autoFeed || autoPlan) && feedFrequency
+        && (monster && monster?.stomach < 6);
       const inFeedWindow = feedFrequency === 4
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
