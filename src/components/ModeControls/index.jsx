@@ -11,11 +11,9 @@ function Controls() {
     pockestDispatch,
   } = usePockestContext();
   const {
-    data,
     autoPlan,
     paused,
   } = pockestState;
-  if (!data || !data.monster) return '';
   return (
     <div className="ModeControls">
       <div className="PockestLine">

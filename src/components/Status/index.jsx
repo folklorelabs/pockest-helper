@@ -25,17 +25,17 @@ function Status() {
       <span className="Status-item">
         {STAT_ICON[highestStat]}
         {' '}
-        {data?.monster?.[STAT_ID[highestStat]]}
+        {data?.monster?.[STAT_ID[highestStat]] || '--'}
       </span>
       <span className="Status-item">
         ❤️
         &nbsp;&nbsp;
-        {data?.monster?.stomach}
+        {data?.monster?.stomach || '--'}
       </span>
       <span className="Status-item">
         💩
         &nbsp;&nbsp;
-        {data?.monster?.garbage}
+        {data?.monster?.garbage || '--'}
       </span>
     </div>
   );
