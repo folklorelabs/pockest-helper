@@ -218,6 +218,7 @@ function REDUCER(state, [type, payload]) {
         autoFeed: payload.autoFeed ?? state?.autoFeed,
         autoClean: payload.autoClean ?? state?.autoClean,
         autoTrain: payload.autoTrain ?? state?.autoTrain,
+        autoMatch: payload.autoMatch ?? state?.autoMatch,
         feedFrequency: payload.feedFrequency ?? state?.feedFrequency,
         cleanFrequency: payload.cleanFrequency ?? state?.cleanFrequency,
         stat: payload.stat ?? state?.stat,

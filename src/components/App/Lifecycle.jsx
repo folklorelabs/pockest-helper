@@ -86,6 +86,7 @@ function LifeCycle() {
         autoClean,
         autoFeed,
         autoTrain,
+        autoMatch,
         paused,
         stat,
       } = pockestState;
@@ -129,7 +130,7 @@ function LifeCycle() {
       }
 
       // Match
-      const attemptToMatch = autoPlan && monster;
+      const attemptToMatch = autoMatch && monster;
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
@@ -146,6 +147,7 @@ function LifeCycle() {
     cleanFrequency,
     currentCleanWindow,
     currentFeedWindow,
+    feedFrequency,
     pockestDispatch,
     pockestState,
   ]);

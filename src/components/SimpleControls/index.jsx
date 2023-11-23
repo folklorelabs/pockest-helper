@@ -3,19 +3,26 @@ import {
   getCurrentPlan,
   getCurrentPlanScheduleWindows,
   usePockestContext,
+  pockestSettings,
 } from '../../contexts/PockestContext';
 import TargetMonsterSelect from '../TargetMonsterSelect';
 import './index.css';
 import Timer from '../Timer';
 import getMonsterPlan from '../../utils/getMonsterPlan';
+import { parseDurationStr } from '../../utils/parseDuration';
+import useNow from '../../hooks/useNow';
 
 function SimpleControls() {
   const {
     pockestState,
+    pockestDispatch,
   } = usePockestContext();
+  const now = useNow();
   const {
     data,
     monsterId,
+    autoMatch,
+    paused,
   } = pockestState;
   const {
     currentCleanWindow,
@@ -59,7 +66,22 @@ function SimpleControls() {
         value={feedFrequency === 4 ? '∞' : null}
       />
       <Timer label="Train" timestamp={data?.monster?.training_time} />
-      <Timer label="Match" timestamp={data?.monster?.exchange_time} />
+      <div className="PockestLine">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoMatch2">
+          <input
+            id="PockestHelper_AutoMatch2"
+            className="PockestCheck-input"
+            type="checkbox"
+            onChange={(e) => pockestDispatch(pockestSettings({ autoMatch: e.target.checked }))}
+            defaultChecked={autoMatch}
+            disabled={!paused}
+          />
+          <span className="PockestCheck-text">Match</span>
+        </label>
+        <span className="PockestText">
+          {parseDurationStr(data?.monster?.exchange_time ? data.monster.exchange_time - now.getTime() : '--')}
+        </span>
+      </div>
       <Timer label={`Age ${data?.monster?.age ? data.monster.age + 1 : 0}`} timestamp={data?.next_big_event_timer} />
     </div>
   );

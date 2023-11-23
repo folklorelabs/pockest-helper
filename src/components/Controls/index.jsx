@@ -41,6 +41,7 @@ function Controls() {
     autoClean,
     autoFeed,
     autoTrain,
+    autoMatch,
     cleanFrequency,
     feedFrequency,
     stat,
@@ -166,7 +167,22 @@ function Controls() {
         </label>
         <span className="PockestText">{data?.monster?.training_time ? parseDurationStr(data.monster.training_time - now) : '--'}</span>
       </div>
-      <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
+      <div className="PockestLine">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoMatch1">
+          <input
+            id="PockestHelper_AutoMatch1"
+            className="PockestCheck-input"
+            type="checkbox"
+            onChange={(e) => pockestDispatch(pockestSettings({ autoMatch: e.target.checked }))}
+            defaultChecked={autoMatch}
+            disabled={!paused}
+          />
+          <span className="PockestCheck-text">Match</span>
+        </label>
+        <span className="PockestText">
+          {parseDurationStr(data?.monster?.exchange_time ? data.monster.exchange_time - now.getTime() : '--')}
+        </span>
+      </div>
     </div>
   );
 }

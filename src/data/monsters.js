@@ -111,16 +111,19 @@ const monsters = [
     monster_id: 4000,
     name_en: 'Ryu',
     plan: 'W5BRP',
+    matchFever: [],
   },
   {
     monster_id: 4002,
     name_en: 'Violent Ken',
     plan: 'B5CRT',
+    matchFever: [],
   },
   {
     monster_id: 4003,
     name_en: 'Ken',
     plan: 'W5BRT',
+    matchFever: [],
   },
   {
     monster_id: 4004,
@@ -133,10 +136,14 @@ const monsters = [
   {
     monster_id: 4006,
     name_en: 'Guile',
+    plan: 'W5ALT',
+    matchFever: [4085, 4083],
   },
   {
     monster_id: 4007,
     name_en: 'Blanka',
+    plan: 'G5CRS',
+    matchFever: [],
   },
   {
     monster_id: 4008,
@@ -145,6 +152,8 @@ const monsters = [
   {
     monster_id: 4009,
     name_en: 'Zangief',
+    plan: 'Y5ALP',
+    matchFever: [],
   },
   {
     monster_id: 4010,
@@ -165,10 +174,14 @@ const monsters = [
   {
     monster_id: 4014,
     name_en: 'Sagat',
+    plan: 'G5CRP',
+    matchFever: [],
   },
   {
     monster_id: 4015,
     name_en: 'M. Bison',
+    plan: 'W5BLT',
+    matchFever: [],
   },
   {
     monster_id: 4016,
@@ -185,6 +198,8 @@ const monsters = [
   {
     monster_id: 4026,
     name_en: 'Juli',
+    plan: 'G5ALS',
+    matchFever: [],
   },
   {
     monster_id: 4029,
@@ -193,6 +208,8 @@ const monsters = [
   {
     monster_id: 4030,
     name_en: 'Sodom',
+    plan: 'W5BLP',
+    matchFever: [],
   },
   {
     monster_id: 4033,
@@ -201,22 +218,32 @@ const monsters = [
   {
     monster_id: 4035,
     name_en: 'Guy',
+    plan: 'B5ALT',
+    matchFever: [],
   },
   {
     monster_id: 4040,
     name_en: 'Edi. E',
+    plan: 'G5ALP',
+    matchFever: [],
   },
   {
     monster_id: 4042,
     name_en: 'Joe',
+    plan: 'B5CRP',
+    matchFever: [],
   },
   {
     monster_id: 4044,
     name_en: 'Retsu',
+    plan: 'W5CRP',
+    matchFever: [4079, 4005, 4084],
   },
   {
     monster_id: 4049,
     name_en: 'Dudley',
+    plan: 'Y5CRP',
+    matchFever: [],
   },
   {
     monster_id: 4051,
@@ -229,6 +256,8 @@ const monsters = [
   {
     monster_id: 4065,
     name_en: 'Juri',
+    plan: 'W5CRT',
+    matchFever: [4000, 4012, 4009],
   },
   {
     monster_id: 4067,
@@ -241,6 +270,8 @@ const monsters = [
   {
     monster_id: 4079,
     name_en: 'Necalli',
+    plan: 'W5ALP',
+    matchFever: [],
   },
   {
     monster_id: 4082,
@@ -257,14 +288,20 @@ const monsters = [
   {
     monster_id: 4085,
     name_en: 'Kimberly',
+    plan: 'W5BLS',
+    matchFever: [],
   },
   {
     monster_id: 4086,
     name_en: 'Manon',
+    plan: 'W5CRS',
+    matchFever: [4124, 4087, 4010],
   },
   {
     monster_id: 4087,
     name_en: 'Marisa',
+    plan: 'G5ALT',
+    matchFever: [],
   },
   {
     monster_id: 4088,
@@ -277,34 +314,50 @@ const monsters = [
   {
     monster_id: 4090,
     name_en: 'JP',
+    plan: 'Y5CRS',
+    matchFever: [],
   },
   {
     monster_id: 4092,
     name_en: 'Captain Sawada',
+    plan: 'Y5CRT',
+    matchFever: [],
   },
   {
     monster_id: 4096,
     name_en: 'Captain Commando',
+    plan: 'G5CRT',
+    matchFever: [],
   },
   {
     monster_id: 4115,
     name_en: 'Lilith',
+    plan: 'B5ALS',
+    matchFever: [],
   },
   {
     monster_id: 4119,
     name_en: 'Kenji',
+    plan: 'B5CRS',
+    matchFever: [],
   },
   {
     monster_id: 4120,
     name_en: 'Mai-Ling',
+    plan: 'B5ALP',
+    matchFever: [],
   },
   {
     monster_id: 4121,
     name_en: 'Tessa',
+    plan: 'Y5ALS',
+    matchFever: [],
   },
   {
     monster_id: 4124,
     name_en: 'Carlos Miyamoto',
+    plan: 'W5ALS',
+    matchFever: [],
   },
 ];
 
