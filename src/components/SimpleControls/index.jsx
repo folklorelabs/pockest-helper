@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  getCurrentPlan,
+  getCurrentPlanStats,
   getCurrentPlanScheduleWindows,
   usePockestContext,
   pockestSettings,
@@ -34,7 +34,8 @@ function SimpleControls() {
   const {
     cleanFrequency,
     feedFrequency,
-  } = React.useMemo(() => getCurrentPlan(pockestState), [pockestState]);
+    feedTarget,
+  } = React.useMemo(() => getCurrentPlanStats(pockestState), [pockestState]);
   const cleanEventTime = (() => {
     if (cleanFrequency === 2) return null;
     if (currentCleanWindow) return currentCleanWindow.end;
@@ -61,7 +62,7 @@ function SimpleControls() {
         value={cleanFrequency === 2 ? '∞' : null}
       />
       <Timer
-        label={currentFeedWindow || feedFrequency === 4 ? 'Feeding' : 'Feed'}
+        label={currentFeedWindow || feedFrequency === 4 ? `Feeding (${feedTarget} max)` : 'Feed'}
         timestamp={feedEventTime}
         value={feedFrequency === 4 ? '∞' : null}
       />

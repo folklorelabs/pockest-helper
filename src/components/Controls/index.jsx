@@ -44,6 +44,7 @@ function Controls() {
     autoMatch,
     cleanFrequency,
     feedFrequency,
+    feedTarget,
     stat,
     paused,
   } = pockestState;
@@ -123,7 +124,7 @@ function Controls() {
             defaultChecked={autoFeed}
             disabled={!paused}
           />
-          <span className="PockestCheck-text">{currentFeedWindow || feedFrequency === 4 ? 'Feeding' : 'Feed'}</span>
+          <span className="PockestCheck-text">{currentFeedWindow || feedFrequency === 4 ? `Feeding (${feedTarget} max)` : 'Feed'}</span>
         </label>
         <span className="PockestText">
           {(() => {

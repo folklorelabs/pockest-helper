@@ -1,57 +1,89 @@
 const routes = {
-  A: {
-    feedFrequency: 4,
-    cleanFrequency: 2,
-  },
-  B: {
-    feedFrequency: 4,
-    cleanFrequency: 12,
-  },
-  C: {
-    feedFrequency: 24,
-    cleanFrequency: 24,
-  },
-  L: {
-    feedFrequency: 4,
-    cleanFrequency: 2,
-  },
-  R: {
-    feedFrequency: 24,
-    cleanFrequency: 24,
-  },
-  AR: [
+  AL: [
     {
-      feedFrequency: 24,
-      cleanFrequency: 24,
-      feedTarget: 6,
+      cleanFrequency: 2,
+      feedFrequency: 4,
     },
     {
-      feedFrequency: 24,
+      cleanFrequency: 2,
+      feedFrequency: 4,
+    },
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
+    },
+  ],
+  AR: [
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
+    },
+    {
+      feedFrequency: 36,
+      cleanFrequency: 36,
+    },
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
+    },
+  ],
+  BL: [
+    {
       cleanFrequency: 24,
-      feedTarget: 3,
+      feedFrequency: 4,
+    },
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
+    },
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
     },
   ],
   BR: [
     {
-      feedFrequency: 24,
       cleanFrequency: 24,
-      feedTarget: 6,
+      feedFrequency: 4,
     },
     {
-      feedFrequency: 24,
       cleanFrequency: 24,
-      feedTarget: 6,
+      feedFrequency: 24,
+    },
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
+    },
+  ],
+  CL: [
+    {
+      cleanFrequency: 24,
+      feedFrequency: 24,
+    },
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
+    },
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
     },
   ],
   CR: [
     {
-      feedFrequency: 0,
       cleanFrequency: 24,
+      feedFrequency: 24,
     },
     {
-      feedFrequency: 24,
+      cleanInitial: false,
+      feedInitial: false,
       cleanFrequency: 24,
+      feedFrequency: 24,
       feedTarget: 3,
+    },
+    {
+      cleanFrequency: 2,
+      feedFrequency: 4,
     },
   ],
 };

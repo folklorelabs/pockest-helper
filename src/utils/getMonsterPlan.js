@@ -2,6 +2,20 @@ import { STAT_ID } from '../data/stats';
 import monsters from '../data/monsters';
 import routes from '../data/routes';
 
+const PLAN_DEFAULTS = {
+  cleanFrequency: null,
+  feedFrequency: null,
+  cleanInitial: true,
+  feedInitial: true,
+  feedTarget: 6,
+};
+
+const PLAN_TIMES = [
+  12 * 60 * 60 * 1000,
+  36 * 60 * 60 * 1000,
+  168 * 60 * 60 * 1000,
+];
+
 export default function getMonsterPlan(monsterId) {
   const monster = monsters.find((m) => m.monster_id === monsterId);
   const planId = monster?.plan;
@@ -11,11 +25,26 @@ export default function getMonsterPlan(monsterId) {
 
   const planAge = parseInt(planId.slice(1, 2), 10);
 
-  const div1 = planId.slice(2, 3);
-  const planDiv1 = routes[div1];
-  const div2 = planId.slice(3, 4);
-  const planDiv2 = routes[div2];
-  const planDiv3 = routes.L;
+  const routeId = planId.slice(2, 4);
+  const route = routes[routeId];
+  const planDiv1 = route[0] ? {
+    startTime: 0,
+    endTime: PLAN_TIMES[0] - 1000,
+    ...PLAN_DEFAULTS,
+    ...route[0],
+  } : null;
+  const planDiv2 = route[1] ? {
+    startTime: PLAN_TIMES[0],
+    endTime: PLAN_TIMES[1] - 1000,
+    ...PLAN_DEFAULTS,
+    ...route[1],
+  } : null;
+  const planDiv3 = route[2] ? {
+    startTime: PLAN_TIMES[1],
+    endTime: PLAN_TIMES[2] - 1000,
+    ...PLAN_DEFAULTS,
+    ...route[2],
+  } : null;
 
   const statLetter = planId.slice(4, 5);
   const planStat = Object.keys(STAT_ID)

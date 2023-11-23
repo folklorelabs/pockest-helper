@@ -7,7 +7,7 @@ import {
   pockestMatch,
   usePockestContext,
   pockestRefresh,
-  getCurrentPlan,
+  getCurrentPlanStats,
   getCurrentPlanScheduleWindows,
   getMonsterMatchFever,
 } from '../../contexts/PockestContext';
@@ -17,7 +17,8 @@ function LifeCycle() {
   const {
     cleanFrequency,
     feedFrequency,
-  } = React.useMemo(() => getCurrentPlan(pockestState), [pockestState]);
+    feedTarget,
+  } = React.useMemo(() => getCurrentPlanStats(pockestState), [pockestState]);
   const {
     currentCleanWindow,
     currentFeedWindow,
@@ -110,7 +111,7 @@ function LifeCycle() {
 
       // Feed
       const attemptToFeed = (autoFeed || autoPlan) && feedFrequency
-        && (monster && monster?.stomach < 6);
+        && (monster && monster?.stomach < feedTarget);
       const inFeedWindow = feedFrequency === 4
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
@@ -150,6 +151,7 @@ function LifeCycle() {
     currentCleanWindow,
     currentFeedWindow,
     feedFrequency,
+    feedTarget,
     pockestDispatch,
     pockestState,
   ]);

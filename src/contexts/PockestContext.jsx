@@ -7,8 +7,6 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import monsters from '../data/monsters';
-import routes from '../data/routes';
-import getNextInterval from '../utils/getNextInterval';
 import getTimeIntervals from '../utils/getTimeIntervals';
 import getMonsterPlan from '../utils/getMonsterPlan';
 
@@ -19,8 +17,9 @@ const INITIAL_STATE = {
   monsterId: null,
   autoPlan: true,
   autoFeed: false,
-  feedFrequency: 4,
   cleanFrequency: 2,
+  feedFrequency: 4,
+  feedTarget: 6,
   autoClean: false,
   autoTrain: false,
   stat: 1,
@@ -144,7 +143,7 @@ export async function getMonsterMatchFever(state) {
   return match?.slot;
 }
 
-export function getCurrentPlan(state) {
+export function getCurrentPlanStats(state) {
   if (state?.autoPlan) {
     const age = state?.data?.monster?.age;
     const targetPlan = getMonsterPlan(state?.monsterId);
@@ -159,23 +158,53 @@ export function getCurrentPlan(state) {
     })();
     return {
       stat: targetPlan?.stat,
-      feedFrequency: targetPlanSpecs?.feedFrequency,
+      cleanInitial: targetPlanSpecs?.cleanInitial,
+      feedInitial: targetPlanSpecs?.feedInitial,
       cleanFrequency: targetPlanSpecs?.cleanFrequency,
+      feedFrequency: targetPlanSpecs?.feedFrequency,
+      feedTarget: targetPlanSpecs?.feedTarget,
     };
   }
   return {
     stat: state?.stat,
-    feedFrequency: state?.feedFrequency,
     cleanFrequency: state?.cleanFrequency,
+    feedFrequency: state?.feedFrequency,
+    feedTarget: state?.feedTarget,
   };
 }
 
 export function getCurrentPlanSchedule(state) {
-  const { cleanFrequency, feedFrequency } = getCurrentPlan(state);
+  const targetPlan = getMonsterPlan(state?.monsterId);
   const birth = state?.data?.monster?.live_time;
-  const death = birth + (1000 * 60 * 60 * 24 * 7);
-  const cleanSchedule = getTimeIntervals(birth, death, cleanFrequency);
-  const feedSchedule = getTimeIntervals(birth, death, feedFrequency);
+  if (!birth) return {};
+  const cleanSchedule = ['planDiv1', 'planDiv2', 'planDiv3']
+    .reduce((fullSchedule, div) => {
+      const spec = targetPlan[div];
+      const schedule = getTimeIntervals(
+        birth + spec.startTime,
+        birth + spec.endTime,
+        spec.cleanFrequency,
+        spec.cleanInitial,
+      );
+      return [
+        ...fullSchedule,
+        ...schedule,
+      ];
+    }, []);
+  const feedSchedule = ['planDiv1', 'planDiv2', 'planDiv3']
+    .reduce((fullSchedule, div) => {
+      const spec = targetPlan[div];
+      const schedule = getTimeIntervals(
+        birth + spec.startTime,
+        birth + spec.endTime,
+        spec.feedFrequency,
+        spec.feedInitial,
+      );
+      return [
+        ...fullSchedule,
+        ...schedule,
+      ];
+    }, []);
   return {
     cleanSchedule,
     feedSchedule,
@@ -219,8 +248,9 @@ function REDUCER(state, [type, payload]) {
         autoClean: payload.autoClean ?? state?.autoClean,
         autoTrain: payload.autoTrain ?? state?.autoTrain,
         autoMatch: payload.autoMatch ?? state?.autoMatch,
-        feedFrequency: payload.feedFrequency ?? state?.feedFrequency,
         cleanFrequency: payload.cleanFrequency ?? state?.cleanFrequency,
+        feedFrequency: payload.feedFrequency ?? state?.feedFrequency,
+        feedTarget: payload.feedTarget ?? state?.feedTarget,
         stat: payload.stat ?? state?.stat,
       };
     case ACTIONS.PAUSE:
