@@ -1,0 +1,31 @@
+name: Pre-release
+
+on:
+  push:
+    tags:
+      - "v*-rc*"
+
+permissions:
+  contents: write
+
+jobs:
+  Pre-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Pre-release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          generate_release_notes: true
+          files: |
+            ./dist/PockestHelper.zip
+
