@@ -106,8 +106,8 @@ function LifeCycle() {
       }
 
       // Feed
-      const attemptToFeed = (autoFeed || autoPlan) && (monster && monster?.garbage > 0);
-      const inFeedWindow = cleanFrequency === 2
+      const attemptToFeed = (autoFeed || autoPlan) && (monster && monster?.stomach < 6);
+      const inFeedWindow = feedFrequency === 4
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
         console.log(now.toLocaleString(), 'FEED');
