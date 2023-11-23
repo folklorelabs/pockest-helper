@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "Pockest Helper",
-    "version": "1.1.13",
+    "version": "1.1.14",
     "content_scripts": [
         {
             "matches": [
