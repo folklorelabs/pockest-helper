@@ -149,10 +149,10 @@ export function getCurrentPlan(state) {
     const age = state?.data?.monster?.age;
     const targetPlan = getMonsterPlan(state?.monsterId);
     const targetPlanSpecs = (() => {
-      if (age < 4) {
+      if (age < 3) {
         return targetPlan?.planDiv1;
       }
-      if (age < 5) {
+      if (age < 4) {
         return targetPlan?.planDiv2;
       }
       return targetPlan?.planDiv3;
