@@ -118,7 +118,7 @@ function LifeCycle() {
       }
 
       // Train
-      const attemptToTrain = (autoTrain || autoPlan) && monster;
+      const attemptToTrain = (autoTrain || autoPlan) && monster && stat;
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
       if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
