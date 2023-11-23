@@ -25,8 +25,8 @@ function LifeCycle() {
 
   const getNextRefresh = () => {
     const now = new Date();
-    const staticOffset = 1000 * 60 * 5; // 7m
-    const dynamicMinOffset = Math.round(Math.random() * 1000 * 60 * 5); // 0-3m
+    const staticOffset = 1000 * 60 * 5; // 5m
+    const dynamicMinOffset = Math.round(Math.random() * 1000 * 60 * 5); // 0-5m
     const dynamicSecOffset = Math.round(Math.random() * 1000 * 59); // 0-59s
     return new Date(now.getTime() + staticOffset + dynamicMinOffset + dynamicSecOffset);
   };
