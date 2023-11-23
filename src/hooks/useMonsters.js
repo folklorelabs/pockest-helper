@@ -6,7 +6,7 @@ function useMonsters() {
   React.useEffect(() => {
     (async () => {
       const newMonsters = await fetchAllMonsters();
-      setAllMonsters(newMonsters);
+      setAllMonsters(newMonsters || []);
     })();
   }, []);
   return allMonsters;

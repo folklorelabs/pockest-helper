@@ -6,7 +6,7 @@ export default async function fetchAllMonsters() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list');
   const { data } = await response.json();
   const monsters = MONSTERS.map((M) => {
-    const matches = data.books.reduce((all, book) => {
+    const matches = data?.books.reduce((all, book) => {
       const { monster } = book;
       const monsterProps = Object.keys(monster);
       const genePropKeys = monsterProps.filter((k) => k.includes('gene'));
@@ -27,7 +27,7 @@ export default async function fetchAllMonsters() {
         ...geneMatches,
       ];
     }, []);
-    return matches[0];
+    return matches?.[0];
   });
   monsterCache = monsters;
   return monsters;

@@ -15,9 +15,8 @@ function TargetMonsterSelect() {
   const availableMonsters = React.useMemo(() => {
     const monster = pockestState?.data?.monster;
     const curMonsterId = getMonsterId(pockestState);
-    if (!curMonsterId) return allMonsters.filter((m) => m.age >= 5);
-    const allAvailIds = allMonsters
-      .filter((m) => m.age > monster?.age)
+    if (!curMonsterId) return allMonsters?.filter((m) => m?.age >= 5);
+    const allAvailIds = allMonsters?.filter((m) => m?.age > monster?.age)
       .reduce((all, m) => {
         const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
         if (!match) return all;
@@ -27,13 +26,13 @@ function TargetMonsterSelect() {
         ];
       }, []);
     return allMonsters
-      .filter((m) => m.age >= 5 && allAvailIds.includes(m.monster_id));
+      .filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id));
   }, [pockestState, allMonsters]);
   const {
     monsterId,
     paused,
   } = pockestState;
-  if (!allMonsters.length) return '';
+  if (!allMonsters?.length) return '';
   return (
     <select
       className="PockestSelect"
