@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build && cd ./dist && zip -r9 ./PockestHelper.zip ./*",
     "preview": "vite preview",
-    "prerelease": "npm version prerelease --preid=rc && git push && git push --tags"
+    "prerelease": "npm version prerelease --preid=rc && git push && git push --tags",
+    "release": "npm version release && git push && git push --tags"
   },
   "dependencies": {
     "classnames": "^2.3.2",
