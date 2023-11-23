@@ -32,52 +32,12 @@ function LifeCycle() {
     return new Date(now.getTime() + staticOffset + dynamicMinOffset + dynamicSecOffset);
   };
   const nextRandomReset = React.useRef(getNextRefresh());
+  const refresh = React.useCallback(async () => {
+    nextRandomReset.current = getNextRefresh();
+    pockestDispatch(pockestLoading());
+    pockestDispatch(await pockestRefresh());
+  }, [pockestDispatch]);
 
-  React.useEffect(() => {
-    // Random refresh cycle
-    const interval = window.setInterval(async () => {
-      const now = new Date();
-      const {
-        data,
-      } = pockestState;
-
-      // Small event refresh
-      if (now.getTime() > data?.next_small_event_timer) {
-        console.log(now.toLocaleString(), 'REFRESH, next_small_event_timer');
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestRefresh());
-        return;
-      }
-
-      // Big event refresh
-      if (now.getTime() > data?.next_big_event_timer) {
-        console.log(now.toLocaleString(), 'REFRESH, next_big_event_timer');
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestRefresh());
-        return;
-      }
-
-      // Random refresh
-      const shouldRandomReset = currentCleanWindow || currentFeedWindow
-        || cleanFrequency === 2 || feedFrequency === 4;
-      if (shouldRandomReset && now > nextRandomReset.current) {
-        nextRandomReset.current = getNextRefresh();
-        console.log(now.toLocaleString(), `REFRESH, random, next @ ${nextRandomReset.current.toLocaleString()}`);
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestRefresh());
-      }
-    }, 1000);
-    return () => {
-      window.clearInterval(interval);
-    };
-  }, [
-    cleanFrequency,
-    feedFrequency,
-    currentCleanWindow,
-    currentFeedWindow,
-    pockestDispatch,
-    pockestState,
-  ]);
   React.useEffect(() => {
     const interval = window.setInterval(async () => {
       const {
@@ -96,6 +56,30 @@ function LifeCycle() {
         monster,
       } = data;
       const now = new Date();
+
+      // Small event refresh
+      if (now.getTime() > data?.next_small_event_timer) {
+        console.log(now.toLocaleString(), 'REFRESH, next_small_event_timer');
+        await refresh();
+        return;
+      }
+
+      // Big event refresh
+      if (now.getTime() > data?.next_big_event_timer) {
+        console.log(now.toLocaleString(), 'REFRESH, next_big_event_timer');
+        await refresh();
+        return;
+      }
+
+      // Random refresh
+      const shouldRandomReset = currentCleanWindow || currentFeedWindow
+        || cleanFrequency === 2 || feedFrequency === 4;
+      if (shouldRandomReset && now > nextRandomReset.current) {
+        nextRandomReset.current = getNextRefresh();
+        console.log(now.toLocaleString(), `REFRESH, random, next @ ${nextRandomReset.current.toLocaleString()}`);
+        await refresh();
+        return;
+      }
 
       // Clean
       const attemptToClean = (autoClean || autoPlan) && cleanFrequency
@@ -154,6 +138,7 @@ function LifeCycle() {
     feedTarget,
     pockestDispatch,
     pockestState,
+    refresh,
   ]);
 }
 
