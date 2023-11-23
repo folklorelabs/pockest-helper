@@ -36,16 +36,15 @@ function Controls() {
     stat,
     paused,
   } = pockestState;
-  if (!data || !data.monster) return '';
   const cleanEventTime = (() => {
     if (cleanFrequency === 2) return null;
     if (currentCleanWindow) return currentCleanWindow.end;
-    return nextCleanWindow.start;
+    return nextCleanWindow?.start;
   })();
   const feedEventTime = (() => {
     if (feedFrequency === 4) return null;
     if (currentFeedWindow) return currentFeedWindow.end;
-    return nextFeedWindow.start;
+    return nextFeedWindow?.start;
   })();
   return (
     <div className="Controls">
@@ -79,7 +78,13 @@ function Controls() {
           />
           <span className="PockestCheck-text">{currentCleanWindow || cleanFrequency === 2 ? 'Cleaning' : 'Clean'}</span>
         </label>
-        <span className="PockestText">{cleanFrequency === 2 ? '∞' : parseDurationStr(cleanEventTime - now.getTime())}</span>
+        <span className="PockestText">
+          {(() => {
+            if (cleanFrequency === 2) return '∞';
+            if (!cleanEventTime) return '--';
+            return parseDurationStr(cleanEventTime - now.getTime());
+          })()}
+        </span>
       </div>
       <div className="PockestLine">
         <span className="PockestText">Feed Frequency</span>
@@ -110,7 +115,13 @@ function Controls() {
           />
           <span className="PockestCheck-text">{currentFeedWindow || feedFrequency === 4 ? 'Feeding' : 'Feed'}</span>
         </label>
-        <span className="PockestText">{feedFrequency === 4 ? '∞' : parseDurationStr(feedEventTime - now.getTime())}</span>
+        <span className="PockestText">
+          {(() => {
+            if (feedFrequency === 4) return '∞';
+            if (!feedEventTime) return '--';
+            return parseDurationStr(feedEventTime - now.getTime());
+          })()}
+        </span>
       </div>
       <div className="PockestLine">
         <span className="PockestText">Train Stat</span>
@@ -143,7 +154,7 @@ function Controls() {
           />
           <span className="PockestCheck-text">Train</span>
         </label>
-        <span className="PockestText">{parseDurationStr(data?.monster?.training_time ? data.monster.training_time - now : 0)}</span>
+        <span className="PockestText">{data?.monster?.training_time ? parseDurationStr(data.monster.training_time - now) : '--'}</span>
       </div>
       <Timer label="Next Match" timestamp={data?.monster?.exchange_time} />
     </div>
