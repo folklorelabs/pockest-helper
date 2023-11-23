@@ -158,8 +158,8 @@ export function getCurrentPlanStats(state) {
     })();
     return {
       stat: targetPlan?.stat,
-      cleanInitial: targetPlanSpecs?.cleanInitial,
-      feedInitial: targetPlanSpecs?.feedInitial,
+      cleanOffset: targetPlanSpecs?.cleanOffset,
+      feedOffset: targetPlanSpecs?.feedOffset,
       cleanFrequency: targetPlanSpecs?.cleanFrequency,
       feedFrequency: targetPlanSpecs?.feedFrequency,
       feedTarget: targetPlanSpecs?.feedTarget,
@@ -184,7 +184,7 @@ export function getCurrentPlanSchedule(state) {
         birth + spec.startTime,
         birth + spec.endTime,
         spec.cleanFrequency,
-        spec.cleanInitial,
+        spec.cleanOffset,
       );
       return [
         ...fullSchedule,
@@ -198,7 +198,7 @@ export function getCurrentPlanSchedule(state) {
         birth + spec.startTime,
         birth + spec.endTime,
         spec.feedFrequency,
-        spec.feedInitial,
+        spec.feedOffset,
       );
       return [
         ...fullSchedule,
@@ -298,7 +298,6 @@ export function PockestProvider({
   // grab data on init
   useEffect(() => {
     (async () => {
-      pockestDispatch([ACTIONS.LOADING]);
       pockestDispatch(await pockestRefresh());
     })();
   }, []);

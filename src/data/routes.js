@@ -75,8 +75,8 @@ const routes = {
       feedFrequency: 24,
     },
     {
-      cleanInitial: false,
-      feedInitial: false,
+      cleanOffset: 12,
+      feedOffset: 12,
       cleanFrequency: 24,
       feedFrequency: 24,
       feedTarget: 3,

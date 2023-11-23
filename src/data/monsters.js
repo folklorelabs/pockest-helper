@@ -182,7 +182,7 @@ const monsters = [
   {
     monster_id: 4015,
     name_en: 'M. Bison',
-    plan: 'W5BLT',
+    plan: 'W5ART',
     matchFever: [],
   },
   {
@@ -211,7 +211,7 @@ const monsters = [
   {
     monster_id: 4030,
     name_en: 'Sodom',
-    plan: 'W5BLP',
+    plan: 'W5ARP',
     matchFever: [],
   },
   {
@@ -293,7 +293,7 @@ const monsters = [
   {
     monster_id: 4085,
     name_en: 'Kimberly',
-    plan: 'W5BLS',
+    plan: 'W5ARS',
     matchFever: [],
   },
   {

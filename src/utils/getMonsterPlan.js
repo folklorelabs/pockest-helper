@@ -5,8 +5,8 @@ import routes from '../data/routes';
 const PLAN_DEFAULTS = {
   cleanFrequency: null,
   feedFrequency: null,
-  cleanInitial: true,
-  feedInitial: true,
+  cleanOffset: 0,
+  feedOffset: 0,
   feedTarget: 6,
 };
 

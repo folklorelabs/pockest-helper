@@ -1,10 +1,10 @@
-export default function getTimeIntervals(startTimestamp, endTimestamp, interval, initial) {
+export default function getTimeIntervals(startTimestamp, endTimestamp, interval, offset) {
   if (!startTimestamp || !endTimestamp || !interval) return null;
   if (startTimestamp > endTimestamp) return null;
   let returnVal = [];
   const intervalInMs = interval * 60 * 60 * 1000;
   let tempTimestamp = startTimestamp;
-  if (!initial) tempTimestamp += intervalInMs;
+  if (offset) tempTimestamp += offset * 60 * 60 * 1000;
   while (tempTimestamp < endTimestamp) {
     returnVal = [
       ...returnVal,
