@@ -31,17 +31,15 @@ function SimpleControls() {
     feedFrequency,
   } = React.useMemo(() => getCurrentPlan(pockestState), [pockestState]);
   const monsterPlan = React.useMemo(() => getMonsterPlan(monsterId), [monsterId]);
-  if (!data || !data.monster) return '';
-
   const cleanEventTime = (() => {
     if (cleanFrequency === 2) return null;
     if (currentCleanWindow) return currentCleanWindow.end;
-    return nextCleanWindow.start;
+    return nextCleanWindow?.start;
   })();
   const feedEventTime = (() => {
     if (feedFrequency === 4) return null;
     if (currentFeedWindow) return currentFeedWindow.end;
-    return nextFeedWindow.start;
+    return nextFeedWindow?.start;
   })();
   return (
     <div className="SimpleControls">

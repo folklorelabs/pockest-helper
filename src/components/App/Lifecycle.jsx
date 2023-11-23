@@ -61,7 +61,7 @@ function LifeCycle() {
         || cleanFrequency === 2 || feedFrequency === 4;
       if (shouldRandomReset && now > nextRandomReset.current) {
         nextRandomReset.current = getNextRefresh();
-        console.log(now.toLocaleString(), 'REFRESH, random reset');
+        console.log(now.toLocaleString(), `REFRESH, random, next @ ${nextRandomReset.current.toLocaleString()}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestRefresh());
       }
