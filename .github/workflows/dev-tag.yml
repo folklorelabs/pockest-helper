@@ -1,0 +1,20 @@
+name: Git Tag (Dev)
+
+on:
+  push:
+    branch: "dev"
+
+permissions:
+  contents: write
+
+jobs:
+  Tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tag
+        run: npm run release:rc
+
+      - name: Git Push
+        run: git push
