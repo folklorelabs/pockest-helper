@@ -6,7 +6,9 @@
     "dev": "vite",
     "build": "vite build && cd ./dist && zip -r9 ./PockestHelper.zip ./*",
     "preview": "vite preview",
-    "postrelease": "node ./scripts/syncManifestVersion.js && git add -A && git commit --amend"
+    "release:manifest": "node ./scripts/syncManifestVersion.js && git add -A && git commit --amend",
+    "prerelease": "npm version prerelease --preid=rc && npm run release:manifest",
+    "release": "npm version patch && npm run release:manifest"
   },
   "dependencies": {
     "classnames": "^2.3.2",
