@@ -24,4 +24,6 @@ jobs:
       - name: Git Tag
         run: npm run release:rc
       - name: Git push
-        run: git push
+        run: |
+          git push
+          git push --tags
