@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - feature/ci-auto-tagging
 
 permissions:
   contents: write
