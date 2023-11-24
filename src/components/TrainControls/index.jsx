@@ -31,34 +31,22 @@ function TrainControls() {
   } = usePockestContext();
   const now = useNow();
   const {
-    currentCleanWindow,
-    nextCleanWindow,
-    currentFeedWindow,
-    nextFeedWindow,
-  } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
-  const {
     data,
     autoPlan,
-    autoClean,
-    autoFeed,
     autoTrain,
-    autoMatch,
-    cleanFrequency,
-    feedFrequency,
-    feedTarget,
     stat,
     paused,
   } = pockestState;
-  const cleanEventTime = (() => {
-    if (cleanFrequency === 2) return null;
-    if (currentCleanWindow) return currentCleanWindow.end;
-    return nextCleanWindow?.start;
-  })();
-  const feedEventTime = (() => {
-    if (feedFrequency === 4) return null;
-    if (currentFeedWindow) return currentFeedWindow.end;
-    return nextFeedWindow?.start;
-  })();
+  const sortedStats = React.useMemo(() => {
+    const availStats = Object.keys(STAT_ID);
+    return availStats.sort((a, b) => {
+      const aId = STAT_ID[a];
+      const aV = data?.monster?.[aId];
+      const bId = STAT_ID[b];
+      const bV = data?.monster?.[bId];
+      return bV - aV;
+    });
+  }, [data]);
   return (
     <div className="TrainControls">
       <div className="PockestLine">
@@ -73,6 +61,15 @@ function TrainControls() {
           />
           <span className="PockestCheck-text">Train</span>
         </label>
+      </div>
+      <div className="PockestLine">
+        {sortedStats.map((k) => (
+          <span key={k} className="Status-item Status-item--stat">
+            <span className="Status-icon">{STAT_ICON[k]}</span>
+            {' '}
+            {typeof data?.monster?.[STAT_ID[k]] === 'number' ? data?.monster?.[STAT_ID[k]] : '--'}
+          </span>
+        ))}
       </div>
       <div className="PockestLine">
         <span className="PockestText">Train Stat</span>
