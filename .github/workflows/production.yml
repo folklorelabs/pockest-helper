@@ -1,0 +1,37 @@
+name: Production
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  Production:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-tags: true
+      - uses: ./.github/actions/git-config
+      - name: Git tag
+        id: tag
+        run: echo "TAG_NAME=$(npm version patch)" >> $GITHUB_ENV
+      - name: Manfiest version amend
+        run: node ./scripts/syncManifestVersion.js && git add -A && git commit --amend --no-edit
+      - name: Git push
+        run: |
+          git push
+          git push --tags
+      - uses: ./.github/actions/build
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ env.TAG_NAME }}
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            ./dist/PockestHelper.zip
