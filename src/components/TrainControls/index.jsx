@@ -2,34 +2,16 @@ import React from 'react';
 import {
   pockestSettings,
   usePockestContext,
-  getCurrentPlanScheduleWindows,
 } from '../../contexts/PockestContext';
 import { STAT_ICON, STAT_ID } from '../../data/stats';
-import Timer from '../Timer';
 import './index.css';
-import useNow from '../../hooks/useNow';
-import { parseDurationStr } from '../../utils/parseDuration';
-
-// CONSTS
-const FEED_INTERVAL = {
-  4: 'Every 4h',
-  12: 'Every 12h',
-  24: 'Every 24h',
-};
-
-const CLEAN_INTERVAL = {
-  2: 'Every 2h',
-  4: 'Every 4h',
-  12: 'Every 12h',
-  24: 'Every 24h',
-};
+import Timer from '../Timer';
 
 function TrainControls() {
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const now = useNow();
   const {
     data,
     autoPlan,
@@ -61,8 +43,6 @@ function TrainControls() {
           />
           <span className="PockestCheck-text">Train</span>
         </label>
-      </div>
-      <div className="PockestLine">
         {sortedStats.map((k) => (
           <span key={k} className="Status-item Status-item--stat">
             <span className="Status-icon">{STAT_ICON[k]}</span>
@@ -71,6 +51,15 @@ function TrainControls() {
           </span>
         ))}
       </div>
+      {/* <div className="PockestLine">
+        {sortedStats.map((k) => (
+          <span key={k} className="Status-item Status-item--stat">
+            <span className="Status-icon">{STAT_ICON[k]}</span>
+            {' '}
+            {typeof data?.monster?.[STAT_ID[k]] === 'number' ? data?.monster?.[STAT_ID[k]] : '--'}
+          </span>
+        ))}
+      </div> */}
       <div className="PockestLine">
         <span className="PockestText">Train Stat</span>
         <select
@@ -90,14 +79,7 @@ function TrainControls() {
           ))}
         </select>
       </div>
-      <div className="PockestLine">
-        <span className="PockestText">
-          Next Match
-        </span>
-        <span className="PockestText">
-          {data?.monster?.training_time ? parseDurationStr(data.monster.training_time - now.getTime()) : '--'}
-        </span>
-      </div>
+      <Timer label="Next Match" timestamp={data?.monster?.training_time} />
     </div>
   );
 }

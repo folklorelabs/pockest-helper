@@ -7,12 +7,12 @@
   padding: 1em;
   width: 280px;
   transition: 0.5s transform;
-  max-height: 100%;
+  max-height: 100vh;
   overflow-y: auto;
 }
 
 #PockestHelperExtension .App--minimized {
-  transform: translate(calc(-100% + 30px), calc(100% - 30px));
+  transform: translate(0, calc(100% - 30px));
 }
 
 #PockestHelperExtension .AppMinBtn {
@@ -57,6 +57,10 @@
 #PockestHelperExtension hr {
   opacity: 0.1;
   margin: 1.1rem 0;
+}
+
+.PockestIcon {
+  font-family: auto;
 }
 
 .PockestLine,

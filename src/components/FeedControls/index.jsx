@@ -48,8 +48,13 @@ function FeedControls() {
           />
           <span className="PockestCheck-text">Feed</span>
         </label>
+        <span className="PockestText">
+          <span className="PockestIcon">❤️</span>
+          {' '}
+          {typeof data?.monster?.stomach === 'number' ? data?.monster?.stomach : '--'}
+        </span>
       </div>
-      <div className="PockestLine">
+      {/* <div className="PockestLine">
         <span className="PockestText">
           Current
         </span>
@@ -58,7 +63,7 @@ function FeedControls() {
           {' '}
           {typeof data?.monster?.stomach === 'number' ? data?.monster?.stomach : '--'}
         </span>
-      </div>
+      </div> */}
       <div className="PockestLine">
         <span className="PockestText">
           Next Hunger*
