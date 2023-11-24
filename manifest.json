@@ -5,7 +5,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.streetfighter.com/6/buckler/*/minigame"
+        "https://www.streetfighter.com/6/buckler/*minigame"
       ],
       "js": [
         "src/index.jsx"
