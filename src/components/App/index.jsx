@@ -1,17 +1,14 @@
 import React from 'react';
 import cx from 'classnames';
 import Lifecycle from './Lifecycle';
-import Status from '../Status';
 import './index.css';
-import ModeControls from '../ModeControls';
-import Controls from '../Controls';
 import SimpleControls from '../SimpleControls';
-import { usePockestContext } from '../../contexts/PockestContext';
 import PauseBtn from '../PauseBtn';
+import AutoPlanControls from '../AutoPlanControls';
+import CleanControls from '../CleanControls';
+// import FeedControls from '../FeedControls';
 
 function App() {
-  const { pockestState } = usePockestContext();
-  const { autoPlan } = pockestState;
   const [minimized, setMinimized] = React.useState(false);
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
@@ -22,13 +19,21 @@ function App() {
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
       </header>
-      <Status />
-      <ModeControls />
-      {autoPlan ? (
+      <hr />
+      <AutoPlanControls />
+      <hr />
+      <CleanControls />
+      <hr />
+      {/* <FeedControls /> */}
+      {/* <Status /> */}
+      {/* <ModeControls /> */}
+      {/* {autoPlan ? (
         <SimpleControls />
       ) : (
         <Controls />
-      )}
+      )} */}
+      {/* <hr /> */}
+      <SimpleControls />
       <div className="App-button">
         <PauseBtn />
       </div>

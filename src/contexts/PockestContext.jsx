@@ -8,7 +8,7 @@ import React, {
 import PropTypes from 'prop-types';
 import monsters from '../data/monsters';
 import getTimeIntervals from '../utils/getTimeIntervals';
-import getMonsterPlan from '../utils/getMonsterPlan';
+import getMonsterPlan, { getCurrentMonsterPlan } from '../utils/getMonsterPlan';
 
 // STATE
 const INITIAL_STATE = {
@@ -45,6 +45,21 @@ export function pockestPause(paused) {
 }
 export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
+}
+export function pockestAutoPlan({ autoPlan, monsterId, age }) {
+  let newSettings = {
+    autoPlan,
+  };
+  if (autoPlan) {
+    newSettings = {
+      ...newSettings,
+      ...getCurrentMonsterPlan(monsterId, age),
+      autoClean: true,
+      autoFeed: true,
+      autoTrain: true,
+    };
+  }
+  return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
@@ -146,24 +161,7 @@ export async function getMonsterMatchFever(state) {
 export function getCurrentPlanStats(state) {
   if (state?.autoPlan) {
     const age = state?.data?.monster?.age;
-    const targetPlan = getMonsterPlan(state?.monsterId);
-    const targetPlanSpecs = (() => {
-      if (age < 3) {
-        return targetPlan?.planDiv1;
-      }
-      if (age < 4) {
-        return targetPlan?.planDiv2;
-      }
-      return targetPlan?.planDiv3;
-    })();
-    return {
-      stat: targetPlan?.stat,
-      cleanOffset: targetPlanSpecs?.cleanOffset,
-      feedOffset: targetPlanSpecs?.feedOffset,
-      cleanFrequency: targetPlanSpecs?.cleanFrequency,
-      feedFrequency: targetPlanSpecs?.feedFrequency,
-      feedTarget: targetPlanSpecs?.feedTarget,
-    };
+    return getCurrentMonsterPlan(state?.monsterId, age);
   }
   return {
     stat: state?.stat,
