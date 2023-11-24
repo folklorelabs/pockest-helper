@@ -1,0 +1,16 @@
+name: latest-tag
+description: Gets the latest git tag
+outputs:
+  latest-tag:
+    description: "Most recent git tag"
+    value: ${{ steps.get-latest-tag.outputs.latest-tag }}
+runs:
+  using: composite
+  steps:
+    - name: Fetch tags
+      run: git fetch --tags
+      shell: bash
+    - name: Get latest tag
+      id: get-latest-tag
+      run: echo "latest-tag=$(git describe --tags `git rev-list --tags --max-count=1`)" >> $GITHUB_OUTPUT
+      shell: bash
