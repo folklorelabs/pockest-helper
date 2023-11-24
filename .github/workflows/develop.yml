@@ -24,8 +24,8 @@ jobs:
       #     git push
       #     git push --tags
   Release:
+    needs: [Build]
     runs-on: ubuntu-latest
-      - uses: actions/checkout@v4
       - uses: ./.github/actions/build
       # - name: Pre-release
       #   uses: softprops/action-gh-release@v1
