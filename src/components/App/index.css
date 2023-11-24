@@ -28,7 +28,7 @@
 }
 
 #PockestHelperExtension .App-header {
-  margin: 1rem 0;
+  margin: 1rem 0 1.5rem;
 }
 
 #PockestHelperExtension .App-title {
@@ -40,7 +40,7 @@
 
 #PockestHelperExtension .App-button {
   display: flex;
-  margin-top: 2.2rem;
+  margin-top: 2rem;
 }
 
 #PockestHelperExtension .App-button .PockestButton {
@@ -55,7 +55,7 @@
 }
 
 #PockestHelperExtension hr {
-  opacity: 0.2;
+  opacity: 0.1;
   margin: 1.1rem 0;
 }
 
