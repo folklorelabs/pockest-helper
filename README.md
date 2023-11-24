@@ -9,7 +9,7 @@ This is a [Chrome Extension](chrome://extensions/) that tracks and automatically
 ## Installation
 
 1. [Download the latest release](https://github.com/folklorelabs/pockest-helper/releases/latest)
-2. Open Chrome and go to the **Manage Extensions** page (`chrome://extensions/`) and install the release by dragging the dropping the zip file onto the page.
+2. Open Chrome and go to the **Manage Extensions** page (`chrome://extensions/`) and install the release by dragging the dropping the `PockestHelper.zip` file onto the page.
 3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Chrome and it will automatically load the helper!
 
 ## FAQ
