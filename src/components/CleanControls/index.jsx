@@ -54,16 +54,6 @@ function CleanControls() {
           {typeof data?.monster?.garbage === 'number' ? data?.monster?.garbage : '--'}
         </span>
       </div>
-      {/* <div className="PockestLine">
-        <span className="PockestText">
-          Current
-        </span>
-        <span className="PockestText">
-          <span className="PockestIcon">💩</span>
-          {' '}
-          {typeof data?.monster?.garbage === 'number' ? data?.monster?.garbage : '--'}
-        </span>
-      </div> */}
       <div className="PockestLine">
         <span className="PockestText">
           Next Poop*

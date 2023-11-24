@@ -51,15 +51,6 @@ function TrainControls() {
           </span>
         ))}
       </div>
-      {/* <div className="PockestLine">
-        {sortedStats.map((k) => (
-          <span key={k} className="Status-item Status-item--stat">
-            <span className="Status-icon">{STAT_ICON[k]}</span>
-            {' '}
-            {typeof data?.monster?.[STAT_ID[k]] === 'number' ? data?.monster?.[STAT_ID[k]] : '--'}
-          </span>
-        ))}
-      </div> */}
       <div className="PockestLine">
         <span className="PockestText">Train Stat</span>
         <select
@@ -79,7 +70,7 @@ function TrainControls() {
           ))}
         </select>
       </div>
-      <Timer label="Next Match" timestamp={data?.monster?.training_time} />
+      <Timer label="Next Training" timestamp={data?.monster?.training_time} />
     </div>
   );
 }
