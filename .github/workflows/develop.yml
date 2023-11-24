@@ -1,4 +1,4 @@
-name: Tag (develop)
+name: Develop
 
 on:
   push:
