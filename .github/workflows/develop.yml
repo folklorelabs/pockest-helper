@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: '0'
+          fetch-tags: true
       - uses: ./.github/actions/git-config
       # - name: Git Tag
       #   run: npm run release:rc
@@ -26,6 +26,8 @@ jobs:
   Release:
     needs: [Build]
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/build
       # - name: Pre-release
       #   uses: softprops/action-gh-release@v1
