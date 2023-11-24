@@ -180,7 +180,7 @@ function Controls() {
           <span className="PockestCheck-text">Match</span>
         </label>
         <span className="PockestText">
-          {parseDurationStr(data?.monster?.exchange_time ? data.monster.exchange_time - now.getTime() : '--')}
+          {data?.monster?.exchange_time ? parseDurationStr(data.monster.exchange_time - now.getTime()) : '--'}
         </span>
       </div>
       <Timer label="Poop/Hunger" timestamp={data?.next_small_event_timer} />

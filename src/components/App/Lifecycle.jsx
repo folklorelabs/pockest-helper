@@ -9,7 +9,7 @@ import {
   pockestRefresh,
   getCurrentPlanStats,
   getCurrentPlanScheduleWindows,
-  getMonsterMatchFever,
+  getMonsterMatch,
 } from '../../contexts/PockestContext';
 
 function LifeCycle() {
@@ -118,7 +118,7 @@ function LifeCycle() {
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
-        const matchSlot = await getMonsterMatchFever(pockestState);
+        const matchSlot = await getMonsterMatch(pockestState);
         console.log(now.toLocaleString(), `MATCH, matchSlot=${matchSlot}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestMatch(matchSlot || 1));

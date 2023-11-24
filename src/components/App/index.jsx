@@ -7,6 +7,7 @@ import PauseBtn from '../PauseBtn';
 import AutoPlanControls from '../AutoPlanControls';
 import CleanControls from '../CleanControls';
 import FeedControls from '../FeedControls';
+import MatchControls from '../MatchControls';
 
 function App() {
   const [minimized, setMinimized] = React.useState(false);
@@ -25,6 +26,8 @@ function App() {
       <CleanControls />
       <hr />
       <FeedControls />
+      <hr />
+      <MatchControls />
       {/* <Status /> */}
       {/* <ModeControls /> */}
       {/* {autoPlan ? (

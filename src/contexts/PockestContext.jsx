@@ -22,6 +22,7 @@ const INITIAL_STATE = {
   feedTarget: 6,
   autoClean: false,
   autoTrain: false,
+  matchPreference: null,
   stat: 1,
   loading: false,
   error: null,
@@ -148,13 +149,16 @@ export function getMonsterId(state) {
   return parseInt(hashId.slice(0, 4), 10);
 }
 
-export async function getMonsterMatchFever(state) {
+export async function getMonsterMatch(state) {
+  const preference = state?.matchPreference;
   const monsterId = getMonsterId(state);
   const monster = monsters.find((m) => m.monster_id === monsterId);
   const matchFeverOptions = monster?.matchFever;
   if (!matchFeverOptions || !matchFeverOptions.length) return null;
   const { exchangeList } = await fetchMatchList();
-  const match = exchangeList.find((opp) => matchFeverOptions.includes(opp.monster_id));
+  const match = exchangeList
+    .find((opp) => (preference ? opp.monster_id === preference
+      : matchFeverOptions.includes(opp.monster_id)));
   return match?.slot;
 }
 
@@ -250,6 +254,7 @@ function REDUCER(state, [type, payload]) {
         feedFrequency: payload.feedFrequency ?? state?.feedFrequency,
         feedTarget: payload.feedTarget ?? state?.feedTarget,
         stat: payload.stat ?? state?.stat,
+        matchPreference: payload.matchPreference ?? state?.matchPreference,
       };
     case ACTIONS.PAUSE:
       return {

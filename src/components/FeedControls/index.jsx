@@ -64,7 +64,7 @@ function FeedControls() {
           Next Hunger
         </span>
         <span className="PockestText">
-          {parseDurationStr(data?.next_small_event_timer ? data.next_small_event_timer - now.getTime() : '--')}
+          {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
         </span>
       </div>
       <div className="PockestLine">
