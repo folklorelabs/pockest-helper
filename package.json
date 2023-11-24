@@ -1,12 +1,12 @@
 {
   "name": "pockest-helper",
   "private": true,
-  "version": "1.1.20",
+  "version": "1.1.21-rc.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build && cd ./dist && zip -r9 ./PockestHelper.zip ./*",
     "preview": "vite preview",
-    "release:manifest": "node ./scripts/syncManifestVersion.js && git add -A && git commit --amend",
+    "release:manifest": "node ./scripts/syncManifestVersion.js && git add -A && git commit --amend --no-edit",
     "release:rc": "npm version prerelease --preid=rc && npm run release:manifest",
     "release": "npm version patch && npm run release:manifest"
   },
