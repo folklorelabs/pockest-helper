@@ -35,16 +35,16 @@ function MatchControls() {
         </label>
       </div>
       <div className="PockestLine">
+        <span className="PockestText">Preference</span>
+        <MatchUpSelect />
+      </div>
+      <div className="PockestLine">
         <span className="PockestText">
           Next Match
         </span>
         <span className="PockestText">
           {data?.monster?.exchange_time ? parseDurationStr(data.monster.exchange_time - now.getTime()) : '--'}
         </span>
-      </div>
-      <div className="PockestLine">
-        <span className="PockestText">Preference</span>
-        <MatchUpSelect />
       </div>
     </div>
   );

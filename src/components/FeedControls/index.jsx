@@ -61,33 +61,10 @@ function FeedControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">
-          Next Hunger
+          Next Hunger*
         </span>
         <span className="PockestText">
           {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
-        </span>
-      </div>
-      <div className="PockestLine">
-        <span className="PockestText">
-          Next Meal
-        </span>
-        <span className="PockestText">
-          {(() => {
-            if (feedFrequency === 4 || !nextFeedWindow) return '--';
-            return parseDurationStr(nextFeedWindow.start - now.getTime());
-          })()}
-        </span>
-      </div>
-      <div className="PockestLine">
-        <span className="PockestText">
-          Current Meal
-        </span>
-        <span className="PockestText">
-          {(() => {
-            if (feedFrequency === 4) return '∞';
-            if (!currentFeedWindow) return '--';
-            return parseDurationStr(currentFeedWindow.end - now.getTime());
-          })()}
         </span>
       </div>
       <div className="PockestLine">
@@ -123,6 +100,29 @@ function FeedControls() {
             </option>
           ))}
         </select>
+      </div>
+      <div className="PockestLine">
+        <span className="PockestText">
+          Next Meal
+        </span>
+        <span className="PockestText">
+          {(() => {
+            if (feedFrequency === 4 || !nextFeedWindow) return '--';
+            return parseDurationStr(nextFeedWindow.start - now.getTime());
+          })()}
+        </span>
+      </div>
+      <div className="PockestLine">
+        <span className="PockestText">
+          Current Meal
+        </span>
+        <span className="PockestText">
+          {(() => {
+            if (feedFrequency === 4) return '∞';
+            if (!currentFeedWindow) return '--';
+            return parseDurationStr(currentFeedWindow.end - now.getTime());
+          })()}
+        </span>
       </div>
     </div>
   );

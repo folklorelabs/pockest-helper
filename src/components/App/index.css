@@ -1,19 +1,21 @@
-.App {
+#PockestHelperExtension .App {
   background-color: rgba(0, 0, 0, 0.8);
   color: rgb(204, 204, 204);
   font-size: 17.575px;
   line-height: 1.2;
   font-family: "Noto Sans", sans-serif;
   padding: 1em;
-  width: 226px;
+  width: 280px;
   transition: 0.5s transform;
+  max-height: 100%;
+  overflow-y: auto;
 }
 
-.App--minimized {
+#PockestHelperExtension .App--minimized {
   transform: translate(calc(-100% + 30px), calc(100% - 30px));
 }
 
-.AppMinBtn {
+#PockestHelperExtension .AppMinBtn {
   position: absolute;
   top: 0;
   right: 0;
@@ -25,27 +27,36 @@
   cursor: pointer;
 }
 
-.App-title {
+#PockestHelperExtension .App-header {
+  margin: 1rem 0;
+}
+
+#PockestHelperExtension .App-title {
   font-size: 2em;
   font-family: Oswald, sans-serif;
   text-transform: uppercase;
   text-align: center;
 }
 
-.App-button {
+#PockestHelperExtension .App-button {
   display: flex;
-  margin: 1rem 0;
+  margin-top: 2.2rem;
 }
 
-.App-button .PockestButton {
+#PockestHelperExtension .App-button .PockestButton {
   width: 100%;
 }
 
-.App-footer {
+#PockestHelperExtension .App-footer {
   opacity: 0.6667;
   font-size: 0.8em;
   margin-top: 1rem;
-  text-align: center;
+  text-align: left;
+}
+
+#PockestHelperExtension hr {
+  opacity: 0.2;
+  margin: 1.1rem 0;
 }
 
 .PockestLine,
@@ -57,11 +68,6 @@
 .PockestLine {
   display: flex;
   justify-content: space-between;
-}
-
-.PockestButton {
-  text-transform: capitalize;
-  cursor: pointer;
 }
 
 .PockestSelect {
@@ -145,10 +151,12 @@
 }
 
 .PockestButton {
-  font-size: 0.9em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-size: 0.5rem;
   font-weight: 700;
   font-family: Oswald, sans-serif;
-  height: 2em;
+  height: 2.5em;
   clip-path: polygon(min(0.5208333333vw, 10px) 0, 100% 0, 100% calc(100% - min(0.5208333333vw, 10px)), calc(100% - min(0.5208333333vw, 10px)) 100%, 0 100%, 0 min(0.5208333333vw, 10px));
   font-size: min(1.0416666667vw, 20px);
 }

@@ -61,11 +61,28 @@ function CleanControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">
-          Next Poop
+          Next Poop*
         </span>
         <span className="PockestText">
           {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
         </span>
+      </div>
+      <div className="PockestLine">
+        <span className="PockestText">Clean Frequency</span>
+        <select
+          className="PockestSelect"
+          onChange={(e) => {
+            pockestDispatch(pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
+          }}
+          value={cleanFrequency}
+          disabled={!paused || autoPlan}
+        >
+          {Object.keys(CLEAN_INTERVAL).map((k) => (
+            <option key={k} value={k}>
+              {CLEAN_INTERVAL[k]}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="PockestLine">
         <span className="PockestText">
@@ -89,23 +106,6 @@ function CleanControls() {
             return parseDurationStr(currentCleanWindow.end - now.getTime());
           })()}
         </span>
-      </div>
-      <div className="PockestLine">
-        <span className="PockestText">Clean Frequency</span>
-        <select
-          className="PockestSelect"
-          onChange={(e) => {
-            pockestDispatch(pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
-          }}
-          value={cleanFrequency}
-          disabled={!paused || autoPlan}
-        >
-          {Object.keys(CLEAN_INTERVAL).map((k) => (
-            <option key={k} value={k}>
-              {CLEAN_INTERVAL[k]}
-            </option>
-          ))}
-        </select>
       </div>
     </div>
   );
