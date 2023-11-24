@@ -3,7 +3,6 @@ import {
   pockestSettings,
   usePockestContext,
   getCurrentPlanScheduleWindows,
-  getCurrentPlanStats,
 } from '../../contexts/PockestContext';
 import './index.css';
 import useNow from '../../hooks/useNow';
@@ -26,16 +25,14 @@ function FeedControls() {
     currentFeedWindow,
     nextFeedWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
-  const {
-    feedFrequency,
-    feedTarget,
-  } = React.useMemo(() => getCurrentPlanStats(pockestState), [pockestState]);
 
   const {
     data,
     autoPlan,
     autoFeed,
     paused,
+    feedFrequency,
+    feedTarget,
   } = pockestState;
   return (
     <div className="FeedControls">
@@ -46,7 +43,7 @@ function FeedControls() {
             className="PockestCheck-input"
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
-            checked={autoFeed || autoPlan}
+            checked={autoFeed}
             disabled={!paused || autoPlan}
           />
           <span className="PockestCheck-text">Feed</span>

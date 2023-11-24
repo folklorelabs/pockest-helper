@@ -3,7 +3,6 @@ import {
   pockestSettings,
   usePockestContext,
   getCurrentPlanScheduleWindows,
-  getCurrentPlanStats,
 } from '../../contexts/PockestContext';
 import './index.css';
 import useNow from '../../hooks/useNow';
@@ -27,15 +26,13 @@ function CleanControls() {
     currentCleanWindow,
     nextCleanWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
-  const {
-    cleanFrequency,
-  } = React.useMemo(() => getCurrentPlanStats(pockestState), [pockestState]);
 
   const {
     data,
     autoPlan,
     autoClean,
     paused,
+    cleanFrequency,
   } = pockestState;
   return (
     <div className="CleanControls">
@@ -46,7 +43,7 @@ function CleanControls() {
             className="PockestCheck-input"
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoClean: e.target.checked }))}
-            checked={autoClean || autoPlan}
+            checked={autoClean}
             disabled={!paused || autoPlan}
           />
           <span className="PockestCheck-text">Clean</span>
