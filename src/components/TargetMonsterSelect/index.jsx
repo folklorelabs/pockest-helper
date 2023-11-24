@@ -15,7 +15,14 @@ function TargetMonsterSelect() {
   const availableMonsters = React.useMemo(() => {
     const monster = pockestState?.data?.monster;
     const curMonsterId = getMonsterId(pockestState);
-    if (!curMonsterId) return allMonsters?.filter((m) => m?.age >= 5);
+    if (!curMonsterId) {
+      return allMonsters?.filter((m) => m?.age >= 5)
+        .sort((a, b) => {
+          if (a.name_en < b.name_en) return -1;
+          if (b.name_en < a.name_en) return 1;
+          return 0;
+        });
+    }
     const allAvailIds = allMonsters?.filter((m) => m?.age > monster?.age)
       .reduce((all, m) => {
         const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
@@ -26,7 +33,12 @@ function TargetMonsterSelect() {
         ];
       }, []);
     return allMonsters
-      .filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id));
+      .filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
+      .sort((a, b) => {
+        if (a.name_en < b.name_en) return -1;
+        if (b.name_en < a.name_en) return 1;
+        return 0;
+      });
   }, [pockestState, allMonsters]);
   const {
     monsterId,
@@ -42,6 +54,9 @@ function TargetMonsterSelect() {
       defaultValue={`${monsterId}`}
       disabled={!paused}
     >
+      <option key="default" value="">
+        --
+      </option>
       {availableMonsters.map((monster) => (
         <option key={monster?.monster_id} value={monster?.monster_id}>
           {monster.name_en}

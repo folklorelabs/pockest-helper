@@ -60,3 +60,24 @@ export default function getMonsterPlan(monsterId) {
     planStat,
   };
 }
+
+export function getCurrentMonsterPlan(monsterId, age) {
+  const targetPlan = getMonsterPlan(monsterId);
+  const targetPlanSpecs = (() => {
+    if (age < 3) {
+      return targetPlan?.planDiv1;
+    }
+    if (age < 4) {
+      return targetPlan?.planDiv2;
+    }
+    return targetPlan?.planDiv3;
+  })();
+  return {
+    stat: targetPlan?.planStat,
+    cleanOffset: targetPlanSpecs?.cleanOffset,
+    feedOffset: targetPlanSpecs?.feedOffset,
+    cleanFrequency: targetPlanSpecs?.cleanFrequency,
+    feedFrequency: targetPlanSpecs?.feedFrequency,
+    feedTarget: targetPlanSpecs?.feedTarget,
+  };
+}

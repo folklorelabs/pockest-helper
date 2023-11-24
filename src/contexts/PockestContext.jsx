@@ -8,7 +8,7 @@ import React, {
 import PropTypes from 'prop-types';
 import monsters from '../data/monsters';
 import getTimeIntervals from '../utils/getTimeIntervals';
-import getMonsterPlan from '../utils/getMonsterPlan';
+import getMonsterPlan, { getCurrentMonsterPlan } from '../utils/getMonsterPlan';
 
 // STATE
 const INITIAL_STATE = {
@@ -22,6 +22,7 @@ const INITIAL_STATE = {
   feedTarget: 6,
   autoClean: false,
   autoTrain: false,
+  matchPreference: null,
   stat: 1,
   loading: false,
   error: null,
@@ -45,6 +46,21 @@ export function pockestPause(paused) {
 }
 export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
+}
+export function pockestAutoPlan({ autoPlan, monsterId, age }) {
+  let newSettings = {
+    autoPlan,
+  };
+  if (autoPlan) {
+    newSettings = {
+      ...newSettings,
+      ...getCurrentMonsterPlan(monsterId, age),
+      autoClean: true,
+      autoFeed: true,
+      autoTrain: true,
+    };
+  }
+  return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
@@ -133,37 +149,23 @@ export function getMonsterId(state) {
   return parseInt(hashId.slice(0, 4), 10);
 }
 
-export async function getMonsterMatchFever(state) {
+export async function getMonsterMatch(state) {
+  const preference = state?.matchPreference;
   const monsterId = getMonsterId(state);
   const monster = monsters.find((m) => m.monster_id === monsterId);
   const matchFeverOptions = monster?.matchFever;
   if (!matchFeverOptions || !matchFeverOptions.length) return null;
   const { exchangeList } = await fetchMatchList();
-  const match = exchangeList.find((opp) => matchFeverOptions.includes(opp.monster_id));
+  const match = exchangeList
+    .find((opp) => (preference ? opp.monster_id === preference
+      : matchFeverOptions.includes(opp.monster_id)));
   return match?.slot;
 }
 
 export function getCurrentPlanStats(state) {
   if (state?.autoPlan) {
     const age = state?.data?.monster?.age;
-    const targetPlan = getMonsterPlan(state?.monsterId);
-    const targetPlanSpecs = (() => {
-      if (age < 3) {
-        return targetPlan?.planDiv1;
-      }
-      if (age < 4) {
-        return targetPlan?.planDiv2;
-      }
-      return targetPlan?.planDiv3;
-    })();
-    return {
-      stat: targetPlan?.stat,
-      cleanOffset: targetPlanSpecs?.cleanOffset,
-      feedOffset: targetPlanSpecs?.feedOffset,
-      cleanFrequency: targetPlanSpecs?.cleanFrequency,
-      feedFrequency: targetPlanSpecs?.feedFrequency,
-      feedTarget: targetPlanSpecs?.feedTarget,
-    };
+    return getCurrentMonsterPlan(state?.monsterId, age);
   }
   return {
     stat: state?.stat,
@@ -252,6 +254,7 @@ function REDUCER(state, [type, payload]) {
         feedFrequency: payload.feedFrequency ?? state?.feedFrequency,
         feedTarget: payload.feedTarget ?? state?.feedTarget,
         stat: payload.stat ?? state?.stat,
+        matchPreference: payload.matchPreference ?? state?.matchPreference,
       };
     case ACTIONS.PAUSE:
       return {
