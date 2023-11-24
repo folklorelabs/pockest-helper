@@ -6,7 +6,7 @@ import SimpleControls from '../SimpleControls';
 import PauseBtn from '../PauseBtn';
 import AutoPlanControls from '../AutoPlanControls';
 import CleanControls from '../CleanControls';
-// import FeedControls from '../FeedControls';
+import FeedControls from '../FeedControls';
 
 function App() {
   const [minimized, setMinimized] = React.useState(false);
@@ -24,7 +24,7 @@ function App() {
       <hr />
       <CleanControls />
       <hr />
-      {/* <FeedControls /> */}
+      <FeedControls />
       {/* <Status /> */}
       {/* <ModeControls /> */}
       {/* {autoPlan ? (
@@ -33,7 +33,7 @@ function App() {
         <Controls />
       )} */}
       {/* <hr /> */}
-      <SimpleControls />
+      {/* <SimpleControls /> */}
       <div className="App-button">
         <PauseBtn />
       </div>
