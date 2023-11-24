@@ -73,7 +73,7 @@ export function getCurrentMonsterPlan(monsterId, age) {
     return targetPlan?.planDiv3;
   })();
   return {
-    stat: targetPlan?.stat,
+    stat: targetPlan?.planStat,
     cleanOffset: targetPlanSpecs?.cleanOffset,
     feedOffset: targetPlanSpecs?.feedOffset,
     cleanFrequency: targetPlanSpecs?.cleanFrequency,
