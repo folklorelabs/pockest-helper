@@ -19,7 +19,7 @@ jobs:
       - uses: ./.github/actions/git-config
       - name: Git tag
         id: tag
-        run: echo "TAG_NAME=${npm version prerelease --preid=rc}" >> $GITHUB_ENV
+        run: echo "TAG_NAME=$(npm version prerelease --preid=rc)" >> $GITHUB_ENV
       - name: Manfiest version amend
         run: node ./scripts/syncManifestVersion.js && git add -A && git commit --amend --no-edit
       - name: Git push
