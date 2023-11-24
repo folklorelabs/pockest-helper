@@ -10,7 +10,7 @@
 }
 
 .App--minimized {
-  transform: translate(-90%, 90%);
+  transform: translate(calc(-100% + 30px), calc(100% - 30px));
 }
 
 .AppMinBtn {
