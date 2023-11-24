@@ -1,0 +1,12 @@
+name: build
+description: Setup and build app
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Build
+      run: npm run build
