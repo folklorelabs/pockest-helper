@@ -157,12 +157,11 @@
 .PockestButton {
   text-transform: uppercase;
   cursor: pointer;
-  font-size: 0.5rem;
   font-weight: 700;
   font-family: Oswald, sans-serif;
   height: 2.5em;
   clip-path: polygon(min(0.5208333333vw, 10px) 0, 100% 0, 100% calc(100% - min(0.5208333333vw, 10px)), calc(100% - min(0.5208333333vw, 10px)) 100%, 0 100%, 0 min(0.5208333333vw, 10px));
-  font-size: min(1.0416666667vw, 20px);
+  font-size: 1rem;
 }
 
 @keyframes buttonOn {
