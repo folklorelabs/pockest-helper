@@ -182,6 +182,7 @@ export function getCurrentPlanSchedule(state) {
   const cleanSchedule = ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
+      if (!spec) return fullSchedule;
       const schedule = getTimeIntervals(
         birth + spec.startTime,
         birth + spec.endTime,
@@ -196,6 +197,7 @@ export function getCurrentPlanSchedule(state) {
   const feedSchedule = ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
+      if (!spec) return fullSchedule;
       const schedule = getTimeIntervals(
         birth + spec.startTime,
         birth + spec.endTime,
