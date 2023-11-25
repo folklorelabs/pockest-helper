@@ -1,4 +1,4 @@
-import MONSTERS from '../data/monsters';
+import MONSTERS from '../data/monsters.json';
 
 let monsterCache;
 export default async function fetchAllMonsters() {

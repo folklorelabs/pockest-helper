@@ -1,5 +1,5 @@
 import React from 'react';
-import { STAT_ID } from '../../data/stats';
+import { STAT_ID } from '../../config/stats';
 import {
   pockestLoading,
   pockestClean,

@@ -3,7 +3,7 @@ import {
   pockestSettings,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import { STAT_ID } from '../../data/stats';
+import { STAT_ID } from '../../config/stats';
 import './index.css';
 import Timer from '../Timer';
 

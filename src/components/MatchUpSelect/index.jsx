@@ -5,7 +5,7 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import useMonsters from '../../hooks/useMonsters';
-import monsters from '../../data/monsters';
+import monsters from '../../data/monsters.json';
 
 function MatchUpSelect() {
   const allMonsters = useMonsters();

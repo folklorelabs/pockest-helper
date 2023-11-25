@@ -6,7 +6,7 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import monsters from '../data/monsters';
+import monsters from '../data/monsters.json';
 import getTimeIntervals from '../utils/getTimeIntervals';
 import getTotalStats from '../utils/getTotalStats';
 import getMonsterPlan, { getCurrentMonsterPlan } from '../utils/getMonsterPlan';
