@@ -48,7 +48,7 @@ function AutoPlanControls() {
         <span className="PockestText">Plan</span>
         <span className="PockestText">{targetPlan.planId ?? '--'}</span>
       </div>
-      <Timer label={`Age ${curAge || 0} → ${(curAge || 0) + 1}`} timestamp={data?.next_big_event_timer} />
+      <Timer label={`Age ${curAge || 0} → ${curAge < 5 ? (curAge || 0) + 1 : '🎁/🪦'}`} timestamp={data?.next_big_event_timer} />
     </div>
   );
 }
