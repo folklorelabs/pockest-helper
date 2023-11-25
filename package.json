@@ -3,14 +3,17 @@
   "private": true,
   "version": "1.1.22-rc.4",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build && cd ./dist && zip -r9 ./PockestHelper.zip ./*",
-    "preview": "vite preview",
+    "data": "node ./scripts/parseMonsterData.js",
+    "build:zip": "cd ./dist && zip -r9 ./PockestHelper.zip ./* && cd ..",
+    "build": "npm run data && vite build && npm run build:zip",
+    "dev": "npm run data && vite",
+    "preview": "npm run data && vite preview",
     "release:manifest": "node ./scripts/syncManifestVersion.js && git add -A && git commit --amend --no-edit",
     "release:rc": "npm version prerelease --preid=rc && npm run release:manifest",
     "release": "npm version patch && npm run release:manifest"
   },
   "dependencies": {
+    "convert-csv-to-json": "^2.0.0",
     "classnames": "^2.3.2",
     "prop-types": "^15.8.1",
     "react": "^18.0.0",

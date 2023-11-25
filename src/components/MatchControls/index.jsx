@@ -7,7 +7,7 @@ import {
 import { parseDurationStr } from '../../utils/parseDuration';
 import useNow from '../../hooks/useNow';
 import './index.css';
-import monsters from '../../data/monsters';
+import monsters from '../../data/monsters.json';
 
 function MatchControls() {
   const {

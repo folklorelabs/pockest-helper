@@ -1,6 +1,6 @@
-import { STAT_ID } from '../data/stats';
-import monsters from '../data/monsters';
-import routes from '../data/routes';
+import { STAT_ID } from '../config/stats';
+import routes from '../config/routes';
+import monsters from '../data/monsters.json';
 
 const PLAN_DEFAULTS = {
   cleanFrequency: null,

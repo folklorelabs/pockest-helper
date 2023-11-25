@@ -1,5 +1,6 @@
 # Project specific
 examples
+src/data
 
 # Logs
 logs
