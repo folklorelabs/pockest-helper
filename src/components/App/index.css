@@ -155,6 +155,29 @@
   background-size: contain;
 }
 
+.PockestStat {
+  text-transform: uppercase;
+}
+
+.PockestStat--power {
+  color: #EB7384;
+}
+
+.PockestStat--speed {
+  color: #8683F1;
+}
+
+.PockestStat--technic {
+  color: #88BA76;
+}
+
+.PockestStat-label {
+  font-family: Oswald, sans-serif;
+  font-weight: 700;
+  font-size: 0.9em;
+  margin-right: 0.4em;
+}
+
 .PockestButton {
   text-transform: uppercase;
   cursor: pointer;

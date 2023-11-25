@@ -44,10 +44,13 @@ function TrainControls() {
           <span className="PockestCheck-text">Train</span>
         </label>
         {sortedStats.map((k) => (
-          <span key={k} className="Status-item Status-item--stat">
-            <span className="Status-icon">{STAT_ICON[k]}</span>
-            {' '}
-            {typeof data?.monster?.[STAT_ID[k]] === 'number' ? data?.monster?.[STAT_ID[k]] : '--'}
+          <span key={k} className={`PockestStat PockestStat--${STAT_ID[k]}`}>
+            <span className="PockestStat-label">
+              {STAT_ID[k].slice(0, 1)}
+            </span>
+            <span className="PockestStat-value">
+              {typeof data?.monster?.[STAT_ID[k]] === 'number' ? data?.monster?.[STAT_ID[k]] : '--'}
+            </span>
           </span>
         ))}
       </div>
@@ -64,8 +67,6 @@ function TrainControls() {
           {Object.keys(STAT_ID).map((s) => (
             <option key={s} value={s}>
               {STAT_ID[s]}
-              {' '}
-              {STAT_ICON[s]}
             </option>
           ))}
         </select>
