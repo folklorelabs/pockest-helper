@@ -1,5 +1,4 @@
 const fs = require('fs');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const csvToJson = require('convert-csv-to-json');
 
 const MONSTER_CSV_PATH = './data/Pockest Helper - Monsters.csv';
