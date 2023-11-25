@@ -157,15 +157,17 @@ export async function getMonsterMatch(state) {
   const matchFeverOptions = monster?.matchFever;
   if (!matchFeverOptions || !matchFeverOptions.length) return null;
   const { exchangeList } = await fetchMatchList();
-  const match = exchangeList
-    .sort((a, b) => {
-      const aStats = (a?.power || 0) + (a?.speed || 0) + (a?.technic || 0);
-      const bStats = (b?.power || 0) + (b?.speed || 0) + (b?.technic || 0);
-      return bStats - aStats;
-    })
-    .find((opp) => (preference ? opp.monster_id === preference
-      : matchFeverOptions.includes(opp.monster_id)));
-  return match?.slot;
+  const sortedMatches = exchangeList?.sort((a, b) => {
+    const aStats = (a?.power || 0) + (a?.speed || 0) + (a?.technic || 0);
+    const bStats = (b?.power || 0) + (b?.speed || 0) + (b?.technic || 0);
+    return bStats - aStats;
+  });
+  const match = sortedMatches?.find((opp) => (preference ? opp.monster_id === preference
+    : matchFeverOptions.includes(opp.monster_id)));
+  return {
+    preferredMatch: match,
+    fallbackMatch: sortedMatches?.[0],
+  };
 }
 
 export function getCurrentPlanStats(state) {
