@@ -1,33 +1,31 @@
 import React from 'react';
 import { pockestLoading, pockestSelectEgg, usePockestContext } from '../../contexts/PockestContext';
+import useEggs from '../../hooks/useEggs';
 import getMonsterPlan from '../../utils/getMonsterPlan';
-
-const EGG_LABEL = {
-  1: 'White',
-  2: 'Green',
-  3: 'Yellow',
-  4: 'Blue',
-};
 
 function BuyEggBtn() {
   const { pockestState, pockestDispatch } = usePockestContext();
-  const canBuyEgg = !pockestState?.data?.monster?.age
-    && pockestState?.autoPlan && pockestState?.monsterId;
-  const planEgg = React.useState(() => {
-    const plan = getMonsterPlan(pockestState?.monsterId);
-    return Object.keys(EGG_LABEL).find((id) => EGG_LABEL[id].slice(0, 1) === plan?.planEgg);
-  }, [pockestState?.monsterId]);
+  const allEggs = useEggs();
+  const {
+    monsterId,
+  } = pockestState;
+  const targetPlan = React.useMemo(() => getMonsterPlan(monsterId), [monsterId]);
+  const planEgg = React.useMemo(
+    () => allEggs.find((egg) => egg?.name_en?.slice(0, 1) === targetPlan?.planEgg),
+    [allEggs, targetPlan],
+  );
   return (
     <button
       className="PockestButton"
       type="button"
       onClick={async () => {
+        if (!planEgg?.id || pockestState?.loading) return;
         pockestDispatch(pockestLoading());
-        await pockestDispatch(pockestSelectEgg(planEgg));
+        await pockestDispatch(pockestSelectEgg(planEgg.id));
       }}
-      disabled={!canBuyEgg || pockestState?.loading}
+      disabled={!planEgg?.id || pockestState?.loading}
     >
-      {`Buy ${EGG_LABEL[planEgg] || ''} Egg`}
+      Buy Egg
     </button>
   );
 }
