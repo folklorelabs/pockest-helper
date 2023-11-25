@@ -31,7 +31,7 @@ function TargetMonsterSelect() {
           ...all,
           m.monster_id,
         ];
-      }, []);
+      }, [pockestState?.monsterId]);
     return allMonsters
       .filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
       .sort((a, b) => {
