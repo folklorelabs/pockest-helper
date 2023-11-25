@@ -158,6 +158,11 @@ export async function getMonsterMatch(state) {
   if (!matchFeverOptions || !matchFeverOptions.length) return null;
   const { exchangeList } = await fetchMatchList();
   const match = exchangeList
+    .sort((a, b) => {
+      const aStats = (a?.power || 0) + (a?.speed || 0) + (a?.technic || 0);
+      const bStats = (b?.power || 0) + (b?.speed || 0) + (b?.technic || 0);
+      return bStats - aStats;
+    })
     .find((opp) => (preference ? opp.monster_id === preference
       : matchFeverOptions.includes(opp.monster_id)));
   return match?.slot;
