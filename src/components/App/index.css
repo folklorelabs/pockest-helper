@@ -165,6 +165,10 @@
   font-size: 1rem;
 }
 
+.PockestButton:disabled {
+  cursor: default;
+}
+
 @keyframes buttonOn {
   from {
     opacity: 0.75;
