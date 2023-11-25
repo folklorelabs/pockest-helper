@@ -8,6 +8,7 @@ import React, {
 import PropTypes from 'prop-types';
 import monsters from '../data/monsters';
 import getTimeIntervals from '../utils/getTimeIntervals';
+import getTotalStats from '../utils/getTotalStats';
 import getMonsterPlan, { getCurrentMonsterPlan } from '../utils/getMonsterPlan';
 
 // STATE
@@ -150,24 +151,19 @@ export function getMonsterId(state) {
   return parseInt(hashId.slice(0, 4), 10);
 }
 
-export async function getMonsterMatch(state) {
-  const preference = state?.matchPreference;
+export async function getBestMatch(state) {
   const monsterId = getMonsterId(state);
   const monster = monsters.find((m) => m.monster_id === monsterId);
   const matchFeverOptions = monster?.matchFever;
-  if (!matchFeverOptions || !matchFeverOptions.length) return null;
   const { exchangeList } = await fetchMatchList();
   const sortedMatches = exchangeList?.sort((a, b) => {
-    const aStats = (a?.power || 0) + (a?.speed || 0) + (a?.technic || 0);
-    const bStats = (b?.power || 0) + (b?.speed || 0) + (b?.technic || 0);
-    return bStats - aStats;
+    const aFever = matchFeverOptions?.includes(a.monster_id) ? 1.5 : 1;
+    const aTotal = getTotalStats(a) * aFever;
+    const bFever = matchFeverOptions?.includes(b.monster_id) ? 1.5 : 1;
+    const bTotal = getTotalStats(b) * bFever;
+    return bTotal - aTotal;
   });
-  const match = sortedMatches?.find((opp) => (preference ? opp.monster_id === preference
-    : matchFeverOptions.includes(opp.monster_id)));
-  return {
-    preferredMatch: match,
-    fallbackMatch: sortedMatches?.[0],
-  };
+  return sortedMatches?.[0];
 }
 
 export function getCurrentPlanStats(state) {

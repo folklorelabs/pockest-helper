@@ -10,10 +10,10 @@ import {
   pockestRefresh,
   getCurrentPlanStats,
   getCurrentPlanScheduleWindows,
-  getMonsterMatch,
+  getBestMatch,
 } from '../../contexts/PockestContext';
 
-function LifeCycle() {
+function Lifecycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
   const {
     cleanFrequency,
@@ -119,13 +119,10 @@ function LifeCycle() {
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
-        const {
-          preferredMatch,
-          fallbackMatch,
-        } = await getMonsterMatch(pockestState);
-        console.log(now.toLocaleString(), `MATCH, preferredMatch=${preferredMatch?.name_en}, fallbackMatch=${fallbackMatch?.name_en}`);
+        const bestMatch = await getBestMatch(pockestState);
+        console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestMatch(preferredMatch?.slot ?? fallbackMatch?.slot));
+        pockestDispatch(await pockestMatch(bestMatch?.slot));
       }
     }, 1000);
     return () => {
@@ -143,4 +140,4 @@ function LifeCycle() {
   ]);
 }
 
-export default LifeCycle;
+export default Lifecycle;
