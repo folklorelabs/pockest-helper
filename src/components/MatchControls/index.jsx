@@ -6,7 +6,6 @@ import {
 } from '../../contexts/PockestContext';
 import { parseDurationStr } from '../../utils/parseDuration';
 import useNow from '../../hooks/useNow';
-import MatchUpSelect from '../MatchUpSelect';
 import './index.css';
 import monsters from '../../data/monsters';
 
@@ -45,10 +44,6 @@ function MatchControls() {
           />
           <span className="PockestCheck-text">Match</span>
         </label>
-      </div>
-      <div className="PockestLine">
-        <span className="PockestText">Preference</span>
-        <MatchUpSelect />
       </div>
       <div className="PockestLine">
         <span className="PockestText">
