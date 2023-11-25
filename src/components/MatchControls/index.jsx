@@ -42,7 +42,7 @@ function MatchControls() {
         <span className="PockestText">
           Next Match
         </span>
-        <span className="PockestText">
+        <span className="PockestText PockestLine-value">
           {data?.monster?.exchange_time ? parseDurationStr(data.monster.exchange_time - now.getTime()) : '--'}
         </span>
       </div>

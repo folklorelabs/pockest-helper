@@ -58,7 +58,7 @@ function FeedControls() {
         <span className="PockestText">
           Next Hunger*
         </span>
-        <span className="PockestText">
+        <span className="PockestText PockestLine-value">
           {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
         </span>
       </div>
@@ -100,7 +100,7 @@ function FeedControls() {
         <span className="PockestText">
           Next Meal
         </span>
-        <span className="PockestText">
+        <span className="PockestText PockestLine-value">
           {(() => {
             if (feedFrequency === 4 || !nextFeedWindow) return '--';
             return parseDurationStr(nextFeedWindow.start - now.getTime());
@@ -111,7 +111,7 @@ function FeedControls() {
         <span className="PockestText">
           Current Meal
         </span>
-        <span className="PockestText">
+        <span className="PockestText PockestLine-value">
           {(() => {
             if (feedFrequency === 4) return '∞';
             if (!currentFeedWindow) return '--';

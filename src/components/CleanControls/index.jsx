@@ -58,7 +58,7 @@ function CleanControls() {
         <span className="PockestText">
           Next Poop*
         </span>
-        <span className="PockestText">
+        <span className="PockestText PockestLine-value">
           {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
         </span>
       </div>
@@ -83,7 +83,7 @@ function CleanControls() {
         <span className="PockestText">
           Next Clean
         </span>
-        <span className="PockestText">
+        <span className="PockestText PockestLine-value">
           {(() => {
             if (cleanFrequency === 2 || !nextCleanWindow) return '--';
             return parseDurationStr(nextCleanWindow.start - now.getTime());
@@ -94,7 +94,7 @@ function CleanControls() {
         <span className="PockestText">
           Current Clean
         </span>
-        <span className="PockestText">
+        <span className="PockestText PockestLine-value">
           {(() => {
             if (cleanFrequency === 2) return '∞';
             if (!currentCleanWindow) return '--';
