@@ -26,6 +26,7 @@ const INITIAL_STATE = {
   stat: 1,
   loading: false,
   error: null,
+  initialized: false,
 };
 
 // ACTIONS
@@ -267,6 +268,7 @@ function REDUCER(state, [type, payload]) {
       return {
         ...state,
         loading: false,
+        initialized: true,
         data: payload,
       };
     case ACTIONS.ERROR:
@@ -284,6 +286,7 @@ const stateFromStorage = window.localStorage.getItem('PockestHelper');
 const initialState = stateFromStorage && JSON.parse(stateFromStorage);
 if (initialState) {
   delete initialState.data;
+  delete initialState.initialized;
   initialState.paused = true;
 }
 const PockestContext = createContext({

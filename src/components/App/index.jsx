@@ -10,6 +10,7 @@ import MatchControls from '../MatchControls';
 import TrainControls from '../TrainControls';
 import BuyEggBtn from '../BuyEggBtn';
 import { usePockestContext } from '../../contexts/PockestContext';
+import EggControls from '../EggControls';
 
 function App() {
   const {
@@ -25,25 +26,32 @@ function App() {
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
       </header>
-      <AutoPlanControls />
-      <hr />
-      <CleanControls />
-      <hr />
-      <FeedControls />
-      <hr />
-      <TrainControls />
-      <hr />
-      <MatchControls />
-      <div className="App-button">
-        {pockestState?.data?.monster?.age ? (
-          <PauseBtn />
-        ) : (
-          <BuyEggBtn />
-        )}
-      </div>
-      <p className="App-footer">
-        *These timers are shared and track the soonest poop OR hunger.
-      </p>
+      {!pockestState?.initialized || pockestState?.data ? (
+        <>
+          <AutoPlanControls />
+          <hr />
+          <CleanControls />
+          <hr />
+          <FeedControls />
+          <hr />
+          <TrainControls />
+          <hr />
+          <MatchControls />
+          <div className="App-button">
+            <PauseBtn />
+          </div>
+          <p className="App-footer">
+            *These timers are shared and track the soonest poop OR hunger.
+          </p>
+        </>
+      ) : (
+        <>
+          <EggControls />
+          <div className="App-button">
+            <BuyEggBtn />
+          </div>
+        </>
+      )}
     </div>
   );
 }
