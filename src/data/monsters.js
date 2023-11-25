@@ -317,6 +317,7 @@ const monsters = [
     monster_id: 4090,
     name_en: 'JP',
     plan: 'Y5CRS',
+    matchFever: [4003, 4016, 4013],
   },
   {
     monster_id: 4092,
