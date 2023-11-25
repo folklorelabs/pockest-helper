@@ -1,4 +1,4 @@
-const routes = {
+const ROUTES = {
   AL: [
     {
       cleanFrequency: 2,
@@ -88,4 +88,4 @@ const routes = {
   ],
 };
 
-export default routes;
+export default ROUTES;
