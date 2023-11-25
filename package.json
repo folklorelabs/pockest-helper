@@ -1,7 +1,7 @@
 {
   "name": "pockest-helper",
   "private": true,
-  "version": "1.1.21-rc.8",
+  "version": "1.1.21-rc.9",
   "scripts": {
     "dev": "vite",
     "build": "vite build && cd ./dist && zip -r9 ./PockestHelper.zip ./*",
