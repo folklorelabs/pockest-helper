@@ -46,7 +46,7 @@ function AutoPlanControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">Plan</span>
-        <span className="PockestText">{targetPlan.planId ?? '--'}</span>
+        <span className="PockestText PockestLine-value">{targetPlan.planId ?? '--'}</span>
       </div>
       <Timer
         label={(() => {

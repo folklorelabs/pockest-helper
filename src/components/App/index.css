@@ -74,6 +74,11 @@
   justify-content: space-between;
 }
 
+.PockestLine-value {
+  max-width: 50%;
+  text-align: right;
+}
+
 .PockestSelect {
   border: 2px solid #d5a613;
   background: hsla(0, 0%, 100%, .2);

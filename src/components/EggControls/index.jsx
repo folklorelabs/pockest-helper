@@ -28,15 +28,15 @@ function EggControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">Plan</span>
-        <span className="PockestText">{targetPlan.planId ?? '--'}</span>
+        <span className="PockestText PockestLine-value">{targetPlan.planId ?? '--'}</span>
       </div>
       <div className="PockestLine">
         <span className="PockestText">Egg</span>
-        <span className="PockestText">{planEgg?.name_en ?? '--'}</span>
+        <span className="PockestText PockestLine-value">{planEgg?.name_en ?? '--'}</span>
       </div>
       <div className="PockestLine">
         <span className="PockestText">Cost</span>
-        <span className="PockestText">
+        <span className="PockestText PockestLine-value">
           {planEgg?.unlock ? 0 : planEgg?.buckler_point ?? '--'}
         </span>
       </div>
