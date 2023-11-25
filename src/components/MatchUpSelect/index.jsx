@@ -22,15 +22,15 @@ function MatchUpSelect() {
   const curMonster = React.useMemo(() => monsters
     .find((m) => m.monster_id === monsterId), [monsterId]);
   const sortedMonsters = React.useMemo(() => allMonsters
-    .filter((m) => m.age >= data?.monster?.age)
+    .filter((m) => m?.age >= data?.monster?.age)
     .sort((a, b) => {
       const matchFever = curMonster?.matchFever;
-      const aFever = matchFever?.includes(a.monster_id);
-      const bFever = matchFever?.includes(b.monster_id);
+      const aFever = matchFever?.includes(a?.monster_id);
+      const bFever = matchFever?.includes(b?.monster_id);
       if (aFever && !bFever) return -1;
       if (bFever && !aFever) return 1;
-      if (a.name_en < b.name_en) return -1;
-      if (b.name_en < a.name_en) return 1;
+      if (a?.name_en < b?.name_en) return -1;
+      if (b?.name_en < a?.name_en) return 1;
       return 0;
     }), [allMonsters, curMonster?.matchFever, data?.monster?.age]);
   if (!allMonsters?.length) return '';
@@ -40,7 +40,7 @@ function MatchUpSelect() {
       onChange={(e) => {
         pockestDispatch(pockestSettings({ matchPreference: parseInt(e.target.value, 10) }));
       }}
-      value={matchPreference}
+      value={matchPreference || ''}
       disabled={!paused}
     >
       <option key="default" value="" style={{ opacity: 0.5 }}>

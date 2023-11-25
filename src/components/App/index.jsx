@@ -8,8 +8,13 @@ import CleanControls from '../CleanControls';
 import FeedControls from '../FeedControls';
 import MatchControls from '../MatchControls';
 import TrainControls from '../TrainControls';
+import BuyEggBtn from '../BuyEggBtn';
+import { usePockestContext } from '../../contexts/PockestContext';
 
 function App() {
+  const {
+    pockestState,
+  } = usePockestContext();
   const [minimized, setMinimized] = React.useState(false);
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
@@ -30,7 +35,11 @@ function App() {
       <hr />
       <MatchControls />
       <div className="App-button">
-        <PauseBtn />
+        {pockestState?.data?.monster?.age ? (
+          <PauseBtn />
+        ) : (
+          <BuyEggBtn />
+        )}
       </div>
       <p className="App-footer">
         *These timers are shared and track the soonest poop OR hunger.

@@ -50,7 +50,7 @@ function AutoPlanControls() {
       </div>
       <Timer
         label={(() => {
-          if (typeof curAge !== 'number') return 'Egg';
+          if (typeof curAge !== 'number') return 'Age 0 → 1';
           if (curAge < 5) return `Age ${curAge} → ${curAge + 1}`;
           if (data?.monster?.memento_flg) return `Age ${curAge} → 🎁`;
           return `Age ${curAge} → 🎁/🪦`;
