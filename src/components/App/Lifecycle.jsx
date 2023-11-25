@@ -1,4 +1,5 @@
 import React from 'react';
+import { STAT_ID } from '../../data/stats';
 import {
   pockestLoading,
   pockestClean,
@@ -108,7 +109,7 @@ function LifeCycle() {
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
       if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
-        console.log(now.toLocaleString(), `TRAIN, stat=${stat}`);
+        console.log(now.toLocaleString(), `TRAIN, stat=${STAT_ID[stat]}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
       }
@@ -118,10 +119,13 @@ function LifeCycle() {
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
-        const matchSlot = await getMonsterMatch(pockestState);
-        console.log(now.toLocaleString(), `MATCH, matchSlot=${matchSlot}`);
+        const {
+          preferredMatch,
+          fallbackMatch,
+        } = await getMonsterMatch(pockestState);
+        console.log(now.toLocaleString(), `MATCH, preferredMatch=${preferredMatch?.name_en}, fallbackMatch=${fallbackMatch?.name_en}`);
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestMatch(matchSlot || 1));
+        pockestDispatch(await pockestMatch(preferredMatch?.slot ?? fallbackMatch?.slot));
       }
     }, 1000);
     return () => {
