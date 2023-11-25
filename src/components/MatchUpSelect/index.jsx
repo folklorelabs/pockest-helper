@@ -40,7 +40,7 @@ function MatchUpSelect() {
       onChange={(e) => {
         pockestDispatch(pockestSettings({ matchPreference: parseInt(e.target.value, 10) }));
       }}
-      value={matchPreference}
+      value={matchPreference || ''}
       disabled={!paused}
     >
       <option key="default" value="" style={{ opacity: 0.5 }}>
