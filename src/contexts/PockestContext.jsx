@@ -22,7 +22,7 @@ const INITIAL_STATE = {
   feedTarget: 6,
   autoClean: false,
   autoTrain: false,
-  matchPreference: null,
+  matchPreference: '',
   stat: 1,
   loading: false,
   error: null,
