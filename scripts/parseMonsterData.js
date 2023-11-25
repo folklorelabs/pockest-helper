@@ -3,7 +3,8 @@ const fs = require('fs');
 const csvToJson = require('convert-csv-to-json');
 
 const MONSTER_CSV_PATH = './data/Pockest Helper - Monsters.csv';
-const MONSTER_PATH = './src/data/monsters.json';
+const DATA_DIR = './src/data';
+const MONSTER_FILE = 'monsters.json';
 
 (async () => {
   const monsters = csvToJson
@@ -17,5 +18,8 @@ const MONSTER_PATH = './src/data/monsters.json';
     plan: m.plan,
     matchFever: m.matchFever,
   }));
-  await fs.writeFileSync(MONSTER_PATH, JSON.stringify(cleanMonsters, null, 2));
+  if (!await fs.existsSync(DATA_DIR)) {
+    await fs.mkdirSync(DATA_DIR);
+  }
+  await fs.writeFileSync(`${DATA_DIR}/${MONSTER_FILE}`, JSON.stringify(cleanMonsters, null, 2));
 })();
