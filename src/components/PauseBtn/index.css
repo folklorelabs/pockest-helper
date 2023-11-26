@@ -11,6 +11,7 @@
 .PauseBtn.PockestButton {
   border-bottom: 4px solid #bbb;
   background-color: #fff;
+  padding: 0 3em 0 4em;
   /* clip-path: polygon(min(0.5208333333vw, 10px) 0, 100% 0, 100% 100%, 0 100%, 0 min(0.5208333333vw, 10px)); */
   /* clip-path: initial; */
 }
