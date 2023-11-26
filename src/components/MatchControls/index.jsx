@@ -21,6 +21,18 @@ function MatchControls() {
     matchPriority,
     matchLog,
   } = pockestState;
+  const matchReport = React.useMemo(() => matchLog.map((entry) => {
+    const dateLabel = (new Date(entry.timestamp)).toLocaleString();
+    const a = monsters.find((m) => m.monster_id === entry.aId);
+    const hasFever = entry.mementoDiff > entry.totalStats / 2;
+    const expectFever = a.matchFever.includes(entry.bId);
+    const b = monsters.find((m) => m.monster_id === entry.bId);
+    const emojis = [
+      !expectFever && hasFever && '🆕',
+      hasFever && '🔥',
+    ].filter((e) => e).join('');
+    return `${emojis}${a.name_en} vs ${b.name_en} (${dateLabel})`;
+  }), [matchLog]);
   return (
     <div className="MatchControls">
       <div className="PockestLine">
@@ -72,19 +84,7 @@ function MatchControls() {
           type="button"
           className="PockestText PockestLine-value PockestLink"
           onClick={() => {
-            console.log(matchLog);
-            matchLog.forEach((entry) => {
-              const dateLabel = (new Date(entry.timestamp)).toLocaleString();
-              const a = monsters.find((m) => m.monster_id === entry.aId);
-              const hasFever = entry.mementoDiff > entry.totalStats / 2;
-              const expectFever = a.matchFever.includes(entry.bId);
-              const b = monsters.find((m) => m.monster_id === entry.bId);
-              const emojis = [
-                !expectFever && hasFever && '🆕',
-                hasFever && '🔥',
-              ].filter((e) => e).join('');
-              console.log(`${emojis}${a.name_en} vs ${b.name_en} (${dateLabel})`);
-            });
+            console.log(matchReport.join('\n'));
           }}
         >
           {matchLog?.length ?? '--'}
