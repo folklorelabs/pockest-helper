@@ -9,7 +9,7 @@ import {
 import monsters from '../../data/monsters.json';
 import './index.css';
 
-function MatchReport() {
+function MatchLog() {
   const { setShowLog } = useAppContext();
   const {
     pockestState,
@@ -31,27 +31,27 @@ function MatchReport() {
     return `${emojis}${a.name_en} vs ${b.name_en} (${dateLabel})`;
   }), [matchLog]);
   return (
-    <div className="MatchReport">
-      <header className="MatchReport-header">
-        <p className="MatchReport-title">
+    <div className="MatchLog">
+      <header className="MatchLog-header">
+        <p className="MatchLog-title">
           Match Log (
           {matchLog?.length || 0}
           )
         </p>
       </header>
-      <div className="MatchReport-content">
+      <div className="MatchLog-content">
         <textarea
-          className="MatchReport-textarea"
+          className="MatchLog-textarea"
           value={matchReport.join('\n\n')}
           readOnly
           rows={20}
         />
         <div
-          className="MatchReport-buttons"
+          className="MatchLog-buttons"
         >
           <button
             type="button"
-            className="PockestLink MatchReport-copy"
+            className="PockestLink MatchLog-copy"
             aria-label="Copy report to clipboard"
             onClick={() => navigator.clipboard.writeText(matchReport.join('\n'))}
           >
@@ -59,7 +59,7 @@ function MatchReport() {
           </button>
           <button
             type="button"
-            className="PockestLink MatchReport-clear"
+            className="PockestLink MatchLog-clear"
             aria-label="Clear match history"
             onClick={() => {
               const confirm = window.confirm('Are you sure you want to permanently clear your match history?');
@@ -75,4 +75,4 @@ function MatchReport() {
   );
 }
 
-export default MatchReport;
+export default MatchLog;

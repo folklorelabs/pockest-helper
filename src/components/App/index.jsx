@@ -8,7 +8,7 @@ import CleanControls from '../CleanControls';
 import FeedControls from '../FeedControls';
 import MatchControls from '../MatchControls';
 import TrainControls from '../TrainControls';
-import MatchReport from '../MatchReport';
+import MatchLog from '../MatchLog';
 import BuyEggBtn from '../BuyEggBtn';
 import { usePockestContext } from '../../contexts/PockestContext';
 import { useAppContext } from '../../contexts/AppContext';
@@ -60,7 +60,7 @@ function App() {
       )}
       {showLog ? (
         <LogPanel>
-          <MatchReport />
+          <MatchLog />
         </LogPanel>
       ) : ''}
     </div>

@@ -1,18 +1,18 @@
-.MatchReport-header {
+.MatchLog-header {
   margin-bottom: 0.5rem;
 }
 
-.MatchReport-title {
+.MatchLog-title {
   font-size: 1.333em;
   font-family: Oswald, sans-serif;
   text-transform: uppercase;
 }
 
-.MatchReport-content {
+.MatchLog-content {
   position: relative;
 }
 
-.MatchReport-textarea {
+.MatchLog-textarea {
   display: block;
   width: 100%;
   resize: none;
@@ -23,23 +23,23 @@
   color: #fff;
 }
 
-.MatchReport-textarea::-webkit-scrollbar {
+.MatchLog-textarea::-webkit-scrollbar {
   width: 4px;
 }
 
-.MatchReport-textarea::-webkit-scrollbar-track {
+.MatchLog-textarea::-webkit-scrollbar-track {
   background: rgba(242, 242, 242, 0);
 }
 
-.MatchReport-textarea::-webkit-scrollbar-thumb {
+.MatchLog-textarea::-webkit-scrollbar-thumb {
   background: rgb(188, 188, 188);
 }
 
-.MatchReport-textarea::-webkit-scrollbar-thumb:hover {
+.MatchLog-textarea::-webkit-scrollbar-thumb:hover {
   background: rgb(148, 148, 148)
 }
 
-.MatchReport .PockestLink {
+.MatchLog .PockestLink {
   text-transform: uppercase;
   font-weight: 700;
   text-decoration: none;
@@ -47,7 +47,7 @@
   line-height: 1em;
 }
 
-.MatchReport-buttons {
+.MatchLog-buttons {
   position: relative;
   display: flex;
   justify-content: space-between;
