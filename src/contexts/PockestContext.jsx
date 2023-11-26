@@ -213,6 +213,9 @@ export async function pockestTrain(type) {
     },
   });
   const { data } = await response.json();
+  if (data?.event !== 'training') {
+    return [ACTIONS.ERROR, '[pockestTrain] server responded with failure'];
+  }
   return [ACTIONS.REFRESH, data];
 }
 export async function pockestMatch(pockestState, match) {
@@ -228,9 +231,9 @@ export async function pockestMatch(pockestState, match) {
     },
     body: JSON.stringify({ slot: match?.slot }),
   });
-  const res = await response.json();
+  const { data } = await response.json();
 
-  if (res?.data?.exchangable === false) {
+  if (data?.exchangable === false) {
     return [ACTIONS.ERROR, '[pockestMatch] server responded with failure'];
   }
   const matchLogEntry = {
@@ -238,9 +241,9 @@ export async function pockestMatch(pockestState, match) {
     aId: getMonsterId(pockestState),
     bId: match?.monster_id,
     totalStats: getTotalStats(pockestState?.data?.monster) + getTotalStats(match?.monster),
-    mementoDiff: Math.max((res?.data?.monster?.memento_point || 0) - mementoBefore, 0),
+    mementoDiff: Math.max((data?.monster?.memento_point || 0) - mementoBefore, 0),
   };
-  return [ACTIONS.MATCH_SUCCESS, { data: res?.data, matchLogEntry }];
+  return [ACTIONS.MATCH_SUCCESS, { data, matchLogEntry }];
 }
 export async function pockestSelectEgg(id) {
   if (id < 1 || id > 4) {
