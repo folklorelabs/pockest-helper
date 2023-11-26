@@ -22,7 +22,7 @@ function MatchControls() {
     autoMatch,
     paused,
     matchPriority,
-    matchLog,
+    log,
   } = pockestState;
   return (
     <div className="MatchControls">
@@ -78,7 +78,7 @@ function MatchControls() {
             setShowLog(true);
           }}
         >
-          {matchLog?.length ?? '--'}
+          {log?.match?.length ?? '--'}
         </button>
       </div>
     </div>

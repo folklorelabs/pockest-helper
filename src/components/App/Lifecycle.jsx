@@ -90,7 +90,7 @@ function Lifecycle() {
       if (attemptToClean && inCleanWindow) {
         console.log(now.toLocaleString(), 'CLEAN');
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestClean());
+        pockestDispatch(await pockestClean(pockestState));
       }
 
       // Feed
@@ -101,7 +101,7 @@ function Lifecycle() {
       if (attemptToFeed && inFeedWindow) {
         console.log(now.toLocaleString(), 'FEED');
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestFeed());
+        pockestDispatch(await pockestFeed(pockestState));
       }
 
       // Train
@@ -111,7 +111,7 @@ function Lifecycle() {
       if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
         console.log(now.toLocaleString(), `TRAIN, stat=${STAT_ID[stat]}`);
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestTrain(stat));
+        pockestDispatch(await pockestTrain(pockestState, stat));
       }
 
       // Match

@@ -1,24 +1,20 @@
 import React from 'react';
 import {
-  pockestClearMatchLog,
+  pockestClearLog,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import {
-  useAppContext,
-} from '../../contexts/AppContext';
 import monsters from '../../data/monsters.json';
 import './index.css';
 
 function MatchLog() {
-  const { setShowLog } = useAppContext();
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
   const {
-    matchLog,
+    log,
   } = pockestState;
-  const matchReport = React.useMemo(() => matchLog.map((entry) => {
+  const matchReport = React.useMemo(() => log?.match.map((entry) => {
     const dateLabel = (new Date(entry.timestamp)).toLocaleString();
     const a = monsters.find((m) => m.monster_id === entry.aId);
     const hasFever = entry.mementoDiff > entry.totalStats / 2;
@@ -29,13 +25,13 @@ function MatchLog() {
       hasFever && '🔥',
     ].filter((e) => e).join('');
     return `${emojis}${a.name_en} vs ${b.name_en} (${dateLabel})`;
-  }), [matchLog]);
+  }), [log?.match]);
   return (
     <div className="MatchLog">
       <header className="MatchLog-header">
         <p className="MatchLog-title">
           Match Log (
-          {matchLog?.length || 0}
+          {log?.match?.length || 0}
           )
         </p>
       </header>
@@ -64,7 +60,7 @@ function MatchLog() {
             onClick={() => {
               const confirm = window.confirm('Are you sure you want to permanently clear your match history?');
               if (!confirm) return;
-              pockestDispatch(pockestClearMatchLog());
+              pockestDispatch(pockestClearLog('match'));
             }}
           >
             ❌ Clear
