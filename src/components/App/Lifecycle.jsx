@@ -83,6 +83,14 @@ function Lifecycle() {
         return;
       }
 
+      // Cure
+      const attemptToCure = false && monster?.status !== 1;
+      if (attemptToCure) {
+        console.log(now.toLocaleString(), 'CURE');
+        pockestDispatch(pockestLoading());
+        pockestDispatch(await pockestCure());
+      }
+
       // Clean
       const attemptToClean = (autoClean || autoPlan) && cleanFrequency
         && (monster && monster?.garbage > 0);
@@ -139,18 +147,6 @@ function Lifecycle() {
     pockestState,
     refresh,
   ]);
-
-  React.useEffect(() => {
-    (async () => {
-      if (!pockestState?.initialized
-        || !pockestState?.data || pockestState?.data?.monster?.status === 1) return;
-
-      const now = new Date();
-      console.log(now.toLocaleString(), 'CURE');
-      pockestDispatch(pockestLoading());
-      pockestDispatch(await pockestCure());
-    })();
-  }, [pockestDispatch, pockestState?.data, pockestState?.initialized]);
 }
 
 export default Lifecycle;
