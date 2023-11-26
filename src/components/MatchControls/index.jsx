@@ -3,7 +3,9 @@ import {
   usePockestContext,
   pockestSettings,
 } from '../../contexts/PockestContext';
-import monsters from '../../data/monsters.json';
+import {
+  useAppContext,
+} from '../../contexts/AppContext';
 import { parseDurationStr } from '../../utils/parseDuration';
 import useNow from '../../hooks/useNow';
 import './index.css';
@@ -13,6 +15,7 @@ function MatchControls() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const { setShowLog } = useAppContext();
   const now = useNow();
   const {
     data,
@@ -21,18 +24,6 @@ function MatchControls() {
     matchPriority,
     matchLog,
   } = pockestState;
-  const matchReport = React.useMemo(() => matchLog.map((entry) => {
-    const dateLabel = (new Date(entry.timestamp)).toLocaleString();
-    const a = monsters.find((m) => m.monster_id === entry.aId);
-    const hasFever = entry.mementoDiff > entry.totalStats / 2;
-    const expectFever = a.matchFever.includes(entry.bId);
-    const b = monsters.find((m) => m.monster_id === entry.bId);
-    const emojis = [
-      !expectFever && hasFever && '🆕',
-      hasFever && '🔥',
-    ].filter((e) => e).join('');
-    return `${emojis}${a.name_en} vs ${b.name_en} (${dateLabel})`;
-  }), [matchLog]);
   return (
     <div className="MatchControls">
       <div className="PockestLine">
@@ -78,14 +69,13 @@ function MatchControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">
-          Reports
+          Matches
         </span>
         <button
           type="button"
           className="PockestText PockestLine-value PockestLink"
           onClick={() => {
-            console.log(matchReport.join('\n'));
-            navigator.clipboard.writeText(matchReport.join('\n'));
+            setShowLog(true);
           }}
         >
           {matchLog?.length ?? '--'}
