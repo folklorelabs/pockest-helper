@@ -85,6 +85,7 @@ function MatchControls() {
           className="PockestText PockestLine-value PockestLink"
           onClick={() => {
             console.log(matchReport.join('\n'));
+            navigator.clipboard.writeText(matchReport.join('\n'));
           }}
         >
           {matchLog?.length ?? '--'}
