@@ -74,11 +74,16 @@ function MatchControls() {
           onClick={() => {
             console.log(matchLog);
             matchLog.forEach((entry) => {
-              const dateLabel = new Date(entry.timestamp);
-              const fever = entry.mementoDiff > entry.totalStats / 2;
+              const dateLabel = (new Date(entry.timestamp)).toLocaleString();
               const a = monsters.find((m) => m.monster_id === entry.aId);
+              const hasFever = entry.mementoDiff > entry.totalStats / 2;
+              const expectFever = a.matchFever.includes(entry.bId);
               const b = monsters.find((m) => m.monster_id === entry.bId);
-              console.log(`${dateLabel}: ${a.name_en} vs ${b.name_en} (${fever})`);
+              const emojis = [
+                !expectFever && hasFever && '🆕',
+                hasFever && '🔥',
+              ].filter((e) => e).join('');
+              console.log(`${emojis}${a.name_en} vs ${b.name_en} (${dateLabel})`);
             });
           }}
         >
