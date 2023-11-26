@@ -188,7 +188,15 @@ export async function pockestFeed() {
   return [ACTIONS.REFRESH, data];
 }
 export async function pockestCure() {
-  return [ACTIONS.ERROR, '[pockestCure] NYI'];
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cure', {
+    body: '{"type":1}',
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  const { data } = await response.json();
+  return [ACTIONS.REFRESH, data];
 }
 export async function pockestClean() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cleaning', {

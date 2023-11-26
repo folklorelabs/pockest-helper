@@ -11,6 +11,7 @@ import {
   getCurrentPlanStats,
   getCurrentPlanScheduleWindows,
   getBestMatch,
+  pockestCure,
 } from '../../contexts/PockestContext';
 
 function Lifecycle() {
@@ -138,6 +139,15 @@ function Lifecycle() {
     pockestState,
     refresh,
   ]);
+
+  React.useEffect(() => {
+    (async () => {
+      if (!pockestState?.initialized
+        || !pockestState?.data || pockestState?.data?.monster?.status === 1) return;
+      pockestDispatch(pockestLoading());
+      pockestDispatch(await pockestCure());
+    })();
+  }, [pockestDispatch, pockestState?.data, pockestState?.initialized]);
 }
 
 export default Lifecycle;
