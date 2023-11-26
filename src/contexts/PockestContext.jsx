@@ -23,119 +23,13 @@ const INITIAL_STATE = {
   feedTarget: 6,
   autoClean: false,
   autoTrain: false,
-  matchPreference: '',
+  matchPriority: 0,
+  matchLog: [],
   stat: 1,
   loading: false,
   error: null,
   initialized: false,
 };
-
-// ACTIONS
-export const ACTIONS = {
-  REFRESH: 'POCKEST_REFRESH',
-  LOADING: 'POCKEST_LOADING',
-  PAUSE: 'POCKEST_PAUSE',
-  ERROR: 'POCKEST_ERROR',
-  SETTINGS: 'POCKEST_SETTINGS',
-};
-export function pockestLoading() {
-  return [ACTIONS.LOADING];
-}
-export function pockestPause(paused) {
-  return [ACTIONS.PAUSE, {
-    paused,
-  }];
-}
-export function pockestSettings(settings) {
-  return [ACTIONS.SETTINGS, settings];
-}
-export function pockestAutoPlan({ autoPlan, monsterId, age }) {
-  let newSettings = {
-    autoPlan,
-  };
-  if (autoPlan) {
-    newSettings = {
-      ...newSettings,
-      ...getCurrentMonsterPlan(monsterId, age),
-      autoClean: true,
-      autoFeed: true,
-      autoTrain: true,
-    };
-  }
-  return [ACTIONS.SETTINGS, newSettings];
-}
-export async function pockestRefresh() {
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
-  const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
-}
-export async function pockestFeed() {
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/serving', {
-    body: '{"type":1}',
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-  });
-  const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
-}
-export async function pockestCure() {
-  return [ACTIONS.ERROR, '[pockestCure] NYI'];
-}
-export async function pockestClean() {
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cleaning', {
-    body: '{"type":1}',
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-  });
-  const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
-}
-export async function pockestTrain(type) {
-  if (type < 1 || type > 3) {
-    return [ACTIONS.ERROR, '[pockestTrain] type needs to be 1, 2, or 3'];
-  }
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/training', {
-    body: `{"type":${type}}`,
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-  });
-  const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
-}
-export async function pockestMatch(slot) {
-  if (slot < 1) {
-    return [ACTIONS.ERROR, '[pockestMatch] slot needs to be > 1'];
-  }
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/start', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({ slot }),
-  });
-  const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
-}
-export async function pockestSelectEgg(id) {
-  if (id < 1 || id > 4) {
-    return [ACTIONS.ERROR, '[pockestSelectEgg] id needs to be 1, 2, 3, or 4'];
-  }
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/eggs', {
-    body: `{"id":${id}}`,
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-  });
-  const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
-}
 
 // GETTERS
 
@@ -157,9 +51,12 @@ export async function getBestMatch(state) {
   const matchFeverOptions = monster?.matchFever;
   const { exchangeList } = await fetchMatchList();
   const sortedMatches = exchangeList?.sort((a, b) => {
+    const discoveryPref = state?.matchPriority === 1;
     const aFever = matchFeverOptions?.includes(a.monster_id) ? 1.5 : 1;
-    const aTotal = getTotalStats(a) * aFever;
     const bFever = matchFeverOptions?.includes(b.monster_id) ? 1.5 : 1;
+    if (discoveryPref && aFever && !bFever) return 1;
+    if (discoveryPref && bFever && !aFever) return -1;
+    const aTotal = getTotalStats(a) * aFever;
     const bTotal = getTotalStats(b) * bFever;
     return bTotal - aTotal;
   });
@@ -238,6 +135,128 @@ export function getCurrentPlanScheduleWindows(state) {
   };
 }
 
+// ACTIONS
+export const ACTIONS = {
+  REFRESH: 'POCKEST_REFRESH',
+  MATCH_SUCCESS: 'POCKEST_MATCH_SUCCESS',
+  LOADING: 'POCKEST_LOADING',
+  PAUSE: 'POCKEST_PAUSE',
+  ERROR: 'POCKEST_ERROR',
+  SETTINGS: 'POCKEST_SETTINGS',
+  CLEAR_MATCH_LOG: 'POCKEST_CLEAR_MATCH_LOG',
+};
+export function pockestLoading() {
+  return [ACTIONS.LOADING];
+}
+export function pockestPause(paused) {
+  return [ACTIONS.PAUSE, {
+    paused,
+  }];
+}
+export function pockestSettings(settings) {
+  return [ACTIONS.SETTINGS, settings];
+}
+export function pockestAutoPlan({ autoPlan, monsterId, age }) {
+  let newSettings = {
+    autoPlan,
+  };
+  if (autoPlan) {
+    newSettings = {
+      ...newSettings,
+      ...getCurrentMonsterPlan(monsterId, age),
+      autoClean: true,
+      autoFeed: true,
+      autoTrain: true,
+    };
+  }
+  return [ACTIONS.SETTINGS, newSettings];
+}
+export async function pockestRefresh() {
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
+  const { data } = await response.json();
+  return [ACTIONS.REFRESH, data];
+}
+export async function pockestFeed() {
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/serving', {
+    body: '{"type":1}',
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  const { data } = await response.json();
+  return [ACTIONS.REFRESH, data];
+}
+export async function pockestCure() {
+  return [ACTIONS.ERROR, '[pockestCure] NYI'];
+}
+export async function pockestClean() {
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cleaning', {
+    body: '{"type":1}',
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  const { data } = await response.json();
+  return [ACTIONS.REFRESH, data];
+}
+export async function pockestTrain(type) {
+  if (type < 1 || type > 3) {
+    return [ACTIONS.ERROR, '[pockestTrain] type needs to be 1, 2, or 3'];
+  }
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/training', {
+    body: `{"type":${type}}`,
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  const { data } = await response.json();
+  return [ACTIONS.REFRESH, data];
+}
+export async function pockestMatch(pockestState, match) {
+  if (match?.slot < 1) {
+    return [ACTIONS.ERROR, '[pockestMatch] slot needs to be > 1'];
+  }
+  const mementoBefore = pockestState?.data?.monster?.memento_point;
+
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/start', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({ slot: match?.slot }),
+  });
+  const res = await response.json();
+
+  if (res?.data?.exchangable === false) {
+    return [ACTIONS.ERROR, '[pockestMatch] server responded with failure'];
+  }
+  const matchLogEntry = {
+    timestamp: new Date().getTime(),
+    aId: getMonsterId(pockestState),
+    bId: match?.monster_id,
+    totalStats: getTotalStats(pockestState?.data?.monster) + getTotalStats(match?.monster),
+    mementoDiff: Math.max((res?.data?.monster?.memento_point || 0) - mementoBefore, 0),
+  };
+  return [ACTIONS.MATCH_SUCCESS, { data: res?.data, matchLogEntry }];
+}
+export async function pockestSelectEgg(id) {
+  if (id < 1 || id > 4) {
+    return [ACTIONS.ERROR, '[pockestSelectEgg] id needs to be 1, 2, 3, or 4'];
+  }
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/eggs', {
+    body: `{"id":${id}}`,
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  const { data } = await response.json();
+  return [ACTIONS.REFRESH, data];
+}
+
 // REDUCER
 function REDUCER(state, [type, payload]) {
   switch (type) {
@@ -260,7 +279,7 @@ function REDUCER(state, [type, payload]) {
         feedFrequency: payload.feedFrequency ?? state?.feedFrequency,
         feedTarget: payload.feedTarget ?? state?.feedTarget,
         stat: payload.stat ?? state?.stat,
-        matchPreference: payload.matchPreference ?? state?.matchPreference,
+        matchPriority: payload.matchPriority ?? state?.matchPriority,
       };
     case ACTIONS.PAUSE:
       return {
@@ -274,6 +293,21 @@ function REDUCER(state, [type, payload]) {
         initialized: true,
         data: payload,
       };
+    case ACTIONS.MATCH_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        matchLog: [
+          ...state.matchLog,
+          payload?.matchLogEntry,
+        ],
+        data: payload?.data,
+      };
+    case ACTIONS.CLEAR_MATCH_LOG:
+      return {
+        ...state,
+        matchLog: [],
+      };
     case ACTIONS.ERROR:
       return {
         ...state,
@@ -285,12 +319,18 @@ function REDUCER(state, [type, payload]) {
   }
 }
 
+let initialState = {
+  ...INITIAL_STATE,
+};
 const stateFromStorage = window.localStorage.getItem('PockestHelper');
-const initialState = stateFromStorage && JSON.parse(stateFromStorage);
-if (initialState) {
-  delete initialState.data;
-  delete initialState.initialized;
-  initialState.paused = true;
+if (stateFromStorage) {
+  initialState = {
+    ...initialState,
+    ...JSON.parse(stateFromStorage),
+    data: null,
+    initialized: false,
+    paused: true,
+  };
 }
 const PockestContext = createContext({
   pockestState: initialState ?? INITIAL_STATE,
@@ -300,7 +340,7 @@ const PockestContext = createContext({
 export function PockestProvider({
   children,
 }) {
-  const [pockestState, pockestDispatch] = useReducer(REDUCER, initialState ?? INITIAL_STATE);
+  const [pockestState, pockestDispatch] = useReducer(REDUCER, initialState);
 
   useEffect(() => {
     window.localStorage.setItem('PockestHelper', JSON.stringify(pockestState));

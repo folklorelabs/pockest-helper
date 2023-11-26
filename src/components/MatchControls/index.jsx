@@ -2,12 +2,10 @@ import React from 'react';
 import {
   usePockestContext,
   pockestSettings,
-  getMonsterId,
 } from '../../contexts/PockestContext';
 import { parseDurationStr } from '../../utils/parseDuration';
 import useNow from '../../hooks/useNow';
 import './index.css';
-import monsters from '../../data/monsters.json';
 
 function MatchControls() {
   const {
@@ -15,20 +13,12 @@ function MatchControls() {
     pockestDispatch,
   } = usePockestContext();
   const now = useNow();
-  const curMonsterId = React.useMemo(() => getMonsterId(pockestState), [pockestState]);
-  const matchTargets = React.useMemo(() => {
-    if (pockestState?.matchPreference) {
-      const targetMonster = monsters.find((m) => m.monster_id === pockestState?.matchPreference);
-      return targetMonster?.name_en;
-    }
-    const curMonster = monsters.find((m) => m.monster_id === curMonsterId);
-    const targets = curMonster?.matchFever?.map((id) => monsters.find((m) => m.monster_id === id));
-    return targets?.map((t) => t.name_en).join(', ');
-  }, [pockestState, curMonsterId]);
   const {
     data,
     autoMatch,
     paused,
+    matchPriority,
+    matchLog,
   } = pockestState;
   return (
     <div className="MatchControls">
@@ -47,6 +37,26 @@ function MatchControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">
+          Priority
+        </span>
+        <select
+          className="PockestSelect"
+          onChange={(e) => {
+            pockestDispatch(pockestSettings({ matchPriority: parseInt(e.target.value, 10) }));
+          }}
+          value={matchPriority || ''}
+          disabled={!paused}
+        >
+          <option key="0" value="0">
+            Points
+          </option>
+          <option key="1" value="1">
+            Discovery
+          </option>
+        </select>
+      </div>
+      <div className="PockestLine">
+        <span className="PockestText">
           Next Match
         </span>
         <span className="PockestText PockestLine-value">
@@ -55,11 +65,17 @@ function MatchControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">
-          Target
+          Reports
         </span>
-        <span className="PockestText PockestLine-value">
-          {matchTargets ?? '--'}
-        </span>
+        <button
+          type="button"
+          className="PockestText PockestLine-value PockestLink"
+          onClick={() => {
+            console.log(matchLog);
+          }}
+        >
+          {matchLog?.length ?? '--'}
+        </button>
       </div>
     </div>
   );

@@ -122,7 +122,7 @@ function Lifecycle() {
         const bestMatch = await getBestMatch(pockestState);
         console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestMatch(bestMatch?.slot));
+        pockestDispatch(await pockestMatch(pockestState, bestMatch));
       }
     }, 1000);
     return () => {

@@ -215,3 +215,15 @@
   opacity: 0.85;
   animation: 2s infinite alternate buttonOn;
 }
+
+.PockestLink {
+  text-decoration: underline;
+  background: inherit;
+  color: inherit;
+  box-shadow: none;
+  border: none;
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  line-height: inherit;
+}
