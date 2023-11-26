@@ -1,0 +1,61 @@
+@keyframes buttonOn {
+  from {
+    opacity: 0.75;
+  }
+
+  to {
+    opacity: 0.95;
+  }
+}
+
+.PauseBtn.PockestButton {
+  border-bottom: 4px solid #bbb;
+  padding: 0 3em 0 4em;
+}
+
+.PauseBtn.PockestButton:disabled {
+  border-bottom-color: transparent;
+}
+
+.PauseBtnTxt {
+  display: inline-block;
+  position: relative;
+  font-weight: 500;
+}
+
+.PauseBtnTxt::before,
+.PauseBtnTxt::after {
+  content: '';
+  width: 0.9em;
+  height: 0.9em;
+  display: inline-block;
+  margin-right: 0.3333em;
+  box-sizing: border-box;
+  line-height: inherit;
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.PauseBtnTxt::before {
+  border: 2px solid #bbb;
+  opacity: 0.8;
+}
+
+.PauseBtnTxt::after {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.PauseBtn.PockestButton--on {
+  border-bottom-color: #d5a613;
+}
+
+.PauseBtn.PockestButton--on .PauseBtnTxt::after {
+  background-image: url(/6/buckler/assets/images/auth/icon_check.png);
+  /* filter: hue-rotate(-13deg) saturate(84%) brightness(88%); */
+  filter: brightness(15%) saturate(0);
+  opacity: 0.9;
+}
