@@ -144,6 +144,9 @@ function Lifecycle() {
     (async () => {
       if (!pockestState?.initialized
         || !pockestState?.data || pockestState?.data?.monster?.status === 1) return;
+
+      const now = new Date();
+      console.log(now.toLocaleString(), 'CURE');
       pockestDispatch(pockestLoading());
       pockestDispatch(await pockestCure());
     })();
