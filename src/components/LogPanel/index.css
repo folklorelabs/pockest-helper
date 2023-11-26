@@ -1,0 +1,28 @@
+.LogPanel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  padding: 2.8rem 1rem 1rem;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.LogPanel-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: 0;
+  color: #fff;
+  padding: 0rem 0.6rem 0.6rem;
+  opacity: 0.3;
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.LogPanel-close:hover {
+  opacity: 0.6;
+}

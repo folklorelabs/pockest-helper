@@ -259,6 +259,9 @@ export async function pockestSelectEgg(id) {
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
 }
+export async function pockestClearMatchLog() {
+  return [ACTIONS.CLEAR_MATCH_LOG];
+}
 
 // REDUCER
 function REDUCER(state, [type, payload]) {
