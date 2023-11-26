@@ -8,6 +8,14 @@ import './index.css';
 import Timer from '../Timer';
 import getMonsterPlan from '../../utils/getMonsterPlan';
 
+const MONSTER_LIFESPAN = {
+  1: 1 * 60 * 60 * 1000, // 1 hour
+  2: 12 * 60 * 60 * 1000, // 12 hour
+  3: (1 * 24 * 60 * 60 * 1000) + (12 * 60 * 60 * 1000), // 1 day 12 hours
+  4: 3 * 24 * 60 * 60 * 1000, // 3 days
+  5: 7 * 24 * 60 * 60 * 1000, // 7 days
+};
+
 function AutoPlanControls() {
   const {
     pockestState,
@@ -55,7 +63,9 @@ function AutoPlanControls() {
           if (data?.monster?.memento_flg) return `Age ${curAge} → 🎁`;
           return `Age ${curAge} → 🎁/🪦`;
         })()}
-        timestamp={data?.next_big_event_timer}
+        timestamp={curAge && data?.monster
+          ? data.monster.live_time + MONSTER_LIFESPAN[curAge]
+          : null}
       />
     </div>
   );
