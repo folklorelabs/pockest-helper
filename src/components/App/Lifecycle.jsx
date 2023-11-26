@@ -119,10 +119,10 @@ function Lifecycle() {
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
+        pockestDispatch(pockestLoading());
         const bestMatch = await getBestMatch(pockestState);
         console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestMatch(bestMatch?.slot));
+        pockestDispatch(await pockestMatch(pockestState, bestMatch));
       }
     }, 1000);
     return () => {
