@@ -189,7 +189,7 @@
   font-weight: 700;
   font-family: Oswald, sans-serif;
   height: 2.7em;
-  clip-path: polygon(min(0.5208333333vw, 10px) 0, 100% 0, 100% calc(100% - min(0.5208333333vw, 10px)), calc(100% - min(0.5208333333vw, 10px)) 100%, 0 100%, 0 min(0.5208333333vw, 10px));
+  clip-path: polygon(4px 0, 100% 0, 100% calc(100% - 4px), calc(100% - 4px) 100%, 0 100%, 0 4px);
   font-size: 1rem;
   border: 0;
   font-weight: 500;
@@ -199,6 +199,8 @@
 
 .PockestButton:disabled {
   cursor: default;
+  opacity: 0.8;
+  color: #bbb;
 }
 
 .PockestLink {
