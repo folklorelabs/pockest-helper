@@ -3,6 +3,7 @@ import {
   usePockestContext,
   pockestSettings,
 } from '../../contexts/PockestContext';
+import monsters from '../../data/monsters.json';
 import { parseDurationStr } from '../../utils/parseDuration';
 import useNow from '../../hooks/useNow';
 import './index.css';
@@ -72,6 +73,13 @@ function MatchControls() {
           className="PockestText PockestLine-value PockestLink"
           onClick={() => {
             console.log(matchLog);
+            matchLog.forEach((entry) => {
+              const dateLabel = new Date(entry.timestamp);
+              const fever = entry.mementoDiff > entry.totalStats / 2;
+              const a = monsters.find((m) => m.monster_id === entry.aId);
+              const b = monsters.find((m) => m.monster_id === entry.bId);
+              console.log(`${dateLabel}: ${a.name_en} vs ${b.name_en} (${fever})`);
+            });
           }}
         >
           {matchLog?.length ?? '--'}
