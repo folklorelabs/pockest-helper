@@ -51,7 +51,7 @@ function MatchControls() {
             Points
           </option>
           <option key="1" value="1">
-            Discovery
+            No fever
           </option>
         </select>
       </div>
