@@ -44,7 +44,7 @@ function MatchLog() {
           className="MatchLog-textarea"
           value={matchReport.join('\n\n')}
           readOnly
-          rows={20}
+          rows={12}
         />
         <div
           className="MatchLog-buttons"
