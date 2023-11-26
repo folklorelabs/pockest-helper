@@ -11,6 +11,22 @@
   overflow-y: auto;
 }
 
+#PockestHelperExtension .App::-webkit-scrollbar {
+  width: 2px;
+}
+
+#PockestHelperExtension .App::-webkit-scrollbar-track {
+  background: rgba(242, 242, 242, 0);
+}
+
+#PockestHelperExtension .App::-webkit-scrollbar-thumb {
+  background: rgb(100, 100, 100);
+}
+
+#PockestHelperExtension .App::-webkit-scrollbar-thumb:hover {
+  background: rgb(135, 135, 135)
+}
+
 #PockestHelperExtension .App--minimized {
   transform: translate(0, calc(100% - 30px));
 }
