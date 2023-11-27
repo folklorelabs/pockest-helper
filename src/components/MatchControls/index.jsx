@@ -19,6 +19,7 @@ function MatchControls() {
     autoMatch,
     paused,
     matchPriority,
+    curePreference,
   } = pockestState;
   return (
     <div className="MatchControls">
@@ -34,6 +35,26 @@ function MatchControls() {
           />
           <span className="PockestCheck-text">Match</span>
         </label>
+      </div>
+      <div className="PockestLine">
+        <span className="PockestText">
+          Cure
+        </span>
+        <select
+          className="PockestSelect"
+          onChange={(e) => {
+            pockestDispatch(pockestSettings({ curePreference: parseInt(e.target.value, 10) }));
+          }}
+          value={curePreference || ''}
+          disabled={!paused}
+        >
+          <option key="0" value="0">
+            Never
+          </option>
+          <option key="1" value="1">
+            When stunned
+          </option>
+        </select>
       </div>
       <div className="PockestLine">
         <span className="PockestText">

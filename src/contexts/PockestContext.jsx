@@ -25,6 +25,7 @@ const INITIAL_STATE = {
   autoClean: false,
   autoTrain: false,
   matchPriority: 0,
+  curePreference: 0,
   log: [],
   stat: 1,
   loading: false,
@@ -340,6 +341,7 @@ function REDUCER(state, [type, payload]) {
         feedTarget: payload.feedTarget ?? state?.feedTarget,
         stat: payload.stat ?? state?.stat,
         matchPriority: payload.matchPriority ?? state?.matchPriority,
+        curePreference: payload.curePreference ?? state?.curePreference,
       };
     case ACTIONS.PAUSE:
       return {
