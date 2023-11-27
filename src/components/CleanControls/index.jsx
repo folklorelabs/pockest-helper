@@ -7,6 +7,7 @@ import {
 import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
+import LogCountLine from '../LogCountLine';
 
 // CONSTS
 const CLEAN_INTERVAL = {
@@ -102,6 +103,10 @@ function CleanControls() {
           })()}
         </span>
       </div>
+      <LogCountLine
+        title="Cleanings"
+        logTypes={['clean']}
+      />
     </div>
   );
 }

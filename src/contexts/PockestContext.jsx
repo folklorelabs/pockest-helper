@@ -25,12 +25,7 @@ const INITIAL_STATE = {
   autoClean: false,
   autoTrain: false,
   matchPriority: 0,
-  log: {
-    clean: [],
-    meal: [],
-    training: [],
-    match: [],
-  },
+  log: [],
   stat: 1,
   loading: false,
   error: null,
@@ -149,7 +144,7 @@ export const ACTIONS = {
   PAUSE: 'POCKEST_PAUSE',
   ERROR: 'POCKEST_ERROR',
   SETTINGS: 'POCKEST_SETTINGS',
-  CLEAR_LOG: 'POCKEST_CLEAR_LOG',
+  SET_LOG: 'POCKEST_SET_LOG',
 };
 export function pockestLoading() {
   return [ACTIONS.LOADING];
@@ -192,10 +187,11 @@ export async function pockestFeed(pockestState) {
   });
   const { data } = await response.json();
   const logEntry = {
+    logType: 'meal',
     timestamp: new Date().getTime(),
     monsterId: getMonsterId(pockestState),
   };
-  return [ACTIONS.ACTION_SUCCESS, { data, logType: 'meal', logEntry }];
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestCure() {
   return [ACTIONS.ERROR, '[pockestCure] NYI'];
@@ -210,10 +206,11 @@ export async function pockestClean(pockestState) {
   });
   const { data } = await response.json();
   const logEntry = {
+    logType: 'clean',
     timestamp: new Date().getTime(),
     monsterId: getMonsterId(pockestState),
   };
-  return [ACTIONS.ACTION_SUCCESS, { data, logType: 'clean', logEntry }];
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestTrain(pockestState, type) {
   if (type < 1 || type > 3) {
@@ -233,12 +230,13 @@ export async function pockestTrain(pockestState, type) {
     return [ACTIONS.ERROR, '[pockestTrain] server responded with failure'];
   }
   const logEntry = {
+    logType: 'training',
     timestamp: new Date().getTime(),
     monsterId: getMonsterId(pockestState),
     statType,
     statDiff: (data?.monster?.[statType] || 0) - statBefore,
   };
-  return [ACTIONS.ACTION_SUCCESS, { data, logType: 'training', logEntry }];
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestMatch(pockestState, match) {
   if (match?.slot < 1) {
@@ -259,13 +257,14 @@ export async function pockestMatch(pockestState, match) {
     return [ACTIONS.ERROR, '[pockestMatch] server responded with failure'];
   }
   const logEntry = {
+    logType: 'match',
     timestamp: new Date().getTime(),
     aId: getMonsterId(pockestState),
     bId: match?.monster_id,
     totalStats: getTotalStats(pockestState?.data?.monster) + getTotalStats(match?.monster),
     mementoDiff: Math.max((data?.monster?.memento_point || 0) - mementoBefore, 0),
   };
-  return [ACTIONS.ACTION_SUCCESS, { data, logType: 'match', logEntry }];
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestSelectEgg(id) {
   if (id < 1 || id > 4) {
@@ -281,11 +280,12 @@ export async function pockestSelectEgg(id) {
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
 }
-export function pockestClearLog(logType) {
-  if (!logType) {
-    return [ACTIONS.ERROR, `[pockestClearLog] Unknown logType ${logType}`];
+export function pockestClearLog(pockestState, logTypes) {
+  if (!Array.isArray(logTypes)) {
+    return [ACTIONS.ERROR, `[pockestClearLog] Unknown logTypes ${logTypes}`];
   }
-  return [ACTIONS.CLEAR_LOG, logType];
+  const newLog = pockestState?.log?.filter((l) => !logTypes.includes(l.logType));
+  return [ACTIONS.SET_LOG, newLog];
 }
 
 // REDUCER
@@ -329,22 +329,16 @@ function REDUCER(state, [type, payload]) {
         ...state,
         loading: false,
         error: null,
-        log: {
+        log: [
           ...state.log,
-          [payload.logType]: [
-            ...state.log[payload.logType],
-            payload.logEntry,
-          ],
-        },
+          payload?.logEntry,
+        ],
         data: payload?.data,
       };
-    case ACTIONS.CLEAR_LOG:
+    case ACTIONS.SET_LOG:
       return {
         ...state,
-        log: {
-          ...state.log,
-          [payload]: [],
-        },
+        log: payload,
       };
     case ACTIONS.ERROR:
       return {

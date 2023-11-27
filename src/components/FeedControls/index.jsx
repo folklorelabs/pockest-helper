@@ -7,6 +7,7 @@ import {
 import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
+import LogCountLine from '../LogCountLine';
 
 // CONSTS
 const FEED_INTERVAL = {
@@ -119,6 +120,10 @@ function FeedControls() {
           })()}
         </span>
       </div>
+      <LogCountLine
+        title="Meals"
+        logTypes={['meal']}
+      />
     </div>
   );
 }

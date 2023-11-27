@@ -6,6 +6,7 @@ import {
 import { STAT_ID } from '../../config/stats';
 import './index.css';
 import Timer from '../Timer';
+import LogCountLine from '../LogCountLine';
 
 function TrainControls() {
   const {
@@ -72,6 +73,10 @@ function TrainControls() {
         </select>
       </div>
       <Timer label="Next Training" timestamp={data?.monster?.training_time} />
+      <LogCountLine
+        title="Trainings"
+        logTypes={['training']}
+      />
     </div>
   );
 }
