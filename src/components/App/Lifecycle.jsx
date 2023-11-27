@@ -88,7 +88,7 @@ function Lifecycle() {
       if (attemptToCure) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestCure());
+        pockestDispatch(await pockestCure(pockestState));
       }
 
       // Clean

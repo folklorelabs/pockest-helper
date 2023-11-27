@@ -203,7 +203,7 @@ export async function pockestFeed(pockestState) {
   };
   return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
-export async function pockestCure() {
+export async function pockestCure(pockestState) {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cure', {
     body: '{"type":1}',
     method: 'POST',
@@ -212,7 +212,12 @@ export async function pockestCure() {
     },
   });
   const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
+  const logEntry = {
+    logType: 'cure',
+    timestamp: new Date().getTime(),
+    monsterId: getMonsterId(pockestState),
+  };
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestClean(pockestState) {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cleaning', {
