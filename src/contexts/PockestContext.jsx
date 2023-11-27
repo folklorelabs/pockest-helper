@@ -273,7 +273,7 @@ export async function pockestMatch(pockestState, match) {
   const logEntry = {
     logType: 'match',
     timestamp: new Date().getTime(),
-    aId: getMonsterId(pockestState),
+    monsterId: getMonsterId(pockestState),
     bId: match?.monster_id,
     totalStats: getTotalStats(pockestState?.data?.monster) + getTotalStats(match),
     mementoDiff: Math.max((data?.monster?.memento_point || 0) - mementoBefore, 0),
