@@ -6,6 +6,7 @@ import {
 } from '../../contexts/PockestContext';
 import monsters from '../../data/monsters.json';
 import './index.css';
+import { STAT_ID_ICON } from '../../config/stats';
 
 function isMatchDiscovery(entry) {
   const a = monsters.find((m) => m.monster_id === entry.aId);
@@ -22,7 +23,8 @@ const REPORT_TEMPLATES = {
     const emoji = (() => {
       if (entry?.logType === 'clean') return '🧹';
       if (entry?.logType === 'meal') return '🍎';
-      if (entry?.logType === 'training') return '💪🏼';
+      if (entry?.logType === 'training') return STAT_ID_ICON[entry?.statType];
+      if (entry?.logType === 'cure') return '🩹';
       if (entry?.logType === 'age') return '⬆️';
       if (entry?.logType === 'egg') return '🥚';
       return '';
