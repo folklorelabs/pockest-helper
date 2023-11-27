@@ -52,7 +52,7 @@ function FeedControls() {
         <span className="PockestText">
           <span className="PockestIcon">❤️</span>
           {' '}
-          {typeof data?.monster?.stomach === 'number' ? data?.monster?.stomach : '--'}
+          {typeof data?.monster?.stomach === 'number' ? `${data?.monster?.stomach}/6` : '--'}
         </span>
       </div>
       <div className="PockestLine">
