@@ -36,8 +36,8 @@ function Lifecycle() {
   const refresh = React.useCallback(async () => {
     nextRandomReset.current = getNextRefresh();
     pockestDispatch(pockestLoading());
-    pockestDispatch(await pockestRefresh());
-  }, [pockestDispatch]);
+    pockestDispatch(await pockestRefresh(pockestState));
+  }, [pockestDispatch, pockestState]);
 
   React.useEffect(() => {
     const interval = window.setInterval(async () => {

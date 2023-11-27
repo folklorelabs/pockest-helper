@@ -23,12 +23,20 @@ const REPORT_TEMPLATES = {
       if (entry?.logType === 'clean') return '🧹';
       if (entry?.logType === 'meal') return '🍎';
       if (entry?.logType === 'training') return '💪🏼';
+      if (entry?.logType === 'age') return '⬆️';
+      if (entry?.logType === 'egg') return '🥚';
       return '';
     })();
     const entryStr = (() => {
-      if (entry?.logType === 'clean') return 'clean';
-      if (entry?.logType === 'meal') return 'feed';
-      if (entry?.logType === 'training') return `train ${entry?.statType} (+${entry?.statDiff})`;
+      if (entry?.logType === 'clean') return 'cleaned';
+      if (entry?.logType === 'meal') return 'fed';
+      if (entry?.logType === 'training') return `trained ${entry?.statType} (+${entry?.statDiff})`;
+      if (entry?.logType === 'age') {
+        const monsterBefore = monsters.find((m) => m.monster_id === entry?.monsterIdBefore);
+        const newAge = parseInt(monster?.plan?.slice(1, 2) || '0', 10);
+        return `aged ${newAge - 1} (${monsterBefore?.name_en}) → ${newAge} (${monster?.name_en})`;
+      }
+      if (entry?.logType === 'egg') return `hatched ${entry?.eggType}`;
       return '';
     })();
     return `[${dateStr}] ${emoji} ${monster.name_en} ${entryStr} `;
@@ -130,7 +138,7 @@ function CareLog({
 
 CareLog.defaultProps = {
   title: 'Log',
-  logTypes: ['clean', 'meal', 'training', 'match'],
+  logTypes: ['clean', 'meal', 'training', 'match', 'age', 'egg'],
   rows: 12,
   allowClear: true,
   onlyDiscoveries: false,
