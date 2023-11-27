@@ -172,9 +172,19 @@ export function pockestAutoPlan({ autoPlan, monsterId, age }) {
   }
   return [ACTIONS.SETTINGS, newSettings];
 }
-export async function pockestRefresh() {
+export async function pockestRefresh(pockestState) {
+  const monsterIdBefore = pockestState?.data?.monster?.monster_id;
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
   const { data } = await response.json();
+  if (monsterIdBefore && monsterIdBefore !== data?.monster?.monster_id) {
+    const logEntry = {
+      logType: 'age',
+      timestamp: new Date().getTime(),
+      monsterId: getMonsterId(pockestState),
+      monsterIdBefore,
+    };
+    return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
+  }
   return [ACTIONS.REFRESH, data];
 }
 export async function pockestFeed(pockestState) {
@@ -266,7 +276,7 @@ export async function pockestMatch(pockestState, match) {
   };
   return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
-export async function pockestSelectEgg(id) {
+export async function pockestSelectEgg(pockestState, id) {
   if (id < 1 || id > 4) {
     return [ACTIONS.ERROR, '[pockestSelectEgg] id needs to be 1, 2, 3, or 4'];
   }
@@ -278,7 +288,13 @@ export async function pockestSelectEgg(id) {
     },
   });
   const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
+  const logEntry = {
+    logType: 'egg',
+    timestamp: new Date().getTime(),
+    monsterId: getMonsterId(pockestState),
+    eggType: id,
+  };
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export function pockestClearLog(pockestState, logTypes) {
   if (!Array.isArray(logTypes)) {
