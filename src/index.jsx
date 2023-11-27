@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { PockestProvider } from './contexts/PockestContext';
+import { AppProvider } from './contexts/AppContext';
 import App from './components/App';
 import './index.css';
 
@@ -12,7 +13,9 @@ document.querySelector('body').appendChild(mainEl);
 ReactDOM.createRoot(mainEl).render(
   <React.StrictMode>
     <PockestProvider>
-      <App />
+      <AppProvider>
+        <App />
+      </AppProvider>
     </PockestProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

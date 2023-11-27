@@ -3,7 +3,7 @@ import {
   usePockestContext,
   pockestSettings,
 } from '../../contexts/PockestContext';
-import monsters from '../../data/monsters.json';
+import LogCountLine from '../LogCountLine';
 import { parseDurationStr } from '../../utils/parseDuration';
 import useNow from '../../hooks/useNow';
 import './index.css';
@@ -19,20 +19,7 @@ function MatchControls() {
     autoMatch,
     paused,
     matchPriority,
-    matchLog,
   } = pockestState;
-  const matchReport = React.useMemo(() => matchLog.map((entry) => {
-    const dateLabel = (new Date(entry.timestamp)).toLocaleString();
-    const a = monsters.find((m) => m.monster_id === entry.aId);
-    const hasFever = entry.mementoDiff > entry.totalStats / 2;
-    const expectFever = a.matchFever.includes(entry.bId);
-    const b = monsters.find((m) => m.monster_id === entry.bId);
-    const emojis = [
-      !expectFever && hasFever && '🆕',
-      hasFever && '🔥',
-    ].filter((e) => e).join('');
-    return `${emojis}${a.name_en} vs ${b.name_en} (${dateLabel})`;
-  }), [matchLog]);
   return (
     <div className="MatchControls">
       <div className="PockestLine">
@@ -76,21 +63,10 @@ function MatchControls() {
           {data?.monster?.exchange_time ? parseDurationStr(data.monster.exchange_time - now.getTime()) : '--'}
         </span>
       </div>
-      <div className="PockestLine">
-        <span className="PockestText">
-          Reports
-        </span>
-        <button
-          type="button"
-          className="PockestText PockestLine-value PockestLink"
-          onClick={() => {
-            console.log(matchReport.join('\n'));
-            navigator.clipboard.writeText(matchReport.join('\n'));
-          }}
-        >
-          {matchLog?.length ?? '--'}
-        </button>
-      </div>
+      <LogCountLine
+        title="Matches"
+        logTypes={['match']}
+      />
     </div>
   );
 }

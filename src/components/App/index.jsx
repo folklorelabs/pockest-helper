@@ -10,12 +10,18 @@ import MatchControls from '../MatchControls';
 import TrainControls from '../TrainControls';
 import BuyEggBtn from '../BuyEggBtn';
 import { usePockestContext } from '../../contexts/PockestContext';
+import { useAppContext } from '../../contexts/AppContext';
 import EggControls from '../EggControls';
+import LogPanel from '../LogPanel';
+import CareLog from '../CareLog';
 
 function App() {
   const {
     pockestState,
   } = usePockestContext();
+  const {
+    showLog,
+  } = useAppContext();
   const [minimized, setMinimized] = React.useState(false);
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
@@ -52,6 +58,12 @@ function App() {
           </div>
         </>
       )}
+      {showLog ? (
+        <LogPanel>
+          <CareLog title="Care Log" rows={36} />
+          <CareLog title="Newly Discovered Fever Matches" logTypes={['match']} onlyDiscoveries allowClear={false} />
+        </LogPanel>
+      ) : ''}
     </div>
   );
 }

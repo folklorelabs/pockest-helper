@@ -45,7 +45,7 @@ function AutoPlanControls() {
             defaultChecked={autoPlan}
             disabled={!paused}
           />
-          <span className="PockestCheck-text">Auto-Plan</span>
+          <span className="PockestCheck-text">Preset</span>
         </label>
       </div>
       <div className="PockestLine">
