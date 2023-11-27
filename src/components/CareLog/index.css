@@ -1,18 +1,22 @@
-.MatchLog-header {
+.CareLog {
+  margin-bottom: 2rem;
+}
+
+.CareLog-header {
   margin-bottom: 0.5rem;
 }
 
-.MatchLog-title {
+.CareLog-title {
   font-size: 1.333em;
   font-family: Oswald, sans-serif;
   text-transform: uppercase;
 }
 
-.MatchLog-content {
+.CareLog-content {
   position: relative;
 }
 
-.MatchLog-textarea {
+.CareLog-textarea {
   display: block;
   width: 100%;
   resize: none;
@@ -23,23 +27,23 @@
   color: #fff;
 }
 
-.MatchLog-textarea::-webkit-scrollbar {
+.CareLog-textarea::-webkit-scrollbar {
   width: 4px;
 }
 
-.MatchLog-textarea::-webkit-scrollbar-track {
+.CareLog-textarea::-webkit-scrollbar-track {
   background: rgba(242, 242, 242, 0);
 }
 
-.MatchLog-textarea::-webkit-scrollbar-thumb {
+.CareLog-textarea::-webkit-scrollbar-thumb {
   background: rgb(188, 188, 188);
 }
 
-.MatchLog-textarea::-webkit-scrollbar-thumb:hover {
+.CareLog-textarea::-webkit-scrollbar-thumb:hover {
   background: rgb(148, 148, 148)
 }
 
-.MatchLog .PockestLink {
+.CareLog .PockestLink {
   text-transform: uppercase;
   font-weight: 700;
   text-decoration: none;
@@ -47,7 +51,7 @@
   line-height: 1em;
 }
 
-.MatchLog-buttons {
+.CareLog-buttons {
   position: relative;
   display: flex;
   justify-content: space-between;

@@ -8,12 +8,12 @@ import CleanControls from '../CleanControls';
 import FeedControls from '../FeedControls';
 import MatchControls from '../MatchControls';
 import TrainControls from '../TrainControls';
-import MatchLog from '../MatchLog';
 import BuyEggBtn from '../BuyEggBtn';
 import { usePockestContext } from '../../contexts/PockestContext';
 import { useAppContext } from '../../contexts/AppContext';
 import EggControls from '../EggControls';
 import LogPanel from '../LogPanel';
+import CareLog from '../CareLog';
 
 function App() {
   const {
@@ -60,7 +60,8 @@ function App() {
       )}
       {showLog ? (
         <LogPanel>
-          <MatchLog />
+          <CareLog title="Care Log" rows={36} logTypes={['clean', 'meal', 'training', 'match']} />
+          <CareLog title="Newly Discovered Fever Matches" logTypes={['match']} onlyDiscoveries allowClear={false} />
         </LogPanel>
       ) : ''}
     </div>

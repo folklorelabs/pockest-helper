@@ -3,9 +3,7 @@ import {
   usePockestContext,
   pockestSettings,
 } from '../../contexts/PockestContext';
-import {
-  useAppContext,
-} from '../../contexts/AppContext';
+import LogCountLine from '../LogCountLine';
 import { parseDurationStr } from '../../utils/parseDuration';
 import useNow from '../../hooks/useNow';
 import './index.css';
@@ -15,14 +13,12 @@ function MatchControls() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const { setShowLog } = useAppContext();
   const now = useNow();
   const {
     data,
     autoMatch,
     paused,
     matchPriority,
-    matchLog,
   } = pockestState;
   return (
     <div className="MatchControls">
@@ -67,20 +63,10 @@ function MatchControls() {
           {data?.monster?.exchange_time ? parseDurationStr(data.monster.exchange_time - now.getTime()) : '--'}
         </span>
       </div>
-      <div className="PockestLine">
-        <span className="PockestText">
-          Matches
-        </span>
-        <button
-          type="button"
-          className="PockestText PockestLine-value PockestLink"
-          onClick={() => {
-            setShowLog(true);
-          }}
-        >
-          {matchLog?.length ?? '--'}
-        </button>
-      </div>
+      <LogCountLine
+        title="Matches"
+        logTypes={['match']}
+      />
     </div>
   );
 }

@@ -10,6 +10,7 @@ import monsters from '../data/monsters.json';
 import getTimeIntervals from '../utils/getTimeIntervals';
 import getTotalStats from '../utils/getTotalStats';
 import getMonsterPlan, { getCurrentMonsterPlan } from '../utils/getMonsterPlan';
+import { STAT_ID } from '../config/stats';
 
 // STATE
 const INITIAL_STATE = {
@@ -24,7 +25,7 @@ const INITIAL_STATE = {
   autoClean: false,
   autoTrain: false,
   matchPriority: 0,
-  matchLog: [],
+  log: [],
   stat: 1,
   loading: false,
   error: null,
@@ -138,12 +139,12 @@ export function getCurrentPlanScheduleWindows(state) {
 // ACTIONS
 export const ACTIONS = {
   REFRESH: 'POCKEST_REFRESH',
-  MATCH_SUCCESS: 'POCKEST_MATCH_SUCCESS',
+  ACTION_SUCCESS: 'POCKEST_ACTION_SUCCESS',
   LOADING: 'POCKEST_LOADING',
   PAUSE: 'POCKEST_PAUSE',
   ERROR: 'POCKEST_ERROR',
   SETTINGS: 'POCKEST_SETTINGS',
-  CLEAR_MATCH_LOG: 'POCKEST_CLEAR_MATCH_LOG',
+  SET_LOG: 'POCKEST_SET_LOG',
 };
 export function pockestLoading() {
   return [ACTIONS.LOADING];
@@ -176,7 +177,7 @@ export async function pockestRefresh() {
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
 }
-export async function pockestFeed() {
+export async function pockestFeed(pockestState) {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/serving', {
     body: '{"type":1}',
     method: 'POST',
@@ -185,12 +186,17 @@ export async function pockestFeed() {
     },
   });
   const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
+  const logEntry = {
+    logType: 'meal',
+    timestamp: new Date().getTime(),
+    monsterId: getMonsterId(pockestState),
+  };
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestCure() {
   return [ACTIONS.ERROR, '[pockestCure] NYI'];
 }
-export async function pockestClean() {
+export async function pockestClean(pockestState) {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cleaning', {
     body: '{"type":1}',
     method: 'POST',
@@ -199,12 +205,19 @@ export async function pockestClean() {
     },
   });
   const { data } = await response.json();
-  return [ACTIONS.REFRESH, data];
+  const logEntry = {
+    logType: 'clean',
+    timestamp: new Date().getTime(),
+    monsterId: getMonsterId(pockestState),
+  };
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
-export async function pockestTrain(type) {
+export async function pockestTrain(pockestState, type) {
   if (type < 1 || type > 3) {
     return [ACTIONS.ERROR, '[pockestTrain] type needs to be 1, 2, or 3'];
   }
+  const statType = STAT_ID[type];
+  const statBefore = pockestState?.data?.monster?.[statType];
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/training', {
     body: `{"type":${type}}`,
     method: 'POST',
@@ -216,7 +229,14 @@ export async function pockestTrain(type) {
   if (data?.event !== 'training') {
     return [ACTIONS.ERROR, '[pockestTrain] server responded with failure'];
   }
-  return [ACTIONS.REFRESH, data];
+  const logEntry = {
+    logType: 'training',
+    timestamp: new Date().getTime(),
+    monsterId: getMonsterId(pockestState),
+    statType,
+    statDiff: (data?.monster?.[statType] || 0) - statBefore,
+  };
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestMatch(pockestState, match) {
   if (match?.slot < 1) {
@@ -236,14 +256,15 @@ export async function pockestMatch(pockestState, match) {
   if (data?.exchangable === false) {
     return [ACTIONS.ERROR, '[pockestMatch] server responded with failure'];
   }
-  const matchLogEntry = {
+  const logEntry = {
+    logType: 'match',
     timestamp: new Date().getTime(),
     aId: getMonsterId(pockestState),
     bId: match?.monster_id,
     totalStats: getTotalStats(pockestState?.data?.monster) + getTotalStats(match?.monster),
     mementoDiff: Math.max((data?.monster?.memento_point || 0) - mementoBefore, 0),
   };
-  return [ACTIONS.MATCH_SUCCESS, { data, matchLogEntry }];
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestSelectEgg(id) {
   if (id < 1 || id > 4) {
@@ -259,8 +280,12 @@ export async function pockestSelectEgg(id) {
   const { data } = await response.json();
   return [ACTIONS.REFRESH, data];
 }
-export async function pockestClearMatchLog() {
-  return [ACTIONS.CLEAR_MATCH_LOG];
+export function pockestClearLog(pockestState, logTypes) {
+  if (!Array.isArray(logTypes)) {
+    return [ACTIONS.ERROR, `[pockestClearLog] Unknown logTypes ${logTypes}`];
+  }
+  const newLog = pockestState?.log?.filter((l) => !logTypes.includes(l.logType));
+  return [ACTIONS.SET_LOG, newLog];
 }
 
 // REDUCER
@@ -299,20 +324,21 @@ function REDUCER(state, [type, payload]) {
         initialized: true,
         data: payload,
       };
-    case ACTIONS.MATCH_SUCCESS:
+    case ACTIONS.ACTION_SUCCESS:
       return {
         ...state,
         loading: false,
-        matchLog: [
-          ...state.matchLog,
-          payload?.matchLogEntry,
+        error: null,
+        log: [
+          ...state.log,
+          payload?.logEntry,
         ],
         data: payload?.data,
       };
-    case ACTIONS.CLEAR_MATCH_LOG:
+    case ACTIONS.SET_LOG:
       return {
         ...state,
-        matchLog: [],
+        log: payload,
       };
     case ACTIONS.ERROR:
       return {
