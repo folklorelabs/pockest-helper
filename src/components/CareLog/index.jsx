@@ -7,33 +7,56 @@ import {
 import monsters from '../../data/monsters.json';
 import './index.css';
 
+function isMatchDiscovery(entry) {
+  const a = monsters.find((m) => m.monster_id === entry.aId);
+  const isFever = entry.mementoDiff > entry.totalStats / 2;
+  const expectFever = a.matchFever.includes(entry.bId);
+  const isDiscovery = (!expectFever && isFever);
+  return isDiscovery;
+}
+
 const REPORT_TEMPLATES = {
   default: (entry) => {
     const dateStr = (new Date(entry?.timestamp)).toLocaleString();
     const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
-    const entryStr = (() => {
-      if (entry?.logType === 'clean') return '🧹 Clean';
-      if (entry?.logType === 'meal') return '🍎 Feed';
-      if (entry?.logType === 'training') return `💪🏼 Train ${entry?.statType} (+${entry?.statDiff})`;
+    const emoji = (() => {
+      if (entry?.logType === 'clean') return '🧹';
+      if (entry?.logType === 'meal') return '🍎';
+      if (entry?.logType === 'training') return '💪🏼';
       return '';
     })();
-    return `[${dateStr} | ${monster.name_en}] ${entryStr} `;
+    const entryStr = (() => {
+      if (entry?.logType === 'clean') return 'clean';
+      if (entry?.logType === 'meal') return 'feed';
+      if (entry?.logType === 'training') return `train ${entry?.statType} (+${entry?.statDiff})`;
+      return '';
+    })();
+    return `[${dateStr}] ${emoji} ${monster.name_en} ${entryStr} `;
   },
   match: (entry) => {
     const dateStr = (new Date(entry.timestamp)).toLocaleString();
     const a = monsters.find((m) => m.monster_id === entry.aId);
-    const hasFever = entry.mementoDiff > entry.totalStats / 2;
-    const expectFever = a.matchFever.includes(entry.bId);
+    const isFever = entry.mementoDiff > entry.totalStats / 2;
     const b = monsters.find((m) => m.monster_id === entry.bId);
-    const emojis = [
-      !expectFever && hasFever && '🆕',
-      hasFever && '🔥 ',
-    ].filter((e) => e).join('');
-    return `[${dateStr}] ${emojis}${a.name_en} vs ${b.name_en}`;
+    const emojis = (() => {
+      if (isFever) return '🆚';
+      return '🆚';
+    })();
+    const entryStr = (() => {
+      if (isFever) return `vs ${b.name_en}`;
+      return `vs ${b.name_en}`;
+    })();
+    return `[${dateStr}] ${emojis} ${a.name_en} ${entryStr} (+${entry?.mementoDiff}) ${isFever ? '<FEVER>' : ''}`;
   },
 };
 
-function CareLog({ title, logTypes }) {
+function CareLog({
+  title,
+  logTypes,
+  rows,
+  allowClear,
+  onlyDiscoveries,
+}) {
   const {
     pockestState,
     pockestDispatch,
@@ -42,8 +65,14 @@ function CareLog({ title, logTypes }) {
     log,
   } = pockestState;
   const careLogData = React.useMemo(
-    () => log.filter((entry) => logTypes.includes(entry.logType)),
-    [log, logTypes],
+    () => {
+      const d = log.filter((entry) => logTypes.includes(entry.logType));
+      if (onlyDiscoveries) {
+        return d.filter((entry) => entry.logType === 'match' && isMatchDiscovery(entry));
+      }
+      return d;
+    },
+    [log, logTypes, onlyDiscoveries],
   );
   const careLog = React.useMemo(() => careLogData.map((entry) => {
     const logType = entry?.logType;
@@ -66,7 +95,7 @@ function CareLog({ title, logTypes }) {
           className="CareLog-textarea"
           value={careLog.join('\n')}
           readOnly
-          rows={12}
+          rows={rows}
         />
         <div
           className="CareLog-buttons"
@@ -79,18 +108,20 @@ function CareLog({ title, logTypes }) {
           >
             📋 Copy
           </button>
-          <button
-            type="button"
-            className="PockestLink CareLog-clear"
-            aria-label={`Clear ${title.toLowerCase()}`}
-            onClick={() => {
-              const confirm = window.confirm(`Are you sure you want to permanently clear your ${title.toLowerCase()}?`);
-              if (!confirm) return;
-              pockestDispatch(pockestClearLog(pockestState, logTypes));
-            }}
-          >
-            ❌ Clear
-          </button>
+          {allowClear ? (
+            <button
+              type="button"
+              className="PockestLink CareLog-clear"
+              aria-label={`Clear ${title.toLowerCase()}`}
+              onClick={() => {
+                const confirm = window.confirm(`Are you sure you want to permanently clear your ${title.toLowerCase()}?`);
+                if (!confirm) return;
+                pockestDispatch(pockestClearLog(pockestState, logTypes));
+              }}
+            >
+              ❌ Clear
+            </button>
+          ) : ''}
         </div>
       </div>
     </div>
@@ -100,11 +131,17 @@ function CareLog({ title, logTypes }) {
 CareLog.defaultProps = {
   title: 'Log',
   logTypes: ['clean', 'meal', 'training', 'match'],
+  rows: 12,
+  allowClear: true,
+  onlyDiscoveries: false,
 };
 
 CareLog.propTypes = {
   title: PropTypes.string,
   logTypes: PropTypes.arrayOf(PropTypes.string),
+  rows: PropTypes.number,
+  allowClear: PropTypes.bool,
+  onlyDiscoveries: PropTypes.bool,
 };
 
 export default CareLog;

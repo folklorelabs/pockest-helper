@@ -60,8 +60,8 @@ function App() {
       )}
       {showLog ? (
         <LogPanel>
-          <CareLog title="Care Log" logTypes={['clean', 'meal', 'training']} />
-          <CareLog title="Match Log" logTypes={['match']} />
+          <CareLog title="Care Log" rows={36} logTypes={['clean', 'meal', 'training', 'match']} />
+          <CareLog title="Newly Discovered Fever Matches" logTypes={['match']} onlyDiscoveries allowClear={false} />
         </LogPanel>
       ) : ''}
     </div>
