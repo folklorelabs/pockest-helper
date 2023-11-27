@@ -85,6 +85,7 @@ function Lifecycle() {
       }
 
       // Cure
+      if (monster?.status !== 1) console.log(`MONSTER STATUS=${monster?.status}`);
       const attemptToCure = curePreference === 1 && monster?.status !== 1;
       if (attemptToCure) {
         console.log(now.toLocaleString(), 'CURE');
