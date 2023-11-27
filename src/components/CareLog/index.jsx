@@ -9,57 +9,46 @@ import './index.css';
 import { STAT_ID_ICON } from '../../config/stats';
 
 function isMatchDiscovery(entry) {
-  const a = monsters.find((m) => m.monster_id === entry.aId);
+  const monster = monsters.find((m) => m.monster_id === entry.monsterId);
   const isFever = entry.mementoDiff > entry.totalStats / 2;
-  const expectFever = a.matchFever.includes(entry.bId);
+  const expectFever = monster.matchFever.includes(entry.oppId);
   const isDiscovery = (!expectFever && isFever);
   return isDiscovery;
 }
 
-const REPORT_TEMPLATES = {
-  default: (entry) => {
-    const dateStr = (new Date(entry?.timestamp)).toLocaleString();
-    const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
-    const emoji = (() => {
-      if (entry?.logType === 'clean') return '💩';
-      if (entry?.logType === 'meal') return '❤️';
-      if (entry?.logType === 'training') return STAT_ID_ICON[entry?.statType];
-      if (entry?.logType === 'cure') return '🩹';
-      if (entry?.logType === 'age') return '⬆️';
-      if (entry?.logType === 'egg') return '🥚';
-      return '';
-    })();
-    const entryStr = (() => {
-      if (entry?.logType === 'clean') return `cleaned (${entry?.garbageBefore || 0} → 0)`;
-      if (entry?.logType === 'meal') return `fed (${entry?.stomachBefore || 0} → ${(entry?.stomachBefore || 0) + 1})`;
-      if (entry?.logType === 'training') return `trained ${entry?.statType} (+${entry?.statDiff})`;
-      if (entry?.logType === 'cure') return 'cured';
-      if (entry?.logType === 'age') {
-        const monsterBefore = monsters.find((m) => m.monster_id === entry?.monsterIdBefore);
-        const newAge = parseInt(monster?.plan?.slice(1, 2) || '0', 10);
-        return `aged ${newAge - 1} (${monsterBefore?.name_en}) → ${newAge} (${monster?.name_en})`;
-      }
-      if (entry?.logType === 'egg') return `hatched ${entry?.eggType}`;
-      return '';
-    })();
-    return `[${dateStr}] ${emoji} ${monster.name_en} ${entryStr} `;
-  },
-  match: (entry) => {
-    const dateStr = (new Date(entry.timestamp)).toLocaleString();
-    const a = monsters.find((m) => m.monster_id === entry.aId);
-    const isFever = entry.mementoDiff > entry.totalStats / 2;
-    const b = monsters.find((m) => m.monster_id === entry.bId);
-    const emojis = (() => {
-      if (isFever) return '🆚';
-      return '🆚';
-    })();
-    const entryStr = (() => {
-      if (isFever) return `vs ${b.name_en}`;
-      return `vs ${b.name_en}`;
-    })();
-    return `[${dateStr}] ${emojis} ${a.name_en} ${entryStr} (+${entry?.mementoDiff}) ${isFever ? '<FEVER>' : ''}`;
-  },
-};
+function entryTemplate(entry) {
+  const dateStr = (new Date(entry?.timestamp)).toLocaleString();
+  const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
+  const emoji = (() => {
+    if (entry?.logType === 'clean') return '💩';
+    if (entry?.logType === 'meal') return '❤️';
+    if (entry?.logType === 'training') return STAT_ID_ICON[entry?.statType];
+    if (entry?.logType === 'match') return '🆚';
+    if (entry?.logType === 'cure') return '🩹';
+    if (entry?.logType === 'age') return '⬆️';
+    if (entry?.logType === 'egg') return '🥚';
+    return '';
+  })();
+  const entryStr = (() => {
+    if (entry?.logType === 'clean') return `cleaned (${entry?.garbageBefore || 0} → 0)`;
+    if (entry?.logType === 'meal') return `fed (${entry?.stomachBefore || 0} → ${(entry?.stomachBefore || 0) + 1})`;
+    if (entry?.logType === 'training') return `trained ${entry?.statType} (+${entry?.statDiff})`;
+    if (entry?.logType === 'match') {
+      const isFever = entry.mementoDiff > entry.totalStats / 2;
+      const b = monsters.find((m) => m.monster_id === entry.oppId);
+      return `vs ${b.name_en} (+${entry?.mementoDiff}) ${isFever ? '<FEVER>' : ''}`;
+    }
+    if (entry?.logType === 'cure') return 'cured';
+    if (entry?.logType === 'age') {
+      const monsterBefore = monsters.find((m) => m.monster_id === entry?.monsterIdBefore);
+      const newAge = parseInt(monster?.plan?.slice(1, 2) || '0', 10);
+      return `aged ${newAge - 1} (${monsterBefore?.name_en}) → ${newAge} (${monster?.name_en})`;
+    }
+    if (entry?.logType === 'egg') return `hatched ${entry?.eggType}`;
+    return '';
+  })();
+  return `[${dateStr}] ${emoji} ${monster.name_en} ${entryStr} `;
+}
 
 function CareLog({
   title,
@@ -85,11 +74,8 @@ function CareLog({
     },
     [log, logTypes, onlyDiscoveries],
   );
-  const careLog = React.useMemo(() => careLogData.map((entry) => {
-    const logType = entry?.logType;
-    const entryFn = REPORT_TEMPLATES[logType] || REPORT_TEMPLATES.default;
-    return entryFn(entry);
-  }), [careLogData]);
+  const careLog = React.useMemo(() => careLogData
+    .map((entry) => entryTemplate(entry)), [careLogData]);
   return (
     <div className="CareLog">
       <header className="CareLog-header">
