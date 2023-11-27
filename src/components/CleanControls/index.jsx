@@ -52,7 +52,7 @@ function CleanControls() {
         <span className="PockestText">
           <span className="PockestIcon">💩</span>
           {' '}
-          {typeof data?.monster?.garbage === 'number' ? data?.monster?.garbage : '--'}
+          {typeof data?.monster?.garbage === 'number' ? `${data?.monster?.garbage}/12` : '--'}
         </span>
       </div>
       <div className="PockestLine">
