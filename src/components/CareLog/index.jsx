@@ -10,13 +10,13 @@ import './index.css';
 
 function isMatchDiscovery(entry) {
   const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
-  if (!entry?.result?.get_memento_point && !entry?.result?.get_egg_point) return false;
+  if (!entry?.get_memento_point && !entry?.get_egg_point) return false;
   const allMissing = [
     ...(monster?.matchSusFever || []),
     ...(monster?.matchUnknown || []),
     ...(monster?.matchSusNormal || []),
   ];
-  return allMissing.includes(entry?.result?.target_monster_id);
+  return allMissing.includes(entry?.target_monster_id);
 }
 
 function entryTemplate({ entry, reporting }) {
@@ -26,41 +26,41 @@ function entryTemplate({ entry, reporting }) {
   const actionStr = (() => {
     if (logType === 'cleaning') return 'cleaned';
     if (logType === 'meal') return 'fed';
-    if (logType === 'training') return `trained ${STAT_ID[entry?.result?.type]}`;
+    if (logType === 'training') return `trained ${STAT_ID[entry?.type]}`;
     if (logType === 'exchange') {
-      const b = monsters.find((m) => m.monster_id === entry?.result?.target_monster_id);
+      const b = monsters.find((m) => m.monster_id === entry?.target_monster_id);
       return `vs ${b.name_en}`;
     }
     if (logType === 'cure') return 'cured 🩹';
-    if (logType === 'age') return `aged ⬆️ ${entry?.result?.monsterBefore?.name_en} → ${monster?.name_en}`;
-    if (logType === 'egg') return `hatched 🥚${entry?.result?.eggType}`;
+    if (logType === 'age') return `aged ⬆️ ${entry?.monsterBefore?.name_en} → ${monster?.name_en}`;
+    if (logType === 'egg') return `hatched 🥚${entry?.eggType}`;
     return '';
   })();
   const tags = (() => {
     if (logType === 'exchange') {
-      // const isFever = entry?.result?.is_spmatch;
-      const expectedMemento = Math.ceil((entry?.result?.totalStats || 0) / 2);
-      const expectedEgg = Math.ceil((entry?.result?.totalStats || 0) / 5);
-      const isFever = entry?.result?.get_memento_point > expectedMemento
-        || entry?.result?.get_egg_point > expectedEgg;
+      // const isFever = entry?.is_spmatch;
+      const expectedMemento = Math.ceil((entry?.totalStats || 0) / 2);
+      const expectedEgg = Math.ceil((entry?.totalStats || 0) / 5);
+      const isFever = entry?.get_memento_point > expectedMemento
+        || entry?.get_egg_point > expectedEgg;
       return [
-        entry?.result?.is_spmatch && '🔥FEVER',
+        entry?.is_spmatch && '🔥FEVER',
         isFever && '🔥FEVER_CALC',
-        !entry?.result?.is_spmatch && !isFever && 'NO_FEVER',
+        !entry?.is_spmatch && !isFever && 'NO_FEVER',
       ];
     }
     return [];
   })().filter((g) => g).map((g) => `<${g}>`).join(' ');
   const resultsStr = (() => {
-    if (logType === 'age') return [`P: ${entry?.result?.monsterBefore?.power}`, `S: ${entry?.result?.monsterBefore?.speed}`, `T: ${entry?.result?.monsterBefore?.technic}`];
-    if (logType === 'cleaning') return [`💩${entry?.result?.garbageBefore || 0} → 0`];
-    if (logType === 'meal') return [`❤️${(entry?.result?.stomach || 0) - 1} → ${entry?.result?.stomach || 0}`];
-    if (logType === 'training') return [`+${entry?.result?.up_status}${STAT_ICON[entry?.result?.type]}`];
+    if (logType === 'age') return [`P: ${entry?.monsterBefore?.power}`, `S: ${entry?.monsterBefore?.speed}`, `T: ${entry?.monsterBefore?.technic}`];
+    if (logType === 'cleaning') return [`💩${entry?.garbageBefore || 0} → 0`];
+    if (logType === 'meal') return [`❤️${(entry?.stomach || 0) - 1} → ${entry?.stomach || 0}`];
+    if (logType === 'training') return [`+${entry?.up_status}${STAT_ICON[entry?.type]}`];
     if (logType === 'exchange') {
       return [
-        entry?.result?.get_memento_point && `+${entry?.result?.get_memento_point} memento`,
-        entry?.result?.get_egg_point && `+${entry?.result?.get_egg_point} egg`,
-        // entry?.result?.memento_get && 'GOT_MEMENTO',
+        entry?.get_memento_point && `+${entry?.get_memento_point} memento`,
+        entry?.get_egg_point && `+${entry?.get_egg_point} egg`,
+        // entry?.memento_get && 'GOT_MEMENTO',
       ];
     }
     return [];
