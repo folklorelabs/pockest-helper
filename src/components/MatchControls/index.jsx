@@ -48,10 +48,10 @@ function MatchControls() {
           disabled={!paused}
         >
           <option key="0" value="0">
-            New Fevers
+            Discovery
           </option>
           <option key="1" value="1">
-            Memento Points
+            Points
           </option>
         </select>
       </div>
