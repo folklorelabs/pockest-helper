@@ -5,8 +5,8 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import monsters from '../../data/monsters.json';
-import './index.css';
 import { STAT_ICON, STAT_ID } from '../../config/stats';
+import './index.css';
 
 function isMatchDiscovery(entry) {
   const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
@@ -92,11 +92,13 @@ function CareLog({
     },
     [log, logTypes, onlyDiscoveries],
   );
-  const careLog = React.useMemo(() => careLogData
-    .map((entry) => entryTemplate({
+  const careLog = React.useMemo(() => [
+    `[Pockest Helper v${window.APP_VERSION}]`,
+    ...careLogData.map((entry) => entryTemplate({
       entry,
       reporting: onlyDiscoveries,
-    })), [careLogData, onlyDiscoveries]);
+    })),
+  ], [careLogData, onlyDiscoveries]);
   return (
     <div className="CareLog">
       <header className="CareLog-header">
@@ -122,7 +124,7 @@ function CareLog({
             type="button"
             className="PockestLink CareLog-copy"
             aria-label={`Copy ${title.toLowerCase()} to clipboard`}
-            onClick={() => navigator.clipboard.writeText(careLog.join('\n'))}
+            onClick={() => navigator.clipboard.writeText([`[${(new Date()).toLocaleString()}] Pockest Helper v${window.APP_VERSION}`, ...careLog].join('\n'))}
           >
             📋 Copy
           </button>
