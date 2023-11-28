@@ -62,6 +62,7 @@ function entryTemplate({ entry, noEmoji, noResults }) {
     return [];
   })().filter((g) => g).map((g) => `<${g}>`).join(' ');
   const resultsStr = (() => {
+    if (logType === 'age') return [`${entry?.result?.monsterBefore?.name_en} → ${monster?.name_en}`];
     if (logType === 'cleaned') return [`${entry?.result?.garbageBefore || 0} → 0`];
     if (logType === 'meal') return [`${(entry?.result?.stomach || 0) - 1} → ${entry?.result?.stomach || 0}`];
     if (logType === 'training') return [`+${entry?.result?.up_status}`];
@@ -70,12 +71,6 @@ function entryTemplate({ entry, noEmoji, noResults }) {
         entry?.result?.get_memento_point && `🎁+${entry?.result?.get_memento_point}`,
         entry?.result?.get_egg_point && `🥚+${entry?.result?.get_egg_point}`,
         // entry?.result?.memento_get && 'GOT_MEMENTO',
-      ];
-    }
-    if (logType === 'age') {
-      const monsterBefore = monsters.find((m) => m.monster_id === entry?.result?.monsterIdBefore);
-      return [
-        `${monsterBefore?.name_en} → ${monster?.name_en}`,
       ];
     }
     return [];

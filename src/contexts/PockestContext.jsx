@@ -213,13 +213,12 @@ export function pockestAutoPlan({ autoPlan, monsterId, age }) {
   return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh(pockestState) {
-  const monsterIdBefore = pockestState?.data?.monster?.monster_id;
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
   const { data } = await response.json();
-  if (data && monsterIdBefore && monsterIdBefore !== data?.monster?.monster_id) {
+  if (data && pockestState?.data?.monster.hash !== data?.monster?.hash) {
     data.result = {
       logType: 'age',
-      monsterIdBefore,
+      monsterBefore: pockestState?.data?.monster,
     };
   }
   return [ACTIONS.REFRESH, data];
