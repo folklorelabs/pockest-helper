@@ -59,6 +59,7 @@ function Lifecycle() {
         monster,
       } = data;
       const now = new Date();
+      const isStunned = monster?.status === 2;
 
       // Small event refresh
       if (now.getTime() > data?.next_small_event_timer) {
@@ -68,7 +69,8 @@ function Lifecycle() {
       }
 
       // Big event refresh
-      if (now.getTime() > data?.next_big_event_timer) {
+      // no refresh if stunned cause the timer doesn't update and it will loop infinitely
+      if (now.getTime() > data?.next_big_event_timer && !isStunned) {
         console.log(now.toLocaleString(), 'REFRESH, next_big_event_timer');
         await refresh();
         return;
@@ -85,8 +87,7 @@ function Lifecycle() {
       }
 
       // Cure
-      if (monster?.status !== 1) console.log(`MONSTER STATUS=${monster?.status}`);
-      const attemptToCure = curePreference === 1 && monster?.status !== 1;
+      const attemptToCure = curePreference === 1 && isStunned;
       if (attemptToCure) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
