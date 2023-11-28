@@ -19,20 +19,10 @@ function isMatchDiscovery(entry) {
   return allMissing.includes(entry?.result?.target_monster_id);
 }
 
-function entryTemplate({ entry, noEmoji, noResults }) {
+function entryTemplate({ entry, reporting }) {
   const dateStr = (new Date(entry?.timestamp)).toLocaleString();
   const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
   const logType = entry?.logType;
-  const emoji = (() => {
-    if (logType === 'cleaning') return '💩';
-    if (logType === 'meal') return '❤️';
-    if (logType === 'training') return STAT_ICON[entry?.result?.type];
-    if (logType === 'exchange') return '🆚';
-    if (logType === 'cure') return '🩹';
-    if (logType === 'age') return '⬆️';
-    if (logType === 'egg') return '🥚';
-    return '';
-  })();
   const actionStr = (() => {
     if (logType === 'cleaning') return 'cleaned';
     if (logType === 'meal') return 'fed';
@@ -41,9 +31,9 @@ function entryTemplate({ entry, noEmoji, noResults }) {
       const b = monsters.find((m) => m.monster_id === entry?.result?.target_monster_id);
       return `vs ${b.name_en}`;
     }
-    if (logType === 'cure') return 'cured';
-    if (logType === 'age') return 'aged';
-    if (logType === 'egg') return `hatched ${entry?.result?.eggType}`;
+    if (logType === 'cure') return 'cured 🩹';
+    if (logType === 'age') return `aged ⬆️ ${entry?.result?.monsterBefore?.name_en} → ${monster?.name_en}`;
+    if (logType === 'egg') return `hatched 🥚${entry?.result?.eggType}`;
     return '';
   })();
   const tags = (() => {
@@ -54,28 +44,28 @@ function entryTemplate({ entry, noEmoji, noResults }) {
       const isFever = entry?.result?.get_memento_point > expectedMemento
         || entry?.result?.get_egg_point > expectedEgg;
       return [
-        entry?.result?.is_spmatch && 'FEVER',
-        isFever && 'FEVER_CALC',
+        entry?.result?.is_spmatch && '🔥FEVER',
+        isFever && '🔥FEVER_CALC',
         !entry?.result?.is_spmatch && !isFever && 'NO_FEVER',
       ];
     }
     return [];
   })().filter((g) => g).map((g) => `<${g}>`).join(' ');
   const resultsStr = (() => {
-    if (logType === 'age') return [`${entry?.result?.monsterBefore?.name_en} → ${monster?.name_en}`];
-    if (logType === 'cleaned') return [`${entry?.result?.garbageBefore || 0} → 0`];
-    if (logType === 'meal') return [`${(entry?.result?.stomach || 0) - 1} → ${entry?.result?.stomach || 0}`];
-    if (logType === 'training') return [`+${entry?.result?.up_status}`];
+    if (logType === 'age') return [`P: ${entry?.result?.monsterBefore?.power}`, `S: ${entry?.result?.monsterBefore?.speed}`, `T: ${entry?.result?.monsterBefore?.technic}`];
+    if (logType === 'cleaning') return [`💩${entry?.result?.garbageBefore || 0} → 0`];
+    if (logType === 'meal') return [`❤️${(entry?.result?.stomach || 0) - 1} → ${entry?.result?.stomach || 0}`];
+    if (logType === 'training') return [`+${entry?.result?.up_status}${STAT_ICON[entry?.result?.type]}`];
     if (logType === 'exchange') {
       return [
-        entry?.result?.get_memento_point && `🎁+${entry?.result?.get_memento_point}`,
-        entry?.result?.get_egg_point && `🥚+${entry?.result?.get_egg_point}`,
+        entry?.result?.get_memento_point && `+${entry?.result?.get_memento_point} memento`,
+        entry?.result?.get_egg_point && `+${entry?.result?.get_egg_point} egg`,
         // entry?.result?.memento_get && 'GOT_MEMENTO',
       ];
     }
     return [];
   })().filter((g) => g).join(', ');
-  return `[${dateStr}]${!noEmoji ? ` ${emoji}` : ''}${tags ? ` ${tags}` : ''} ${monster.name_en} ${actionStr}${resultsStr && !noResults ? ` (${resultsStr})` : ''}`;
+  return `[${dateStr}]${reporting && tags ? ` ${tags}` : ''} ${monster.name_en} ${actionStr}${resultsStr && !reporting ? ` (${resultsStr})` : ''}`;
 }
 
 function CareLog({
@@ -105,8 +95,7 @@ function CareLog({
   const careLog = React.useMemo(() => careLogData
     .map((entry) => entryTemplate({
       entry,
-      noEmoji: onlyDiscoveries,
-      noResults: onlyDiscoveries,
+      reporting: onlyDiscoveries,
     })), [careLogData, onlyDiscoveries]);
   return (
     <div className="CareLog">
