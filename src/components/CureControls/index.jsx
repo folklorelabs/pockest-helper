@@ -19,9 +19,9 @@ function CureControls() {
   return (
     <div className="CureControls">
       <div className="PockestLine">
-        <label className="PockestCheck" htmlFor="PockestHelper_AutoMatch">
+        <label className="PockestCheck" htmlFor="PockestHelper_AutoCure">
           <input
-            id="PockestHelper_AutoMatch"
+            id="PockestHelper_AutoCure"
             className="PockestCheck-input"
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoCure: e.target.checked }))}
