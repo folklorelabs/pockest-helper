@@ -50,7 +50,7 @@ function Lifecycle() {
         autoFeed,
         autoTrain,
         autoMatch,
-        curePreference,
+        autoCure,
         paused,
         stat,
       } = pockestState;
@@ -87,8 +87,7 @@ function Lifecycle() {
       }
 
       // Cure
-      const attemptToCure = curePreference === 1 && isStunned;
-      if (attemptToCure) {
+      if (autoCure && isStunned) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestCure(pockestState));

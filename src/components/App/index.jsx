@@ -14,6 +14,7 @@ import { useAppContext } from '../../contexts/AppContext';
 import EggControls from '../EggControls';
 import LogPanel from '../LogPanel';
 import CareLog from '../CareLog';
+import CureControls from '../CureControls';
 
 function App() {
   const {
@@ -43,6 +44,8 @@ function App() {
           <TrainControls />
           <hr />
           <MatchControls />
+          <hr />
+          <CureControls />
           <div className="App-button">
             <PauseBtn />
           </div>
