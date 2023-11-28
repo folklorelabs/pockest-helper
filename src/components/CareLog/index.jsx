@@ -75,6 +75,7 @@ function CareLog({
   allowClear,
   onlyDiscoveries,
 }) {
+  const textAreaEl = React.useRef();
   const {
     pockestState,
     pockestDispatch,
@@ -99,6 +100,11 @@ function CareLog({
       reporting: onlyDiscoveries,
     })),
   ], [careLogData, onlyDiscoveries]);
+  React.useEffect(() => {
+    if (!textAreaEl?.current) return () => {};
+    textAreaEl.current.scrollTop = textAreaEl.current.scrollHeight;
+    return () => {};
+  }, [careLog]);
   return (
     <div className="CareLog">
       <header className="CareLog-header">
@@ -112,6 +118,7 @@ function CareLog({
       </header>
       <div className="CareLog-content">
         <textarea
+          ref={textAreaEl}
           className="CareLog-textarea"
           value={careLog.join('\n')}
           readOnly
