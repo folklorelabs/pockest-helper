@@ -41,15 +41,12 @@ function TargetMonsterSelect() {
         return 0;
       });
   }, [pockestState, allMonsters]);
-  const {
-    monsterId,
-    paused,
-  } = pockestState;
   if (!allMonsters?.length) return '';
   return (
     <select
       className="PockestSelect"
       onChange={(e) => {
+        const monsterId = e.target.value ? parseInt(e.target.value, 10) : '';
         if (pockestState?.autoPlan) {
           pockestDispatch(pockestAutoPlan({
             autoPlan: true,
@@ -57,11 +54,11 @@ function TargetMonsterSelect() {
             age: pockestState?.data?.monster?.age,
           }));
         } else {
-          pockestDispatch(pockestSettings({ monsterId: parseInt(e.target.value, 10) }));
+          pockestDispatch(pockestSettings({ monsterId }));
         }
       }}
-      defaultValue={`${monsterId}`}
-      disabled={!paused}
+      defaultValue={`${pockestState?.monsterId}`}
+      disabled={!pockestState?.paused}
     >
       <option key="default" value="">
         --

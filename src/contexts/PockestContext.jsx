@@ -205,6 +205,7 @@ export function pockestAutoPlan({ autoPlan, monsterId, age }) {
       autoTrain: true,
     };
   }
+  console.log(newSettings);
   return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh(pockestState) {
