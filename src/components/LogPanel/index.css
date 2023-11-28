@@ -8,6 +8,24 @@
   background: rgba(0, 0, 0, 0.95);
   padding: 2.8rem 1rem 1rem;
   border-left: 2px solid rgba(255, 255, 255, 0.1);
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.LogPanel::-webkit-scrollbar {
+  width: 2px;
+}
+
+.LogPanel::-webkit-scrollbar-track {
+  background: rgba(242, 242, 242, 0);
+}
+
+.LogPanel::-webkit-scrollbar-thumb {
+  background: rgb(100, 100, 100);
+}
+
+.LogPanel::-webkit-scrollbar-thumb:hover {
+  background: rgb(135, 135, 135)
 }
 
 .LogPanel-close {
