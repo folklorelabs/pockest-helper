@@ -200,7 +200,7 @@ export async function pockestRefresh(pockestState) {
   return [ACTIONS.REFRESH, data];
 }
 export async function pockestFeed(pockestState) {
-  const stomachBefore = pockestState?.monster?.stomach;
+  const stomachBefore = pockestState?.data?.monster?.stomach;
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/serving', {
     body: '{"type":1}',
     method: 'POST',
@@ -234,7 +234,7 @@ export async function pockestCure(pockestState) {
   return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestClean(pockestState) {
-  const garbageBefore = pockestState?.monster?.garbage;
+  const garbageBefore = pockestState?.data?.monster?.garbage;
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cleaning', {
     body: '{"type":1}',
     method: 'POST',
