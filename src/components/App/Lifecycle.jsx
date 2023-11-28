@@ -11,6 +11,7 @@ import {
   getCurrentPlanStats,
   getCurrentPlanScheduleWindows,
   getBestMatch,
+  pockestCure,
 } from '../../contexts/PockestContext';
 
 function Lifecycle() {
@@ -49,6 +50,7 @@ function Lifecycle() {
         autoFeed,
         autoTrain,
         autoMatch,
+        autoCure,
         paused,
         stat,
       } = pockestState;
@@ -57,6 +59,7 @@ function Lifecycle() {
         monster,
       } = data;
       const now = new Date();
+      const isStunned = monster?.status === 2;
 
       // Small event refresh
       if (now.getTime() > data?.next_small_event_timer) {
@@ -66,7 +69,8 @@ function Lifecycle() {
       }
 
       // Big event refresh
-      if (now.getTime() > data?.next_big_event_timer) {
+      // no refresh if stunned cause the timer doesn't update and it will loop infinitely
+      if (now.getTime() > data?.next_big_event_timer && !isStunned) {
         console.log(now.toLocaleString(), 'REFRESH, next_big_event_timer');
         await refresh();
         return;
@@ -80,6 +84,13 @@ function Lifecycle() {
         console.log(now.toLocaleString(), `REFRESH, random, next @ ${nextRandomReset.current.toLocaleString()}`);
         await refresh();
         return;
+      }
+
+      // Cure
+      if (autoCure && isStunned) {
+        console.log(now.toLocaleString(), 'CURE');
+        pockestDispatch(pockestLoading());
+        pockestDispatch(await pockestCure(pockestState));
       }
 
       // Clean

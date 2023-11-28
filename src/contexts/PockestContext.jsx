@@ -24,6 +24,7 @@ const INITIAL_STATE = {
   feedTarget: 6,
   autoClean: false,
   autoTrain: false,
+  autoCure: false,
   matchPriority: 0,
   log: [],
   stat: 1,
@@ -205,8 +206,21 @@ export async function pockestFeed(pockestState) {
   };
   return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
-export async function pockestCure() {
-  return [ACTIONS.ERROR, '[pockestCure] NYI'];
+export async function pockestCure(pockestState) {
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cure', {
+    body: '{"type":1}',
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  const { data } = await response.json();
+  const logEntry = {
+    logType: 'cure',
+    timestamp: new Date().getTime(),
+    monsterId: getMonsterId(pockestState),
+  };
+  return [ACTIONS.ACTION_SUCCESS, { data, logEntry }];
 }
 export async function pockestClean(pockestState) {
   const garbageBefore = pockestState?.monster?.garbage;
@@ -331,6 +345,7 @@ function REDUCER(state, [type, payload]) {
         feedTarget: payload.feedTarget ?? state?.feedTarget,
         stat: payload.stat ?? state?.stat,
         matchPriority: payload.matchPriority ?? state?.matchPriority,
+        autoCure: payload.autoCure ?? state?.autoCure,
       };
     case ACTIONS.PAUSE:
       return {
