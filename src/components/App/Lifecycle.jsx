@@ -87,7 +87,8 @@ function Lifecycle() {
       }
 
       // Cure
-      if (autoCure && isStunned) {
+      const attemptToCure = autoCure || (autoPlan && monster?.age > 4);
+      if (attemptToCure && isStunned) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestCure(pockestState));
@@ -126,7 +127,7 @@ function Lifecycle() {
       }
 
       // Match
-      const attemptToMatch = autoMatch && monster;
+      const attemptToMatch = (autoMatch || (autoPlan && data?.monster?.age > 4)) && monster;
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {

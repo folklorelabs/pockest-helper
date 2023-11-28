@@ -203,6 +203,8 @@ export function pockestAutoPlan({ autoPlan, monsterId, age }) {
       autoClean: true,
       autoFeed: true,
       autoTrain: true,
+      autoMatch: age > 4,
+      autoCure: age > 4,
     };
   }
   console.log(newSettings);
