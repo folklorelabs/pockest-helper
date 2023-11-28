@@ -26,7 +26,7 @@ function CureControls() {
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoCure: e.target.checked }))}
             defaultChecked={autoCure}
-            disabled={!paused}
+            disabled={!paused || data?.monster?.age < 5}
           />
           <span className="PockestCheck-text">Cure</span>
         </label>

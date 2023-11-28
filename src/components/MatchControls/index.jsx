@@ -30,7 +30,7 @@ function MatchControls() {
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoMatch: e.target.checked }))}
             defaultChecked={autoMatch}
-            disabled={!paused}
+            disabled={!paused || data?.monster?.age < 5}
           />
           <span className="PockestCheck-text">Match</span>
         </label>
@@ -45,7 +45,7 @@ function MatchControls() {
             pockestDispatch(pockestSettings({ matchPriority: parseInt(e.target.value, 10) }));
           }}
           value={matchPriority || ''}
-          disabled={!paused}
+          disabled={!paused || data?.monster?.age < 5}
         >
           <option key="0" value="0">
             Discovery
