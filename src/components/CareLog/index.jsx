@@ -19,7 +19,7 @@ function isMatchDiscovery(entry) {
   return allMissing.includes(entry?.result?.target_monster_id);
 }
 
-function entryTemplate(entry, noResults) {
+function entryTemplate({ entry, noEmoji, noResults }) {
   const dateStr = (new Date(entry?.timestamp)).toLocaleString();
   const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
   const logType = entry?.logType;
@@ -80,7 +80,7 @@ function entryTemplate(entry, noResults) {
     }
     return [];
   })().filter((g) => g).join(', ');
-  return `[${dateStr}] ${emoji}${tags ? ` ${tags}` : ''} ${monster.name_en} ${actionStr}${resultsStr && !noResults ? ` (${resultsStr})` : ''}`;
+  return `[${dateStr}]${!noEmoji ? ` ${emoji}` : ''}${tags ? ` ${tags}` : ''} ${monster.name_en} ${actionStr}${resultsStr && !noResults ? ` (${resultsStr})` : ''}`;
 }
 
 function CareLog({
@@ -108,7 +108,11 @@ function CareLog({
     [log, logTypes, onlyDiscoveries],
   );
   const careLog = React.useMemo(() => careLogData
-    .map((entry) => entryTemplate(entry, onlyDiscoveries)), [careLogData, onlyDiscoveries]);
+    .map((entry) => entryTemplate({
+      entry,
+      noEmoji: onlyDiscoveries,
+      noResults: onlyDiscoveries,
+    })), [careLogData, onlyDiscoveries]);
   return (
     <div className="CareLog">
       <header className="CareLog-header">
