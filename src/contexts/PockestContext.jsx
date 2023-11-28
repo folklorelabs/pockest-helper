@@ -33,6 +33,29 @@ const INITIAL_STATE = {
   initialized: false,
 };
 
+// UTIL
+function getStateFromLocalStorage() {
+  const stateFromStorage = window.localStorage.getItem('PockestHelper');
+  const logFromStorage = window.localStorage.getItem('PockestHelperLog');
+  return {
+    ...INITIAL_STATE,
+    ...(stateFromStorage ? JSON.parse(stateFromStorage) : {}),
+    log: (logFromStorage ? JSON.parse(logFromStorage) : INITIAL_STATE.log),
+  };
+}
+
+function saveStateToLocalStorage(state) {
+  const stateToSave = { ...state };
+  delete stateToSave?.data;
+  delete stateToSave?.initialized;
+  delete stateToSave?.paused;
+  delete stateToSave?.loading;
+  delete stateToSave?.error;
+  delete stateToSave?.log;
+  window.localStorage.setItem('PockestHelper', JSON.stringify(stateToSave));
+  window.localStorage.setItem('PockestHelperLog', JSON.stringify(state?.log));
+}
+
 // GETTERS
 
 export async function fetchMatchList() {
@@ -397,21 +420,10 @@ function REDUCER(state, [type, payload]) {
   }
 }
 
-let initialState = {
-  ...INITIAL_STATE,
-};
-const stateFromStorage = window.localStorage.getItem('PockestHelper');
-if (stateFromStorage) {
-  initialState = {
-    ...initialState,
-    ...JSON.parse(stateFromStorage),
-    data: null,
-    initialized: false,
-    paused: true,
-  };
-}
+const initialState = getStateFromLocalStorage();
+
 const PockestContext = createContext({
-  pockestState: initialState ?? INITIAL_STATE,
+  pockestState: initialState,
   pockestDispatch: () => { },
 });
 
@@ -421,7 +433,7 @@ export function PockestProvider({
   const [pockestState, pockestDispatch] = useReducer(REDUCER, initialState);
 
   useEffect(() => {
-    window.localStorage.setItem('PockestHelper', JSON.stringify(pockestState));
+    saveStateToLocalStorage(pockestState);
   }, [pockestState]);
 
   // grab data on init
