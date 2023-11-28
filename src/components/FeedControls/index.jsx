@@ -81,7 +81,7 @@ function FeedControls() {
         </select>
       </div>
       <div className="PockestLine">
-        <span className="PockestText">Meal Plan</span>
+        <span className="PockestText">Meal Target</span>
         <select
           className="PockestSelect"
           onChange={(e) => {
@@ -90,9 +90,9 @@ function FeedControls() {
           value={feedTarget}
           disabled={!paused || autoPlan}
         >
-          {[0, 1, 2, 3, 4, 5, 6].map((k) => (
+          {[1, 2, 3, 4, 5, 6].map((k) => (
             <option key={k} value={k}>
-              {`❤️ → ${k}`}
+              {`❤️ ${k}/6`}
             </option>
           ))}
         </select>
