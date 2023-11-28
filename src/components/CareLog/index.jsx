@@ -10,10 +10,11 @@ import { STAT_ID_ICON } from '../../config/stats';
 
 function isMatchDiscovery(entry) {
   const monster = monsters.find((m) => m.monster_id === entry.monsterId);
-  const isFever = entry.mementoDiff > entry.totalStats / 2;
-  const expectFever = monster.matchFever.includes(entry.oppId);
-  const isDiscovery = (!expectFever && isFever);
-  return isDiscovery;
+  return [
+    monster?.matchSusFever,
+    monster?.matchUnknown,
+    monster?.matchSusNormal,
+  ].includes(entry.oppId);
 }
 
 function entryTemplate(entry) {

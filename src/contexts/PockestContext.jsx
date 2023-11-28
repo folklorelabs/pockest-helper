@@ -50,16 +50,27 @@ export function getMonsterId(state) {
 export async function getBestMatch(state) {
   const monsterId = getMonsterId(state);
   const monster = monsters.find((m) => m.monster_id === monsterId);
-  const matchFeverOptions = monster?.matchFever;
   const { exchangeList } = await fetchMatchList();
   const sortedMatches = exchangeList?.sort((a, b) => {
-    const discoveryPref = state?.matchPriority === 1;
-    const aFever = matchFeverOptions?.includes(a.monster_id) ? 1.5 : 1;
-    const bFever = matchFeverOptions?.includes(b.monster_id) ? 1.5 : 1;
-    if (discoveryPref && aFever && !bFever) return 1;
-    if (discoveryPref && bFever && !aFever) return -1;
-    const aTotal = getTotalStats(a) * aFever;
-    const bTotal = getTotalStats(b) * bFever;
+    const discoveryPref = state?.matchPriority === 0;
+    if (discoveryPref) {
+      const aSusFever = monster?.matchSusFever?.includes(a.monster_id);
+      const bSusFever = monster?.matchSusFever?.includes(a.monster_id);
+      if (aSusFever && !bSusFever) return -1;
+      if (bSusFever && !aSusFever) return 1;
+      const aUnknown = monster?.matchUnknown?.includes(a.monster_id);
+      const bUnknown = monster?.matchUnknown?.includes(a.monster_id);
+      if (aUnknown && !bUnknown) return -1;
+      if (bUnknown && !aUnknown) return 1;
+      const aSusNormal = monster?.matchSusNormal?.includes(a.monster_id);
+      const bSusNormal = monster?.matchSusNormal?.includes(a.monster_id);
+      if (aSusNormal && !bSusNormal) return -1;
+      if (bSusNormal && !aSusNormal) return 1;
+    }
+    const aMulti = monster?.matchFever?.includes(a.monster_id) ? 1.5 : 1;
+    const bMulti = monster?.matchFever?.includes(b.monster_id) ? 1.5 : 1;
+    const aTotal = getTotalStats(a) * aMulti;
+    const bTotal = getTotalStats(b) * bMulti;
     return bTotal - aTotal;
   });
   return sortedMatches?.[0];
