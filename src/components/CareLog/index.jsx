@@ -112,7 +112,7 @@ function CareLog({
               className="PockestLink CareLog-clear"
               aria-label={`Clear ${title.toLowerCase()}`}
               onClick={() => {
-                const confirm = window.confirm(`Are you sure you want to permanently clear your ${title.toLowerCase()}?`);
+                const confirm = window.confirm(`Are you sure you want to permanently clear your ${title.toLowerCase()}? This will include any newly discovered fever matches.`);
                 if (!confirm) return;
                 pockestDispatch(pockestClearLog(pockestState, logTypes));
               }}
