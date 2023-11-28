@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   getMonsterId,
+  pockestAutoPlan,
   pockestSettings,
   usePockestContext,
 } from '../../contexts/PockestContext';
@@ -49,7 +50,15 @@ function TargetMonsterSelect() {
     <select
       className="PockestSelect"
       onChange={(e) => {
-        pockestDispatch(pockestSettings({ monsterId: parseInt(e.target.value, 10) }));
+        if (pockestState?.autoPlan) {
+          pockestDispatch(pockestAutoPlan({
+            autoPlan: true,
+            monsterId,
+            age: pockestState?.data?.monster?.age,
+          }));
+        } else {
+          pockestDispatch(pockestSettings({ monsterId: parseInt(e.target.value, 10) }));
+        }
       }}
       defaultValue={`${monsterId}`}
       disabled={!paused}
