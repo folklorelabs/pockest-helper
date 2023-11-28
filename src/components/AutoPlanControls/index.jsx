@@ -60,7 +60,7 @@ function AutoPlanControls() {
         label={(() => {
           if (typeof curAge !== 'number') return 'Age 0 → 1';
           if (curAge < 5) return `Age ${curAge} → ${curAge + 1}`;
-          if (data?.monster?.memento_flg) return `Age ${curAge} → 🎁`;
+          if (data?.monster?.memento_point > data?.monster?.max_memento_point) return `Age ${curAge} → 🎁`;
           return `Age ${curAge} → 🎁/🪦`;
         })()}
         timestamp={curAge && data?.monster
