@@ -64,7 +64,7 @@ function App() {
       {showLog ? (
         <LogPanel>
           <CareLog title="Care Log" rows={36} />
-          <CareLog title="Newly Discovered Fever Matches" logTypes={['match']} onlyDiscoveries allowClear={false} />
+          <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
         </LogPanel>
       ) : ''}
     </div>

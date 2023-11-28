@@ -6,49 +6,81 @@ import {
 } from '../../contexts/PockestContext';
 import monsters from '../../data/monsters.json';
 import './index.css';
-import { STAT_ID_ICON } from '../../config/stats';
+import { STAT_ICON, STAT_ID } from '../../config/stats';
 
 function isMatchDiscovery(entry) {
-  const monster = monsters.find((m) => m.monster_id === entry.monsterId);
-  return [
-    monster?.matchSusFever,
-    monster?.matchUnknown,
-    monster?.matchSusNormal,
-  ].includes(entry.oppId);
+  const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
+  if (!entry?.result?.get_memento_point && !entry?.result?.get_egg_point) return false;
+  const allMissing = [
+    ...(monster?.matchSusFever || []),
+    ...(monster?.matchUnknown || []),
+    ...(monster?.matchSusNormal || []),
+  ];
+  return allMissing.includes(entry?.result?.target_monster_id);
 }
 
-function entryTemplate(entry) {
+function entryTemplate(entry, noResults) {
   const dateStr = (new Date(entry?.timestamp)).toLocaleString();
   const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
+  const logType = entry?.logType;
   const emoji = (() => {
-    if (entry?.logType === 'clean') return '💩';
-    if (entry?.logType === 'meal') return '❤️';
-    if (entry?.logType === 'training') return STAT_ID_ICON[entry?.statType];
-    if (entry?.logType === 'match') return '🆚';
-    if (entry?.logType === 'cure') return '🩹';
-    if (entry?.logType === 'age') return '⬆️';
-    if (entry?.logType === 'egg') return '🥚';
+    if (logType === 'cleaning') return '💩';
+    if (logType === 'meal') return '❤️';
+    if (logType === 'training') return STAT_ICON[entry?.result?.type];
+    if (logType === 'exchange') return '🆚';
+    if (logType === 'cure') return '🩹';
+    if (logType === 'age') return '⬆️';
+    if (logType === 'egg') return '🥚';
     return '';
   })();
-  const entryStr = (() => {
-    if (entry?.logType === 'clean') return `cleaned (${entry?.garbageBefore || 0} → 0)`;
-    if (entry?.logType === 'meal') return `fed (${entry?.stomachBefore || 0} → ${(entry?.stomachBefore || 0) + 1})`;
-    if (entry?.logType === 'training') return `trained ${entry?.statType} (+${entry?.statDiff})`;
-    if (entry?.logType === 'match') {
-      const isFever = entry.mementoDiff > entry.totalStats / 2;
-      const b = monsters.find((m) => m.monster_id === entry.oppId);
-      return `vs ${b.name_en} (+${entry?.mementoDiff}) ${isFever ? '<FEVER>' : ''}`;
+  const actionStr = (() => {
+    if (logType === 'cleaning') return 'cleaned';
+    if (logType === 'meal') return 'fed';
+    if (logType === 'training') return `trained ${STAT_ID[entry?.result?.type]}`;
+    if (logType === 'exchange') {
+      const b = monsters.find((m) => m.monster_id === entry?.result?.target_monster_id);
+      return `vs ${b.name_en}`;
     }
-    if (entry?.logType === 'cure') return 'cured';
-    if (entry?.logType === 'age') {
-      const monsterBefore = monsters.find((m) => m.monster_id === entry?.monsterIdBefore);
-      const newAge = parseInt(monster?.plan?.slice(1, 2) || '0', 10);
-      return `aged ${newAge - 1} (${monsterBefore?.name_en}) → ${newAge} (${monster?.name_en})`;
-    }
-    if (entry?.logType === 'egg') return `hatched ${entry?.eggType}`;
+    if (logType === 'cure') return 'cured';
+    if (logType === 'age') return 'aged';
+    if (logType === 'egg') return `hatched ${entry?.result?.eggType}`;
     return '';
   })();
-  return `[${dateStr}] ${emoji} ${monster.name_en} ${entryStr} `;
+  const tags = (() => {
+    if (logType === 'exchange') {
+      // const isFever = entry?.result?.is_spmatch;
+      const expectedMemento = Math.ceil((entry?.result?.totalStats || 0) / 2);
+      const expectedEgg = Math.ceil((entry?.result?.totalStats || 0) / 5);
+      const isFever = entry?.result?.get_memento_point > expectedMemento
+        || entry?.result?.get_egg_point > expectedEgg;
+      return [
+        entry?.result?.is_spmatch && 'FEVER',
+        isFever && 'FEVER_CALC',
+        !entry?.result?.is_spmatch && !isFever && 'NO_FEVER',
+      ];
+    }
+    return [];
+  })().filter((g) => g).map((g) => `<${g}>`).join(' ');
+  const resultsStr = (() => {
+    if (logType === 'cleaned') return [`${entry?.result?.garbageBefore || 0} → 0`];
+    if (logType === 'meal') return [`${(entry?.result?.stomach || 0) - 1} → ${entry?.result?.stomach || 0}`];
+    if (logType === 'training') return [`+${entry?.result?.up_status}`];
+    if (logType === 'exchange') {
+      return [
+        entry?.result?.get_memento_point && `🎁+${entry?.result?.get_memento_point}`,
+        entry?.result?.get_egg_point && `🥚+${entry?.result?.get_egg_point}`,
+        // entry?.result?.memento_get && 'GOT_MEMENTO',
+      ];
+    }
+    if (logType === 'age') {
+      const monsterBefore = monsters.find((m) => m.monster_id === entry?.result?.monsterIdBefore);
+      return [
+        `${monsterBefore?.name_en} → ${monster?.name_en}`,
+      ];
+    }
+    return [];
+  })().filter((g) => g).join(', ');
+  return `[${dateStr}] ${emoji}${tags ? ` ${tags}` : ''} ${monster.name_en} ${actionStr}${resultsStr && !noResults ? ` (${resultsStr})` : ''}`;
 }
 
 function CareLog({
@@ -69,14 +101,14 @@ function CareLog({
     () => {
       const d = log.filter((entry) => logTypes.includes(entry.logType));
       if (onlyDiscoveries) {
-        return d.filter((entry) => entry.logType === 'match' && isMatchDiscovery(entry));
+        return d.filter((entry) => entry.logType === 'exchange' && isMatchDiscovery(entry));
       }
       return d;
     },
     [log, logTypes, onlyDiscoveries],
   );
   const careLog = React.useMemo(() => careLogData
-    .map((entry) => entryTemplate(entry)), [careLogData]);
+    .map((entry) => entryTemplate(entry, onlyDiscoveries)), [careLogData, onlyDiscoveries]);
   return (
     <div className="CareLog">
       <header className="CareLog-header">
@@ -128,7 +160,7 @@ function CareLog({
 
 CareLog.defaultProps = {
   title: 'Log',
-  logTypes: ['clean', 'meal', 'training', 'match', 'age', 'egg', 'cure'],
+  logTypes: ['cleaning', 'meal', 'training', 'exchange', 'age', 'egg', 'cure'],
   rows: 12,
   allowClear: true,
   onlyDiscoveries: false,
