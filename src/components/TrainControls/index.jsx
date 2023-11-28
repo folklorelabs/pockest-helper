@@ -20,16 +20,6 @@ function TrainControls() {
     stat,
     paused,
   } = pockestState;
-  const sortedStats = React.useMemo(() => {
-    const availStats = Object.keys(STAT_ID);
-    return availStats.sort((a, b) => {
-      const aId = STAT_ID[a];
-      const aV = data?.monster?.[aId];
-      const bId = STAT_ID[b];
-      const bV = data?.monster?.[bId];
-      return bV - aV;
-    });
-  }, [data]);
   return (
     <div className="TrainControls">
       <div className="PockestLine">
@@ -44,7 +34,7 @@ function TrainControls() {
           />
           <span className="PockestCheck-text">Train</span>
         </label>
-        {sortedStats.map((k) => (
+        {Object.keys(STAT_ID).map((k) => (
           <span key={k} className={`PockestStat PockestStat--${STAT_ID[k]}`}>
             <span className="PockestStat-label">
               {STAT_ID[k].slice(0, 1)}
