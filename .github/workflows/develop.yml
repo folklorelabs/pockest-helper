@@ -8,9 +8,6 @@ on:
 permissions:
   contents: write
 
-env:
-  DISCORD_WEBHOOK: ${{ vars.DISCORD_WEBHOOK }}
-
 jobs:
   Develop:
     runs-on: ubuntu-latest
@@ -30,6 +27,8 @@ jobs:
           git push --tags
       - name: Build
         uses: ./.github/actions/build
+        with:
+          discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Pre-release
         uses: softprops/action-gh-release@v1
         with:

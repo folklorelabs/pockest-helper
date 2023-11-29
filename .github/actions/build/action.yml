@@ -1,5 +1,9 @@
 name: build
 description: Setup and build app
+inputs:
+  discord_webhook:
+    description: 'Full URL for the Discord Webhook'
+    required: true
 runs:
   using: composite
   steps:
@@ -7,5 +11,5 @@ runs:
       run: npm ci
       shell: bash
     - name: Build
-      run: npm run build
+      run: DISCORD_WEBHOOK="${{ inputs.discord_webhook }}" npm run build
       shell: bash
