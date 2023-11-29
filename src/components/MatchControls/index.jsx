@@ -29,7 +29,7 @@ function MatchControls() {
             className="PockestCheck-input"
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoMatch: e.target.checked }))}
-            defaultChecked={autoMatch}
+            checked={autoMatch}
             disabled={!paused || data?.monster?.age < 5}
           />
           <span className="PockestCheck-text">Match</span>
