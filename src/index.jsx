@@ -19,3 +19,8 @@ ReactDOM.createRoot(mainEl).render(
     </PockestProvider>
   </React.StrictMode>,
 );
+
+(async () => {
+  const data = await chrome.runtime.sendMessage({ type: 'POST_DISCORD', content: 'another test' });
+  console.log('res', { data });
+})();
