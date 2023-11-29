@@ -7,5 +7,5 @@ runs:
       run: npm ci
       shell: bash
     - name: Build
-      run: DISCORD_WEBHOOK="$DISCORD_WEBHOOK" npm run build
+      run: npm run build
       shell: bash

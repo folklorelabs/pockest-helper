@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write
 
+env:
+  DISCORD_WEBHOOK: ${{ env.DISCORD_WEBHOOK }}
+
 jobs:
   Develop:
     runs-on: ubuntu-latest
