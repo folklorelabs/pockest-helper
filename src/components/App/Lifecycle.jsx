@@ -91,7 +91,7 @@ function Lifecycle() {
       if (attemptToCure && isStunned) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestCure(pockestState));
+        pockestDispatch(await pockestCure());
       }
 
       // Clean
@@ -113,7 +113,7 @@ function Lifecycle() {
       if (attemptToFeed && inFeedWindow) {
         console.log(now.toLocaleString(), 'FEED');
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestFeed(pockestState));
+        pockestDispatch(await pockestFeed());
       }
 
       // Train
@@ -123,7 +123,7 @@ function Lifecycle() {
       if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
         console.log(now.toLocaleString(), `TRAIN, stat=${STAT_ID[stat]}`);
         pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestTrain(pockestState, stat));
+        pockestDispatch(await pockestTrain(stat));
       }
 
       // Match
@@ -134,7 +134,7 @@ function Lifecycle() {
         pockestDispatch(pockestLoading());
         const bestMatch = await getBestMatch(pockestState);
         console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
-        pockestDispatch(await pockestMatch(pockestState, bestMatch));
+        pockestDispatch(await pockestMatch(bestMatch));
       }
     }, 1000);
     return () => {

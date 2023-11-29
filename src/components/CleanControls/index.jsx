@@ -105,7 +105,7 @@ function CleanControls() {
       </div>
       <LogCountLine
         title="Cleanings"
-        logTypes={['clean']}
+        logTypes={['cleaning']}
       />
     </div>
   );

@@ -35,7 +35,7 @@ function LogCountLine({ title, logTypes }) {
 
 LogCountLine.defaultProps = {
   title: 'Log',
-  logTypes: ['clean', 'meal', 'training', 'match'],
+  logTypes: ['cleaning', 'meal', 'training', 'exchange'],
 };
 
 LogCountLine.propTypes = {

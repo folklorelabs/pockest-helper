@@ -5,50 +5,67 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import monsters from '../../data/monsters.json';
+import { STAT_ICON, STAT_ID } from '../../config/stats';
 import './index.css';
-import { STAT_ID_ICON } from '../../config/stats';
 
 function isMatchDiscovery(entry) {
-  const monster = monsters.find((m) => m.monster_id === entry.monsterId);
-  return [
-    monster?.matchSusFever,
-    monster?.matchUnknown,
-    monster?.matchSusNormal,
-  ].includes(entry.oppId);
+  const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
+  if (!entry?.get_memento_point && !entry?.get_egg_point) return false;
+  const allMissing = [
+    ...(monster?.matchSusFever || []),
+    ...(monster?.matchUnknown || []),
+    ...(monster?.matchSusNormal || []),
+  ];
+  return allMissing.includes(entry?.target_monster_id);
 }
 
-function entryTemplate(entry) {
+function entryTemplate({ entry, reporting }) {
   const dateStr = (new Date(entry?.timestamp)).toLocaleString();
   const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
-  const emoji = (() => {
-    if (entry?.logType === 'clean') return '💩';
-    if (entry?.logType === 'meal') return '❤️';
-    if (entry?.logType === 'training') return STAT_ID_ICON[entry?.statType];
-    if (entry?.logType === 'match') return '🆚';
-    if (entry?.logType === 'cure') return '🩹';
-    if (entry?.logType === 'age') return '⬆️';
-    if (entry?.logType === 'egg') return '🥚';
+  const logType = entry?.logType;
+  const actionStr = (() => {
+    if (logType === 'cleaning') return 'cleaned';
+    if (logType === 'meal') return 'fed';
+    if (logType === 'training') return `trained ${STAT_ID[entry?.type]}`;
+    if (logType === 'exchange') {
+      const b = monsters.find((m) => m.monster_id === entry?.target_monster_id);
+      return `vs ${b.name_en}`;
+    }
+    if (logType === 'cure') return 'cured 🩹';
+    if (logType === 'age') return `aged ⬆️ ${entry?.monsterBefore?.name_en} → ${monster?.name_en}`;
+    if (logType === 'egg') return `hatched 🥚${entry?.eggType}`;
     return '';
   })();
-  const entryStr = (() => {
-    if (entry?.logType === 'clean') return `cleaned (${entry?.garbageBefore || 0} → 0)`;
-    if (entry?.logType === 'meal') return `fed (${entry?.stomachBefore || 0} → ${(entry?.stomachBefore || 0) + 1})`;
-    if (entry?.logType === 'training') return `trained ${entry?.statType} (+${entry?.statDiff})`;
-    if (entry?.logType === 'match') {
-      const isFever = entry.mementoDiff > entry.totalStats / 2;
-      const b = monsters.find((m) => m.monster_id === entry.oppId);
-      return `vs ${b.name_en} (+${entry?.mementoDiff}) ${isFever ? '<FEVER>' : ''}`;
+  const tags = (() => {
+    if (logType === 'exchange') {
+      // const isFever = entry?.is_spmatch;
+      const expectedMemento = Math.ceil((entry?.totalStats || 0) / 2);
+      const expectedEgg = Math.ceil((entry?.totalStats || 0) / 5);
+      const isFever = entry?.get_memento_point > expectedMemento
+        || entry?.get_egg_point > expectedEgg;
+      return [
+        entry?.is_spmatch && '🔥FEVER',
+        isFever && '🔥FEVER_CALC',
+        !entry?.is_spmatch && !isFever && 'NO_FEVER',
+      ];
     }
-    if (entry?.logType === 'cure') return 'cured';
-    if (entry?.logType === 'age') {
-      const monsterBefore = monsters.find((m) => m.monster_id === entry?.monsterIdBefore);
-      const newAge = parseInt(monster?.plan?.slice(1, 2) || '0', 10);
-      return `aged ${newAge - 1} (${monsterBefore?.name_en}) → ${newAge} (${monster?.name_en})`;
+    return [];
+  })().filter((g) => g).map((g) => `<${g}>`).join(' ');
+  const resultsStr = (() => {
+    if (logType === 'age') return [`P: ${entry?.monsterBefore?.power}`, `S: ${entry?.monsterBefore?.speed}`, `T: ${entry?.monsterBefore?.technic}`];
+    if (logType === 'cleaning') return [`💩${entry?.garbageBefore || 0} → 0`];
+    if (logType === 'meal') return [`❤️${(entry?.stomach || 0) - 1} → ${entry?.stomach || 0}`];
+    if (logType === 'training') return [`+${entry?.up_status}${STAT_ICON[entry?.type]}`];
+    if (logType === 'exchange') {
+      return [
+        entry?.get_memento_point && `+${entry?.get_memento_point} memento`,
+        entry?.get_egg_point && `+${entry?.get_egg_point} egg`,
+        // entry?.memento_get && 'GOT_MEMENTO',
+      ];
     }
-    if (entry?.logType === 'egg') return `hatched ${entry?.eggType}`;
-    return '';
-  })();
-  return `[${dateStr}] ${emoji} ${monster.name_en} ${entryStr} `;
+    return [];
+  })().filter((g) => g).join(', ');
+  return `[${dateStr}]${reporting && tags ? ` ${tags}` : ''} ${monster.name_en} ${actionStr}${resultsStr && !reporting ? ` (${resultsStr})` : ''}`;
 }
 
 function CareLog({
@@ -58,6 +75,7 @@ function CareLog({
   allowClear,
   onlyDiscoveries,
 }) {
+  const textAreaEl = React.useRef();
   const {
     pockestState,
     pockestDispatch,
@@ -69,14 +87,24 @@ function CareLog({
     () => {
       const d = log.filter((entry) => logTypes.includes(entry.logType));
       if (onlyDiscoveries) {
-        return d.filter((entry) => entry.logType === 'match' && isMatchDiscovery(entry));
+        return d.filter((entry) => entry.logType === 'exchange' && isMatchDiscovery(entry));
       }
       return d;
     },
     [log, logTypes, onlyDiscoveries],
   );
-  const careLog = React.useMemo(() => careLogData
-    .map((entry) => entryTemplate(entry)), [careLogData]);
+  const careLog = React.useMemo(() => [
+    `[Pockest Helper v${window.APP_VERSION}]`,
+    ...careLogData.map((entry) => entryTemplate({
+      entry,
+      reporting: onlyDiscoveries,
+    })),
+  ], [careLogData, onlyDiscoveries]);
+  React.useEffect(() => {
+    if (!textAreaEl?.current) return () => {};
+    textAreaEl.current.scrollTop = textAreaEl.current.scrollHeight;
+    return () => {};
+  }, [careLog]);
   return (
     <div className="CareLog">
       <header className="CareLog-header">
@@ -90,6 +118,7 @@ function CareLog({
       </header>
       <div className="CareLog-content">
         <textarea
+          ref={textAreaEl}
           className="CareLog-textarea"
           value={careLog.join('\n')}
           readOnly
@@ -102,7 +131,7 @@ function CareLog({
             type="button"
             className="PockestLink CareLog-copy"
             aria-label={`Copy ${title.toLowerCase()} to clipboard`}
-            onClick={() => navigator.clipboard.writeText(careLog.join('\n'))}
+            onClick={() => navigator.clipboard.writeText([`[${(new Date()).toLocaleString()}] Pockest Helper v${window.APP_VERSION}`, ...careLog].join('\n'))}
           >
             📋 Copy
           </button>
@@ -128,7 +157,7 @@ function CareLog({
 
 CareLog.defaultProps = {
   title: 'Log',
-  logTypes: ['clean', 'meal', 'training', 'match', 'age', 'egg', 'cure'],
+  logTypes: ['cleaning', 'meal', 'training', 'exchange', 'age', 'egg', 'cure'],
   rows: 12,
   allowClear: true,
   onlyDiscoveries: false,

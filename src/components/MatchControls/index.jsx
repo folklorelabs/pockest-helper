@@ -65,7 +65,7 @@ function MatchControls() {
       </div>
       <LogCountLine
         title="Matches"
-        logTypes={['match']}
+        logTypes={['exchange']}
       />
     </div>
   );
