@@ -11,5 +11,7 @@ runs:
       run: npm ci
       shell: bash
     - name: Build
-      run: DISCORD_WEBHOOK="${{ inputs.discord_webhook }}" npm run build
+      env:
+        DISCORD_WEBHOOK: ${{ inputs.discord_webhook }}
+      run: DISCORD_WEBHOOK="${DISCORD_WEBHOOK}" npm run build
       shell: bash
