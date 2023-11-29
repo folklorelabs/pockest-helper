@@ -224,7 +224,6 @@ export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
 }
 export function pockestAutoPlan({ autoPlan, pockestState, monsterId }) {
-  console.log(autoPlan, pockestState, monsterId);
   let newSettings = {
     autoPlan,
   };
