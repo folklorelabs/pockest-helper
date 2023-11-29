@@ -5,7 +5,7 @@ async function getMonsterData() {
 }
 
 async function postDiscordMessage(content) {
-  if (!import.meta.env.DISCORD_WEBHOOK) return { error: true };
+  if (!import.meta.env.DISCORD_WEBHOOK) return { error: 'Missing DISCORD_WEBHOOK env var' };
   const response = await fetch(import.meta.env.DISCORD_WEBHOOK, {
     body: JSON.stringify({ content }),
     method: 'POST',

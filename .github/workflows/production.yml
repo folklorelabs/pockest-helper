@@ -30,6 +30,8 @@ jobs:
           git push --tags
       - name: Build
         uses: ./.github/actions/build
+        with:
+          discord_webhook: $DISCORD_WEBHOOK
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
