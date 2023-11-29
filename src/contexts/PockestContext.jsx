@@ -10,6 +10,9 @@ import getTimeIntervals from '../utils/getTimeIntervals';
 import getTotalStats from '../utils/getTotalStats';
 import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../utils/getTargetMonsterPlan';
 import fetchAllMonsters from '../utils/fetchAllMonsters';
+import postDiscord from '../utils/postDiscord';
+import isMatchDiscovery from '../utils/isMatchDiscovery';
+import getActionResultString from '../utils/getActionResultString';
 
 // STATE
 const INITIAL_STATE = {
@@ -58,6 +61,15 @@ function saveStateToLocalStorage(state) {
 }
 
 // GETTERS
+
+export function getResultEntry(pockestState) {
+  return {
+    logType: pockestState?.event,
+    timestamp: new Date().getTime(),
+    monsterId: parseInt(pockestState?.monster?.hash?.split('-')[0] || '', 10),
+    ...pockestState?.result,
+  };
+}
 
 export async function fetchMatchList() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/list');
@@ -234,6 +246,7 @@ export async function pockestRefresh(pockestState) {
   const data = await fetchPockestStatus();
   if (data && pockestState?.data?.monster.hash !== data?.monster?.hash) {
     data.result = {
+      ...getResultEntry(data),
       logType: 'age',
       monsterBefore: pockestState?.data?.monster,
     };
@@ -250,6 +263,7 @@ export async function pockestFeed() {
   });
   const { data } = await response.json();
   data.result = {
+    ...getResultEntry(data),
     ...data?.serving,
     stomach: data?.monster?.stomach,
   };
@@ -265,6 +279,7 @@ export async function pockestCure() {
   });
   const { data } = await response.json();
   data.result = {
+    ...getResultEntry(data),
     ...data?.cure, // TODO: check that this is correct
   };
   return [ACTIONS.REFRESH, data];
@@ -279,6 +294,7 @@ export async function pockestClean(pockestState) {
   });
   const { data } = await response.json();
   data.result = {
+    ...getResultEntry(data),
     ...data?.cleaning,
     garbageBefore: pockestState?.data?.monster?.garbage,
   };
@@ -300,6 +316,7 @@ export async function pockestTrain(type) {
     return [ACTIONS.ERROR, '[pockestTrain] server responded with failure'];
   }
   data.result = {
+    ...getResultEntry(data),
     ...data?.training,
   };
   return [ACTIONS.REFRESH, data];
@@ -320,9 +337,18 @@ export async function pockestMatch(match) {
     return [ACTIONS.ERROR, '[pockestMatch] server responded with failure'];
   }
   data.result = {
+    ...getResultEntry(data),
     ...data?.exhangeResult,
     totalStats: getTotalStats(data?.monster) + getTotalStats(match),
   };
+  const isDisc = isMatchDiscovery(data, data?.exhangeResult);
+  if (isDisc) {
+    postDiscord(getActionResultString({
+      pockestState: data,
+      result: data.result,
+      reporting: true,
+    }));
+  }
   return [ACTIONS.REFRESH, data];
 }
 export async function pockestSelectEgg(id) {
@@ -408,12 +434,7 @@ function REDUCER(state, [type, payload]) {
         data: payload,
         log: payload?.event ? [
           ...state.log,
-          {
-            logType: payload?.event,
-            timestamp: new Date().getTime(),
-            monsterId: parseInt(payload?.monster?.hash?.split('-')[0] || '', 10),
-            ...payload?.result,
-          },
+          payload?.result,
         ] : state.log,
       };
     case ACTIONS.SET_LOG:
