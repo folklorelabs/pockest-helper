@@ -4,6 +4,7 @@ import { PockestProvider } from './contexts/PockestContext';
 import { AppProvider } from './contexts/AppContext';
 import App from './components/App';
 import './index.css';
+import postDiscord from './utils/postDiscord';
 
 const APP_ID = 'PockestHelperExtension';
 let mainEl = document.getElementById(APP_ID);
@@ -21,6 +22,5 @@ ReactDOM.createRoot(mainEl).render(
 );
 
 (async () => {
-  const data = await chrome.runtime.sendMessage({ type: 'POST_DISCORD', content: 'another test' });
-  console.log('res', { data });
+  await postDiscord('testing connection');
 })();

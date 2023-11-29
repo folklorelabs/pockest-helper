@@ -1,11 +1,11 @@
 async function getMonsterData() {
   const response = await fetch('https://storage.googleapis.com/pockest-helper/monsters.json');
-  const data = await response.json();
-  return data;
+  const monsters = await response.json();
+  return monsters;
 }
 
 async function postDiscordMessage(content) {
-  if (!import.meta.env.DISCORD_WEBHOOK) return { error: 'Missing DISCORD_WEBHOOK env var' };
+  if (!import.meta.env.DISCORD_WEBHOOK) return { message: 'Missing DISCORD_WEBHOOK env var' };
   const response = await fetch(import.meta.env.DISCORD_WEBHOOK, {
     body: JSON.stringify({ content }),
     method: 'POST',
@@ -28,7 +28,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'POST_DISCORD') {
     (async () => {
       const data = await postDiscordMessage(request.content);
-      sendResponse({ data });
+      sendResponse(data);
     })();
     return true;
   }
