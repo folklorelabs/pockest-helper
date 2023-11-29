@@ -1,8 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import 'dotenv/config';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { crx } from '@crxjs/vite-plugin';
 import manifest from './manifest.json';
+
+console.log('asdf', process.env);
 
 export default defineConfig({
   plugins: [

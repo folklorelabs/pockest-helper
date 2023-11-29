@@ -27,10 +27,14 @@ jobs:
           git push --tags
       - name: Install dependencies
         run: npm ci
-      - name: Build
+      - name: Dotenv config
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-        run: DISCORD_WEBHOOK="${DISCORD_WEBHOOK}" npm run build
+        run: |
+          touch .env
+          echo DISCORD_WEBHOOK=$DISCORD_WEBHOOK >> .env
+      - name: Build
+        run: npm run build
       # - name: Build
       #   uses: ./.github/actions/build
       #   with:

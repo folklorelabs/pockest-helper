@@ -13,8 +13,8 @@
     "release": "npm version patch && npm run release:manifest"
   },
   "dependencies": {
-    "convert-csv-to-json": "^2.0.0",
     "classnames": "^2.3.2",
+    "convert-csv-to-json": "^2.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
@@ -24,6 +24,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^1.3.0",
+    "dotenv": "^16.3.1",
     "eslint": "^8.6.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.4",
