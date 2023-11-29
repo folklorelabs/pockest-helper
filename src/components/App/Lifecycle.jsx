@@ -117,7 +117,7 @@ function Lifecycle() {
       }
 
       // Train
-      const attemptToTrain = (autoTrain || autoPlan) && monster && stat;
+      const attemptToTrain = (autoTrain || autoPlan) && monster && stat && !isStunned;
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
       if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
