@@ -8,5 +8,5 @@ runs:
       shell: bash
 
     - name: Build
-      run: DISCORD_WEBHOOK=${{ env.DISCORD_WEBHOOK }} npm run build
+      run: DISCORD_WEBHOOK="${{ env.DISCORD_WEBHOOK }}" npm run build
       shell: bash
