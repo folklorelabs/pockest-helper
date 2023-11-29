@@ -14,7 +14,7 @@ export default function getActionResultString({ pockestState, result, reporting 
     }
     if (logType === 'cure') return 'cured 🩹';
     if (logType === 'age') return `aged ⬆️ ${result?.monsterBefore?.name_en} → ${monster?.name_en}`;
-    if (logType === 'egg') return `hatched 🥚${result?.eggType}`;
+    if (logType === 'hatching') return `hatched 🥚#${result?.eggType}`;
     return '';
   })();
   const tags = (() => {
