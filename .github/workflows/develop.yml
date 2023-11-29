@@ -29,9 +29,9 @@ jobs:
       - name: Install dependencies
         run: npm ci              
       - name: Dotenv config
-        run:
+        run: |
           touch .env
-          echo DISCORD_WEBHOOK=${{ secrets.DISCORD_WEBHOOK }} >> .env
+          echo DISCORD_WEBHOOK=\"${{ secrets.DISCORD_WEBHOOK }}\" >> .env
           cat .env
       # - name: Dotenv config
       #   run: |
