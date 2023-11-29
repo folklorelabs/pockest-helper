@@ -5,8 +5,8 @@ async function getMonsterData() {
 }
 
 async function postDiscordMessage(content) {
-  if (!import.meta.env.VITE_DISCORD_WEBHOOK) return { error: true };
-  const response = await fetch(import.meta.env.VITE_DISCORD_WEBHOOK, {
+  if (!import.meta.env.DISCORD_WEBHOOK) return { error: true };
+  const response = await fetch(import.meta.env.DISCORD_WEBHOOK, {
     body: JSON.stringify({ content }),
     method: 'POST',
     headers: {

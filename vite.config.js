@@ -4,13 +4,13 @@ import react from '@vitejs/plugin-react';
 import { crx } from '@crxjs/vite-plugin';
 import manifest from './manifest.json';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     crx({ manifest }),
   ],
   define: {
-    APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
+    'import.meta.env.DISCORD_WEBHOOK': JSON.stringify(process.env.DISCORD_WEBHOOK),
   },
 });

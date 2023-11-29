@@ -34,7 +34,7 @@ function CareLog({
     [log, onlyDiscoveries, logTypes, pockestState],
   );
   const careLog = React.useMemo(() => [
-    `[Pockest Helper v${window.APP_VERSION}]`,
+    `[Pockest Helper v${import.meta.env.APP_VERSION}]`,
     ...careLogData.map((entry) => getActionResultString({
       pockestState,
       result: entry,
@@ -72,7 +72,7 @@ function CareLog({
             type="button"
             className="PockestLink CareLog-copy"
             aria-label={`Copy ${title.toLowerCase()} to clipboard`}
-            onClick={() => navigator.clipboard.writeText([`[${(new Date()).toLocaleString()}] Pockest Helper v${window.APP_VERSION}`, ...careLog].join('\n'))}
+            onClick={() => navigator.clipboard.writeText([`[${(new Date()).toLocaleString()}] Pockest Helper v${import.meta.env.APP_VERSION}`, ...careLog].join('\n'))}
           >
             📋 Copy
           </button>
