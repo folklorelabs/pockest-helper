@@ -11,6 +11,7 @@ permissions:
 jobs:
   Develop:
     runs-on: ubuntu-latest
+    environment: develop
     steps:
       - uses: actions/checkout@v4
         with:
