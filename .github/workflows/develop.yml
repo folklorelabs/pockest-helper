@@ -1,8 +1,5 @@
 name: Develop
 
-env:
-  DAY_OF_WEEK: Monday
-
 on:
   push:
     branches:

@@ -1,7 +1,7 @@
 name: build
 description: Setup and build app
 inputs:
-  discord_webhook:
+  DISCORD_WEBHOOK:
     description: 'Full URL for the Discord Webhook'
     required: true
 runs:
