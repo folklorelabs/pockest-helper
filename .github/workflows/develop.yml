@@ -43,10 +43,10 @@ jobs:
       #     DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       # - name: Build
       #   run: npm run build
-      # - name: Build
-      #   uses: ./.github/actions/build
-      #   with:
-      #     discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Build
+        uses: ./.github/actions/build
+        # with:
+        #   discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Pre-release
         uses: softprops/action-gh-release@v1
         with:
