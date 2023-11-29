@@ -4,11 +4,8 @@ import {
   pockestSettings,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import useMonsters from '../../hooks/useMonsters';
-import monsters from '../../data/monsters.json';
 
 function MatchUpSelect() {
-  const allMonsters = useMonsters();
   const {
     pockestState,
     pockestDispatch,
@@ -17,10 +14,11 @@ function MatchUpSelect() {
     data,
     matchPreference,
     paused,
+    allMonsters,
   } = pockestState;
   const monsterId = React.useMemo(() => getMonsterId(pockestState), [pockestState]);
-  const curMonster = React.useMemo(() => monsters
-    .find((m) => m.monster_id === monsterId), [monsterId]);
+  const curMonster = React.useMemo(() => allMonsters
+    .find((m) => m.monster_id === monsterId), [allMonsters, monsterId]);
   const sortedMonsters = React.useMemo(() => allMonsters
     .filter((m) => m?.age >= data?.monster?.age)
     .sort((a, b) => {

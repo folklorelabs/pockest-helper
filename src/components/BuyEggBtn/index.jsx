@@ -1,15 +1,12 @@
 import React from 'react';
 import { pockestLoading, pockestSelectEgg, usePockestContext } from '../../contexts/PockestContext';
 import useEggs from '../../hooks/useEggs';
-import getMonsterPlan from '../../utils/getMonsterPlan';
+import getMonsterPlan from '../../utils/getTargetMonsterPlan';
 
 function BuyEggBtn() {
   const { pockestState, pockestDispatch } = usePockestContext();
   const allEggs = useEggs();
-  const {
-    monsterId,
-  } = pockestState;
-  const targetPlan = React.useMemo(() => getMonsterPlan(monsterId), [monsterId]);
+  const targetPlan = React.useMemo(() => getMonsterPlan(pockestState), [pockestState]);
   const planEgg = React.useMemo(
     () => allEggs.find((egg) => egg?.name_en?.slice(0, 1) === targetPlan?.planEgg),
     [allEggs, targetPlan],

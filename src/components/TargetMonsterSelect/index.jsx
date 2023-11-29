@@ -5,10 +5,8 @@ import {
   pockestSettings,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import useMonsters from '../../hooks/useMonsters';
 
 function TargetMonsterSelect() {
-  const allMonsters = useMonsters();
   const {
     pockestState,
     pockestDispatch,
@@ -17,14 +15,17 @@ function TargetMonsterSelect() {
     const monster = pockestState?.data?.monster;
     const curMonsterId = getMonsterId(pockestState);
     if (!curMonsterId) {
-      return allMonsters?.filter((m) => m?.age >= 5)
-        .sort((a, b) => {
-          if (a.name_en < b.name_en) return -1;
-          if (b.name_en < a.name_en) return 1;
-          return 0;
-        });
+      return pockestState?.allMonsters?.filter((m) => {
+        const mAgeStr = m?.plan?.slice(1, 2);
+        const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
+        return mAge >= 5;
+      }).sort((a, b) => {
+        if (a.name_en < b.name_en) return -1;
+        if (b.name_en < a.name_en) return 1;
+        return 0;
+      });
     }
-    const allAvailIds = allMonsters?.filter((m) => m?.age > monster?.age)
+    const allAvailIds = pockestState?.allMonsters?.filter((m) => m?.age > monster?.age)
       .reduce((all, m) => {
         const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
         if (!match) return all;
@@ -33,15 +34,15 @@ function TargetMonsterSelect() {
           m.monster_id,
         ];
       }, [curMonsterId]);
-    return allMonsters
+    return pockestState?.allMonsters
       .filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
       .sort((a, b) => {
         if (a.name_en < b.name_en) return -1;
         if (b.name_en < a.name_en) return 1;
         return 0;
       });
-  }, [pockestState, allMonsters]);
-  if (!allMonsters?.length) return '';
+  }, [pockestState]);
+  if (!pockestState?.allMonsters?.length) return '';
   return (
     <select
       className="PockestSelect"
@@ -51,7 +52,7 @@ function TargetMonsterSelect() {
           pockestDispatch(pockestAutoPlan({
             autoPlan: true,
             monsterId,
-            age: pockestState?.data?.monster?.age,
+            pockestState,
           }));
         } else {
           pockestDispatch(pockestSettings({ monsterId }));

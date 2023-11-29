@@ -4,12 +4,11 @@ import {
   pockestClearLog,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import monsters from '../../data/monsters.json';
 import { STAT_ICON, STAT_ID } from '../../config/stats';
 import './index.css';
 
-function isMatchDiscovery(entry) {
-  const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
+function isMatchDiscovery(allMonsters, entry) {
+  const monster = allMonsters.find((m) => m.monster_id === entry?.monsterId);
   if (!entry?.get_memento_point && !entry?.get_egg_point) return false;
   const allMissing = [
     ...(monster?.matchSusFever || []),
@@ -19,16 +18,16 @@ function isMatchDiscovery(entry) {
   return allMissing.includes(entry?.target_monster_id);
 }
 
-function entryTemplate({ entry, reporting }) {
+function entryTemplate({ allMonsters, entry, reporting }) {
   const dateStr = (new Date(entry?.timestamp)).toLocaleString();
-  const monster = monsters.find((m) => m.monster_id === entry?.monsterId);
+  const monster = allMonsters.find((m) => m.monster_id === entry?.monsterId);
   const logType = entry?.logType;
   const actionStr = (() => {
     if (logType === 'cleaning') return 'cleaned';
     if (logType === 'meal') return 'fed';
     if (logType === 'training') return `trained ${STAT_ID[entry?.type]}`;
     if (logType === 'exchange') {
-      const b = monsters.find((m) => m.monster_id === entry?.target_monster_id);
+      const b = allMonsters.find((m) => m.monster_id === entry?.target_monster_id);
       return `vs ${b.name_en}`;
     }
     if (logType === 'cure') return 'cured 🩹';
@@ -82,24 +81,26 @@ function CareLog({
   } = usePockestContext();
   const {
     log,
+    allMonsters,
   } = pockestState;
   const careLogData = React.useMemo(
     () => {
       const d = log.filter((entry) => logTypes.includes(entry.logType));
       if (onlyDiscoveries) {
-        return d.filter((entry) => entry.logType === 'exchange' && isMatchDiscovery(entry));
+        return d.filter((entry) => entry.logType === 'exchange' && isMatchDiscovery(allMonsters, entry));
       }
       return d;
     },
-    [log, logTypes, onlyDiscoveries],
+    [log, logTypes, allMonsters, onlyDiscoveries],
   );
   const careLog = React.useMemo(() => [
     `[Pockest Helper v${window.APP_VERSION}]`,
     ...careLogData.map((entry) => entryTemplate({
+      allMonsters,
       entry,
       reporting: onlyDiscoveries,
     })),
-  ], [careLogData, onlyDiscoveries]);
+  ], [careLogData, allMonsters, onlyDiscoveries]);
   React.useEffect(() => {
     if (!textAreaEl?.current) return () => {};
     textAreaEl.current.scrollTop = textAreaEl.current.scrollHeight;

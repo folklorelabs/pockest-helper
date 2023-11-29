@@ -1,6 +1,5 @@
 import { STAT_ID } from '../config/stats';
 import routes from '../config/routes';
-import monsters from '../data/monsters.json';
 
 const PLAN_DEFAULTS = {
   cleanFrequency: null,
@@ -16,8 +15,8 @@ const PLAN_TIMES = [
   168 * 60 * 60 * 1000,
 ];
 
-export default function getMonsterPlan(monsterId) {
-  const monster = monsters.find((m) => m.monster_id === monsterId);
+export default function getTargetMonsterPlan(state, monsterId) {
+  const monster = state?.allMonsters?.find((m) => m.monster_id === (monsterId || state?.monsterId));
   const planId = monster?.plan;
   if (!planId) return {};
 
@@ -61,19 +60,19 @@ export default function getMonsterPlan(monsterId) {
   };
 }
 
-export function getCurrentMonsterPlan(monsterId, age) {
-  const targetPlan = getMonsterPlan(monsterId);
+export function getCurrentTargetMonsterPlan(state, monsterId) {
+  const targetPlan = getTargetMonsterPlan(state, monsterId);
   const targetPlanSpecs = (() => {
-    if (age < 3) {
+    if (state?.monster?.age < 3) {
       return targetPlan?.planDiv1;
     }
-    if (age < 4) {
+    if (state?.monster?.age < 4) {
       return targetPlan?.planDiv2;
     }
     return targetPlan?.planDiv3;
   })();
   return {
-    monsterId,
+    monsterId: monsterId || state?.monsterId,
     stat: targetPlan?.planStat,
     cleanOffset: targetPlanSpecs?.cleanOffset,
     feedOffset: targetPlanSpecs?.feedOffset,

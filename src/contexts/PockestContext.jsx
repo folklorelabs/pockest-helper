@@ -6,14 +6,15 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import monsters from '../data/monsters.json';
 import getTimeIntervals from '../utils/getTimeIntervals';
 import getTotalStats from '../utils/getTotalStats';
-import getMonsterPlan, { getCurrentMonsterPlan } from '../utils/getMonsterPlan';
+import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../utils/getTargetMonsterPlan';
+import fetchAllMonsters from '../utils/fetchAllMonsters';
 
 // STATE
 const INITIAL_STATE = {
   data: {},
+  allMonsters: [],
   paused: true,
   monsterId: null,
   autoPlan: true,
@@ -51,6 +52,7 @@ function saveStateToLocalStorage(state) {
   delete stateToSave?.loading;
   delete stateToSave?.error;
   delete stateToSave?.log;
+  delete stateToSave?.allMonsters;
   window.localStorage.setItem('PockestHelper', JSON.stringify(stateToSave));
   window.localStorage.setItem('PockestHelperLog', JSON.stringify(state?.log));
 }
@@ -63,6 +65,12 @@ export async function fetchMatchList() {
   return data;
 }
 
+export async function fetchPockestStatus() {
+  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
+  const { data } = await response.json();
+  return data;
+}
+
 export function getMonsterId(state) {
   const hashId = state?.data?.monster?.hash;
   if (!hashId) return null;
@@ -71,7 +79,7 @@ export function getMonsterId(state) {
 
 export async function getBestMatch(state) {
   const monsterId = getMonsterId(state);
-  const monster = monsters.find((m) => m.monster_id === monsterId);
+  const monster = state?.allMonsters?.find((m) => m.monster_id === monsterId);
   const { exchangeList } = await fetchMatchList();
   const sortedMatches = exchangeList?.map((a) => {
     const aMulti = monster?.matchFever?.includes(a.monster_id) ? 1.5 : 1;
@@ -103,8 +111,7 @@ export async function getBestMatch(state) {
 
 export function getCurrentPlanStats(state) {
   if (state?.autoPlan) {
-    const age = state?.data?.monster?.age;
-    return getCurrentMonsterPlan(state?.monsterId, age);
+    return getCurrentTargetMonsterPlan(state);
   }
   return {
     stat: state?.stat,
@@ -115,10 +122,10 @@ export function getCurrentPlanStats(state) {
 }
 
 export function getCurrentPlanSchedule(state) {
-  const targetPlan = getMonsterPlan(state?.monsterId);
+  const targetPlan = getTargetMonsterPlan(state);
   const birth = state?.data?.monster?.live_time;
   if (!birth) return {};
-  const cleanSchedule = ['planDiv1', 'planDiv2', 'planDiv3']
+  const cleanSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
       if (!spec) return fullSchedule;
@@ -132,8 +139,13 @@ export function getCurrentPlanSchedule(state) {
         ...fullSchedule,
         ...schedule,
       ];
-    }, []);
-  const feedSchedule = ['planDiv1', 'planDiv2', 'planDiv3']
+    }, []) : getTimeIntervals(
+    birth,
+    birth + 7 * 24 * 60 * 60 * 1000,
+    state?.cleanFrequency,
+    0,
+  );
+  const feedSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
       if (!spec) return fullSchedule;
@@ -147,7 +159,12 @@ export function getCurrentPlanSchedule(state) {
         ...fullSchedule,
         ...schedule,
       ];
-    }, []);
+    }, []) : getTimeIntervals(
+    birth,
+    birth + 7 * 24 * 60 * 60 * 1000,
+    state?.feedFrequency,
+    0,
+  );
   return {
     cleanSchedule,
     feedSchedule,
@@ -175,6 +192,7 @@ export function getCurrentPlanScheduleWindows(state) {
 
 // ACTIONS
 export const ACTIONS = {
+  INIT: 'POCKEST_INIT',
   REFRESH: 'POCKEST_REFRESH',
   LOADING: 'POCKEST_LOADING',
   PAUSE: 'POCKEST_PAUSE',
@@ -193,28 +211,27 @@ export function pockestPause(paused) {
 export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
 }
-export function pockestAutoPlan({ autoPlan, monsterId, age }) {
+export function pockestAutoPlan({ autoPlan, pockestState, monsterId }) {
   let newSettings = {
     autoPlan,
   };
   if (autoPlan) {
     newSettings = {
       ...newSettings,
-      ...getCurrentMonsterPlan(monsterId, age),
+      ...getCurrentTargetMonsterPlan(pockestState, monsterId),
       autoClean: true,
       autoFeed: true,
       autoTrain: true,
     };
   }
-  if (autoPlan && age < 5) {
+  if (autoPlan && pockestState?.monster?.age < 5) {
     newSettings.autoMatch = false;
     newSettings.autoCure = false;
   }
   return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh(pockestState) {
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
-  const { data } = await response.json();
+  const data = await fetchPockestStatus();
   if (data && pockestState?.data?.monster.hash !== data?.monster?.hash) {
     data.result = {
       logType: 'age',
@@ -333,6 +350,19 @@ export function pockestClearLog(pockestState, logTypes) {
   const newLog = pockestState?.log?.filter((l) => !logTypes.includes(l.logType));
   return [ACTIONS.SET_LOG, newLog];
 }
+export async function pockestInit() {
+  const [
+    allMonsters,
+    data,
+  ] = await Promise.all([
+    fetchAllMonsters(),
+    fetchPockestStatus(),
+  ]);
+  return [ACTIONS.INIT, {
+    data,
+    allMonsters,
+  }];
+}
 
 // REDUCER
 function REDUCER(state, [type, payload]) {
@@ -364,11 +394,17 @@ function REDUCER(state, [type, payload]) {
         ...state,
         paused: payload.paused ?? state?.paused,
       };
+    case ACTIONS.INIT:
+      return {
+        ...state,
+        initialized: true,
+        data: payload?.data,
+        allMonsters: payload?.allMonsters,
+      };
     case ACTIONS.REFRESH:
       return {
         ...state,
         loading: false,
-        initialized: true,
         data: payload,
         log: payload?.event ? [
           ...state.log,
@@ -415,7 +451,7 @@ export function PockestProvider({
   // grab data on init
   useEffect(() => {
     (async () => {
-      pockestDispatch(await pockestRefresh());
+      pockestDispatch(await pockestInit());
     })();
   }, []);
 

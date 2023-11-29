@@ -6,7 +6,7 @@ import {
 import TargetMonsterSelect from '../TargetMonsterSelect';
 import './index.css';
 import Timer from '../Timer';
-import getMonsterPlan from '../../utils/getMonsterPlan';
+import getMonsterPlan from '../../utils/getTargetMonsterPlan';
 
 const MONSTER_LIFESPAN = {
   1: 1 * 60 * 60 * 1000, // 1 hour
@@ -27,7 +27,7 @@ function AutoPlanControls() {
     autoPlan,
     paused,
   } = pockestState;
-  const targetPlan = React.useMemo(() => getMonsterPlan(monsterId), [monsterId]);
+  const targetPlan = React.useMemo(() => getMonsterPlan(pockestState), [pockestState]);
   const curAge = data?.monster?.age;
   return (
     <div className="AutoPlanControls">
@@ -40,7 +40,7 @@ function AutoPlanControls() {
             onChange={(e) => pockestDispatch(pockestAutoPlan({
               autoPlan: e.target.checked,
               monsterId,
-              age: data?.monster?.age,
+              pockestState,
             }))}
             defaultChecked={autoPlan}
             disabled={!paused}
