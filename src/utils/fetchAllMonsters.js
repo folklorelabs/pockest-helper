@@ -9,31 +9,38 @@ export default async function fetchAllMonsters() {
     chrome.runtime.sendMessage({ type: 'GET_MONSTERS' }),
   ]);
   const { data } = await bucklerRes.json();
-  const monsters = serviceWorkerRes?.monsters?.map((ssm) => {
-    const matches = data?.books.reduce((all, book) => {
-      const { monster } = book;
-      const monsterProps = Object.keys(monster);
-      const genePropKeys = monsterProps.filter((k) => k.includes('gene'));
-      const geneMatches = genePropKeys.reduce((monsterMatches, k) => {
-        const match = monster[k].find((mk) => mk.monster_id === ssm.monster_id);
-        if (!match) return monsterMatches;
-        return [
-          ...monsterMatches,
-          {
-            ...match,
-            ...ssm,
-          },
+  const buckerMonsters = data?.books.reduce((allMonsters, book) => {
+    const newAllMonsters = {
+      ...allMonsters,
+    };
+    const { monster } = book;
+    const monsterProps = Object.keys(monster);
+    const genePropKeys = monsterProps.filter((k) => k.includes('gene'));
+    genePropKeys.forEach((gk) => {
+      const geneMonsters = monster[gk];
+      geneMonsters.forEach((gm) => {
+        newAllMonsters[gm?.monster_id] = [
+          ...(newAllMonsters[gm?.monster_id] || []),
+          gm,
         ];
-      }, []);
-      if (!geneMatches.length) return all;
-      return [
-        ...all,
-        ...geneMatches,
-      ];
-    }, []);
-    // TODO: combine any necessary attributes across the multiple versions like ".from"
-    return matches?.[0] || ssm;
+      });
+    });
+    return newAllMonsters;
+  }, {});
+  if (!buckerMonsters) return serviceWorkerRes?.monsters;
+  const allMonsters = Object.keys(buckerMonsters).map((monsterIdStr) => {
+    const monsterId = parseInt(monsterIdStr || '-1', 10);
+    const matchingBucklerMonsters = buckerMonsters[monsterId];
+    const bucklerMonster = {
+      ...matchingBucklerMonsters[0],
+      // TODO: combine/add any diffs found
+    };
+    const swMonster = serviceWorkerRes?.monsters?.find((m) => m.monster_id === monsterId);
+    return {
+      ...bucklerMonster,
+      ...swMonster,
+    };
   });
-  monsterCache = monsters;
-  return monsters;
+  monsterCache = allMonsters;
+  return allMonsters;
 }
