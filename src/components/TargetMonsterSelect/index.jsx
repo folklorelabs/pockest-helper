@@ -15,12 +15,15 @@ function TargetMonsterSelect() {
     const monster = pockestState?.data?.monster;
     const curMonsterId = getMonsterId(pockestState);
     if (!curMonsterId) {
-      return pockestState?.allMonsters?.filter((m) => m?.age >= 5)
-        .sort((a, b) => {
-          if (a.name_en < b.name_en) return -1;
-          if (b.name_en < a.name_en) return 1;
-          return 0;
-        });
+      return pockestState?.allMonsters?.filter((m) => {
+        const mAgeStr = m?.plan?.slice(1, 2);
+        const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
+        return mAge >= 5;
+      }).sort((a, b) => {
+        if (a.name_en < b.name_en) return -1;
+        if (b.name_en < a.name_en) return 1;
+        return 0;
+      });
     }
     const allAvailIds = pockestState?.allMonsters?.filter((m) => m?.age > monster?.age)
       .reduce((all, m) => {
