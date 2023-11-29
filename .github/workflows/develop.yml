@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 env:
-  DISCORD_WEBHOOK: ${{ env.DISCORD_WEBHOOK }}
+  DISCORD_WEBHOOK: ${{ vars.DISCORD_WEBHOOK }}
 
 jobs:
   Develop:
