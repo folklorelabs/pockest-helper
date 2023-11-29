@@ -17,6 +17,7 @@ function MatchControls() {
   const {
     data,
     autoMatch,
+    autoPlan,
     paused,
     matchPriority,
   } = pockestState;
@@ -30,7 +31,7 @@ function MatchControls() {
             type="checkbox"
             onChange={(e) => pockestDispatch(pockestSettings({ autoMatch: e.target.checked }))}
             checked={autoMatch}
-            disabled={!paused || data?.monster?.age < 5}
+            disabled={!paused || (autoPlan && data?.monster?.age < 5)}
           />
           <span className="PockestCheck-text">Match</span>
         </label>
