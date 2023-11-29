@@ -127,7 +127,8 @@ function Lifecycle() {
       }
 
       // Match
-      const attemptToMatch = (autoMatch || (autoPlan && data?.monster?.age > 4)) && monster;
+      const attemptToMatch = (autoMatch || (autoPlan && data?.monster?.age > 4))
+        && monster && !isStunned;
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
