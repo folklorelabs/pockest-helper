@@ -25,10 +25,8 @@ jobs:
         run: |
           git push
           git push --tags
-      - name: Install dependencies
-        run: npm ci
       - name: Build
-        run: DISCORD_WEBHOOK="${{ secrets.DISCORD_WEBHOOK }}" npm run build
+        uses: ./.github/actions/build
       - name: Pre-release
         uses: softprops/action-gh-release@v1
         with:
