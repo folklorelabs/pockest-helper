@@ -33,7 +33,7 @@ function App() {
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
       </header>
-      {!pockestState?.initialized || pockestState?.data ? (
+      {!pockestState?.initialized || pockestState?.data?.monster ? (
         <>
           <AutoPlanControls />
           <hr />
