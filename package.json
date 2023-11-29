@@ -1,7 +1,7 @@
 {
   "name": "pockest-helper",
   "private": true,
-  "version": "1.1.24-rc.2",
+  "version": "1.1.24-rc.3",
   "scripts": {
     "data": "node ./scripts/fetchMonsterSheetData.js",
     "build:zip": "cd ./dist && zip -r9 ./PockestHelper.zip ./* && cd ..",
