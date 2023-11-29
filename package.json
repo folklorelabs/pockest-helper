@@ -1,7 +1,7 @@
 {
   "name": "pockest-helper",
   "private": true,
-  "version": "1.1.23-rc.38",
+  "version": "1.1.23-rc.39",
   "scripts": {
     "data": "node ./scripts/parseMonsterData.js",
     "build:zip": "cd ./dist && zip -r9 ./PockestHelper.zip ./* && cd ..",
