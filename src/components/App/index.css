@@ -9,6 +9,7 @@
   transition: 0.5s transform;
   max-height: 100vh;
   overflow-y: auto;
+  border-top: 4px solid #d5a613;
 }
 
 #PockestHelperExtension .App::-webkit-scrollbar {
@@ -28,12 +29,12 @@
 }
 
 #PockestHelperExtension .App--minimized {
-  transform: translate(0, calc(100% - 30px));
+  transform: translate(0, calc(100% - 44px));
 }
 
 #PockestHelperExtension .AppMinBtn {
   position: absolute;
-  top: 0;
+  top: 4px;
   right: 0;
   background: none;
   border: 0;
@@ -49,7 +50,7 @@
 }
 
 #PockestHelperExtension .App-header {
-  margin: 1rem 0 1.5rem;
+  margin: 1.2rem 0 1.5rem;
 }
 
 #PockestHelperExtension .App-title {
