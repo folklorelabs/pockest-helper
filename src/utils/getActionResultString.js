@@ -39,6 +39,7 @@ export default function getActionResultString({ pockestState, result, reporting 
     if (logType === 'training') return [`+${result?.up_status}${STAT_ICON[result?.type]}`];
     if (logType === 'exchange') {
       return [
+        result?.is_spmatch && '🔥fever',
         result?.get_memento_point && `+${result?.get_memento_point} memento`,
         result?.get_egg_point && `+${result?.get_egg_point} egg`,
         // result?.memento_get && 'GOT_MEMENTO',
