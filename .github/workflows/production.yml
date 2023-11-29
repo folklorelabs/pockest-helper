@@ -8,6 +8,9 @@ on:
 permissions:
   contents: write
 
+env:
+  DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+
 jobs:
   Production:
     runs-on: ubuntu-latest
@@ -25,9 +28,8 @@ jobs:
         run: |
           git push
           git push --tags
-      - uses: ./.github/actions/build
-        with:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Build
+        uses: ./.github/actions/build
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
