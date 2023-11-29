@@ -4,7 +4,6 @@ import { PockestProvider } from './contexts/PockestContext';
 import { AppProvider } from './contexts/AppContext';
 import App from './components/App';
 import './index.css';
-import postDiscord from './utils/postDiscord';
 
 const APP_ID = 'PockestHelperExtension';
 let mainEl = document.getElementById(APP_ID);
@@ -20,8 +19,3 @@ ReactDOM.createRoot(mainEl).render(
     </PockestProvider>
   </React.StrictMode>,
 );
-
-(async () => {
-  console.log(import.meta.env.APP_VERSION, import.meta.env.DISCORD_HOOK);
-  await postDiscord('testing connection');
-})();
