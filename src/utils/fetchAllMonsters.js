@@ -32,7 +32,7 @@ export default async function fetchAllMonsters() {
       ];
     }, []);
     // TODO: combine any necessary attributes across the multiple versions like ".from"
-    return matches?.[0];
+    return matches?.[0] || ssm;
   });
   monsterCache = monsters;
   return monsters;
