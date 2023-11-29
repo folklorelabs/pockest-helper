@@ -22,5 +22,6 @@ ReactDOM.createRoot(mainEl).render(
 );
 
 (async () => {
+  console.log(import.meta.env.APP_VERSION, import.meta.env.DISCORD_HOOK);
   await postDiscord('testing connection');
 })();
