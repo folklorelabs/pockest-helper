@@ -231,7 +231,7 @@ export function pockestAutoPlan({ autoPlan, pockestState, monsterId }) {
   return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh(pockestState) {
-  const { data } = await fetchPockestStatus();
+  const data = await fetchPockestStatus();
   if (data && pockestState?.data?.monster.hash !== data?.monster?.hash) {
     data.result = {
       logType: 'age',
