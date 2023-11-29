@@ -24,7 +24,7 @@ const MONSTER_FILE = 'monsters.json';
       const key = keys[index];
       return {
         ...monster,
-        [key]: value.includes('[') ? JSON.parse(value) : value,
+        [key]: value.includes('[') || /^\d+$/.test(value) ? JSON.parse(value) : value,
       };
     }, {}));
   if (!await fs.existsSync(DATA_DIR)) {

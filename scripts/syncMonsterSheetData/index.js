@@ -28,7 +28,7 @@ async function fetchMonsters() {
   const monsters = response.data.values
     .slice(1, -1).map((row) => row.reduce((monster, cellStr, index) => {
       const key = keys[index];
-      const value = cellStr.includes('[') ? JSON.parse(cellStr) : cellStr;
+      const value = cellStr.includes('[') || /^\d+$/.test(cellStr) ? JSON.parse(cellStr) : cellStr;
       if (['matchSusFever', 'matchSusNormal', 'matchUnknown'].includes(key)) allUnknown = [...allUnknown, ...value]; // for fun!
       return {
         ...monster,
