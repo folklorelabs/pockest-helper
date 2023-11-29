@@ -27,16 +27,20 @@ jobs:
           git push
           git push --tags
       - name: Install dependencies
-        run: npm ci
+        run: npm ci              
       - name: Dotenv config
-        run: |
-          touch .env
-          echo "$DISCORD_WEBHOOK"
-          echo DISCORD_WEBHOOK="$DISCORD_WEBHOOK" >> .env
-          ls
-          npm run build
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: actually-colab/github-action-create-env-file@v2.3
+        with:
+          envkey_DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      # - name: Dotenv config
+      #   run: |
+      #     touch .env
+      #     echo "$DISCORD_WEBHOOK"
+      #     echo DISCORD_WEBHOOK="$DISCORD_WEBHOOK" >> .env
+      #     ls
+      #     npm run build
+      #   env:
+      #     DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
       # - name: Build
       #   run: npm run build
       # - name: Build
