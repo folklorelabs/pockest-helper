@@ -14,11 +14,13 @@ env:
 jobs:
   Production:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-tags: true
-      - uses: ./.github/actions/git-config
+      - name: Git config
+        uses: ./.github/actions/git-config
       - name: Git tag
         id: tag
         run: echo "TAG_NAME=$(npm version patch)" >> $GITHUB_ENV
@@ -28,10 +30,12 @@ jobs:
         run: |
           git push
           git push --tags
+      - name: Dotenv config
+        run: |
+          touch .env
+          echo DISCORD_WEBHOOK=\"${{ secrets.DISCORD_WEBHOOK }}\" >> .env
       - name: Build
         uses: ./.github/actions/build
-        with:
-          discord_webhook: ${{ env.DISCORD_WEBHOOK }}
       - name: Release
         uses: softprops/action-gh-release@v1
         with:

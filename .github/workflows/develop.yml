@@ -27,29 +27,12 @@ jobs:
         run: |
           git push
           git push --tags
-      - name: Install dependencies
-        run: npm ci              
       - name: Dotenv config
         run: |
           touch .env
           echo DISCORD_WEBHOOK=\"${{ secrets.DISCORD_WEBHOOK }}\" >> .env
-          cat .env
-      # - name: Dotenv config
-      #   run: |
-      #     touch .env
-      #     echo "$DISCORD_WEBHOOK"
-      #     echo DISCORD_WEBHOOK="$DISCORD_WEBHOOK" >> .env
-      #     ls
-      #     npm run build
-      #   env:
-      #     DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
-      # - name: Build
-      #   run: npm run build
-      - run: ls
       - name: Build
         uses: ./.github/actions/build
-        # with:
-        #   discord_webhook: ${{ secrets.DISCORD_WEBHOOK }}
       - name: Pre-release
         uses: softprops/action-gh-release@v1
         with:
