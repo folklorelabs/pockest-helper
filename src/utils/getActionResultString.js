@@ -14,7 +14,7 @@ export default function getActionResultString({ pockestState, result, reporting 
     }
     if (logType === 'cure') return 'cured 🩹';
     if (logType === 'age') return `aged ⬆️ ${result?.monsterBefore?.name_en} → ${monster?.name_en}`;
-    if (logType === 'hatching') return `hatched 🥚#${result?.eggType}`;
+    if (logType === 'hatching') return 'hatched';
     return '';
   })();
   const tags = (() => {
@@ -45,6 +45,7 @@ export default function getActionResultString({ pockestState, result, reporting 
         // result?.memento_get && 'GOT_MEMENTO',
       ];
     }
+    if (logType === 'hatching') return [`🥚#${result?.eggType}`];
     return [];
   })().filter((g) => g).join(', ');
   return `[${dateStr}]${reporting && tags ? ` ${tags}` : ''} ${monster.name_en} ${actionStr}${resultsStr && !reporting ? ` (${resultsStr})` : ''}`;
