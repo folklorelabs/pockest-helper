@@ -42,7 +42,7 @@ function AutoPlanControls() {
               monsterId,
               pockestState,
             }))}
-            defaultChecked={autoPlan}
+            checked={autoPlan}
             disabled={!paused}
           />
           <span className="PockestCheck-text">Preset</span>
