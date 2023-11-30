@@ -62,12 +62,11 @@ function saveStateToLocalStorage(state) {
 
 // GETTERS
 
-export function getResultEntry(pockestState) {
+export function getLogEntry(pockestState) {
   return {
-    logType: pockestState?.event,
+    logType: pockestState?.data?.event,
     timestamp: new Date().getTime(),
     monsterId: parseInt(pockestState?.data?.monster?.hash?.split('-')[0] || '-1', 10),
-    ...pockestState?.result,
   };
 }
 
@@ -246,7 +245,7 @@ export async function pockestRefresh(pockestState) {
   const data = await fetchPockestStatus();
   if (data && pockestState?.data?.monster.hash !== data?.monster?.hash) {
     data.result = {
-      ...getResultEntry({ data }),
+      ...getLogEntry({ data }),
       logType: 'age',
       monsterBefore: pockestState?.data?.monster,
     };
@@ -263,7 +262,7 @@ export async function pockestFeed() {
   });
   const { data } = await response.json();
   data.result = {
-    ...getResultEntry({ data }),
+    ...getLogEntry({ data }),
     ...data?.serving,
     stomach: data?.monster?.stomach,
   };
@@ -279,7 +278,7 @@ export async function pockestCure() {
   });
   const { data } = await response.json();
   data.result = {
-    ...getResultEntry({ data }),
+    ...getLogEntry({ data }),
     ...data?.cure, // TODO: check that this is correct
   };
   return [ACTIONS.REFRESH, data];
@@ -294,7 +293,7 @@ export async function pockestClean(pockestState) {
   });
   const { data } = await response.json();
   data.result = {
-    ...getResultEntry({ data }),
+    ...getLogEntry({ data }),
     ...data?.cleaning,
     garbageBefore: pockestState?.data?.monster?.garbage,
   };
@@ -316,7 +315,7 @@ export async function pockestTrain(type) {
     return [ACTIONS.ERROR, '[pockestTrain] server responded with failure'];
   }
   data.result = {
-    ...getResultEntry({ data }),
+    ...getLogEntry({ data }),
     ...data?.training,
   };
   return [ACTIONS.REFRESH, data];
@@ -337,7 +336,7 @@ export async function pockestMatch(match) {
     return [ACTIONS.ERROR, '[pockestMatch] server responded with failure'];
   }
   data.result = {
-    ...getResultEntry({ data }),
+    ...getLogEntry({ data }),
     ...data?.exhangeResult,
     totalStats: getTotalStats(data?.monster) + getTotalStats(match),
   };
@@ -364,7 +363,7 @@ export async function pockestSelectEgg(id) {
   });
   const { data } = await response.json();
   data.result = {
-    ...data?.egg,
+    ...getLogEntry({ data }),
     eggType: id,
   };
   return [ACTIONS.REFRESH, data];
@@ -432,7 +431,7 @@ function REDUCER(state, [type, payload]) {
         ...state,
         loading: false,
         data: payload,
-        log: payload?.event ? [
+        log: (payload?.result) ? [
           ...state.log,
           payload?.result,
         ] : state.log,
