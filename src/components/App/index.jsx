@@ -69,7 +69,6 @@ function App() {
           <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
         </LogPanel>
       ) : ''}
-      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
       <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
         {lol ? (
           <CharacterSprite
