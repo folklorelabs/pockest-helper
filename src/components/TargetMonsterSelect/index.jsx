@@ -61,7 +61,7 @@ function TargetMonsterSelect() {
       defaultValue={`${pockestState?.monsterId}`}
       disabled={!pockestState?.paused}
     >
-      <option key="default" value="">
+      <option key="default" value="-1">
         --
       </option>
       {availableMonsters.map((monster) => (

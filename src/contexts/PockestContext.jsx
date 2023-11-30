@@ -19,7 +19,7 @@ const INITIAL_STATE = {
   data: {},
   allMonsters: [],
   paused: true,
-  monsterId: null,
+  monsterId: -1,
   autoPlan: true,
   autoFeed: true,
   cleanFrequency: 2,
