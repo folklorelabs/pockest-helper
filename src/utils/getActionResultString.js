@@ -13,7 +13,7 @@ export default function getActionResultString({ pockestState, result, reporting 
       return `vs ${b.name_en}`;
     }
     if (logType === 'cure') return 'cured 🩹';
-    if (logType === 'age') return `aged ⬆️ ${result?.monsterBefore?.name_en} → ${monster?.name_en}`;
+    if (logType === 'age') return 'appears';
     if (logType === 'hatching') return 'hatched';
     return '';
   })();
@@ -33,7 +33,7 @@ export default function getActionResultString({ pockestState, result, reporting 
     return [];
   })().filter((g) => g).map((g) => `<${g}>`).join(' ');
   const resultsStr = (() => {
-    if (logType === 'age') return [`P: ${result?.monsterBefore?.power}`, `S: ${result?.monsterBefore?.speed}`, `T: ${result?.monsterBefore?.technic}`];
+    if (logType === 'age') return [`⬆️ ${result?.monsterBefore?.name_en}`, `P: ${result?.monsterBefore?.power}`, `S: ${result?.monsterBefore?.speed}`, `T: ${result?.monsterBefore?.technic}`];
     if (logType === 'cleaning') return [`💩${result?.garbageBefore || 0} → 0`];
     if (logType === 'meal') return [`❤️${(result?.stomach || 0) - 1} → ${result?.stomach || 0}`];
     if (logType === 'training') return [`+${result?.up_status}${STAT_ICON[result?.type]}`];
