@@ -135,7 +135,7 @@ function Lifecycle() {
         pockestDispatch(pockestLoading());
         const bestMatch = await getBestMatch(pockestState);
         console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
-        pockestDispatch(await pockestMatch(bestMatch));
+        pockestDispatch(await pockestMatch(pockestState, bestMatch));
       }
     }, 1000);
     return () => {
