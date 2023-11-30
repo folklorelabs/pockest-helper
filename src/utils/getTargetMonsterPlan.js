@@ -17,15 +17,14 @@ const PLAN_TIMES = [
 
 export default function getTargetMonsterPlan(state, monsterId) {
   const monster = state?.allMonsters?.find((m) => m.monster_id === (monsterId || state?.monsterId));
-  const planId = monster?.plan;
-  if (!planId) return {};
+  const planId = monster?.plan || '';
 
   const planEgg = planId.slice(0, 1);
 
-  const planAge = parseInt(planId.slice(1, 2), 10);
+  const planAge = parseInt(planId.slice(1, 2), 10) || 0;
 
   const routeId = planId.slice(2, 4);
-  const route = ROUTES[routeId];
+  const route = routeId ? ROUTES[routeId] : [];
   const planDiv1 = route[0] ? {
     startTime: 0,
     endTime: PLAN_TIMES[0] - 1000,
@@ -61,7 +60,8 @@ export default function getTargetMonsterPlan(state, monsterId) {
 }
 
 export function getCurrentTargetMonsterPlan(state, monsterId) {
-  const targetPlan = getTargetMonsterPlan(state, monsterId);
+  const mId = typeof monsterId === 'number' ? monsterId : state?.monsterId;
+  const targetPlan = getTargetMonsterPlan(state, mId);
   const targetPlanSpecs = (() => {
     if (state?.data?.monster?.age < 3) {
       return targetPlan?.planDiv1;
@@ -72,7 +72,7 @@ export function getCurrentTargetMonsterPlan(state, monsterId) {
     return targetPlan?.planDiv3;
   })();
   return {
-    monsterId: monsterId || state?.monsterId,
+    monsterId: mId,
     stat: targetPlan?.planStat,
     cleanOffset: targetPlanSpecs?.cleanOffset,
     feedOffset: targetPlanSpecs?.feedOffset,
