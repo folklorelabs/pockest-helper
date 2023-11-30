@@ -3,6 +3,7 @@ import { STAT_ICON, STAT_ID } from '../config/stats';
 export default function getActionResultString({ pockestState, result, reporting }) {
   const dateStr = (new Date(result?.timestamp)).toLocaleString();
   const monster = pockestState?.allMonsters.find((m) => m.monster_id === result?.monsterId);
+  if (!monster) return `Error parsing ${result?.logType} log`;
   const logType = result?.logType;
   const actionStr = (() => {
     if (logType === 'cleaning') return 'cleaned';
@@ -10,7 +11,7 @@ export default function getActionResultString({ pockestState, result, reporting 
     if (logType === 'training') return `trained ${STAT_ID[result?.type]}`;
     if (logType === 'exchange') {
       const b = pockestState?.allMonsters.find((m) => m.monster_id === result?.target_monster_id);
-      return `vs ${b.name_en}`;
+      return `vs ${b?.name_en}`;
     }
     if (logType === 'cure') return 'cured 🩹';
     if (logType === 'age') return 'appears';
