@@ -15,6 +15,7 @@ import EggControls from '../EggControls';
 import LogPanel from '../LogPanel';
 import CareLog from '../CareLog';
 import CureControls from '../CureControls';
+import CharacterSprite from '../CharacterSprite';
 
 function App() {
   const {
@@ -24,6 +25,7 @@ function App() {
     showLog,
   } = useAppContext();
   const [minimized, setMinimized] = React.useState(false);
+  const [lol, setLol] = React.useState(false);
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
       <Lifecycle />
@@ -67,6 +69,14 @@ function App() {
           <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
         </LogPanel>
       ) : ''}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
+      <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
+        {lol && pockestState?.autoPlan ? (
+          <CharacterSprite
+            action={pockestState?.paused ? 'down' : 'idle'}
+          />
+        ) : ''}
+      </button>
     </div>
   );
 }

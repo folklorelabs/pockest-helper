@@ -30,6 +30,7 @@
 
 #PockestHelperExtension .App--minimized {
   transform: translate(0, calc(100% - 44px));
+  overflow: visible;
 }
 
 #PockestHelperExtension .AppMinBtn {
@@ -74,6 +75,20 @@
   font-size: 0.8em;
   margin-top: 1rem;
   text-align: left;
+}
+
+#PockestHelperExtension .App-sprite {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, 2.5rem) scale(1.5);
+  transform-origin: bottom center;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  min-width: 5px;
+  min-height: 5px;
+  border: 0;
 }
 
 #PockestHelperExtension hr {

@@ -1,0 +1,15 @@
+.CharacterSprite,
+.CharacterSprite-img {
+  display: block;
+}
+
+.CharacterSprite {
+  position: relative;
+  transform-origin: bottom center;
+}
+
+
+.CharacterSprite-img {
+  position: absolute;
+  bottom: 0;
+}
