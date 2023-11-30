@@ -2,10 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { usePockestContext } from '../../contexts/PockestContext';
 import fetchCharAssets from '../../utils/fetchCharAssets';
-// import HASHES from '../../config/hashes.json';
 import './index.css';
 
-function CharacterSprite({ action }) {
+function CharacterSprite({ action, animated }) {
   const imgEl = React.useRef();
   const {
     pockestState,
@@ -15,9 +14,6 @@ function CharacterSprite({ action }) {
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
     (async () => {
-      // const hash = pockestState?.autoPlan
-      //   ? HASHES.find((h) => h.includes(pockestState?.monsterId))
-      //   : pockestState?.data?.monster?.hash;
       const hash = pockestState?.data?.monster?.hash;
       if (!hash) return;
       const newSprite = await fetchCharAssets(hash);
@@ -28,14 +24,17 @@ function CharacterSprite({ action }) {
     const frames = characterSprite?.[action];
     if (!frames || loading) return () => {};
     let curIndex = 0;
-    const interval = window.setInterval(() => {
+    const setFrame = () => {
       setCurFrame(frames[curIndex]);
       curIndex = curIndex < (frames.length - 1) ? curIndex + 1 : 0;
-    }, 400);
+    };
+    setFrame();
+    if (!animated) return () => {};
+    const interval = window.setInterval(setFrame, 400);
     return () => {
       clearInterval(interval);
     };
-  }, [action, characterSprite, loading]);
+  }, [action, animated, characterSprite, loading]);
   React.useEffect(() => {
     const frames = characterSprite?.[action];
     setLoading(true);
@@ -76,6 +75,7 @@ function CharacterSprite({ action }) {
 
 CharacterSprite.defaultProps = {
   action: 'idle',
+  animated: true,
 };
 
 CharacterSprite.propTypes = {
@@ -85,6 +85,7 @@ CharacterSprite.propTypes = {
     'win',
     'down',
   ]),
+  animated: PropTypes.bool,
 };
 
 export default CharacterSprite;
