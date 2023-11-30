@@ -33,6 +33,7 @@ function CareLog({
     },
     [log, onlyDiscoveries, logTypes, pockestState],
   );
+  console.log(log);
   const careLog = React.useMemo(() => [
     `[Pockest Helper v${import.meta.env.APP_VERSION}]`,
     ...careLogData.map((entry) => getActionResultString({
