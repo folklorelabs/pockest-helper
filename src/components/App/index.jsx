@@ -51,9 +51,9 @@ function App() {
           <div className="App-button">
             <PauseBtn />
           </div>
-          <p className="App-footer">
-            *These timers are shared and track the soonest poop OR hunger.
-          </p>
+          <div className="App-footer">
+            <p>*This timer is still a mystery. Often used for evolutions, stuns, death, etc.</p>
+          </div>
         </>
       ) : (
         <>
