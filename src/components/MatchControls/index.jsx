@@ -46,7 +46,7 @@ function MatchControls() {
             pockestDispatch(pockestSettings({ matchPriority: parseInt(e.target.value, 10) }));
           }}
           value={matchPriority || ''}
-          disabled={!paused || data?.monster?.age < 5}
+          disabled={!paused || (autoPlan && data?.monster?.age < 5)}
         >
           <option key="0" value="0">
             Discovery
