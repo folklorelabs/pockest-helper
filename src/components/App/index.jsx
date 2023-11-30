@@ -71,7 +71,7 @@ function App() {
       ) : ''}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events */}
       <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
-        {lol && pockestState?.autoPlan ? (
+        {lol ? (
           <CharacterSprite
             action={pockestState?.paused ? 'down' : 'idle'}
           />

@@ -15,8 +15,8 @@ function CharacterSprite({ action }) {
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
     (async () => {
-      if (!pockestState?.monsterId) return;
-      const hash = HASHES.find((h) => h.includes(pockestState?.monsterId));
+      const hash = pockestState?.autoPlan ? HASHES.find((h) => h.includes(pockestState?.monsterId))
+        : pockestState?.data?.monster?.hash;
       if (!hash) return;
       const newSprite = await fetchCharAssets(hash);
       setCharacterSprite(newSprite || {});
