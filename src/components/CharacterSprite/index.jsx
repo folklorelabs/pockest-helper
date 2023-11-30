@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { usePockestContext } from '../../contexts/PockestContext';
 import fetchCharAssets from '../../utils/fetchCharAssets';
-import HASHES from '../../config/hashes.json';
+// import HASHES from '../../config/hashes.json';
 import './index.css';
 
 function CharacterSprite({ action }) {
@@ -15,8 +15,10 @@ function CharacterSprite({ action }) {
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
     (async () => {
-      const hash = pockestState?.autoPlan ? HASHES.find((h) => h.includes(pockestState?.monsterId))
-        : pockestState?.data?.monster?.hash;
+      // const hash = pockestState?.autoPlan
+      //   ? HASHES.find((h) => h.includes(pockestState?.monsterId))
+      //   : pockestState?.data?.monster?.hash;
+      const hash = pockestState?.data?.monster?.hash;
       if (!hash) return;
       const newSprite = await fetchCharAssets(hash);
       setCharacterSprite(newSprite || {});
