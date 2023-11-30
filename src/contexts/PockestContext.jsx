@@ -320,7 +320,7 @@ export async function pockestTrain(type) {
   };
   return [ACTIONS.REFRESH, data];
 }
-export async function pockestMatch(match) {
+export async function pockestMatch(pockestState, match) {
   if (match?.slot < 1) {
     return [ACTIONS.ERROR, '[pockestMatch] slot needs to be > 1'];
   }
@@ -340,10 +340,10 @@ export async function pockestMatch(match) {
     ...data?.exhangeResult,
     totalStats: getTotalStats(data?.monster) + getTotalStats(match),
   };
-  const isDisc = isMatchDiscovery({ data }, data?.exhangeResult);
+  const isDisc = isMatchDiscovery(pockestState, data?.exhangeResult);
   if (isDisc) {
     postDiscord(getActionResultString({
-      pockestState: data,
+      pockestState,
       result: data.result,
       reporting: true,
     }));
