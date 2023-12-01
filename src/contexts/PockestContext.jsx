@@ -337,7 +337,7 @@ export async function pockestMatch(pockestState, match) {
   }
   data.result = {
     ...getLogEntry({ data }),
-    ...data?.exhangeResult,
+    ...data?.exchangeResult,
     totalStats: getTotalStats(data?.monster) + getTotalStats(match),
   };
   const isDisc = isMatchDiscovery(pockestState, data.result);
