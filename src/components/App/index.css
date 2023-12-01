@@ -96,6 +96,11 @@
   margin: 1.1rem 0;
 }
 
+#PockestHelperExtension em {
+  font-weight: bold;
+  font-style: italic;
+}
+
 .PockestIcon {
   font-family: auto;
 }

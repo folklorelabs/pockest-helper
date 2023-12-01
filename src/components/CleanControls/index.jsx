@@ -57,6 +57,14 @@ function CleanControls() {
         </span>
       </div>
       <div className="PockestLine">
+        <span className="PockestText">
+          Next Poop**
+        </span>
+        <span className="PockestText PockestLine-value">
+          {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
+        </span>
+      </div>
+      <div className="PockestLine">
         <span className="PockestText">Clean Frequency</span>
         <select
           className="PockestSelect"

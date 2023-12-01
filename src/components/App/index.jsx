@@ -52,7 +52,14 @@ function App() {
             <PauseBtn />
           </div>
           <div className="App-footer">
-            <p>*This timer is still a mystery. Often used for evolutions, stuns, death, etc.</p>
+            <p>* Timer for next age, stun, death, etc.</p>
+            <p>
+              ** Timer for next poop
+              {' '}
+              <em>OR</em>
+              {' '}
+              hunger.
+            </p>
           </div>
         </>
       ) : (

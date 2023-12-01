@@ -57,6 +57,14 @@ function FeedControls() {
         </span>
       </div>
       <div className="PockestLine">
+        <span className="PockestText">
+          Next Hunger**
+        </span>
+        <span className="PockestText PockestLine-value">
+          {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
+        </span>
+      </div>
+      <div className="PockestLine">
         <span className="PockestText">Meal Frequency</span>
         <select
           className="PockestSelect"

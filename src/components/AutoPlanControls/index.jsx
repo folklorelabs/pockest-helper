@@ -68,10 +68,6 @@ function AutoPlanControls() {
           : null}
       />
       <Timer
-        label="Hunger/Poop"
-        timestamp={data?.next_small_event_timer}
-      />
-      <Timer
         label="Big Event*"
         timestamp={data?.next_big_event_timer}
       />
