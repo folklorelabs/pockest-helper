@@ -29,7 +29,7 @@ const ROUTES = {
   ],
   BL: [
     {
-      cleanFrequency: 24,
+      cleanFrequency: 12,
       feedFrequency: 4,
     },
     {
@@ -43,12 +43,12 @@ const ROUTES = {
   ],
   BR: [
     {
-      cleanFrequency: 24,
+      cleanFrequency: 12,
       feedFrequency: 4,
     },
     {
-      cleanFrequency: 24,
-      feedFrequency: 24,
+      cleanFrequency: 36,
+      feedFrequency: 36,
     },
     {
       cleanFrequency: 2,
@@ -57,8 +57,8 @@ const ROUTES = {
   ],
   CL: [
     {
-      cleanFrequency: 24,
-      feedFrequency: 24,
+      cleanFrequency: 12,
+      feedFrequency: 12,
     },
     {
       cleanFrequency: 2,
