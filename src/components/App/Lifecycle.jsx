@@ -62,7 +62,7 @@ function Lifecycle() {
       const isStunned = monster?.status === 2;
 
       // Small event refresh
-      if (now.getTime() > data?.next_small_event_timer) {
+      if (data?.next_small_event_timer && now.getTime() > data?.next_small_event_timer) {
         console.log(now.toLocaleString(), 'REFRESH, next_small_event_timer');
         await refresh();
         return;
@@ -70,7 +70,7 @@ function Lifecycle() {
 
       // Big event refresh
       // no refresh if stunned cause the timer doesn't update and it will loop infinitely
-      if (now.getTime() > data?.next_big_event_timer && !isStunned) {
+      if (data?.next_big_event_timer && now.getTime() > data?.next_big_event_timer && !isStunned) {
         console.log(now.toLocaleString(), 'REFRESH, next_big_event_timer');
         await refresh();
         return;
