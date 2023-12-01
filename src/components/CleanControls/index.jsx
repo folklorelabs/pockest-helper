@@ -15,6 +15,7 @@ const CLEAN_INTERVAL = {
   4: 'Every 4h',
   12: 'Every 12h',
   24: 'Every 24h',
+  36: 'Every 36h',
 };
 
 function CleanControls() {
