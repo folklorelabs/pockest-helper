@@ -70,7 +70,7 @@ function App() {
           </div>
         </>
       )}
-      {showLog ? (
+      {showLog && !minimized ? (
         <LogPanel>
           <CareLog title="Care Log" rows={36} />
           <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
