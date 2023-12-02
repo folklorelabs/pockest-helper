@@ -1,7 +1,7 @@
 {
   "name": "pockest-helper",
   "private": true,
-  "version": "1.1.31-rc.3",
+  "version": "1.1.31-rc.4",
   "scripts": {
     "build:zip": "cd ./dist && zip -r9 ./PockestHelper.zip ./* && cd ..",
     "build": "vite build && npm run build:zip",
