@@ -36,6 +36,7 @@ function CharacterSprite({ action, animated }) {
     };
   }, [action, animated, characterSprite, loading]);
   React.useEffect(() => {
+    if (!characterSprite?.image) return;
     const frames = characterSprite?.[action];
     setLoading(true);
     const preLoadEl = new Image();
