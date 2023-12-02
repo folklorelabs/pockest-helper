@@ -12,7 +12,7 @@ import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../utils/getT
 import fetchAllMonsters from '../utils/fetchAllMonsters';
 import postDiscord from '../utils/postDiscord';
 import isMatchDiscovery from '../utils/isMatchDiscovery';
-import getActionResultString from '../utils/getActionResultString';
+import getMatchReportString from '../utils/getMatchReportString';
 
 // STATE
 const INITIAL_STATE = {
@@ -342,11 +342,11 @@ export async function pockestMatch(pockestState, match) {
   };
   const isDisc = isMatchDiscovery(pockestState, data.result);
   if (isDisc) {
-    postDiscord(getActionResultString({
+    const report = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${getMatchReportString({
       pockestState,
       result: data.result,
-      reporting: true,
-    }));
+    })}`;
+    postDiscord(report);
   }
   return [ACTIONS.REFRESH, data];
 }
