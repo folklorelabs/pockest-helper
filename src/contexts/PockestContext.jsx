@@ -342,10 +342,11 @@ export async function pockestMatch(pockestState, match) {
   };
   const isDisc = isMatchDiscovery(pockestState, data.result);
   if (isDisc) {
-    postDiscord(getMatchReportString({
+    const report = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${getMatchReportString({
       pockestState,
       result: data.result,
-    }));
+    })}`;
+    postDiscord(report);
   }
   return [ACTIONS.REFRESH, data];
 }
