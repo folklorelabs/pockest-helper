@@ -7,6 +7,7 @@ import {
 import './index.css';
 import isMatchDiscovery from '../../utils/isMatchDiscovery';
 import getActionResultString from '../../utils/getActionResultString';
+import getMatchReportString from '../../utils/getMatchReportString';
 
 function CareLog({
   title,
@@ -35,10 +36,9 @@ function CareLog({
   );
   const careLog = React.useMemo(() => [
     `[Pockest Helper v${import.meta.env.APP_VERSION}]`,
-    ...careLogData.map((entry) => getActionResultString({
+    ...careLogData.map((entry) => (onlyDiscoveries ? getMatchReportString : getActionResultString)({
       pockestState,
       result: entry,
-      reporting: onlyDiscoveries,
     })),
   ], [careLogData, pockestState, onlyDiscoveries]);
   React.useEffect(() => {
