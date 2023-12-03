@@ -235,7 +235,7 @@ export function pockestAutoPlan({ autoPlan, pockestState, monsterId }) {
       autoTrain: true,
     };
   }
-  if (autoPlan && pockestState?.data?.monster?.age < 5) {
+  if (autoPlan && pockestState?.data?.monster?.age < 4) {
     newSettings.autoMatch = false;
     newSettings.autoCure = false;
   }
