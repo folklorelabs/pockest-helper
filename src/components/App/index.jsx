@@ -53,13 +53,6 @@ function App() {
           </div>
           <div className="App-footer">
             <p>* Timer for next age, stun, death, etc.</p>
-            <p>
-              ** Timer for next poop
-              {' '}
-              <em>OR</em>
-              {' '}
-              hunger.
-            </p>
           </div>
         </>
       ) : (
