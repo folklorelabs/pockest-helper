@@ -7,14 +7,7 @@ import TargetMonsterSelect from '../TargetMonsterSelect';
 import './index.css';
 import Timer from '../Timer';
 import getMonsterPlan from '../../utils/getTargetMonsterPlan';
-
-const MONSTER_LIFESPAN = {
-  1: 1 * 60 * 60 * 1000, // 1 hour
-  2: 12 * 60 * 60 * 1000, // 12 hour
-  3: (1 * 24 * 60 * 60 * 1000) + (12 * 60 * 60 * 1000), // 1 day 12 hours
-  4: 3 * 24 * 60 * 60 * 1000, // 3 days
-  5: 7 * 24 * 60 * 60 * 1000, // 7 days
-};
+import getAgeTimer from '../../utils/getAgeTimer';
 
 function AutoPlanControls() {
   const {
@@ -63,9 +56,7 @@ function AutoPlanControls() {
           if (data?.monster?.memento_point > data?.monster?.max_memento_point) return `Age ${curAge} → 🎁`;
           return `Age ${curAge} → 🎁/🪦`;
         })()}
-        timestamp={curAge && data?.monster
-          ? data.monster.live_time + MONSTER_LIFESPAN[curAge]
-          : null}
+        timestamp={getAgeTimer(pockestState)}
       />
       <Timer
         label="Big Event*"
