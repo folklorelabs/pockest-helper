@@ -7,6 +7,7 @@ import {
 import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
+import getStomachTimer from '../../utils/getStomachTimer';
 import LogCountLine from '../LogCountLine';
 
 // CONSTS
@@ -27,6 +28,7 @@ function FeedControls() {
     currentFeedWindow,
     nextFeedWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
+  const stomachTimer = React.useMemo(() => getStomachTimer(pockestState), [pockestState]);
 
   const {
     data,
@@ -58,10 +60,10 @@ function FeedControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">
-          Next Hunger**
+          Next Hunger
         </span>
         <span className="PockestText PockestLine-value">
-          {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
+          {stomachTimer ? parseDurationStr(stomachTimer - now.getTime()) : '--'}
         </span>
       </div>
       <div className="PockestLine">

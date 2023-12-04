@@ -7,6 +7,7 @@ import {
 import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
+import getStomachTimer from '../../utils/getStomachTimer';
 import LogCountLine from '../LogCountLine';
 
 // CONSTS
@@ -28,6 +29,7 @@ function CleanControls() {
     currentCleanWindow,
     nextCleanWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
+  const stomachTimer = React.useMemo(() => getStomachTimer(pockestState), [pockestState]);
 
   const {
     data,
@@ -58,10 +60,20 @@ function CleanControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">
-          Next Poop**
+          Next Poop
         </span>
         <span className="PockestText PockestLine-value">
-          {data?.next_small_event_timer ? parseDurationStr(data.next_small_event_timer - now.getTime()) : '--'}
+          {(() => {
+            const nextSmall = data?.next_small_event_timer;
+            if (!nextSmall) return '--';
+            const durStr = parseDurationStr(nextSmall - now.getTime());
+            if (nextSmall === stomachTimer) {
+              const durEnd = nextSmall + (2 * 60 * 60 * 1000);
+              const durStrEnd = parseDurationStr(durEnd - now.getTime());
+              return `${durStr}-${durStrEnd}`;
+            }
+            return durStr;
+          })()}
         </span>
       </div>
       <div className="PockestLine">
