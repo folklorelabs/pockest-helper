@@ -8,6 +8,7 @@ import './index.css';
 import Timer from '../Timer';
 import getMonsterPlan from '../../utils/getTargetMonsterPlan';
 import getAgeTimer from '../../utils/getAgeTimer';
+import { BIG_EVENTS, getBigEventTypes } from '../../utils/getBigEventTypes';
 
 function AutoPlanControls() {
   const {
@@ -21,6 +22,7 @@ function AutoPlanControls() {
     paused,
   } = pockestState;
   const targetPlan = React.useMemo(() => getMonsterPlan(pockestState), [pockestState]);
+  const nextBigEventTypes = React.useMemo(() => getBigEventTypes(pockestState), [pockestState]);
   const curAge = data?.monster?.age;
   return (
     <div className="AutoPlanControls">
@@ -59,7 +61,16 @@ function AutoPlanControls() {
         timestamp={getAgeTimer(pockestState)}
       />
       <Timer
-        label="Big Event*"
+        label={(() => {
+          if (nextBigEventTypes.includes(BIG_EVENTS.AGE)) return 'Age Event';
+          if (nextBigEventTypes.includes(BIG_EVENTS.STOMACH_EMPTY)) return 'Starvation';
+          if (nextBigEventTypes.includes(BIG_EVENTS.GARBAGE_FULL)) return 'Poop Full';
+          if (nextBigEventTypes.includes(BIG_EVENTS.STOMACH_STUN)) return 'Hunger Stun';
+          if (nextBigEventTypes.includes(BIG_EVENTS.GARBAGE_STUN)) return 'Poop Stun';
+          if (nextBigEventTypes.includes(BIG_EVENTS.STOMACH_DEATH)) return 'Hunger Death';
+          if (nextBigEventTypes.includes(BIG_EVENTS.GARBAGE_DEATH)) return 'Poop Death';
+          return 'Unknown';
+        })()}
         timestamp={data?.next_big_event_timer}
       />
     </div>

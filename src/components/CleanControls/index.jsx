@@ -8,6 +8,7 @@ import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
 import getStomachTimer from '../../utils/getStomachTimer';
+import { GARBAGE_TIME } from '../../utils/getGarbageTimer';
 import LogCountLine from '../LogCountLine';
 
 // CONSTS
@@ -68,7 +69,7 @@ function CleanControls() {
             if (!nextSmall) return '--';
             const durStr = parseDurationStr(nextSmall - now.getTime());
             if (nextSmall === stomachTimer) {
-              const durEnd = nextSmall + (2 * 60 * 60 * 1000);
+              const durEnd = nextSmall + GARBAGE_TIME;
               const durStrEnd = parseDurationStr(durEnd - now.getTime());
               return `${durStr}-${durStrEnd}`;
             }
