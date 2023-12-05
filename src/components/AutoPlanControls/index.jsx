@@ -8,6 +8,7 @@ import Timer from '../Timer';
 import Memento from '../Memento';
 import getMonsterPlan from '../../utils/getTargetMonsterPlan';
 import getAgeTimer from '../../utils/getAgeTimer';
+import { BIG_EVENTS, getBigEventTypes } from '../../utils/getBigEventTypes';
 import './index.css';
 
 function AutoPlanControls() {
