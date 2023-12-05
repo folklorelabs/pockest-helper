@@ -1,7 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
 import Lifecycle from './Lifecycle';
-import './index.css';
 import PauseBtn from '../PauseBtn';
 import AutoPlanControls from '../AutoPlanControls';
 import CleanControls from '../CleanControls';
@@ -16,6 +15,7 @@ import LogPanel from '../LogPanel';
 import CareLog from '../CareLog';
 import CureControls from '../CureControls';
 import CharacterSprite from '../CharacterSprite';
+import './index.css';
 
 function App() {
   const {
@@ -52,7 +52,7 @@ function App() {
             <PauseBtn />
           </div>
           <div className="App-footer">
-            <p>* Timer for next age, stun, death, etc.</p>
+            {/* <p>* Timer for next age, stun, death, etc.</p> */}
           </div>
         </>
       ) : (
