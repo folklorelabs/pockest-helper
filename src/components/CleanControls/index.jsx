@@ -7,8 +7,7 @@ import {
 import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
-import getStomachTimer from '../../utils/getStomachTimer';
-import { GARBAGE_TIME } from '../../utils/getGarbageTimer';
+import getGarbageTimer from '../../utils/getGarbageTimer';
 import LogCountLine from '../LogCountLine';
 
 // CONSTS
@@ -30,7 +29,7 @@ function CleanControls() {
     currentCleanWindow,
     nextCleanWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
-  const stomachTimer = React.useMemo(() => getStomachTimer(pockestState), [pockestState]);
+  const garbageTimer = React.useMemo(() => getGarbageTimer(pockestState), [pockestState]);
 
   const {
     data,
@@ -67,13 +66,8 @@ function CleanControls() {
           {(() => {
             const nextSmall = data?.next_small_event_timer;
             if (!nextSmall) return '--';
-            const durStr = parseDurationStr(nextSmall - now.getTime());
-            if (nextSmall === stomachTimer) {
-              const durEnd = nextSmall + GARBAGE_TIME;
-              const durStrEnd = parseDurationStr(durEnd - now.getTime());
-              return `${durStr}-${durStrEnd}`;
-            }
-            return durStr;
+            if (!garbageTimer) return '??';
+            return parseDurationStr(garbageTimer - now.getTime());
           })()}
         </span>
       </div>
