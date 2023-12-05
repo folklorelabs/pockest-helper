@@ -87,8 +87,7 @@ function Lifecycle() {
       }
 
       // Cure
-      const attemptToCure = autoCure || (autoPlan && monster?.age > 4);
-      if (attemptToCure && isStunned) {
+      if (autoCure && isStunned) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestCure());
