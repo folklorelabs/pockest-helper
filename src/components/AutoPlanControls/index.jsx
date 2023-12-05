@@ -4,11 +4,11 @@ import {
   pockestAutoPlan,
 } from '../../contexts/PockestContext';
 import TargetMonsterSelect from '../TargetMonsterSelect';
-import './index.css';
 import Timer from '../Timer';
+import Memento from '../Memento';
 import getMonsterPlan from '../../utils/getTargetMonsterPlan';
 import getAgeTimer from '../../utils/getAgeTimer';
-import { BIG_EVENTS, getBigEventTypes } from '../../utils/getBigEventTypes';
+import './index.css';
 
 function AutoPlanControls() {
   const {
@@ -24,6 +24,16 @@ function AutoPlanControls() {
   const targetPlan = React.useMemo(() => getMonsterPlan(pockestState), [pockestState]);
   const nextBigEventTypes = React.useMemo(() => getBigEventTypes(pockestState), [pockestState]);
   const curAge = data?.monster?.age;
+  const ageLabel = React.useMemo(() => {
+    if (typeof curAge !== 'number') return 'Age 0 → 1';
+    if (curAge < 5) return `Age ${curAge} → ${curAge + 1}`;
+    return (
+      <>
+        {`Age ${curAge} → `}
+        <Memento />
+      </>
+    );
+  }, [curAge]);
   return (
     <div className="AutoPlanControls">
       <div className="PockestLine">
@@ -52,12 +62,7 @@ function AutoPlanControls() {
         <span className="PockestText PockestLine-value">{targetPlan?.planId || '--'}</span>
       </div>
       <Timer
-        label={(() => {
-          if (typeof curAge !== 'number') return 'Age 0 → 1';
-          if (curAge < 5) return `Age ${curAge} → ${curAge + 1}`;
-          if (data?.monster?.memento_point > data?.monster?.max_memento_point) return `Age ${curAge} → 🎁`;
-          return `Age ${curAge} → 🎁/🪦`;
-        })()}
+        label={ageLabel}
         timestamp={getAgeTimer(pockestState)}
       />
       <Timer
