@@ -23,7 +23,10 @@ Timer.defaultProps = {
 };
 
 Timer.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node,
+  ]).isRequired,
   timestamp: PropTypes.number,
   value: PropTypes.string,
 };

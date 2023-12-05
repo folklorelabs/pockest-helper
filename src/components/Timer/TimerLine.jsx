@@ -11,7 +11,10 @@ function TimerLine({ label, value }) {
 }
 
 TimerLine.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.node,
+  ]).isRequired,
   value: PropTypes.string.isRequired,
 };
 
