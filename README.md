@@ -4,7 +4,7 @@
 
 This is a [Chrome Extension](chrome://extensions/) that tracks and automatically cares for [Street Fighter Pockest Monsters](https://www.streetfighter.com/6/buckler/minigame). It is a passion project and is still in early development.
 
-![A screenshot of Pockest Helper in action](https://i.imgur.com/bulpA2c.png)
+![A screenshot of Pockest Helper in action](https://storage.googleapis.com/pockest-helper/pockest-helper.png)
 
 ## Installation
 
@@ -20,7 +20,7 @@ The extensions will not enact any changes on your behalf until you click the "AU
 
 ### Why didn't I get the monster I selected?
 
-The requirements for specific monsters are quite complex. If attempting a run for a specific monster using the preset you should refrain from manually taking any actions. This includes matching, curing, etc. The extension follows the [Pockest Guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624) qutie closely so it's a great reference if you would like to better understand how things work so you can manually pilot the tool.
+The requirements for specific monsters are quite complex. If attempting a run for a specific monster using the preset you should refrain from manually taking any actions. This includes matching, curing, etc. The extension follows the [Pockest Guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624) quite closely so it's a great reference if you would like to better understand how things work so you can manually pilot the tool.
 
 ### The app or a feature is broken for me. What can I do?
 
