@@ -10,6 +10,7 @@ import getTimeIntervals from '../utils/getTimeIntervals';
 import getTotalStats from '../utils/getTotalStats';
 import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../utils/getTargetMonsterPlan';
 import fetchAllMonsters from '../utils/fetchAllMonsters';
+import fetchAllHashes from '../utils/fetchAllHashes';
 import postDiscord from '../utils/postDiscord';
 import isMatchDiscovery from '../utils/isMatchDiscovery';
 import getMatchReportString from '../utils/getMatchReportString';
@@ -18,6 +19,7 @@ import getMatchReportString from '../utils/getMatchReportString';
 const INITIAL_STATE = {
   data: {},
   allMonsters: [],
+  allHashes: [],
   paused: true,
   monsterId: -1,
   autoPlan: true,
@@ -56,6 +58,7 @@ function saveStateToLocalStorage(state) {
   delete stateToSave?.error;
   delete stateToSave?.log;
   delete stateToSave?.allMonsters;
+  delete stateToSave?.allHashes;
   window.localStorage.setItem('PockestHelper', JSON.stringify(stateToSave));
   window.localStorage.setItem('PockestHelperLog', JSON.stringify(state?.log));
 }
@@ -378,14 +381,17 @@ export function pockestClearLog(pockestState, logTypes) {
 export async function pockestInit() {
   const [
     allMonsters,
+    allHashes,
     data,
   ] = await Promise.all([
     fetchAllMonsters(),
+    fetchAllHashes(),
     fetchPockestStatus(),
   ]);
   return [ACTIONS.INIT, {
     data,
     allMonsters,
+    allHashes,
   }];
 }
 
@@ -425,6 +431,7 @@ function REDUCER(state, [type, payload]) {
         initialized: true,
         data: payload?.data,
         allMonsters: payload?.allMonsters,
+        allHashes: payload?.allHashes,
       };
     case ACTIONS.REFRESH:
       return {
