@@ -5,7 +5,7 @@ const uploadToCloud = require('./uploadToCloud');
 const MONSTER_FILE = 'monsters.json';
 const MONSTER_RANGE = 'Live!A:G';
 const HASHES_FILE = 'hashes.json';
-const HASHES_RANGE = 'LiveHashes!A:B';
+const HASHES_RANGE = 'LiveHashes!A:D';
 
 async function main() {
   const monsters = await fetchFromSheet(MONSTER_RANGE);
