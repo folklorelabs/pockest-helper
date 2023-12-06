@@ -25,7 +25,7 @@ function App() {
     showLog,
   } = useAppContext();
   const [minimized, setMinimized] = React.useState(false);
-  const [lol, setLol] = React.useState(false);
+  const [lol, setLol] = React.useState(true);
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
       <Lifecycle />
