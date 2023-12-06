@@ -1,5 +1,4 @@
 export default function getMatchReportString({ pockestState, result }) {
-  const dateStr = (new Date(result?.timestamp)).toLocaleString();
   const monster = pockestState?.allMonsters.find((m) => m.monster_id === result?.monsterId);
   if (!monster) return `Error parsing ${result?.logType} log`;
   const b = pockestState?.allMonsters.find((m) => m.monster_id === result?.target_monster_id);
@@ -14,5 +13,5 @@ export default function getMatchReportString({ pockestState, result }) {
       !result?.is_spmatch && !isFever && '❌NO_FEVER',
     ];
   })().filter((g) => g).map((g) => `<${g}>`).join(' ');
-  return `[${dateStr}]${tags ? ` ${tags}` : ''} ${monster.name_en} vs ${b?.name_en}`;
+  return `${tags ? ` ${tags}` : ''} ${monster.name_en} vs ${b?.name_en}`;
 }

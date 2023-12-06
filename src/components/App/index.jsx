@@ -25,7 +25,7 @@ function App() {
     showLog,
   } = useAppContext();
   const [minimized, setMinimized] = React.useState(false);
-  const [lol, setLol] = React.useState(false);
+  const [lol, setLol] = React.useState(true);
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
       <Lifecycle />
@@ -73,6 +73,9 @@ function App() {
         {lol ? (
           <CharacterSprite
             action={pockestState?.paused ? 'down' : 'idle'}
+            animated={!pockestState?.paused}
+            randomAnimations={pockestState?.paused ? null : ['idle', 'win', 'attack']}
+            randomAnimationWeights={[100, 10, 60]}
           />
         ) : ''}
       </button>
