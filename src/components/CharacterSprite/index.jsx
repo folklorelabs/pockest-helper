@@ -2,9 +2,22 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { usePockestContext } from '../../contexts/PockestContext';
 import fetchCharAssets from '../../utils/fetchCharAssets';
+import getWeightedRandom from '../../utils/getWeightedRandom';
 import './index.css';
 
-function CharacterSprite({ action, animated }) {
+const ACTION_PROP_TYPE = PropTypes.oneOf([
+  'idle',
+  'attack',
+  'win',
+  'down',
+]);
+
+function CharacterSprite({
+  action,
+  animated,
+  randomAnimations,
+  randomAnimationWeights,
+}) {
   const imgEl = React.useRef();
   const {
     pockestState,
@@ -21,20 +34,30 @@ function CharacterSprite({ action, animated }) {
     })();
   }, [pockestState]);
   React.useEffect(() => {
-    const frames = characterSprite?.[action];
-    if (!frames || loading) return () => {};
+    if (!characterSprite || loading) return () => {};
+    let timeout;
     let curIndex = 0;
+    let curAction = action;
     const setFrame = () => {
+      const frames = characterSprite?.[curAction];
       setCurFrame(frames[curIndex]);
       curIndex = curIndex < (frames.length - 1) ? curIndex + 1 : 0;
+      const endOfAnim = curIndex === frames.length - 1;
+      if (randomAnimations && endOfAnim) {
+        const nextRandActionIndex = randomAnimationWeights
+          ? getWeightedRandom(randomAnimationWeights)
+          : Math.floor(Math.random() * randomAnimations.length);
+        curAction = randomAnimations[nextRandActionIndex];
+      }
+      const ms = endOfAnim ? 200 + Math.random() * 500 : 200;
+      if (!animated) return;
+      timeout = window.setTimeout(setFrame, ms);
     };
     setFrame();
-    if (!animated) return () => {};
-    const interval = window.setInterval(setFrame, 400);
     return () => {
-      clearInterval(interval);
+      clearTimeout(timeout);
     };
-  }, [action, animated, characterSprite, loading]);
+  }, [action, animated, characterSprite, loading, randomAnimationWeights, randomAnimations]);
   React.useEffect(() => {
     if (!characterSprite?.image) return;
     const frames = characterSprite?.[action];
@@ -76,16 +99,15 @@ function CharacterSprite({ action, animated }) {
 
 CharacterSprite.defaultProps = {
   action: 'idle',
+  randomAnimations: null,
+  randomAnimationWeights: null,
   animated: true,
 };
 
 CharacterSprite.propTypes = {
-  action: PropTypes.oneOf([
-    'idle',
-    'attack',
-    'win',
-    'down',
-  ]),
+  action: ACTION_PROP_TYPE,
+  randomAnimations: PropTypes.arrayOf(ACTION_PROP_TYPE),
+  randomAnimationWeights: PropTypes.arrayOf(PropTypes.number),
   animated: PropTypes.bool,
 };
 

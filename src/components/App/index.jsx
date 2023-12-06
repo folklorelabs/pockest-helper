@@ -73,6 +73,9 @@ function App() {
         {lol ? (
           <CharacterSprite
             action={pockestState?.paused ? 'down' : 'idle'}
+            animated={!pockestState?.paused}
+            randomAnimations={pockestState?.paused ? null : ['idle', 'win', 'attack']}
+            randomAnimationWeights={[100, 10, 60]}
           />
         ) : ''}
       </button>
