@@ -20,7 +20,7 @@ The extensions will not enact any changes on your behalf until you click the "AU
 
 ### Why didn't I get the monster I selected?
 
-The requirements for specific monsters are quite complex. If attempting a run for a specific monster using the preset you should refrain from manually taking any actions. This includes matching, curing, etc. The extension follows the [Pockest Guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624) quite closely so it's a great reference if you would like to better understand how things work so you can manually pilot the tool.
+The requirements for specific monsters are quite complex. You will want to refrain from manually taking ANY actions when using the preset option or you may end up with a different monster. This includes matching, curing, etc. The extension follows the [Pockest Guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624) closely, and the guide is a great reference if you would like to better understand how Pockest Helper works under the hood.
 
 ### The app or a feature is broken for me. What can I do?
 
