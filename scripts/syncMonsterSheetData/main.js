@@ -3,7 +3,7 @@ const fetchFromSheet = require('./fetchFromSheet');
 const uploadToCloud = require('./uploadToCloud');
 
 const MONSTER_FILE = 'monsters.json';
-const MONSTER_RANGE = 'Live!A:G';
+const MONSTER_RANGE = 'Live!A:I';
 const HASHES_FILE = 'hashes.json';
 const HASHES_RANGE = 'LiveHashes!A:B';
 

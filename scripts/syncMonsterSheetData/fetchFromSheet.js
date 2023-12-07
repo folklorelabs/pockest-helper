@@ -23,6 +23,7 @@ async function fetchFromSheet(sheetRange) {
     .map((row) => row.reduce((rowObj, cellStr, index) => {
       const key = keys[index];
       const value = cellStr.includes('[') || /^\d+$/.test(cellStr) ? JSON.parse(cellStr) : cellStr;
+      if (!value) return rowObj;
       return {
         ...rowObj,
         [key]: value,
