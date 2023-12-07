@@ -26,7 +26,14 @@ function TargetMonsterSelect() {
       });
     }
     const allAvailIds = pockestState?.allMonsters?.filter((m) => m?.age > monster?.age)
+      .filter((m) => {
+        // check for any required mementos
+        if (!m?.requiredMemento) return true;
+        const reqM = pockestState?.allMonsters?.find((rm) => rm?.monster_id === m?.monster_id);
+        return reqM?.memento_flg;
+      })
       .reduce((all, m) => {
+        // only return decendants of current monster
         const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
         if (!match) return all;
         return [
