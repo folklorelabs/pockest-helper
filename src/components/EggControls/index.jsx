@@ -25,7 +25,7 @@ function EggControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">Plan</span>
-        <span className="PockestText PockestLine-value">{targetPlan.planId ?? '--'}</span>
+        <span className="PockestText PockestLine-value">{targetPlan?.planId ?? '--'}</span>
       </div>
       <div className="PockestLine">
         <span className="PockestText">Egg</span>
