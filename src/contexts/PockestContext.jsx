@@ -205,6 +205,33 @@ export function getCurrentPlanScheduleWindows(state) {
   };
 }
 
+export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
+  let newSettings = {
+    autoPlan,
+  };
+  if (autoPlan) {
+    newSettings = {
+      ...newSettings,
+      ...getCurrentTargetMonsterPlan(state, targetMonsterId),
+      autoClean: true,
+      autoFeed: true,
+      autoTrain: true,
+    };
+    const targetMonster = state?.allMonsters?.find((m) => m?.monster_id === targetMonsterId);
+    if (targetMonster?.statPlan) {
+      const curTrainings = state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
+      const numTrains = curTrainings?.length;
+      const statAbbr = targetMonster?.statPlan?.slice(numTrains, numTrains + 1);
+      newSettings.stat = statAbbr ? STAT_ABBR[statAbbr] : newSettings.stat;
+    }
+  }
+  if (autoPlan && state?.data?.monster?.age < 4) {
+    newSettings.autoMatch = false;
+    newSettings.autoCure = false;
+  }
+  return newSettings;
+}
+
 // ACTIONS
 export const ACTIONS = {
   INIT: 'POCKEST_INIT',
@@ -227,29 +254,7 @@ export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
 }
 export function pockestAutoPlan({ pockestState, autoPlan, monsterId }) {
-  let newSettings = {
-    autoPlan,
-  };
-  if (autoPlan) {
-    newSettings = {
-      ...newSettings,
-      ...getCurrentTargetMonsterPlan(pockestState, monsterId),
-      autoClean: true,
-      autoFeed: true,
-      autoTrain: true,
-    };
-    const targetMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === monsterId);
-    if (targetMonster?.statPlan) {
-      const curTrainings = pockestState?.log?.filter((entry) => entry.timestamp > pockestState?.data?.monster?.live_time && entry.logType === 'training');
-      const numTrains = curTrainings?.length;
-      const statAbbr = targetMonster?.statPlan?.slice(numTrains, numTrains + 1);
-      newSettings.stat = statAbbr ? STAT_ABBR[statAbbr] : newSettings.stat;
-    }
-  }
-  if (autoPlan && pockestState?.data?.monster?.age < 4) {
-    newSettings.autoMatch = false;
-    newSettings.autoCure = false;
-  }
+  const newSettings = getAutoPlanSettings(pockestState, autoPlan, monsterId);
   return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh(pockestState) {
@@ -452,6 +457,7 @@ function REDUCER(state, [type, payload]) {
           ...state.log,
           payload?.result,
         ] : state.log,
+        ...getAutoPlanSettings(state, state.autoPlan, state.monsterId),
       };
     case ACTIONS.SET_LOG:
       return {
