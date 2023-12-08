@@ -82,12 +82,12 @@ function CareLog({
               className="PockestLink CareLog-clear"
               aria-label={`Clear ${title.toLowerCase()}`}
               onClick={() => {
-                const confirm = window.confirm(`Are you sure you want to permanently clear your ${title.toLowerCase()}? This will include any newly discovered fever matches.`);
+                const confirm = window.confirm(`Are you sure you want to permanently delete your old ${title.toLowerCase()} entries? This will include all entries before your last egg hatch.`);
                 if (!confirm) return;
                 pockestDispatch(pockestClearLog(pockestState, logTypes));
               }}
             >
-              ❌ Clear
+              ❌ Clean
             </button>
           ) : ''}
         </div>
