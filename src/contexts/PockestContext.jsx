@@ -410,6 +410,7 @@ export async function pockestInit() {
 
 // REDUCER
 function REDUCER(state, [type, payload]) {
+  console.log('STATE CHANGE', { state, type, payload });
   switch (type) {
     case ACTIONS.LOADING:
       return {
