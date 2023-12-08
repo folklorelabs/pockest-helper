@@ -383,7 +383,9 @@ export function pockestClearLog(pockestState, logTypes) {
   if (!Array.isArray(logTypes)) {
     return [ACTIONS.ERROR, `[pockestClearLog] Unknown logTypes ${logTypes}`];
   }
-  const newLog = pockestState?.log?.filter((l) => !logTypes.includes(l.logType));
+  const newLog = pockestState?.log
+    ?.filter((entry) => !logTypes.includes(entry.logType)
+    || entry.timestamp >= pockestState?.data?.monster?.live_time);
   return [ACTIONS.SET_LOG, newLog];
 }
 export async function pockestInit() {
