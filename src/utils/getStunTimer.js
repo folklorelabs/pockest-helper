@@ -19,5 +19,7 @@ export default function getStunTimer(pockestState) {
   if (bigTimer !== ageTimer) return bigTimer;
   const garbageFullTimer = getGarbageFullTimer(pockestState);
   const stomachEmptyTimer = getStomachEmptyTimer(pockestState);
-  return Math.min(garbageFullTimer, stomachEmptyTimer) + STUN_OFFSET;
+  const stunTimer = Math.min(garbageFullTimer, stomachEmptyTimer) + STUN_OFFSET;
+  if (pockestState?.data?.monster?.age === 5 && stunTimer > ageTimer) return null;
+  return stunTimer;
 }
