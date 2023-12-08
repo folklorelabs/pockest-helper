@@ -402,9 +402,9 @@ export async function pockestInit() {
     fetchPockestStatus(),
   ]);
   return [ACTIONS.INIT, {
-    data,
     allMonsters,
     allHashes,
+    data,
   }];
 }
 
