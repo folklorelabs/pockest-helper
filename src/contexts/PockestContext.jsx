@@ -384,7 +384,7 @@ export async function pockestSelectEgg(id) {
 }
 export function pockestClearLog(pockestState, logTypes) {
   if (!Array.isArray(logTypes)) {
-    return [ACTIONS.ERROR, `[pockestClearLog] Unknown logTypes ${logTypes}`];
+    return [ACTIONS.ERROR, `[pockestClearLog] logTypes ${logTypes} needs to be an array`];
   }
   const newLog = pockestState?.log
     ?.filter((entry) => !logTypes.includes(entry.logType)
