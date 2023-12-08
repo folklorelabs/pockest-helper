@@ -19,6 +19,11 @@ function TargetMonsterSelect() {
         const mAgeStr = m?.plan?.slice(1, 2);
         const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
         return mAge >= 5;
+      }).filter((m) => {
+        // check for any required mementos
+        if (!m?.requiredMemento) return true;
+        const reqM = pockestState?.allMonsters?.find((rm) => rm?.monster_id === m?.monster_id);
+        return reqM?.memento_flg;
       }).sort((a, b) => {
         if (a.name_en < b.name_en) return -1;
         if (b.name_en < a.name_en) return 1;
