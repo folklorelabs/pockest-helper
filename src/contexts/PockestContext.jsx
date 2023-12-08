@@ -225,14 +225,19 @@ export function pockestPause(paused) {
 export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
 }
-export function pockestAutoPlan({ autoPlan, pockestState, monsterId }) {
+export function pockestAutoPlan({ pockestState, autoPlan, monsterId }) {
   let newSettings = {
     autoPlan,
   };
   if (autoPlan) {
+    const newMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === monsterId);
+    if (newMonster?.statPlan) {
+      const curTrainings = pockestState?.log?.filter((entry) => entry.timestamp > pockestState?.data?.monster?.live_time && entry.logType === 'training');
+      newSettings.stat = newMonster?.statPlan.slice(curTrainings.length, curTrainings.length + 1);
+    }
     newSettings = {
-      ...newSettings,
       ...getCurrentTargetMonsterPlan(pockestState, monsterId),
+      ...newSettings,
       autoClean: true,
       autoFeed: true,
       autoTrain: true,
