@@ -233,7 +233,8 @@ export function pockestAutoPlan({ pockestState, autoPlan, monsterId }) {
     const targetMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === monsterId);
     if (targetMonster?.statPlan) {
       const curTrainings = pockestState?.log?.filter((entry) => entry.timestamp > pockestState?.data?.monster?.live_time && entry.logType === 'training');
-      newSettings.stat = targetMonster?.statPlan.slice(curTrainings.length, curTrainings.length + 1);
+      const numTrains = curTrainings?.length;
+      newSettings.stat = targetMonster?.statPlan?.slice(numTrains, numTrains + 1);
     }
     newSettings = {
       ...getCurrentTargetMonsterPlan(pockestState, monsterId),
