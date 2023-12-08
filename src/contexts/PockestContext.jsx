@@ -367,9 +367,7 @@ export async function pockestMatch(pockestState, match) {
   return [ACTIONS.REFRESH, data];
 }
 export async function pockestSelectEgg(id) {
-  if (id < 1 || id > 4) {
-    return [ACTIONS.ERROR, '[pockestSelectEgg] id needs to be 1, 2, 3, or 4'];
-  }
+  if (id < 1) return [ACTIONS.ERROR, '[pockestSelectEgg] id needs to be > 0'];
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/eggs', {
     body: `{"id":${id}}`,
     method: 'POST',
