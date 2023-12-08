@@ -6,6 +6,7 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
+import { STAT_ABBR } from '../config/stats';
 import getTimeIntervals from '../utils/getTimeIntervals';
 import getTotalStats from '../utils/getTotalStats';
 import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../utils/getTargetMonsterPlan';
@@ -230,19 +231,20 @@ export function pockestAutoPlan({ pockestState, autoPlan, monsterId }) {
     autoPlan,
   };
   if (autoPlan) {
-    const targetMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === monsterId);
-    if (targetMonster?.statPlan) {
-      const curTrainings = pockestState?.log?.filter((entry) => entry.timestamp > pockestState?.data?.monster?.live_time && entry.logType === 'training');
-      const numTrains = curTrainings?.length;
-      newSettings.stat = targetMonster?.statPlan?.slice(numTrains, numTrains + 1);
-    }
     newSettings = {
-      ...getCurrentTargetMonsterPlan(pockestState, monsterId),
       ...newSettings,
+      ...getCurrentTargetMonsterPlan(pockestState, monsterId),
       autoClean: true,
       autoFeed: true,
       autoTrain: true,
     };
+    const targetMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === monsterId);
+    if (targetMonster?.statPlan) {
+      const curTrainings = pockestState?.log?.filter((entry) => entry.timestamp > pockestState?.data?.monster?.live_time && entry.logType === 'training');
+      const numTrains = curTrainings?.length;
+      const statAbbr = targetMonster?.statPlan?.slice(numTrains, numTrains + 1);
+      newSettings.stat = statAbbr ? STAT_ABBR[statAbbr] : newSettings.stat;
+    }
   }
   if (autoPlan && pockestState?.data?.monster?.age < 4) {
     newSettings.autoMatch = false;
