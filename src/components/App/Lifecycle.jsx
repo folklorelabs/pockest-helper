@@ -39,7 +39,18 @@ function Lifecycle() {
     pockestDispatch(pockestLoading());
     pockestDispatch(await pockestRefresh(pockestState));
   }, [pockestDispatch, pockestState]);
-
+  React.useEffect(() => {
+    if (!pockestState?.error || pockestState?.loading) return () => {};
+    const dynamicMinOffset = Math.round(Math.random() * 1000 * 60 * 3) + (1000 * 60 * 1); // 1-4m
+    const dynamicSecOffset = Math.round(Math.random() * 1000 * 59); // 0-59s
+    const errorOffset = dynamicMinOffset + dynamicSecOffset;
+    const errorTimeout = window.setTimeout(async () => {
+      await refresh();
+    }, errorOffset);
+    return () => {
+      window.clearTimeout(errorTimeout);
+    };
+  }, [refresh, pockestState, pockestState?.error]);
   React.useEffect(() => {
     const interval = window.setInterval(async () => {
       const {
@@ -53,8 +64,9 @@ function Lifecycle() {
         autoCure,
         paused,
         stat,
+        error,
       } = pockestState;
-      if (!data || loading || paused) return;
+      if (!data || loading || paused || error) return;
       const {
         monster,
       } = data;
