@@ -98,7 +98,7 @@ function CareLog({
 
 CareLog.defaultProps = {
   title: 'Log',
-  logTypes: ['cleaning', 'meal', 'training', 'exchange', 'age', 'hatching', 'cure'],
+  logTypes: ['cleaning', 'meal', 'training', 'exchange', 'age', 'hatching', 'cure', 'error'],
   rows: 12,
   allowClear: true,
   onlyDiscoveries: false,

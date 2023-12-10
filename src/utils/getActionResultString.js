@@ -16,6 +16,7 @@ export default function getActionResultString({ pockestState, result }) {
     if (logType === 'cure') return 'cured 🩹';
     if (logType === 'age') return 'appears';
     if (logType === 'hatching') return 'hatched';
+    if (logType === 'error') return `ERROR❗${result?.error}`;
     return '';
   })();
   const resultsStr = (() => {

@@ -500,6 +500,14 @@ function REDUCER(state, [type, payload]) {
         ...state,
         loading: false,
         error: payload,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state),
+            logType: 'error',
+            error: `${payload.stack}`,
+          },
+        ],
       };
     default:
       return { ...state };
