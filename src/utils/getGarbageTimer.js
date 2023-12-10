@@ -18,7 +18,7 @@ export default function getGarbageTimer(pockestState) {
     }, null);
   let nextClean = lastClean + GARBAGE_TIME;
   let nextStomach = pockestState.data.monster.stomach + 1;
-  while (nextStomach < 12 && nextStomach < now) {
+  while (nextStomach < 12 && nextClean < now) {
     nextClean += GARBAGE_TIME;
     nextStomach += 1;
   }
