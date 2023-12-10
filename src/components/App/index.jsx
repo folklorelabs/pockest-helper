@@ -1,5 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
+import semverLt from 'semver/functions/lt';
 import Lifecycle from './Lifecycle';
 import PauseBtn from '../PauseBtn';
 import AutoPlanControls from '../AutoPlanControls';
@@ -15,6 +16,7 @@ import LogPanel from '../LogPanel';
 import CareLog from '../CareLog';
 import CureControls from '../CureControls';
 import CharacterSprite from '../CharacterSprite';
+import fetchLatestRelease from '../../utils/fetchLatestRelease';
 import './index.css';
 
 function App() {
@@ -26,6 +28,21 @@ function App() {
   } = useAppContext();
   const [minimized, setMinimized] = React.useState(false);
   const [lol, setLol] = React.useState(true);
+  const [remoteVersion, setRemoteVersion] = React.useState();
+  React.useEffect(() => {
+    (async () => {
+      const latestRelease = await fetchLatestRelease();
+      setRemoteVersion(latestRelease?.tag_name);
+    })();
+  }, []);
+  const isOutdated = React.useMemo(() => {
+    const curVersion = import.meta.env.APP_VERSION;
+    if (!remoteVersion || !curVersion) return false;
+    return semverLt(
+      curVersion,
+      remoteVersion,
+    );
+  }, [remoteVersion]);
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
       <Lifecycle />
@@ -52,7 +69,17 @@ function App() {
             <PauseBtn />
           </div>
           <div className="App-footer">
-            {/* <p>* Timer for next age, stun, death, etc.</p> */}
+            {isOutdated ? (
+              <p>
+                <a href="https://github.com/folklorelabs/pockest-helper/releases/latest" target="_blank" rel="noreferrer">
+                  Pockest Helper upgrade available (
+                  {`v${import.meta.env.APP_VERSION}`}
+                  {' → '}
+                  {remoteVersion}
+                  )
+                </a>
+              </p>
+            ) : ''}
           </div>
         </>
       ) : (
