@@ -11,34 +11,33 @@ function TargetMonsterSelect() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const acquiredMementos = React.useMemo(() => pockestState?.allMonsters
+    ?.filter((m) => m?.memento_flg)
+    .map((m) => m?.monster_id), [pockestState?.allMonsters]);
   const availableMonsters = React.useMemo(() => {
     const monster = pockestState?.data?.monster;
     const curMonsterId = getMonsterId(pockestState);
     if (!curMonsterId) {
-      return pockestState?.allMonsters?.filter((m) => {
-        const mAgeStr = m?.plan?.slice(1, 2);
-        const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
-        return mAge >= 5;
-      }).filter((m) => {
-        // check for any required mementos
-        if (!m?.requiredMemento) return true;
-        const reqM = pockestState?.allMonsters
-          ?.find((rm) => rm?.monster_id === m?.requiredMemento?.monster_id);
-        return reqM?.memento_flg;
-      }).sort((a, b) => {
-        if (a.name_en < b.name_en) return -1;
-        if (b.name_en < a.name_en) return 1;
-        return 0;
-      });
+      return pockestState?.allMonsters
+        ?.filter((m) => {
+          const mAgeStr = m?.plan?.slice(1, 2);
+          const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
+          const hasRequiredMems = !m?.requiredMemento
+            || acquiredMementos.includes(m.requiredMemento);
+          return mAge >= 5 && hasRequiredMems;
+        })
+        .sort((a, b) => {
+          if (a.name_en < b.name_en) return -1;
+          if (b.name_en < a.name_en) return 1;
+          return 0;
+        });
     }
-    const allAvailIds = pockestState?.allMonsters?.filter((m) => m?.age > monster?.age)
-      .filter((m) => {
-        // check for any required mementos
-        if (!m?.requiredMemento) return true;
-        const reqM = pockestState?.allMonsters
-          ?.find((rm) => rm?.monster_id === m?.requiredMemento?.monster_id);
-        return reqM?.memento_flg;
-      })
+    const allAvailIds = pockestState?.allMonsters?.filter((m) => {
+      const isOlder = m?.age > monster?.age;
+      const hasRequiredMems = !m?.requiredMemento
+        || acquiredMementos.includes(m.requiredMemento);
+      return isOlder && hasRequiredMems;
+    })
       .reduce((all, m) => {
         // only return decendants of current monster
         const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
@@ -55,7 +54,7 @@ function TargetMonsterSelect() {
         if (b.name_en < a.name_en) return 1;
         return 0;
       });
-  }, [pockestState]);
+  }, [acquiredMementos, pockestState]);
   if (!pockestState?.allMonsters?.length) return '';
   return (
     <select
@@ -81,6 +80,7 @@ function TargetMonsterSelect() {
       {availableMonsters.map((monster) => (
         <option key={monster?.monster_id} value={monster?.monster_id}>
           {monster.name_en}
+          {acquiredMementos.includes(monster?.monster_id) ? ' ✓' : ''}
         </option>
       ))}
     </select>
