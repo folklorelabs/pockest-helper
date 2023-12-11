@@ -22,7 +22,8 @@ function TargetMonsterSelect() {
       }).filter((m) => {
         // check for any required mementos
         if (!m?.requiredMemento) return true;
-        const reqM = pockestState?.allMonsters?.find((rm) => rm?.monster_id === m?.monster_id);
+        const reqM = pockestState?.allMonsters
+          ?.find((rm) => rm?.monster_id === m?.requiredMemento?.monster_id);
         return reqM?.memento_flg;
       }).sort((a, b) => {
         if (a.name_en < b.name_en) return -1;
@@ -34,7 +35,8 @@ function TargetMonsterSelect() {
       .filter((m) => {
         // check for any required mementos
         if (!m?.requiredMemento) return true;
-        const reqM = pockestState?.allMonsters?.find((rm) => rm?.monster_id === m?.monster_id);
+        const reqM = pockestState?.allMonsters
+          ?.find((rm) => rm?.monster_id === m?.requiredMemento?.monster_id);
         return reqM?.memento_flg;
       })
       .reduce((all, m) => {
