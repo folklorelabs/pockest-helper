@@ -18,7 +18,7 @@ function BuyEggBtn() {
       onClick={async () => {
         if (!planEgg?.id || pockestState?.loading) return;
         pockestDispatch(pockestLoading());
-        await pockestDispatch(pockestSelectEgg(planEgg.id));
+        pockestDispatch(await pockestSelectEgg(planEgg.id));
       }}
       disabled={!planEgg?.id || pockestState?.loading}
     >
