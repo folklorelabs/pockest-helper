@@ -3,7 +3,7 @@ import { STAT_ICON, STAT_ID } from '../config/stats';
 export default function getActionResultString({ pockestState, result }) {
   const dateStr = (new Date(result?.timestamp)).toLocaleString();
   const monster = pockestState?.allMonsters.find((m) => m.monster_id === result?.monsterId);
-  if (!monster) return `Error parsing ${result?.logType} log`;
+  const monsterName = monster?.name_en || `MONSTER_${result?.monsterId}`;
   const logType = result?.logType;
   const actionStr = (() => {
     if (logType === 'cleaning') return 'cleaned';
@@ -35,5 +35,5 @@ export default function getActionResultString({ pockestState, result }) {
     if (logType === 'hatching') return [`🥚#${result?.eggType}`];
     return [];
   })().filter((g) => g).join(', ');
-  return `[${dateStr}] ${monster.name_en} ${actionStr}${resultsStr ? ` (${resultsStr})` : ''}`;
+  return `[${dateStr}] ${monsterName} ${actionStr}${resultsStr ? ` (${resultsStr})` : ''}`;
 }
