@@ -210,6 +210,7 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
     autoPlan,
   };
   if (autoPlan) {
+    // ensure default autoPlan settings are set
     newSettings = {
       ...newSettings,
       ...getCurrentTargetMonsterPlan(state, targetMonsterId),
@@ -217,6 +218,8 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
       autoFeed: true,
       autoTrain: true,
     };
+
+    // use statPlan when monster has one
     const targetMonster = state?.allMonsters?.find((m) => m?.monster_id === targetMonsterId);
     if (targetMonster?.statPlan) {
       const curTrainings = state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
@@ -224,17 +227,19 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
       const statAbbr = targetMonster?.statPlan?.slice(numTrains, numTrains + 1);
       newSettings.stat = statAbbr ? STAT_ABBR[statAbbr] : newSettings.stat;
     }
-  }
-  if (autoPlan && state?.data?.monster?.age < 4) {
-    newSettings.autoMatch = false;
-    newSettings.autoCure = false;
+
+    // auto match and cure settings
+    const shouldMatch = state?.data?.event !== 'monster_not_found'
+      && state?.data?.monster?.age >= 4;
+    newSettings.autoMatch = shouldMatch;
+
+    // always enable autoCure
+    // doesn't matter cause we should never get stunned,
+    //   but it's better to enable it just in case
+    newSettings.autoCure = true;
   }
   if (state?.data?.event === 'monster_not_found') {
     newSettings.paused = true;
-    if (autoPlan) {
-      newSettings.autoMatch = false;
-      newSettings.autoCure = false;
-    }
   }
   return newSettings;
 }
