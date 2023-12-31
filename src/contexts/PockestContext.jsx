@@ -229,10 +229,12 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
     newSettings.autoMatch = false;
     newSettings.autoCure = false;
   }
-  if (autoPlan && state?.data?.event === 'monster_not_found') {
+  if (state?.data?.event === 'monster_not_found') {
     newSettings.paused = true;
-    newSettings.autoMatch = false;
-    newSettings.autoCure = false;
+    if (autoPlan) {
+      newSettings.autoMatch = false;
+      newSettings.autoCure = false;
+    }
   }
   return newSettings;
 }
