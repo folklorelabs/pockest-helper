@@ -54,41 +54,51 @@ function App() {
       </header>
       {!pockestState?.initialized || pockestState?.data?.monster ? (
         <>
-          <AutoPlanControls />
-          <hr />
-          <CleanControls />
-          <hr />
-          <FeedControls />
-          <hr />
-          <TrainControls />
-          <hr />
-          <MatchControls />
-          <hr />
-          <CureControls />
-          <div className="App-button">
-            <PauseBtn />
-          </div>
-          <div className="App-footer">
+          <div className="App-inner">
             {isOutdated ? (
-              <p>
+              <p className="App-updateText">
                 <a href="https://github.com/folklorelabs/pockest-helper/releases/latest" target="_blank" rel="noreferrer">
-                  Pockest Helper upgrade available (
-                  {`v${import.meta.env.APP_VERSION}`}
-                  {' → '}
+                  New version available (
                   {remoteVersion}
                   )
                 </a>
               </p>
             ) : ''}
+            <AutoPlanControls />
+            <hr />
+            <CleanControls />
+            <hr />
+            <FeedControls />
+            <hr />
+            <TrainControls />
+            <hr />
+            <MatchControls />
+            <hr />
+            <CureControls />
           </div>
+          <div className="App-footer">
+            <div className="App-button">
+              <PauseBtn />
+            </div>
+          </div>
+          <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
+            {lol ? (
+              <CharacterSprite
+                action={pockestState?.paused ? 'down' : 'idle'}
+                animated={!pockestState?.paused}
+                randomAnimations={pockestState?.paused ? null : ['idle', 'win', 'attack']}
+                randomAnimationWeights={[100, 10, 60]}
+              />
+            ) : ''}
+          </button>
         </>
       ) : (
-        <>
+        <div className="App-inner">
           <EggControls />
           <div className="App-button">
             <BuyEggBtn />
           </div>
-        </>
+        </div>
       )}
       {showLog && !minimized ? (
         <LogPanel>
@@ -96,16 +106,6 @@ function App() {
           <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
         </LogPanel>
       ) : ''}
-      <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
-        {lol ? (
-          <CharacterSprite
-            action={pockestState?.paused ? 'down' : 'idle'}
-            animated={!pockestState?.paused}
-            randomAnimations={pockestState?.paused ? null : ['idle', 'win', 'attack']}
-            randomAnimationWeights={[100, 10, 60]}
-          />
-        ) : ''}
-      </button>
     </div>
   );
 }
