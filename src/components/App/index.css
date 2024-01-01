@@ -79,11 +79,10 @@
   padding: 0 1rem;
 }
 
-#PockestHelperExtension .App-footerText {
-  opacity: 0.6667;
+#PockestHelperExtension .App-updateText {
   font-size: 0.8em;
-  margin-top: 1rem;
-  text-align: left;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
 #PockestHelperExtension .App-sprite {

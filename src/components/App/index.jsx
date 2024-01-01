@@ -55,6 +55,15 @@ function App() {
       {!pockestState?.initialized || pockestState?.data?.monster ? (
         <>
           <div className="App-inner">
+            {isOutdated ? (
+              <p className="App-updateText">
+                <a href="https://github.com/folklorelabs/pockest-helper/releases/latest" target="_blank" rel="noreferrer">
+                  New version available (
+                  {remoteVersion}
+                  )
+                </a>
+              </p>
+            ) : ''}
             <AutoPlanControls />
             <hr />
             <CleanControls />
@@ -71,17 +80,6 @@ function App() {
             <div className="App-button">
               <PauseBtn />
             </div>
-            {isOutdated ? (
-              <p className="App-footerText">
-                <a href="https://github.com/folklorelabs/pockest-helper/releases/latest" target="_blank" rel="noreferrer">
-                  Pockest Helper upgrade available (
-                  {`v${import.meta.env.APP_VERSION}`}
-                  {' → '}
-                  {remoteVersion}
-                  )
-                </a>
-              </p>
-            ) : ''}
           </div>
           <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
             {lol ? (
