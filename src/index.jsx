@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { PockestProvider } from './contexts/PockestContext';
 import { AppProvider } from './contexts/AppContext';
 import App from './components/App';
+import './reset.css';
 import './index.css';
 
 const APP_ID = 'PockestHelperExtension';

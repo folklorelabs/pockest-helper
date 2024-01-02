@@ -1,0 +1,195 @@
+@font-face {
+  font-family: Noto Sans;
+  src: url(https://www.capcom-games.com/common/font/SourceSans3-VF.woff2) format("woff2");
+  font-display: swap;
+  font-weight: 100 900
+}
+
+@font-face {
+  font-family: Noto Sans JP;
+  src: url(https://www.capcom-games.com/common/font/SourceHanSansJP-VF.otf.woff2) format("woff2");
+  font-display: swap;
+  font-weight: 100 900
+}
+
+@font-face {
+  font-family: Oswald;
+  src: url(/6/buckler/assets/images/common/font/Oswald-VariableFont_wght.woff) format("woff"), url(/6/buckler/assets/images/common/font/Oswald-VariableFont_wght.woff2) format("woff2");
+  font-display: swap;
+  font-weight: 100 900
+}
+
+a,
+abbr,
+acronym,
+address,
+applet,
+article,
+aside,
+audio,
+b,
+big,
+blockquote,
+body,
+canvas,
+caption,
+center,
+cite,
+code,
+dd,
+del,
+details,
+dfn,
+div,
+dl,
+dt,
+em,
+embed,
+fieldset,
+figcaption,
+figure,
+footer,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+header,
+hgroup,
+html,
+i,
+iframe,
+img,
+ins,
+kbd,
+label,
+legend,
+li,
+mark,
+menu,
+nav,
+object,
+ol,
+output,
+p,
+pre,
+q,
+ruby,
+s,
+samp,
+section,
+small,
+span,
+strike,
+strong,
+sub,
+summary,
+sup,
+table,
+tbody,
+td,
+tfoot,
+th,
+thead,
+time,
+tr,
+tt,
+u,
+ul,
+var,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block
+}
+
+body {
+  line-height: 1
+}
+
+ol,
+ul {
+  list-style: none
+}
+
+blockquote,
+q {
+  quotes: none
+}
+
+blockquote:after,
+blockquote:before,
+q:after,
+q:before {
+  content: "";
+  content: none
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0
+}
+
+button {
+  appearance: auto;
+  text-rendering: auto;
+  color: rgb(0, 0, 0);
+  letter-spacing: normal;
+  word-spacing: normal;
+  line-height: normal;
+  text-transform: none;
+  text-indent: 0px;
+  text-shadow: none;
+  display: inline-block;
+  text-align: center;
+  align-items: flex-start;
+  cursor: default;
+  box-sizing: border-box;
+  background-color: rgb(240, 240, 240);
+  margin: 0em;
+  padding-block: 1px;
+  padding-inline: 6px;
+  border-width: 2px;
+  border-style: outset;
+  border-color: rgb(0, 0, 0);
+  border-image: initial;
+}
+
+body,
+html {
+  height: -webkit-fill-available;
+  -webkit-text-size-adjust: 100%;
+  background: #000;
+  color: #fff;
+  font-family: Noto Sans, sans-serif;
+  line-height: 1.5
+}
+
+body:lang(ja),
+html:lang(ja) {
+  font-family: Noto Sans JP, sans-serif
+}
+
+body:lang(ar),
+html:lang(ar) {
+  direction: rtl
+}
