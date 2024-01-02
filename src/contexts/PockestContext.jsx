@@ -544,9 +544,13 @@ export function PockestProvider({
 
   // grab data on init
   useEffect(() => {
-    (async () => {
-      pockestDispatch(await pockestInit());
-    })();
+    const initIntervalTime = 1000 * 60 * 60;
+    const init = async () => pockestDispatch(await pockestInit());
+    init();
+    const initInterval = window.setInterval(() => init(), initIntervalTime);
+    return () => {
+      window.clearInterval(initInterval);
+    };
   }, []);
 
   // wrap value in memo so we only re-render when necessary
