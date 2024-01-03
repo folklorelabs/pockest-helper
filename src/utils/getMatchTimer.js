@@ -11,6 +11,6 @@ export default function getMatchTimer(pockestState) {
   const firstMatch = monster.live_time + OPTIMAL_MATCH_TIME;
   const nextOptimalMatch = Math.max(firstMatch, nextAvailableMatch);
   return monster.training_time - nextOptimalMatch <= TRAINING_THRESHOLD
-    ? monster.training_time
+    ? Math.max(monster.training_time, nextOptimalMatch)
     : nextOptimalMatch;
 }

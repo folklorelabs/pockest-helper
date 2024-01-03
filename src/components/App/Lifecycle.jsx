@@ -132,14 +132,15 @@ function Lifecycle() {
       const attemptToTrain = (autoTrain || autoPlan) && monster && stat && !isStunned;
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
-      if (attemptToTrain && nextTrainingTime && now >= nextTrainingTime) {
+      const willTrain = attemptToTrain && nextTrainingTime && now >= nextTrainingTime;
+      if (willTrain) {
         console.log(now.toLocaleString(), `TRAIN, stat=${STAT_ID[stat]}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
       }
 
       // Match
-      const attemptToMatch = autoMatch && monster && !isStunned && !attemptToTrain;
+      const attemptToMatch = autoMatch && monster && !isStunned && !willTrain;
       const nextMatchTime = getMatchTimer(pockestState);
       if (attemptToMatch && nextMatchTime && now.getTime() >= nextMatchTime) {
         pockestDispatch(pockestLoading());
