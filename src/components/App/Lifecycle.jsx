@@ -138,7 +138,7 @@ function Lifecycle() {
       }
 
       // Match
-      const attemptToMatch = autoMatch && monster && !isStunned;
+      const attemptToMatch = autoMatch && monster && !isStunned && !attemptToTrain;
       const nextMatchTime = monster?.exchange_time
         && new Date(monster?.exchange_time);
       if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
