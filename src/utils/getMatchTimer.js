@@ -8,9 +8,9 @@ export default function getMatchTimer(pockestState) {
   if (!monster) return null;
   const nextAvailableMatch = monster.exchange_time;
   if (!pockestState?.autoPlan) return nextAvailableMatch;
-  return Math.max(
-    monster.live_time + OPTIMAL_MATCH_TIME,
-    monster.training_time,
-    nextAvailableMatch,
-  );
+  const firstMatch = monster.live_time + OPTIMAL_MATCH_TIME;
+  const nextOptimalMatch = Math.max(firstMatch, nextAvailableMatch);
+  return monster.training_time - nextOptimalMatch <= TRAINING_THRESHOLD
+    ? monster.training_time
+    : nextOptimalMatch;
 }
