@@ -13,6 +13,7 @@ import {
   getBestMatch,
   pockestCure,
 } from '../../contexts/PockestContext';
+import getMatchTimer from '../../utils/getMatchTimer';
 
 function Lifecycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
@@ -139,9 +140,8 @@ function Lifecycle() {
 
       // Match
       const attemptToMatch = autoMatch && monster && !isStunned && !attemptToTrain;
-      const nextMatchTime = monster?.exchange_time
-        && new Date(monster?.exchange_time);
-      if (attemptToMatch && nextMatchTime && now >= nextMatchTime) {
+      const nextMatchTime = getMatchTimer(pockestState);
+      if (attemptToMatch && nextMatchTime && now.getTime() >= nextMatchTime) {
         pockestDispatch(pockestLoading());
         const bestMatch = await getBestMatch(pockestState);
         console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);

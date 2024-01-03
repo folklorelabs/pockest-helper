@@ -7,6 +7,7 @@ import LogCountLine from '../LogCountLine';
 import { parseDurationStr } from '../../utils/parseDuration';
 import useNow from '../../hooks/useNow';
 import './index.css';
+import getMatchTimer from '../../utils/getMatchTimer';
 
 function MatchControls() {
   const {
@@ -21,6 +22,7 @@ function MatchControls() {
     paused,
     matchPriority,
   } = pockestState;
+  const nextMatchTimer = React.useMemo(() => getMatchTimer(pockestState), [pockestState]);
   return (
     <div className="MatchControls">
       <div className="PockestLine">
@@ -61,7 +63,7 @@ function MatchControls() {
           Next Match
         </span>
         <span className="PockestText PockestLine-value">
-          {data?.monster?.exchange_time ? parseDurationStr(data.monster.exchange_time - now.getTime()) : '--'}
+          {data?.monster?.exchange_time ? parseDurationStr(nextMatchTimer - now.getTime()) : '--'}
         </span>
       </div>
       <LogCountLine
