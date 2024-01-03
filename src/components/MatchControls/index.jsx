@@ -5,9 +5,9 @@ import {
 } from '../../contexts/PockestContext';
 import LogCountLine from '../LogCountLine';
 import { parseDurationStr } from '../../utils/parseDuration';
+import getMatchTimer from '../../utils/getMatchTimer';
 import useNow from '../../hooks/useNow';
 import './index.css';
-import getMatchTimer from '../../utils/getMatchTimer';
 
 function MatchControls() {
   const {
