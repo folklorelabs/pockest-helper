@@ -1,7 +1,5 @@
 export default function isMatchDiscovery(pockestState, result) {
-  const monsterIdStr = (pockestState?.data?.monster?.hash?.split('-') || '')[0];
-  const monsterId = monsterIdStr ? parseInt(monsterIdStr, 10) : null;
-  const monster = pockestState?.allMonsters.find((m) => m.monster_id === monsterId);
+  const monster = pockestState?.allMonsters.find((m) => m.monster_id === result?.monsterId);
   const allMissing = [
     ...(monster?.matchSusFever || []),
     ...(monster?.matchUnknown || []),
