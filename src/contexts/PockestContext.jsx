@@ -217,6 +217,8 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
       autoClean: true,
       autoFeed: true,
       autoTrain: true,
+      autoMatch: true,
+      autoCure: true,
     };
 
     // use statPlan when monster has one
@@ -227,16 +229,6 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
       const statAbbr = targetMonster?.statPlan?.slice(numTrains, numTrains + 1);
       newSettings.stat = statAbbr ? STAT_ABBR[statAbbr] : newSettings.stat;
     }
-
-    // auto match and cure settings
-    const shouldMatch = state?.data?.event !== 'monster_not_found'
-      && state?.data?.monster?.age >= 4;
-    newSettings.autoMatch = shouldMatch;
-
-    // always enable autoCure
-    // doesn't matter cause we should never get stunned,
-    //   but it's better to enable it just in case
-    newSettings.autoCure = true;
   }
   if (state?.data?.event === 'monster_not_found') {
     newSettings.paused = true;
