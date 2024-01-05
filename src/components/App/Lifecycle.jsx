@@ -14,6 +14,7 @@ import {
   pockestCure,
 } from '../../contexts/PockestContext';
 import getMatchTimer from '../../utils/getMatchTimer';
+import getRandomMinutes from '../../utils/getRandomMinutes';
 
 function Lifecycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
@@ -29,10 +30,7 @@ function Lifecycle() {
 
   const getNextRefresh = () => {
     const now = new Date();
-    const staticOffset = 1000 * 60 * 5; // 5m
-    const dynamicMinOffset = Math.round(Math.random() * 1000 * 60 * 5); // 0-5m
-    const dynamicSecOffset = Math.round(Math.random() * 1000 * 59); // 0-59s
-    return new Date(now.getTime() + staticOffset + dynamicMinOffset + dynamicSecOffset);
+    return new Date(now.getTime() + getRandomMinutes(5, 5));
   };
   const nextRandomReset = React.useRef(getNextRefresh());
   const refresh = React.useCallback(async () => {

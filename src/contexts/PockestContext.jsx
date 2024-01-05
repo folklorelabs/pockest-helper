@@ -15,6 +15,7 @@ import fetchAllHashes from '../utils/fetchAllHashes';
 import postDiscord from '../utils/postDiscord';
 import isMatchDiscovery from '../utils/isMatchDiscovery';
 import getMatchReportString from '../utils/getMatchReportString';
+import getRandomMinutes from '../utils/getRandomMinutes';
 
 // STATE
 const INITIAL_STATE = {
@@ -536,12 +537,15 @@ export function PockestProvider({
 
   // grab data on init
   useEffect(() => {
-    const initIntervalTime = 1000 * 60 * 60;
-    const init = async () => pockestDispatch(await pockestInit());
+    let initTimeout;
+    const init = async () => {
+      pockestDispatch(await pockestInit());
+      const timeoutMs = getRandomMinutes(60);
+      initTimeout = window.setTimeout(init, timeoutMs);
+    };
     init();
-    const initInterval = window.setInterval(() => init(), initIntervalTime);
     return () => {
-      window.clearInterval(initInterval);
+      window.clearTimeout(initTimeout);
     };
   }, []);
 
