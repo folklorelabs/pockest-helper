@@ -40,12 +40,10 @@ function Lifecycle() {
   }, [pockestDispatch, pockestState]);
   React.useEffect(() => {
     if (!pockestState?.error || pockestState?.loading) return () => {};
-    const dynamicMinOffset = Math.round(Math.random() * 1000 * 60 * 3) + (1000 * 60 * 1); // 1-4m
-    const dynamicSecOffset = Math.round(Math.random() * 1000 * 59); // 0-59s
-    const errorOffset = dynamicMinOffset + dynamicSecOffset;
+    const errorTimeoutMs = getRandomMinutes(1, 3);
     const errorTimeout = window.setTimeout(async () => {
       await refresh();
-    }, errorOffset);
+    }, errorTimeoutMs);
     return () => {
       window.clearTimeout(errorTimeout);
     };
