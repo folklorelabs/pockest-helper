@@ -1,6 +1,9 @@
+const MONSTER_CACHE_DURATION = 1000 * 60 * 60;
 let monsterCache;
+let lastMonsterCache;
 export default async function fetchAllMonsters() {
-  if (monsterCache) return monsterCache;
+  const now = (new Date()).getTime();
+  if (monsterCache && (now - lastMonsterCache) >= MONSTER_CACHE_DURATION) return monsterCache;
   const [
     bucklerRes,
     serviceWorkerRes,
@@ -42,5 +45,6 @@ export default async function fetchAllMonsters() {
     };
   });
   monsterCache = allMonsters;
+  lastMonsterCache = (new Date()).getTime();
   return allMonsters;
 }
