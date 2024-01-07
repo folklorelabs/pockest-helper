@@ -231,9 +231,6 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
       newSettings.stat = statAbbr ? STAT_ABBR[statAbbr] : newSettings.stat;
     }
   }
-  if (state?.data?.event === 'monster_not_found') {
-    newSettings.paused = true;
-  }
   return newSettings;
 }
 
@@ -265,7 +262,7 @@ export function pockestAutoPlan({ pockestState, autoPlan, monsterId }) {
 export async function pockestRefresh(pockestState) {
   try {
     const data = await fetchPockestStatus();
-    if (data && pockestState?.data?.monster.hash !== data?.monster?.hash) {
+    if (data && pockestState?.data?.monster?.hash !== data?.monster?.hash) {
       data.result = {
         ...getLogEntry({ data }),
         logType: 'age',
@@ -487,13 +484,17 @@ function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH:
       return {
         ...state,
+        paused: payload?.event === 'monster_not_found' ? true : state.paused,
         loading: false,
         data: payload,
         log: (payload?.result) ? [
           ...state.log,
           payload?.result,
         ] : state.log,
-        ...getAutoPlanSettings(state, state.autoPlan, state.monsterId),
+        ...getAutoPlanSettings({
+          ...state,
+          result: payload?.result,
+        }, state.autoPlan, state.monsterId),
       };
     case ACTIONS.SET_LOG:
       return {
