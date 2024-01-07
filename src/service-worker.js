@@ -23,6 +23,14 @@ async function postDiscordMessage(content) {
   return data;
 }
 
+async function getLatestRelease() {
+  const response = await fetch('https://api.github.com/repos/folklorelabs/pockest-helper/releases');
+  const res = await response.json();
+  if (!Array.isArray(res)) throw new Error(`[fetchLatestRelease] Unexpected response type ${typeof res}`);
+  const latestRelease = res.find((r) => !r.prerelease);
+  return latestRelease;
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'GET_MONSTERS') {
     (async () => {
@@ -35,6 +43,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
       const hashes = await getHashData();
       sendResponse({ hashes });
+    })();
+    return true;
+  }
+  if (request.type === 'GET_LATEST_RELEASE') {
+    (async () => {
+      const release = await getLatestRelease();
+      sendResponse({ release });
     })();
     return true;
   }
