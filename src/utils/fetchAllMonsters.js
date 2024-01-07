@@ -3,7 +3,7 @@ let monsterCache;
 let lastMonsterCache;
 export default async function fetchAllMonsters() {
   const now = (new Date()).getTime();
-  if (monsterCache && (now - lastMonsterCache) >= MONSTER_CACHE_DURATION) return monsterCache;
+  if (monsterCache && (now - lastMonsterCache) < MONSTER_CACHE_DURATION) return monsterCache;
   const [
     bucklerRes,
     serviceWorkerRes,
