@@ -5,7 +5,8 @@ export const GARBAGE_MAX = 12;
 
 export default function getGarbageTimer(pockestState) {
   if (typeof pockestState?.data?.monster?.stomach !== 'number') return null;
-  if (pockestState?.data?.monster?.stomach >= GARBAGE_MAX) return null;
+  if (typeof pockestState?.data?.monster?.garbage !== 'number') return null;
+  if (pockestState.data.monster.garbage >= GARBAGE_MAX) return null;
   const stomachTimer = getStomachTimer(pockestState);
   const nextSmall = pockestState?.data?.next_small_event_timer;
   if (stomachTimer && stomachTimer !== nextSmall) return nextSmall;
@@ -23,6 +24,7 @@ export default function getGarbageTimer(pockestState) {
       return (potentialLatestTs > latestTs) ? potentialLatestTs : latestTs;
     }, null));
   const garbageDiff = Math.ceil((now - lastClean) / GARBAGE_TIME);
-  console.log((new Date(lastClean)).toLocaleString(), garbageDiff);
+  const nextGarbage = pockestState.data.monster.garbage + 1;
+  if (nextGarbage > garbageDiff) return null; // clean prolly missing from log
   return lastClean + (garbageDiff * GARBAGE_TIME);
 }
