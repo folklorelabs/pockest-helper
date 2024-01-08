@@ -484,7 +484,7 @@ function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH:
       return {
         ...state,
-        paused: payload?.event === 'monster_not_found' ? true : state.paused,
+        paused: payload?.data?.event === 'monster_not_found' ? true : state.paused,
         loading: false,
         data: payload,
         log: (payload?.result) ? [
