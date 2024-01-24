@@ -1,4 +1,4 @@
-import { STAT_ID } from '../config/stats';
+import { STAT_ABBR, STAT_ID } from '../config/stats';
 import ROUTES from '../config/routes';
 
 const PLAN_DEFAULTS = {
@@ -48,6 +48,15 @@ export default function getTargetMonsterPlan(state, monsterId) {
   const planStat = Object.keys(STAT_ID)
     .find((k) => STAT_ID[k].slice(0, 1).toUpperCase() === statLetter);
 
+  const planStatPlan = Array.from(new Array(6)).map((val, index) => {
+    const statPlanLetter = monster?.statPlan?.charAt(index);
+    const statPlanStat = Object.keys(STAT_ID)
+      .find((k) => STAT_ID[k].slice(0, 1).toUpperCase() === statPlanLetter);
+    return statPlanStat ?? planStat;
+  });
+
+  const planStatPlanId = planStatPlan?.map((sId) => STAT_ID[sId]?.charAt(0).toUpperCase()).join('');
+
   return {
     planId,
     planEgg,
@@ -56,6 +65,8 @@ export default function getTargetMonsterPlan(state, monsterId) {
     planDiv2,
     planDiv3,
     planStat,
+    planStatPlanId,
+    planStatPlan,
   };
 }
 
@@ -71,9 +82,14 @@ export function getCurrentTargetMonsterPlan(state, monsterId) {
     }
     return targetPlan?.planDiv3;
   })();
+  const stat = (() => {
+    const curTrainings = state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
+    const numTrains = curTrainings?.length;
+    return targetPlan?.planStatPlan?.[numTrains] || targetPlan?.planStat;
+  })();
   return {
     monsterId: mId,
-    stat: targetPlan?.planStat,
+    stat,
     cleanOffset: targetPlanSpecs?.cleanOffset,
     feedOffset: targetPlanSpecs?.feedOffset,
     cleanFrequency: targetPlanSpecs?.cleanFrequency,
