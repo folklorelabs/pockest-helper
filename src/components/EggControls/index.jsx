@@ -28,6 +28,10 @@ function EggControls() {
         <span className="PockestText PockestLine-value">{targetPlan?.planId ?? '--'}</span>
       </div>
       <div className="PockestLine">
+        <span className="PockestText">Stat Plan</span>
+        <span className="PockestText PockestLine-value">{targetPlan?.planStatPlanId || '--'}</span>
+      </div>
+      <div className="PockestLine">
         <span className="PockestText">Egg</span>
         <span className="PockestText PockestLine-value">{planEgg?.name_en ?? '--'}</span>
       </div>

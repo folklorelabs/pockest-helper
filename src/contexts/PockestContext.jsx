@@ -6,7 +6,6 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import { STAT_ABBR } from '../config/stats';
 import getTimeIntervals from '../utils/getTimeIntervals';
 import getTotalStats from '../utils/getTotalStats';
 import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../utils/getTargetMonsterPlan';
@@ -221,15 +220,6 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
       autoMatch: true,
       autoCure: true,
     };
-
-    // use statPlan when monster has one
-    const targetMonster = state?.allMonsters?.find((m) => m?.monster_id === targetMonsterId);
-    if (targetMonster?.statPlan) {
-      const curTrainings = state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
-      const numTrains = curTrainings?.length;
-      const statAbbr = targetMonster?.statPlan?.slice(numTrains, numTrains + 1);
-      newSettings.stat = statAbbr ? STAT_ABBR[statAbbr] : newSettings.stat;
-    }
   }
   return newSettings;
 }
