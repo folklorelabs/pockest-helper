@@ -285,3 +285,35 @@
   line-height: inherit;
   padding: 0;
 }
+
+/* Tooltip container */
+.PockestToolTip {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* Tooltip text */
+.PockestToolTip .PockestToolTip-text {
+  z-index: 1;
+  visibility: hidden;
+  width: 15em;
+  text-align: center;
+  padding: 0.3333em 0.5em;
+  border: 1px solid #d5a613;
+  background: hsla(0, 0%, 27%, 0.95);
+  font-size: 0.75rem;
+  font-weight: 100;
+  letter-spacing: 0.0333em;
+  text-align: left;
+
+  position: absolute;
+  top: -5px;
+  left: 105%;
+}
+
+/* Show the PockestToolTip text when you mouse over the PockestToolTip container */
+.PockestToolTip:hover .PockestToolTip-text,
+.PockestToolTip:focus .PockestToolTip-text {
+  visibility: visible;
+}
