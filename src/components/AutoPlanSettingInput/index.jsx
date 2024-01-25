@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
 import { STAT_ABBR } from '../../config/stats';
 import {
   pockestPlanSettings,
@@ -49,14 +48,17 @@ function AutoPlanSettingInput({ settingName, required }) {
     return '*';
   }, [pockestState?.allMonsters, settingName]);
   return (
-    <input
-      className={cx('AutoPlanSettingInput', 'PockestInput')}
-      onChange={onChange}
-      value={targetMonster ? pockestState?.[settingName] : newValue}
-      disabled={isDisabled}
-      pattern={pattern}
-      required={required}
-    />
+    <div className="AutoPlanSettingInput">
+      <input
+        className="PockestInput"
+        onChange={onChange}
+        value={targetMonster ? pockestState?.[settingName] : newValue}
+        disabled={isDisabled}
+        pattern={pattern}
+        required={required}
+      />
+      <span className="AutoPlanSettingInput-overlay" />
+    </div>
   );
 }
 
