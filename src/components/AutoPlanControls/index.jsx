@@ -119,8 +119,8 @@ function AutoPlanControls() {
               <em>Stat Plans</em>
               {' '}
               are training schedules made up of 0-14 letters.
-              Each letter represents a training period with the designated stat type.
-              The Primary Stat specified in the Plan will be trained for missing periods.
+              Each letter represents a training period with a specified stat.
+              The Plan&apos;s Primary Stat is trained for unspecified periods.
               <br />
               <br />
               <em>Training Period (0-14):</em>
