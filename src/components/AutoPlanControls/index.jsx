@@ -58,11 +58,25 @@ function AutoPlanControls() {
         <TargetMonsterSelect />
       </div>
       <div className="PockestLine">
-        <span className="PockestText">Plan</span>
+        <a
+          className="PockestText"
+          href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624#6460421"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Plan
+        </a>
         <AutoPlanSettingInput settingName="planId" required />
       </div>
       <div className="PockestLine">
-        <span className="PockestText">Stat Plan</span>
+        <a
+          className="PockestText"
+          href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624#6602623"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Stat Plan
+        </a>
         <AutoPlanSettingInput settingName="statPlanId" />
       </div>
       <Timer
