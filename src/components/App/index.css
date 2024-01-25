@@ -274,9 +274,9 @@
 }
 
 .PockestLink {
+  color: #fff;
   text-decoration: underline;
   background: inherit;
-  color: inherit;
   box-shadow: none;
   border: none;
   font-size: inherit;
