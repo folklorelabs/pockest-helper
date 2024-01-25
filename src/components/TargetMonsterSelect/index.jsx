@@ -60,7 +60,6 @@ function TargetMonsterSelect() {
       className="PockestSelect"
       onChange={(e) => {
         const monsterId = e.target.value ? parseInt(e.target.value, 10) : -1;
-        console.log(monsterId);
         pockestDispatch(pockestPlanSettings(pockestState, { monsterId }));
       }}
       defaultValue={`${pockestState?.monsterId}`}
