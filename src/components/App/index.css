@@ -129,6 +129,15 @@
   text-align: right;
 }
 
+.PockestText--info::after {
+  content: 'ℹ️';
+  font-size: 0.666em;
+  position: relative;
+  display: inline-block;
+  top: -0.5em;
+  left: 0.25em;
+}
+
 .PockestInput,
 .PockestSelect {
   position: relative;

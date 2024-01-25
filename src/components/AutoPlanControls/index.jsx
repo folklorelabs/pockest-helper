@@ -59,7 +59,7 @@ function AutoPlanControls() {
       </div>
       <div className="PockestLine">
         <a
-          className="PockestText"
+          className="PockestText PockestText--info"
           href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624#6460421"
           target="_blank"
           rel="noreferrer"
@@ -70,7 +70,7 @@ function AutoPlanControls() {
       </div>
       <div className="PockestLine">
         <a
-          className="PockestText"
+          className="PockestText PockestText--info"
           href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624#6602623"
           target="_blank"
           rel="noreferrer"
