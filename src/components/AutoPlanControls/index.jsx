@@ -58,25 +58,78 @@ function AutoPlanControls() {
         <TargetMonsterSelect />
       </div>
       <div className="PockestLine">
-        <a
-          className="PockestText PockestText--info"
-          href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624#6460421"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <div className="PockestText">
           Plan
-        </a>
+          <a
+            className="PockestToolTip"
+            href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624#6460421"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ℹ️
+            <span className="PockestToolTip-text">
+              <em>Plans</em>
+              {' '}
+              are 5 character paths that monsters take through the evolution tree.
+              <br />
+              <br />
+              <em>Egg:</em>
+              {' '}
+              W, G, Y, B, R
+              <br />
+              <em>Age:</em>
+              {' '}
+              5
+              <br />
+              <em>1st Divergence:</em>
+              {' '}
+              A, B, C
+              <br />
+              <em>2nd Divergence:</em>
+              {' '}
+              R, L
+              <br />
+              <em>Primary Stat:</em>
+              {' '}
+              P, S, T
+              <br />
+              <br />
+              <em>Example:</em>
+              {' '}
+              G5ART
+            </span>
+          </a>
+        </div>
         <AutoPlanSettingInput settingName="planId" required />
       </div>
       <div className="PockestLine">
-        <a
-          className="PockestText PockestText--info"
-          href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624#6602623"
-          target="_blank"
-          rel="noreferrer"
-        >
+        <div className="PockestText">
           Stat Plan
-        </a>
+          <a
+            className="PockestToolTip"
+            href="https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624#6602623"
+            target="_blank"
+            rel="noreferrer"
+          >
+            ℹ️
+            <span className="PockestToolTip-text">
+              <em>Stat Plans</em>
+              {' '}
+              are training schedules made up of 0-14 characters.
+              Each character is a stat type and represents a training period.
+              <br />
+              <br />
+              <em>Training Period (0-14):</em>
+              {' '}
+              P, S, T
+              <br />
+              <br />
+              <em>Example:</em>
+              {' '}
+              SSPPTT
+            </span>
+          </a>
+        </div>
         <AutoPlanSettingInput settingName="statPlanId" />
       </div>
       <Timer
