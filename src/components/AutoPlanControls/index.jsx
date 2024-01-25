@@ -59,7 +59,7 @@ function AutoPlanControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">Plan</span>
-        <AutoPlanSettingInput settingName="planId" />
+        <AutoPlanSettingInput settingName="planId" required />
       </div>
       <div className="PockestLine">
         <span className="PockestText">Stat Plan</span>

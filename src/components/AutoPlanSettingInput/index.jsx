@@ -8,7 +8,7 @@ import {
 } from '../../contexts/PockestContext';
 import './index.css';
 
-function AutoPlanSettingInput({ settingName }) {
+function AutoPlanSettingInput({ settingName, required }) {
   const {
     pockestState,
     pockestDispatch,
@@ -19,8 +19,8 @@ function AutoPlanSettingInput({ settingName }) {
       ?.find((m) => m.monster_id === pockestState?.monsterId),
     [pockestState?.allMonsters, pockestState?.monsterId],
   );
-  const isDisabled = React.useMemo(() => !pockestState?.autoPlan || targetMonster
-    || !pockestState?.paused, [targetMonster, pockestState?.autoPlan, pockestState?.paused]);
+  const isDisabled = React.useMemo(() => (!pockestState?.autoPlan || targetMonster
+    || !pockestState?.paused), [targetMonster, pockestState?.autoPlan, pockestState?.paused]);
   React.useEffect(() => {
     if (targetMonster) {
       setNewValue(pockestState?.[settingName]);
@@ -55,16 +55,18 @@ function AutoPlanSettingInput({ settingName }) {
       value={targetMonster ? pockestState?.[settingName] : newValue}
       disabled={isDisabled}
       pattern={pattern}
+      required={required}
     />
   );
 }
 
 AutoPlanSettingInput.defaultProps = {
-
+  required: false,
 };
 
 AutoPlanSettingInput.propTypes = {
   settingName: PropTypes.string.isRequired,
+  required: PropTypes.bool,
 };
 
 export default AutoPlanSettingInput;
