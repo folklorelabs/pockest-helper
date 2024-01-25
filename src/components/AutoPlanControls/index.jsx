@@ -1,12 +1,12 @@
 import React from 'react';
 import {
   usePockestContext,
-  pockestAutoPlan,
+  pockestPlanSettings,
 } from '../../contexts/PockestContext';
 import TargetMonsterSelect from '../TargetMonsterSelect';
+import AutoPlanSettingInput from '../AutoPlanSettingInput';
 import Timer from '../Timer';
 import Memento from '../Memento';
-import getMonsterPlan from '../../utils/getTargetMonsterPlan';
 import getAgeTimer from '../../utils/getAgeTimer';
 import getStunTimer from '../../utils/getStunTimer';
 import getDeathTimer from '../../utils/getDeathTimer';
@@ -19,11 +19,9 @@ function AutoPlanControls() {
   } = usePockestContext();
   const {
     data,
-    monsterId,
     autoPlan,
     paused,
   } = pockestState;
-  const targetPlan = React.useMemo(() => getMonsterPlan(pockestState), [pockestState]);
   const stunTimer = React.useMemo(() => getStunTimer(pockestState), [pockestState]);
   const deathTimer = React.useMemo(() => getDeathTimer(pockestState), [pockestState]);
   const curAge = data?.monster?.age;
@@ -45,11 +43,10 @@ function AutoPlanControls() {
             id="PockestHelper_AutoPlan"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestAutoPlan({
-              autoPlan: e.target.checked,
-              monsterId,
+            onChange={(e) => pockestDispatch(pockestPlanSettings(
               pockestState,
-            }))}
+              { autoPlan: e.target.checked },
+            ))}
             checked={autoPlan}
             disabled={!paused}
           />
@@ -62,11 +59,11 @@ function AutoPlanControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">Plan</span>
-        <span className="PockestText PockestLine-value">{targetPlan?.planId || '--'}</span>
+        <AutoPlanSettingInput settingName="planId" />
       </div>
       <div className="PockestLine">
         <span className="PockestText">Stat Plan</span>
-        <span className="PockestText PockestLine-value">{targetPlan?.planStatPlanId || '--'}</span>
+        <AutoPlanSettingInput settingName="statPlanId" />
       </div>
       <Timer
         label={ageLabel}

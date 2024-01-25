@@ -23,6 +23,8 @@ const INITIAL_STATE = {
   allHashes: [],
   paused: true,
   monsterId: -1,
+  planId: '',
+  statPlanId: '',
   autoPlan: true,
   autoFeed: true,
   cleanFrequency: 2,
@@ -205,7 +207,13 @@ export function getCurrentPlanScheduleWindows(state) {
   };
 }
 
-export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
+export function getAutoPlanSettings(
+  state,
+  autoPlan,
+  targetMonsterId,
+  targetPlanId,
+  targetStatPlanId,
+) {
   let newSettings = {
     autoPlan,
   };
@@ -213,7 +221,7 @@ export function getAutoPlanSettings(state, autoPlan, targetMonsterId) {
     // ensure default autoPlan settings are set
     newSettings = {
       ...newSettings,
-      ...getCurrentTargetMonsterPlan(state, targetMonsterId),
+      ...getCurrentTargetMonsterPlan(state, targetMonsterId, targetPlanId, targetStatPlanId),
       autoClean: true,
       autoFeed: true,
       autoTrain: true,
@@ -245,8 +253,19 @@ export function pockestPause(paused) {
 export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
 }
-export function pockestAutoPlan({ pockestState, autoPlan, monsterId }) {
-  const newSettings = getAutoPlanSettings(pockestState, autoPlan, monsterId);
+export function pockestPlanSettings(pockestState, {
+  autoPlan,
+  monsterId,
+  planId,
+  statPlanId,
+}) {
+  const newSettings = getAutoPlanSettings(
+    pockestState,
+    autoPlan ?? pockestState?.autoPlan,
+    monsterId ?? pockestState?.monsterId,
+    planId ?? pockestState?.planId,
+    statPlanId ?? pockestState?.statPlanId,
+  );
   return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh(pockestState) {
@@ -446,6 +465,8 @@ function REDUCER(state, [type, payload]) {
       return {
         ...state,
         monsterId: payload.monsterId ?? state?.monsterId,
+        planId: payload.planId ?? state?.planId,
+        statPlanId: payload.statPlanId ?? state?.statPlanId,
         autoPlan: payload.autoPlan ?? state?.autoPlan,
         autoFeed: payload.autoFeed ?? state?.autoFeed,
         autoClean: payload.autoClean ?? state?.autoClean,
@@ -484,7 +505,7 @@ function REDUCER(state, [type, payload]) {
         ...getAutoPlanSettings({
           ...state,
           result: payload?.result,
-        }, state.autoPlan, state.monsterId),
+        }, state.autoPlan, state.monsterId, state.planId, state.statPlanId),
       };
     case ACTIONS.SET_LOG:
       return {

@@ -6,6 +6,7 @@ import TargetMonsterSelect from '../TargetMonsterSelect';
 import useEggs from '../../hooks/useEggs';
 import getMonsterPlan from '../../utils/getTargetMonsterPlan';
 import './index.css';
+import AutoPlanSettingInput from '../AutoPlanSettingInput';
 
 function EggControls() {
   const {
@@ -25,11 +26,11 @@ function EggControls() {
       </div>
       <div className="PockestLine">
         <span className="PockestText">Plan</span>
-        <span className="PockestText PockestLine-value">{targetPlan?.planId ?? '--'}</span>
+        <AutoPlanSettingInput settingName="planId" />
       </div>
       <div className="PockestLine">
         <span className="PockestText">Stat Plan</span>
-        <span className="PockestText PockestLine-value">{targetPlan?.planStatPlanId || '--'}</span>
+        <AutoPlanSettingInput settingName="statPlanId" />
       </div>
       <div className="PockestLine">
         <span className="PockestText">Egg</span>
