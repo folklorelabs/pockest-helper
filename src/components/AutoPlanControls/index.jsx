@@ -70,7 +70,7 @@ function AutoPlanControls() {
             <span className="PockestToolTip-text">
               <em>Plans</em>
               {' '}
-              are paths made up of 5 letters that correspond to a path through the evolution tree.
+              are unique paths through the evolution tree and are made up of 5 letters.
               <br />
               <br />
               <em>Egg:</em>
