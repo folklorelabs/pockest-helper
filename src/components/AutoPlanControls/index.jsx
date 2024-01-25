@@ -70,7 +70,7 @@ function AutoPlanControls() {
             <span className="PockestToolTip-text">
               <em>Plans</em>
               {' '}
-              are 5 character paths that monsters take through the evolution tree.
+              are paths made up of 5 letters that correspond to a path through the evolution tree.
               <br />
               <br />
               <em>Egg:</em>
@@ -97,6 +97,9 @@ function AutoPlanControls() {
               <em>Example:</em>
               {' '}
               G5ART
+              <br />
+              Green egg taking the AR path all the way
+              through age 5 with Technique as a primary stat.
             </span>
           </a>
         </div>
@@ -115,8 +118,9 @@ function AutoPlanControls() {
             <span className="PockestToolTip-text">
               <em>Stat Plans</em>
               {' '}
-              are training schedules made up of 0-14 characters.
-              Each character is a stat type and represents a training period.
+              are training schedules made up of 0-14 letters.
+              Each letter represents a training period for the designated stat type.
+              The Primary Stat specified in the Plan will be trained for missing periods.
               <br />
               <br />
               <em>Training Period (0-14):</em>
@@ -127,6 +131,20 @@ function AutoPlanControls() {
               <em>Example:</em>
               {' '}
               SSPPTT
+              <br />
+              0d 00:00: Speed
+              <br />
+              0d 00:12: Speed
+              <br />
+              1d 00:00: Power
+              <br />
+              1d 12:00: Power
+              <br />
+              2d 00:00: Technique
+              <br />
+              2d 12:00: Technique
+              <br />
+              3d - 7d: Primary Stat
             </span>
           </a>
         </div>
