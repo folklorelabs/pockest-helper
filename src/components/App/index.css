@@ -129,7 +129,9 @@
   text-align: right;
 }
 
+.PockestInput,
 .PockestSelect {
+  position: relative;
   border: 2px solid #d5a613;
   background: hsla(0, 0%, 100%, .2);
   color: #fcfcfc;
@@ -137,17 +139,27 @@
   line-height: 1;
   width: 100px;
   text-transform: capitalize;
+}
+
+.PockestSelect {
   cursor: pointer;
 }
 
+.PockestSelect option {
+  color: #000;
+}
+
+.PockestInput:disabled,
 .PockestSelect:disabled {
   cursor: default;
   filter: grayscale();
   opacity: 0.5;
 }
 
-.PockestSelect option {
-  color: #000;
+.PockestInput:invalid,
+.PockestSelect:invalid {
+  background: rgba(255, 0, 0, 0.2);
+  border-color: red;
 }
 
 .PockestCheck {
