@@ -15,6 +15,8 @@ import postDiscord from '../utils/postDiscord';
 import isMatchDiscovery from '../utils/isMatchDiscovery';
 import getMatchReportString from '../utils/getMatchReportString';
 import getRandomMinutes from '../utils/getRandomMinutes';
+import getDeathTimer from '../utils/getDeathTimer';
+import { MONSTER_LIFESPAN } from '../utils/getAgeTimer';
 
 // STATE
 const INITIAL_STATE = {
@@ -74,6 +76,15 @@ export function getLogEntry(pockestState) {
     timestamp: new Date().getTime(),
     monsterId: parseInt(pockestState?.data?.monster?.hash?.split('-')[0] || '-1', 10),
   };
+}
+
+export function isMonsterGone(pockestState) {
+  if (pockestState?.event === 'departure' || pockestState?.data?.event === 'monster_not_found') return true;
+  if (!pockestState?.data?.monster) return null; // inconclusive
+  const now = (new Date()).getTime();
+  const isDead = now >= getDeathTimer(pockestState);
+  const hasLeft = now >= (pockestState.data.monster.live_time + MONSTER_LIFESPAN[5]);
+  return isDead || hasLeft;
 }
 
 export async function fetchMatchList() {
@@ -495,9 +506,9 @@ function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH:
       return {
         ...state,
-        paused: payload?.data?.event === 'monster_not_found' ? true : state.paused,
+        paused: isMonsterGone(payload) ? true : state.paused,
         loading: false,
-        data: payload,
+        data: isMonsterGone(payload) ? null : payload,
         log: (payload?.result) ? [
           ...state.log,
           payload?.result,
