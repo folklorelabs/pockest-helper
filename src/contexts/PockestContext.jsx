@@ -226,9 +226,16 @@ export function getAutoPlanSettings(
   targetStatPlanId,
 ) {
   let newSettings = {
-    autoPlan,
+    autoPlan: autoPlan ?? state.autoPlan,
   };
-  if (autoPlan) {
+  if (isMonsterGone(state)) {
+    newSettings = {
+      ...newSettings,
+      autoPlan: true,
+      paused: true,
+    };
+  }
+  if (newSettings.autoPlan) {
     // ensure default autoPlan settings are set
     newSettings = {
       ...newSettings,

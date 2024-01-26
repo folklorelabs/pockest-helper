@@ -18,8 +18,6 @@ function AutoPlanSettingInput({ settingName, required }) {
       ?.find((m) => m.monster_id === pockestState?.monsterId),
     [pockestState?.allMonsters, pockestState?.monsterId],
   );
-  const isDisabled = React.useMemo(() => (!pockestState?.autoPlan || targetMonster
-    || !pockestState?.paused), [targetMonster, pockestState?.autoPlan, pockestState?.paused]);
   React.useEffect(() => {
     if (targetMonster) {
       setNewValue(pockestState?.[settingName]);
@@ -53,7 +51,7 @@ function AutoPlanSettingInput({ settingName, required }) {
         className="PockestInput"
         onChange={onChange}
         value={targetMonster ? pockestState?.[settingName] : newValue}
-        disabled={isDisabled}
+        disabled={targetMonster || !pockestState?.paused}
         pattern={pattern}
         required={required}
       />

@@ -63,7 +63,7 @@ function TargetMonsterSelect() {
         pockestDispatch(pockestPlanSettings(pockestState, { monsterId }));
       }}
       defaultValue={`${pockestState?.monsterId}`}
-      disabled={!pockestState?.paused || !pockestState.autoPlan}
+      disabled={!pockestState?.paused}
     >
       <option key="default" value="-1">
         --

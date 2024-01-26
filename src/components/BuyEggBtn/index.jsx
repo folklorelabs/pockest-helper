@@ -1,16 +1,13 @@
 import React from 'react';
 import { pockestLoading, pockestSelectEgg, usePockestContext } from '../../contexts/PockestContext';
-import useEggs from '../../hooks/useEggs';
-import getMonsterPlan from '../../utils/getTargetMonsterPlan';
+import usePlanEgg from '../../hooks/usePlanEgg';
 
 function BuyEggBtn() {
   const { pockestState, pockestDispatch } = usePockestContext();
-  const allEggs = useEggs();
-  const targetPlan = React.useMemo(() => getMonsterPlan(pockestState), [pockestState]);
-  const planEgg = React.useMemo(
-    () => allEggs.find((egg) => egg?.name_en?.slice(0, 1) === targetPlan?.planEgg),
-    [allEggs, targetPlan],
-  );
+  const {
+    planEgg,
+    planEggAffordable,
+  } = usePlanEgg(pockestState);
   return (
     <button
       className="PockestButton"
@@ -20,7 +17,7 @@ function BuyEggBtn() {
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestSelectEgg(planEgg.id));
       }}
-      disabled={!planEgg?.id || pockestState?.loading}
+      disabled={!planEgg?.id || pockestState?.loading || !planEggAffordable}
     >
       Buy Egg
     </button>

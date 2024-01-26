@@ -1,10 +1,10 @@
 import React from 'react';
+import cx from 'classnames';
 import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import TargetMonsterSelect from '../TargetMonsterSelect';
-import useEggs from '../../hooks/useEggs';
-import getMonsterPlan from '../../utils/getTargetMonsterPlan';
+import usePlanEgg from '../../hooks/usePlanEgg';
 import './index.css';
 import AutoPlanSettingInput from '../AutoPlanSettingInput';
 
@@ -12,12 +12,11 @@ function EggControls() {
   const {
     pockestState,
   } = usePockestContext();
-  const allEggs = useEggs();
-  const targetPlan = React.useMemo(() => getMonsterPlan(pockestState), [pockestState]);
-  const planEgg = React.useMemo(
-    () => allEggs.find((egg) => egg?.name_en?.slice(0, 1) === targetPlan?.planEgg),
-    [allEggs, targetPlan],
-  );
+  const {
+    planEgg,
+    planEggAffordable,
+    userBucklerPointBalance,
+  } = usePlanEgg(pockestState);
   return (
     <div className="EggControls">
       <div className="PockestLine">
@@ -37,8 +36,20 @@ function EggControls() {
         <span className="PockestText PockestLine-value">{planEgg?.name_en ?? '--'}</span>
       </div>
       <div className="PockestLine">
-        <span className="PockestText">Cost</span>
-        <span className="PockestText PockestLine-value">
+        <span className="PockestText">Egg Cost</span>
+        <span className={cx('PockestText PockestLine-value PockestToolTip PockestToolTip--left PockestToolTip--bottom', { 'PockestText--error': !planEggAffordable })}>
+          {!planEggAffordable ? (
+            <span>❗</span>
+          ) : ''}
+          <span className="PockestToolTip-text">
+            You do not have enough
+            {' '}
+            <em>buckler points</em>
+            . Your current balance is
+            {' '}
+            <em>{userBucklerPointBalance ?? '--'}</em>
+            .
+          </span>
           {planEgg?.unlock ? 0 : planEgg?.buckler_point ?? '--'}
         </span>
       </div>
