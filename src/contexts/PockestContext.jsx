@@ -78,6 +78,7 @@ export function getLogEntry(pockestState) {
 }
 
 export function isMonsterGone(pockestState) {
+  if (pockestState?.event === 'departure' || pockestState?.data?.event === 'monster_not_found') return true;
   const now = (new Date()).getTime();
   const isDead = now >= getDeathTimer(pockestState);
   const hasLeft = now >= pockestState?.data?.monster?.live_time;
@@ -503,9 +504,9 @@ function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH:
       return {
         ...state,
-        paused: payload?.data?.event === 'monster_not_found' || isMonsterGone(state) ? true : state.paused,
+        paused: isMonsterGone(payload) ? true : state.paused,
         loading: false,
-        data: payload,
+        data: isMonsterGone(payload) ? null : payload,
         log: (payload?.result) ? [
           ...state.log,
           payload?.result,
