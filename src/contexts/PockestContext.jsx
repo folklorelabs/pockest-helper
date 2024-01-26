@@ -16,6 +16,7 @@ import isMatchDiscovery from '../utils/isMatchDiscovery';
 import getMatchReportString from '../utils/getMatchReportString';
 import getRandomMinutes from '../utils/getRandomMinutes';
 import getDeathTimer from '../utils/getDeathTimer';
+import { MONSTER_LIFESPAN } from '../utils/getAgeTimer';
 
 // STATE
 const INITIAL_STATE = {
@@ -79,9 +80,10 @@ export function getLogEntry(pockestState) {
 
 export function isMonsterGone(pockestState) {
   if (pockestState?.event === 'departure' || pockestState?.data?.event === 'monster_not_found') return true;
+  if (!pockestState?.data?.monster) return null; // inconclusive
   const now = (new Date()).getTime();
   const isDead = now >= getDeathTimer(pockestState);
-  const hasLeft = now >= pockestState?.data?.monster?.live_time;
+  const hasLeft = now >= (pockestState.data.monster.live_time + MONSTER_LIFESPAN[5]);
   return isDead || hasLeft;
 }
 
