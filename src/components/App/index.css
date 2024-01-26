@@ -129,6 +129,10 @@
   text-align: right;
 }
 
+.PockestText--error {
+  color: red;
+}
+
 .PockestText--info::after {
   content: 'ℹ️';
   font-size: 0.666em;
@@ -302,6 +306,7 @@
   padding: 0.3333em 0.5em;
   border: 1px solid #d5a613;
   background: hsla(0, 0%, 27%, 0.95);
+  color: rgb(204, 204, 204);
   font-size: 0.75rem;
   font-weight: 100;
   letter-spacing: 0.0333em;
@@ -316,4 +321,14 @@
 .PockestToolTip:hover .PockestToolTip-text,
 .PockestToolTip:focus .PockestToolTip-text {
   visibility: visible;
+}
+
+.PockestToolTip--left .PockestToolTip-text {
+  right: 105%;
+  left: initial;
+}
+
+.PockestToolTip--bottom .PockestToolTip-text {
+  bottom: -5px;
+  top: initial;
 }
