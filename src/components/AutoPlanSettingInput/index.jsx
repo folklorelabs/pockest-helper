@@ -51,7 +51,7 @@ function AutoPlanSettingInput({ settingName, required }) {
         className="PockestInput"
         onChange={onChange}
         value={targetMonster ? pockestState?.[settingName] : newValue}
-        disabled={targetMonster || !pockestState?.paused}
+        disabled={!pockestState?.autoPlan || targetMonster || !pockestState?.paused}
         pattern={pattern}
         required={required}
       />
