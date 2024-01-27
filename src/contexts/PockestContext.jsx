@@ -509,13 +509,15 @@ function REDUCER(state, [type, payload]) {
         data: payload?.data,
         allMonsters: payload?.allMonsters,
         allHashes: payload?.allHashes,
+        ...getAutoPlanSettings({
+          ...state,
+        }, state.autoPlan, state.monsterId, state.planId, state.statPlanId),
       };
     case ACTIONS.REFRESH:
       return {
         ...state,
-        paused: isMonsterGone(payload) ? true : state.paused,
         loading: false,
-        data: isMonsterGone(payload) ? null : payload,
+        data: payload,
         log: (payload?.result) ? [
           ...state.log,
           payload?.result,
