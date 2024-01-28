@@ -1,34 +1,19 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 require('dotenv').config();
-
-// eslint-disable-next-line import/no-extraneous-dependencies
-const { google } = require('googleapis');
 const fs = require('fs');
+const fetchFromSheet = require('./syncMonsterSheetData/fetchFromSheet');
 
-const { SHEET_ID, SHEET_RANGE } = process.env;
-const DATA_DIR = './src/data';
+const DATA_DIR = './data';
 const MONSTER_FILE = 'monsters.json';
+const MONSTER_RANGE = 'Live!A:I';
+const HASHES_FILE = 'hashes.json';
+const HASHES_RANGE = 'LiveHashes!A:B';
 
 (async () => {
-  const auth = await google.auth.getClient({ scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'] });
-  const sheets = google.sheets({ version: 'v4', auth });
-
-  const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: SHEET_ID,
-    range: SHEET_RANGE,
-  });
-
-  const keys = response.data.values[0];
-  const monsters = response.data.values
-    .slice(1, -1).map((row) => row.reduce((monster, value, index) => {
-      const key = keys[index];
-      return {
-        ...monster,
-        [key]: value.includes('[') || /^\d+$/.test(value) ? JSON.parse(value) : value,
-      };
-    }, {}));
+  const monsters = await fetchFromSheet(MONSTER_RANGE);
+  const hashes = await fetchFromSheet(HASHES_RANGE);
   if (!await fs.existsSync(DATA_DIR)) {
     await fs.mkdirSync(DATA_DIR);
   }
-  await fs.writeFileSync(`${DATA_DIR}/${MONSTER_FILE}`, JSON.stringify(monsters, null, 2));
+  await fs.writeFileSync(`${DATA_DIR}/${MONSTER_FILE}`, JSON.stringify(monsters));
+  await fs.writeFileSync(`${DATA_DIR}/${HASHES_FILE}`, JSON.stringify(hashes));
 })();

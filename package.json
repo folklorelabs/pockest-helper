@@ -10,15 +10,15 @@
     "release:manifest": "node ./scripts/syncManifestVersion.js && git add -A && git commit --amend --no-edit",
     "release:rc": "npm version prerelease --preid=rc && npm run release:manifest",
     "release": "npm version patch && npm run release:manifest",
-    "data": "node ./scripts/fetchMonsterSheetData.js",
+    "fetch": "node ./scripts/fetchMonsterSheetData.js",
     "gs:upload": "gsutil -m rsync -r -c ./src/data gs://pockest-helper",
     "gs:meta": "gsutil -m setmeta -r -h 'Content-Type:application/json' -h 'Cache-Control:public, max-age=300' gs://pockest-helper",
-    "gs": "npm run gs:upload && npm run gs:meta",
-    "sync": "npm run data && npm run gs"
+    "gs": "npm run gs:upload && npm run gs:meta"
   },
   "dependencies": {
     "classnames": "^2.3.2",
     "convert-csv-to-json": "^2.0.0",
+    "dotenv": "^16.3.1",
     "prop-types": "^15.8.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -29,7 +29,6 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^1.3.0",
-    "dotenv": "^16.3.1",
     "eslint": "^8.6.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.25.4",
