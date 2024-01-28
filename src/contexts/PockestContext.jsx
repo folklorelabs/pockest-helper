@@ -445,7 +445,7 @@ export function pockestClearLog(pockestState, logTypes) {
   }
   const newLog = pockestState?.log
     ?.filter((entry) => !logTypes.includes(entry.logType)
-    || entry.timestamp >= pockestState?.data?.monster?.live_time);
+    || entry.timestamp > pockestState?.data?.monster?.live_time);
   return [ACTIONS.SET_LOG, newLog];
 }
 export async function pockestInit() {
