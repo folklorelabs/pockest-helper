@@ -22,16 +22,16 @@ function AutoPlanControls() {
     autoPlan,
     paused,
   } = pockestState;
+  const curAge = data?.monster?.age;
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const stunTimer = React.useMemo(() => {
     const st = getStunTimer(pockestState);
-    return st > ageTimer ? null : st;
-  }, [pockestState, ageTimer]);
+    return st > ageTimer && curAge >= 5 ? null : st;
+  }, [pockestState, ageTimer, curAge]);
   const deathTimer = React.useMemo(() => {
     const dt = getDeathTimer(pockestState);
-    return dt > ageTimer ? null : dt;
-  }, [pockestState, ageTimer]);
-  const curAge = data?.monster?.age;
+    return dt > ageTimer && curAge >= 5 ? null : dt;
+  }, [pockestState, ageTimer, curAge]);
   const ageLabel = React.useMemo(() => {
     if (typeof curAge !== 'number') return 'Age 0 → 1';
     if (curAge < 5) return `Age ${curAge} → ${curAge + 1}`;
