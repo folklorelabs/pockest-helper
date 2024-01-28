@@ -1,11 +1,11 @@
 async function getMonsterData() {
-  const response = await fetch('https://storage.googleapis.com/pockest-helper/monsters.json');
+  const response = await fetch('https://folklorelabs.io/pockest-helper-data/monsters.min.json');
   const monsters = await response.json();
   return monsters;
 }
 
 async function getHashData() {
-  const response = await fetch('https://storage.googleapis.com/pockest-helper/hashes.json');
+  const response = await fetch('https://folklorelabs.io/pockest-helper-data/hashes.min.json');
   const monsters = await response.json();
   return monsters;
 }
