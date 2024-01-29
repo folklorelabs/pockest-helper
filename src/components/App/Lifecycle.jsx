@@ -12,9 +12,11 @@ import {
   getCurrentPlanScheduleWindows,
   getBestMatch,
   pockestCure,
+  fetchMatchList,
 } from '../../contexts/PockestContext';
 import getMatchTimer from '../../utils/getMatchTimer';
 import getRandomMinutes from '../../utils/getRandomMinutes';
+import postDiscord from '../../utils/postDiscord';
 
 function Lifecycle() {
   const { pockestState, pockestDispatch } = usePockestContext();
@@ -140,7 +142,17 @@ function Lifecycle() {
       const nextMatchTime = getMatchTimer(pockestState);
       if (attemptToMatch && nextMatchTime && now.getTime() >= nextMatchTime) {
         pockestDispatch(pockestLoading());
-        const bestMatch = await getBestMatch(pockestState);
+        const { exchangeList } = await fetchMatchList();
+        if (monster?.age >= 5) {
+          // Report missing hashes, names, and stat vals to discord when found on opponents
+          const missing = exchangeList.filter((m) => pockestState?.allMonsters
+            ?.find((m2) => m2?.hash === m.hash
+            && m2?.name_en === m.name_en));
+          const missingStrs = missing.map((m) => `${m.name_en} (P=${m.power}, S=${m.speed}, T=${m.technic}) ${m.hash}`);
+          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${missingStrs.join('\n')}`;
+          postDiscord(missingReport);
+        }
+        const bestMatch = await getBestMatch(pockestState, exchangeList);
         console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
         pockestDispatch(await pockestMatch(pockestState, bestMatch));
       }

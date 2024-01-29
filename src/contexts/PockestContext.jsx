@@ -105,10 +105,9 @@ export function getMonsterId(state) {
   return parseInt(hashId.slice(0, 4), 10);
 }
 
-export async function getBestMatch(state) {
+export async function getBestMatch(state, exchangeList) {
   const monsterId = getMonsterId(state);
   const monster = state?.allMonsters?.find((m) => m.monster_id === monsterId);
-  const { exchangeList } = await fetchMatchList();
   const sortedMatches = exchangeList?.map((a) => {
     const aMulti = monster?.matchFever?.includes(a.monster_id) ? 1.5 : 1;
     return {
@@ -295,6 +294,15 @@ export async function pockestRefresh(pockestState) {
         logType: 'age',
         monsterBefore: pockestState?.data?.monster,
       };
+      if (data?.monster?.age >= 5) {
+        const isNew = pockestState?.allMonsters
+          ?.find((m2) => m2?.hash === data?.monster?.hash
+          && m2?.name_en === data?.monster?.name_en);
+        if (isNew) {
+          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${data?.monster?.name_en} (P=${data?.monster?.power}, S=${data?.monster?.speed}, T=${data?.monster?.technic}) ${data?.monster?.hash}`;
+          postDiscord(missingReport);
+        }
+      }
     }
     return [ACTIONS.REFRESH, data];
   } catch (error) {
