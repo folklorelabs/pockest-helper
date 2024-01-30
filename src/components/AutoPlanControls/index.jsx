@@ -141,7 +141,7 @@ function AutoPlanControls() {
               <br />
               0d 00:00: Speed
               <br />
-              0d 00:12: Speed
+              0d 12:00: Speed
               <br />
               1d 00:00: Power
               <br />
