@@ -7,6 +7,7 @@ import LogCountLine from '../LogCountLine';
 import { parseDurationStr } from '../../utils/parseDuration';
 import getMatchTimer from '../../utils/getMatchTimer';
 import useNow from '../../hooks/useNow';
+import getAgeTimer from '../../utils/getAgeTimer';
 import './index.css';
 
 function MatchControls() {
@@ -22,7 +23,11 @@ function MatchControls() {
     paused,
     matchPriority,
   } = pockestState;
-  const nextMatchTimer = React.useMemo(() => getMatchTimer(pockestState), [pockestState]);
+  const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
+  const nextMatchTimer = React.useMemo(() => {
+    const mt = getMatchTimer(pockestState);
+    return mt > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : mt;
+  }, [pockestState, ageTimer]);
   return (
     <div className="MatchControls">
       <div className="PockestLine">
