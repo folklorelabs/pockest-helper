@@ -413,6 +413,7 @@ export async function pockestMatch(pockestState, match) {
       ...getLogEntry({ data }),
       ...data?.exchangeResult,
       totalStats: getTotalStats(data?.monster) + getTotalStats(match),
+      target_monster_name_en: match?.name_en,
     };
     const isDisc = isMatchDiscovery(pockestState, data.result);
     if (isDisc) {
