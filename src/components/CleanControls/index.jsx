@@ -4,11 +4,12 @@ import {
   usePockestContext,
   getCurrentPlanScheduleWindows,
 } from '../../contexts/PockestContext';
-import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
 import getGarbageTimer from '../../utils/getGarbageTimer';
 import LogCountLine from '../LogCountLine';
+import getAgeTimer from '../../utils/getAgeTimer';
+import './index.css';
 
 // CONSTS
 const CLEAN_INTERVAL = {
@@ -29,7 +30,11 @@ function CleanControls() {
     currentCleanWindow,
     nextCleanWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
-  const garbageTimer = React.useMemo(() => getGarbageTimer(pockestState), [pockestState]);
+  const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
+  const garbageTimer = React.useMemo(() => {
+    const gt = getGarbageTimer(pockestState);
+    return gt > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : gt;
+  }, [pockestState, ageTimer]);
 
   const {
     data,

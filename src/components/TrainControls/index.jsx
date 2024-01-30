@@ -4,15 +4,22 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { STAT_ID } from '../../config/stats';
-import './index.css';
 import Timer from '../Timer';
 import LogCountLine from '../LogCountLine';
+import getAgeTimer from '../../utils/getAgeTimer';
+import './index.css';
 
 function TrainControls() {
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
+  const trainingTimer = React.useMemo(() => {
+    const tt = pockestState?.data?.monster?.training_time;
+    return tt > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : tt;
+  }, [pockestState, ageTimer]);
+
   const {
     data,
     autoPlan,
@@ -62,7 +69,7 @@ function TrainControls() {
           ))}
         </select>
       </div>
-      <Timer label="Next Training" timestamp={data?.monster?.training_time} />
+      <Timer label="Next Training" timestamp={trainingTimer} />
       <LogCountLine
         title="Trainings"
         logTypes={['training']}

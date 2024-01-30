@@ -9,6 +9,7 @@ import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
 import getStomachTimer from '../../utils/getStomachTimer';
 import LogCountLine from '../LogCountLine';
+import getAgeTimer from '../../utils/getAgeTimer';
 
 // CONSTS
 const FEED_INTERVAL = {
@@ -28,7 +29,11 @@ function FeedControls() {
     currentFeedWindow,
     nextFeedWindow,
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
-  const stomachTimer = React.useMemo(() => getStomachTimer(pockestState), [pockestState]);
+  const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
+  const stomachTimer = React.useMemo(() => {
+    const st = getStomachTimer(pockestState);
+    return st > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : st;
+  }, [pockestState, ageTimer]);
 
   const {
     data,
