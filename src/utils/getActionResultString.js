@@ -11,7 +11,7 @@ export default function getActionResultString({ pockestState, result }) {
     if (logType === 'training') return `trained ${STAT_ID[result?.type]}`;
     if (logType === 'exchange') {
       const b = pockestState?.allMonsters.find((m) => m.monster_id === result?.target_monster_id);
-      return `vs ${b?.name_en}`;
+      return `vs ${result?.target_monster_name_en || b?.name_en}`;
     }
     if (logType === 'cure') return 'cured 🩹';
     if (logType === 'age') return 'appears';
