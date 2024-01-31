@@ -91,6 +91,12 @@ function App() {
               />
             ) : ''}
           </button>
+          {(showLog && !minimized) ? (
+            <LogPanel>
+              <CareLog title="Care Log" rows={36} />
+              <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
+            </LogPanel>
+          ) : ''}
         </>
       ) : (
         <div className="App-inner">
@@ -100,12 +106,6 @@ function App() {
           </div>
         </div>
       )}
-      {showLog && !minimized ? (
-        <LogPanel>
-          <CareLog title="Care Log" rows={36} />
-          <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
-        </LogPanel>
-      ) : ''}
     </div>
   );
 }
