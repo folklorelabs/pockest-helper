@@ -79,7 +79,7 @@ export function getLogEntry(pockestState) {
 }
 
 export function isMonsterGone(pockestState) {
-  if (pockestState?.event === 'departure' || pockestState?.data?.event === 'monster_not_found') return true;
+  if (pockestState?.data?.event === 'departure' || pockestState?.data?.event === 'monster_not_found') return true;
   if (!pockestState?.data?.monster) return null; // inconclusive
   const now = (new Date()).getTime();
   const isDead = now >= getDeathTimer(pockestState);
@@ -95,8 +95,11 @@ export async function fetchMatchList() {
 
 export async function fetchPockestStatus() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
-  const { data } = await response.json();
-  return data;
+  const { data, event } = await response.json();
+  return {
+    ...data,
+    event,
+  };
 }
 
 export function getMonsterId(state) {
