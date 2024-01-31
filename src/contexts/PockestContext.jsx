@@ -289,11 +289,13 @@ export async function pockestRefresh(pockestState) {
   try {
     const data = await fetchPockestStatus();
     if (data && pockestState?.data?.monster?.hash !== data?.monster?.hash) {
+      // add evolution to log
       data.result = {
         ...getLogEntry({ data }),
         logType: 'age',
         monsterBefore: pockestState?.data?.monster,
       };
+      // send new lvl 5 monster data to discord
       if (data?.monster?.age >= 5) {
         const isNew = pockestState?.allMonsters
           ?.find((m2) => m2?.hash === data?.monster?.hash
