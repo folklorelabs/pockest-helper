@@ -287,7 +287,7 @@ export async function pockestRefresh(pockestState) {
           ?.find((m2) => m2?.hash === data?.monster?.hash
           && m2?.name_en === data?.monster?.name_en);
         if (isNew) {
-          const missingStr = `${data?.monster?.name_en}: ${data?.monster?.hash}`;
+          const missingStr = `${data?.monster?.name_en}: ${data?.monster?.hash} (P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})`;
           const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster(s) identified\n${missingStr}`;
           postDiscord(missingReport);
         }
