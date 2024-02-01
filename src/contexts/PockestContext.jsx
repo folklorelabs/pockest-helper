@@ -97,8 +97,8 @@ export async function fetchPockestStatus() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
   const { data, event } = await response.json();
   return {
-    ...data,
     event,
+    ...data,
   };
 }
 
