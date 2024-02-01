@@ -60,7 +60,10 @@ function TargetMonsterSelect() {
       className="PockestSelect"
       onChange={(e) => {
         const monsterId = e.target.value ? parseInt(e.target.value, 10) : -1;
-        pockestDispatch(pockestPlanSettings(pockestState, { monsterId }));
+        pockestDispatch(pockestPlanSettings({
+          ...pockestState,
+          monsterId,
+        }));
       }}
       defaultValue={`${pockestState?.monsterId}`}
       disabled={!pockestState?.autoPlan || !pockestState?.paused}
