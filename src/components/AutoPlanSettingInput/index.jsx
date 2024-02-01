@@ -28,7 +28,10 @@ function AutoPlanSettingInput({ settingName, required }) {
     setNewValue(inputStr);
     const invalidInput = e?.target?.validity?.patternMismatch;
     if (invalidInput) return;
-    pockestDispatch(pockestPlanSettings(pockestState, { [settingName]: inputStr }));
+    pockestDispatch(pockestPlanSettings({
+      ...pockestState,
+      [settingName]: inputStr,
+    }));
   }, [pockestDispatch, pockestState, settingName]);
   const pattern = React.useMemo(() => {
     const validStats = Object.keys(STAT_ABBR).join('');

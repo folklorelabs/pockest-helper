@@ -220,15 +220,9 @@ export function getCurrentPlanScheduleWindows(state) {
   };
 }
 
-export function getAutoPlanSettings(
-  state,
-  autoPlan,
-  targetMonsterId,
-  targetPlanId,
-  targetStatPlanId,
-) {
+export function getAutoPlanSettings(state) {
   let newSettings = {
-    autoPlan: autoPlan ?? state.autoPlan,
+    autoPlan: state.autoPlan,
   };
   if (isMonsterGone(state)) {
     newSettings = {
@@ -241,7 +235,7 @@ export function getAutoPlanSettings(
     // ensure default autoPlan settings are set
     newSettings = {
       ...newSettings,
-      ...getCurrentTargetMonsterPlan(state, targetMonsterId, targetPlanId, targetStatPlanId),
+      ...getCurrentTargetMonsterPlan(state),
       autoClean: true,
       autoFeed: true,
       autoTrain: true,
@@ -273,19 +267,8 @@ export function pockestPause(paused) {
 export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
 }
-export function pockestPlanSettings(pockestState, {
-  autoPlan,
-  monsterId,
-  planId,
-  statPlanId,
-}) {
-  const newSettings = getAutoPlanSettings(
-    pockestState,
-    autoPlan ?? pockestState?.autoPlan,
-    monsterId ?? pockestState?.monsterId,
-    planId ?? pockestState?.planId,
-    statPlanId ?? pockestState?.statPlanId,
-  );
+export function pockestPlanSettings(pockestState) {
+  const newSettings = getAutoPlanSettings(pockestState);
   return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh(pockestState) {
@@ -527,7 +510,8 @@ function REDUCER(state, [type, payload]) {
         allHashes: payload?.allHashes,
         ...getAutoPlanSettings({
           ...state,
-        }, state.autoPlan, state.monsterId, state.planId, state.statPlanId),
+          data: payload?.data,
+        }),
       };
     case ACTIONS.REFRESH:
       return {
@@ -540,8 +524,9 @@ function REDUCER(state, [type, payload]) {
         ] : state.log,
         ...getAutoPlanSettings({
           ...state,
+          data: payload?.data,
           result: payload?.result,
-        }, state.autoPlan, state.monsterId, state.planId, state.statPlanId),
+        }),
       };
     case ACTIONS.SET_LOG:
       return {

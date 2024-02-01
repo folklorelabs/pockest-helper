@@ -15,9 +15,9 @@ const PLAN_TIMES = [
   168 * 60 * 60 * 1000,
 ];
 
-export default function getTargetMonsterPlan(state, monsterId, manualPlanId, manualStatPlanId) {
-  const monster = state?.allMonsters?.find((m) => m.monster_id === (monsterId || state?.monsterId));
-  const planId = (monster ? monster?.plan : (manualPlanId || state?.planId)) ?? '';
+export default function getTargetMonsterPlan(state) {
+  const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
+  const planId = (monster ? monster?.plan : state?.planId) ?? '';
 
   const primaryStatLetter = planId.slice(4, 5);
   const primaryStat = Object.keys(STAT_ID)
@@ -29,7 +29,6 @@ export default function getTargetMonsterPlan(state, monsterId, manualPlanId, man
     if (monster) return fallbackStatPlanId;
 
     // We are in new/unknown/manual mode
-    if (manualStatPlanId) return manualStatPlanId;
     if (state?.statPlanId) return state?.statPlanId;
     return fallbackStatPlanId;
   })();
@@ -74,9 +73,8 @@ export default function getTargetMonsterPlan(state, monsterId, manualPlanId, man
   };
 }
 
-export function getCurrentTargetMonsterPlan(state, monsterId, manualPlanId, manualStatPlanId) {
-  const mId = typeof monsterId === 'number' ? monsterId : state?.monsterId;
-  const targetPlan = getTargetMonsterPlan(state, mId, manualPlanId, manualStatPlanId);
+export function getCurrentTargetMonsterPlan(state) {
+  const targetPlan = getTargetMonsterPlan(state);
   const targetPlanSpecs = (() => {
     if (state?.data?.monster?.age < 3) {
       return targetPlan?.planDiv1;
@@ -92,7 +90,7 @@ export function getCurrentTargetMonsterPlan(state, monsterId, manualPlanId, manu
     return targetPlan?.statPlan?.[numTrains] || targetPlan?.primaryStat;
   })();
   return {
-    monsterId: mId,
+    monsterId: state?.monsterId,
     planId: targetPlan?.planId,
     statPlanId: targetPlan?.statPlanId,
     stat,

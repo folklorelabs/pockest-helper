@@ -50,10 +50,10 @@ function AutoPlanControls() {
             id="PockestHelper_AutoPlan"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestPlanSettings(
-              pockestState,
-              { autoPlan: e.target.checked },
-            ))}
+            onChange={(e) => pockestDispatch(pockestPlanSettings({
+              ...pockestState,
+              autoPlan: e.target.checked,
+            }))}
             checked={autoPlan}
             disabled={!paused}
           />
