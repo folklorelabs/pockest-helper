@@ -283,13 +283,18 @@ export async function pockestRefresh(pockestState) {
       };
       // send new lvl 5 monster data to discord
       if (data?.monster?.age >= 5) {
-        const matchingMonster = pockestState?.allMonsters
-          .find((m2) => m2?.name_en === data?.monster?.name_en);
         const matchingHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.hash);
-        if (!matchingMonster || !matchingHash) {
+        if (!matchingHash) {
           const missingStr = `${data?.monster?.name_en}: ${data?.monster?.hash} (P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})`;
-          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster(s) identified\n${missingStr}`;
+          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster identified\n${missingStr}`;
+          postDiscord(missingReport);
+        }
+        const matchingMementoHash = pockestState?.allHashes
+          .find((m2) => m2?.id === data?.monster?.memento_hash);
+        if (!matchingMementoHash) {
+          const missingStr = `${data?.monster?.memento_name_en}: ${data?.monster?.memento_hash} (${data?.monster?.name_en})`;
+          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New memento identified\n${missingStr}`;
           postDiscord(missingReport);
         }
       }

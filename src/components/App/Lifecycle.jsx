@@ -146,11 +146,9 @@ function Lifecycle() {
         if (monster?.age >= 5) {
           // Report missing hashes, names, and stat vals to discord when found on opponents
           const missing = exchangeList.filter((m) => {
-            const matchingMonster = pockestState?.allMonsters
-              .find((m2) => m2?.name_en === m?.name_en);
             const matchingHash = pockestState?.allHashes
               .find((m2) => m2?.id === m?.hash);
-            return !matchingMonster || !matchingHash;
+            return !matchingHash;
           });
           if (missing.length) {
             const missingStrs = missing.map((m) => `${m.name_en}: ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
