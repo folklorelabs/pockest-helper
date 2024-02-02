@@ -137,6 +137,10 @@ function Lifecycle() {
         pockestDispatch(await pockestTrain(stat));
       }
 
+      // delete me
+
+      console.log({ missing });
+
       // Match
       const attemptToMatch = autoMatch && monster && !isStunned && !willTrain;
       const nextMatchTime = getMatchTimer(pockestState);
@@ -145,9 +149,13 @@ function Lifecycle() {
         const { exchangeList } = await fetchMatchList();
         if (monster?.age >= 5) {
           // Report missing hashes, names, and stat vals to discord when found on opponents
-          const missing = exchangeList.filter((m) => !pockestState?.allMonsters
-            ?.find((m2) => m2?.hash === m.hash
-            && m2?.name_en === m.name_en));
+          const missing = exchangeList.filter((m) => {
+            const matchingMonster = pockestState?.allMonsters
+              .find((m2) => m2?.name_en === m?.name_en);
+            const matchingHash = pockestState?.allHashes
+              .find((m2) => m2?.id === m?.hash);
+            return !matchingMonster || !matchingHash;
+          });
           const missingStrs = missing.map((m) => `${m.name_en}: ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
           const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster(s) identified\n${missingStrs.join('\n')}`;
           postDiscord(missingReport);
