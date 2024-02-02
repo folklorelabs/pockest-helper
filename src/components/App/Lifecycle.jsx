@@ -156,9 +156,11 @@ function Lifecycle() {
               .find((m2) => m2?.id === m?.hash);
             return !matchingMonster || !matchingHash;
           });
-          const missingStrs = missing.map((m) => `${m.name_en}: ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
-          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster(s) identified\n${missingStrs.join('\n')}`;
-          postDiscord(missingReport);
+          if (missing.length) {
+            const missingStrs = missing.map((m) => `${m.name_en}: ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
+            const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster(s) identified\n${missingStrs.join('\n')}`;
+            postDiscord(missingReport);
+          }
         }
         const bestMatch = await getBestMatch(pockestState, exchangeList);
         console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
