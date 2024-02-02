@@ -32,8 +32,8 @@ function CleanControls() {
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const garbageTimer = React.useMemo(() => {
-    const gt = getGarbageTimer(pockestState);
-    return gt > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : gt;
+    const timer = getGarbageTimer(pockestState);
+    return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
 
   const {

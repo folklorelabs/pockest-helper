@@ -24,8 +24,8 @@ function MatchControls() {
   } = pockestState;
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const nextMatchTimer = React.useMemo(() => {
-    const mt = getMatchTimer(pockestState);
-    return mt > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : mt;
+    const timer = getMatchTimer(pockestState);
+    return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
   return (
     <div className="MatchControls">

@@ -16,8 +16,8 @@ function TrainControls() {
   } = usePockestContext();
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const trainingTimer = React.useMemo(() => {
-    const tt = pockestState?.data?.monster?.training_time;
-    return tt > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : tt;
+    const timer = pockestState?.data?.monster?.training_time;
+    return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
 
   const {
