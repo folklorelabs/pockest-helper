@@ -137,10 +137,6 @@ function Lifecycle() {
         pockestDispatch(await pockestTrain(stat));
       }
 
-      // delete me
-
-      console.log({ missing });
-
       // Match
       const attemptToMatch = autoMatch && monster && !isStunned && !willTrain;
       const nextMatchTime = getMatchTimer(pockestState);
