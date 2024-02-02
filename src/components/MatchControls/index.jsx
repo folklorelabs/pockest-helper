@@ -17,7 +17,6 @@ function MatchControls() {
   } = usePockestContext();
   const now = useNow();
   const {
-    data,
     autoMatch,
     autoPlan,
     paused,
@@ -68,7 +67,7 @@ function MatchControls() {
           Next Match
         </span>
         <span className="PockestText PockestLine-value">
-          {data?.monster?.exchange_time ? parseDurationStr(nextMatchTimer - now.getTime()) : '--'}
+          {nextMatchTimer ? parseDurationStr(nextMatchTimer - now.getTime()) : '--'}
         </span>
       </div>
       <LogCountLine
