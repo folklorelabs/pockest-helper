@@ -31,8 +31,8 @@ function FeedControls() {
   } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const stomachTimer = React.useMemo(() => {
-    const st = getStomachTimer(pockestState);
-    return st > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : st;
+    const timer = getStomachTimer(pockestState);
+    return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
 
   const {
