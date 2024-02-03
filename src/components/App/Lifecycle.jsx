@@ -137,6 +137,19 @@ function Lifecycle() {
         pockestDispatch(await pockestTrain(stat));
       }
 
+      // Report missing hashes, names, and stat vals to discord when found on opponents
+      const { exchangeList: el } = await fetchMatchList();
+      const missing = el.filter((m) => {
+        const matchingHash = pockestState?.allHashes
+          .find((m2) => m2?.id === m?.hash);
+        return !matchingHash;
+      });
+      if (missing.length) {
+        const missingStrs = missing.map((m) => `${m.name_en}: ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
+        const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monsters:\n${missingStrs.join('\n')}`;
+        postDiscord(missingReport);
+      }
+
       // Match
       const attemptToMatch = autoMatch && monster && !isStunned && !willTrain;
       const nextMatchTime = getMatchTimer(pockestState);
