@@ -283,18 +283,19 @@ export async function pockestRefresh(pockestState) {
       };
       // send new lvl 5 monster data to discord
       if (data?.monster?.age >= 5) {
+        const reports = [];
         const matchingHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.hash);
         if (!matchingHash) {
-          const missingStr = `${data?.monster?.name_en}: ${data?.monster?.hash} (P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})`;
-          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster identified\n${missingStr}`;
-          postDiscord(missingReport);
+          reports.push(`New monster: ${data?.monster?.name_en} | ${data?.monster?.hash} | https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${data?.monster?.hash}.png (P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})`);
         }
         const matchingMementoHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.memento_hash);
         if (!matchingMementoHash) {
-          const missingStr = `${data?.monster?.memento_name_en}: ${data?.monster?.memento_hash} (${data?.monster?.name_en})`;
-          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New memento identified\n${missingStr}`;
+          reports.push(`New memento: ${data?.monster?.memento_name_en} | ${data?.monster?.memento_hash} | https://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${data?.monster?.memento_hash}_memento.png (${data?.monster?.name_en})`);
+        }
+        if (reports.length) {
+          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${reports.join('\n')}`;
           postDiscord(missingReport);
         }
       }
