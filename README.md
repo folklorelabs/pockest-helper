@@ -24,7 +24,7 @@ The requirements for specific monsters are quite complex. You will want to refra
 
 ### Is this against TOS?
 
-TOS calls like this are at the discretion of the service owner (i.e. Capcom), so use at your own risk. That being said, we haven't had any reports of issues so far!
+Terms of service calls like this are at the discretion of the service owner (i.e. Capcom), so use at your own risk. That being said, we haven't had any reports of issues so far!
 
 ### The app or a feature is broken for me. What can I do?
 
