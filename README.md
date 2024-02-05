@@ -22,6 +22,10 @@ The extensions will not enact any changes on your behalf until you click the "AU
 
 The requirements for specific monsters are quite complex. You will want to refrain from manually taking ANY actions when using the preset option or you may end up with a different monster. This includes matching, curing, etc. The extension follows the [Pockest Guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624) closely, and the guide is a great reference if you would like to better understand how Pockest Helper works under the hood.
 
+### Is this against TOS?
+
+TOS calls like this are at the discretion of the service owner (i.e. Capcom), so use at your own risk. That being said, we haven't had any reports of issues so far!
+
 ### The app or a feature is broken for me. What can I do?
 
 Sorry about that! Feel free to join the [Pockest Guide Discord](https://discord.gg/492bdzBDu) if you have any questions or feedback. There is a dedicated `#pockest-helper` channel. Also please keep in mind that testing some features/fixes may take collaboration and/or multiple days because verifying functionality often requires specific game events.
