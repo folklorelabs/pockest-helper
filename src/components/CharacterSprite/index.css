@@ -12,4 +12,5 @@
 .CharacterSprite-img {
   position: absolute;
   bottom: 0;
+  transform-origin: bottom left;
 }
