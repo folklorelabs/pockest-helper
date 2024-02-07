@@ -80,7 +80,7 @@ export function getLogEntry(pockestState) {
 
 export function isMonsterGone(pockestState) {
   if (['monster_not_found', 'departure', 'death'].includes(pockestState?.data?.event)) return true;
-  if (!pockestState?.data?.monster) return null; // inconclusive
+  if (!pockestState?.data?.monster) return true; // inconclusive?
   const now = (new Date()).getTime();
   const isDead = now >= getDeathTimer(pockestState);
   const hasLeft = now >= (pockestState.data.monster.live_time + MONSTER_LIFESPAN[5]);
