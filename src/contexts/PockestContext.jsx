@@ -314,7 +314,11 @@ export async function pockestFeed() {
         'content-type': 'application/json',
       },
     });
-    const { data } = await response.json();
+    const resJson = await response.json();
+    const data = {
+      event: resJson.event,
+      ...resJson.data,
+    };
     data.result = {
       ...getLogEntry({ data }),
       ...data?.serving,
@@ -334,7 +338,11 @@ export async function pockestCure() {
         'content-type': 'application/json',
       },
     });
-    const { data } = await response.json();
+    const resJson = await response.json();
+    const data = {
+      event: resJson.event,
+      ...resJson.data,
+    };
     data.result = {
       ...getLogEntry({ data }),
       ...data?.cure, // TODO: check that this is correct
@@ -353,7 +361,11 @@ export async function pockestClean(pockestState) {
         'content-type': 'application/json',
       },
     });
-    const { data } = await response.json();
+    const resJson = await response.json();
+    const data = {
+      event: resJson.event,
+      ...resJson.data,
+    };
     data.result = {
       ...getLogEntry({ data }),
       ...data?.cleaning,
@@ -376,7 +388,11 @@ export async function pockestTrain(type) {
         'content-type': 'application/json',
       },
     });
-    const { data } = await response.json();
+    const resJson = await response.json();
+    const data = {
+      event: resJson.event,
+      ...resJson.data,
+    };
     if (data?.event !== 'training') {
       return [ACTIONS.ERROR, '[pockestTrain] server responded with failure'];
     }
@@ -401,7 +417,11 @@ export async function pockestMatch(pockestState, match) {
       },
       body: JSON.stringify({ slot: match?.slot }),
     });
-    const { data } = await response.json();
+    const resJson = await response.json();
+    const data = {
+      event: resJson.event,
+      ...resJson.data,
+    };
     if (data?.exchangable === false) {
       return [ACTIONS.ERROR, '[pockestMatch] server responded with failure'];
     }
@@ -434,7 +454,11 @@ export async function pockestSelectEgg(id) {
         'content-type': 'application/json',
       },
     });
-    const { data } = await response.json();
+    const resJson = await response.json();
+    const data = {
+      event: resJson.event,
+      ...resJson.data,
+    };
     data.result = {
       ...getLogEntry({ data }),
       eggType: id,
