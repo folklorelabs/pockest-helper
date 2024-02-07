@@ -556,7 +556,7 @@ function REDUCER(state, [type, payload]) {
         ] : state.log,
         ...getAutoPlanSettings({
           ...state,
-          data: payload?.data,
+          data: payload?.data ?? state?.data,
           result: payload?.result,
         }),
       };
