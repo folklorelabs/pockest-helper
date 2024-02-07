@@ -20,5 +20,8 @@ export default function getStunTimer(pockestState) {
   const garbageFullTimer = getGarbageFullTimer(pockestState);
   const stomachEmptyTimer = getStomachEmptyTimer(pockestState);
   const stunTimer = Math.min(garbageFullTimer, stomachEmptyTimer) + STUN_OFFSET;
+  const isStunned = pockestState?.data?.monster?.status === 2;
+  const now = (new Date()).getTime();
+  if (isStunned && stunTimer > now) return now;
   return stunTimer;
 }
