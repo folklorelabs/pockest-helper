@@ -95,11 +95,12 @@ export async function fetchMatchList() {
 
 export async function fetchPockestStatus() {
   const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
-  const { data, event } = await response.json();
-  return {
-    event,
-    ...data,
+  const resJson = await response.json();
+  const data = {
+    event: resJson.event,
+    ...resJson.data,
   };
+  return data;
 }
 
 export function getMonsterId(state) {
