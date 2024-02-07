@@ -79,20 +79,17 @@ function CharacterSprite({
         transform: `translate(calc(${100 - (curFrame?.anchor?.x || 0) * 100}% - ${(curFrame?.frame?.w || 0) / 2}px), ${100 - (curFrame?.anchor?.y || 0) * 100}%)`,
       }}
     >
-      <div>
-        <div
-          ref={imgEl}
-          className="CharacterSprite-img"
-          style={{
-            width: `${curFrame?.rotated ? curFrame?.frame?.h : curFrame?.frame?.w}px`,
-            height: `${curFrame?.rotated ? curFrame?.frame?.w : curFrame?.frame?.h}px`,
-            transform: `translateX(${curFrame?.rotated ? `${curFrame?.frame?.w}px` : '0'}) rotate(${curFrame?.rotated ? '-90deg' : '0deg'})`,
-            backgroundImage: characterSprite?.image && !loading ? `url(${characterSprite?.image})` : 'none',
-            backgroundPosition: `-${curFrame?.frame?.x}px -${curFrame?.frame?.y}px`,
-            transformOrigin: 'bottom left',
-          }}
-        />
-      </div>
+      <div
+        ref={imgEl}
+        className="CharacterSprite-img"
+        style={{
+          width: `${curFrame?.rotated ? curFrame?.frame?.h : curFrame?.frame?.w}px`,
+          height: `${curFrame?.rotated ? curFrame?.frame?.w : curFrame?.frame?.h}px`,
+          transform: `translateX(${curFrame?.rotated ? `${curFrame?.frame?.w}px` : '0'}) rotate(${curFrame?.rotated ? '-90deg' : '0deg'})`,
+          backgroundImage: characterSprite?.image && !loading ? `url(${characterSprite?.image})` : 'none',
+          backgroundPosition: `-${curFrame?.frame?.x}px -${curFrame?.frame?.y}px`,
+        }}
+      />
     </div>
   );
 }
