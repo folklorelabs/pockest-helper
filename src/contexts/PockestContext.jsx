@@ -275,7 +275,7 @@ export function pockestPlanSettings(pockestState) {
 export async function pockestRefresh(pockestState) {
   try {
     const data = await fetchPockestStatus();
-    if (data && pockestState?.data?.monster?.hash !== data?.monster?.hash) {
+    if (data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash) {
       // add evolution to log
       data.result = {
         ...getLogEntry({ data }),
@@ -301,6 +301,7 @@ export async function pockestRefresh(pockestState) {
         }
       }
     }
+    if (['death', 'departure'].includes(data?.event)) data.result = getLogEntry({ data });
     return [ACTIONS.REFRESH, data];
   } catch (error) {
     return [ACTIONS.ERROR, error];
