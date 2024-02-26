@@ -301,7 +301,15 @@ export async function pockestRefresh(pockestState) {
         }
       }
     }
-    if (['death', 'departure'].includes(data?.event)) data.result = getLogEntry({ data });
+    if (['death', 'departure'].includes(data?.event)) {
+      const monster = data?.monster || pockestState?.data?.monster;
+      data.result = getLogEntry({
+        data: {
+          ...data,
+          monster,
+        },
+      });
+    }
     return [ACTIONS.REFRESH, data];
   } catch (error) {
     return [ACTIONS.ERROR, error];
