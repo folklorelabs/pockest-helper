@@ -102,6 +102,7 @@ function Lifecycle() {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestCure());
+        return;
       }
 
       // Clean
@@ -113,6 +114,7 @@ function Lifecycle() {
         console.log(now.toLocaleString(), 'CLEAN');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestClean(pockestState));
+        return;
       }
 
       // Feed
@@ -124,6 +126,7 @@ function Lifecycle() {
         console.log(now.toLocaleString(), 'FEED');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestFeed());
+        return;
       }
 
       // Train
@@ -135,6 +138,7 @@ function Lifecycle() {
         console.log(now.toLocaleString(), `TRAIN, stat=${STAT_ID[stat]}`);
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestTrain(stat));
+        return;
       }
 
       // Match
