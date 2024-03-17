@@ -4,7 +4,8 @@
 
 This is a [Chrome Extension](chrome://extensions/) that tracks and automatically cares for [Street Fighter Pockest Monsters](https://www.streetfighter.com/6/buckler/minigame). It is a passion project and is still in early development.
 
-![A screenshot of Pockest Helper in action](https://storage.googleapis.com/pockest-helper/pockest-helper.png)
+![A screenshot of Pockest Helper in action](https://github.com/folklorelabs/pockest-helper/assets/98740773/a90060c8-69d9-40e4-a763-0e6bc4178cf6)
+
 
 ## Installation
 
