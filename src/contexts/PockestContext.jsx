@@ -500,7 +500,6 @@ export async function pockestInit() {
       fetchAllHashes(),
       fetchPockestStatus(),
     ]);
-    console.log(data);
     return [ACTIONS.INIT, {
       allMonsters,
       allHashes,
