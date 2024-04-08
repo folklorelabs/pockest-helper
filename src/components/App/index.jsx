@@ -52,60 +52,74 @@ function App() {
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
       </header>
-      {!pockestState?.initialized || pockestState?.data?.monster ? (
-        <>
-          <div className="App-inner">
-            {isOutdated ? (
+      {(() => {
+        if (pockestState?.data?.event === 'AuthError') {
+          return (
+            <div className="App-inner">
               <p className="App-updateText">
-                <a href="https://github.com/folklorelabs/pockest-helper/releases/latest" target="_blank" rel="noreferrer">
-                  New version available (
-                  {remoteVersion}
-                  )
-                </a>
+                Unable to load Pockest Helper data (AuthError)
               </p>
-            ) : ''}
-            <AutoPlanControls />
-            <hr />
-            <CleanControls />
-            <hr />
-            <FeedControls />
-            <hr />
-            <TrainControls />
-            <hr />
-            <MatchControls />
-            <hr />
-            <CureControls />
-          </div>
-          <div className="App-footer">
-            <div className="App-button">
-              <PauseBtn />
             </div>
-          </div>
-          <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
-            {lol ? (
-              <CharacterSprite
-                action={pockestState?.paused ? 'down' : 'idle'}
-                animated={!pockestState?.paused}
-                randomAnimations={pockestState?.paused ? null : ['idle', 'win', 'attack']}
-                randomAnimationWeights={[100, 10, 60]}
-              />
+          );
+        }
+        if (pockestState?.initialized && !pockestState?.data?.monster) {
+          return (
+            <div className="App-inner">
+              <EggControls />
+              <div className="App-button">
+                <BuyEggBtn />
+              </div>
+            </div>
+          );
+        }
+        return (
+          <>
+            <div className="App-inner">
+              {isOutdated ? (
+                <p className="App-updateText">
+                  <a href="https://github.com/folklorelabs/pockest-helper/releases/latest" target="_blank" rel="noreferrer">
+                    New version available (
+                    {remoteVersion}
+                    )
+                  </a>
+                </p>
+              ) : ''}
+              <AutoPlanControls />
+              <hr />
+              <CleanControls />
+              <hr />
+              <FeedControls />
+              <hr />
+              <TrainControls />
+              <hr />
+              <MatchControls />
+              <hr />
+              <CureControls />
+            </div>
+            <div className="App-footer">
+              <div className="App-button">
+                <PauseBtn />
+              </div>
+            </div>
+            <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
+              {lol ? (
+                <CharacterSprite
+                  action={pockestState?.paused ? 'down' : 'idle'}
+                  animated={!pockestState?.paused}
+                  randomAnimations={pockestState?.paused ? null : ['idle', 'win', 'attack']}
+                  randomAnimationWeights={[100, 10, 60]}
+                />
+              ) : ''}
+            </button>
+            {(showLog && !minimized) ? (
+              <LogPanel>
+                <CareLog title="Care Log" rows={36} />
+                <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
+              </LogPanel>
             ) : ''}
-          </button>
-          {(showLog && !minimized) ? (
-            <LogPanel>
-              <CareLog title="Care Log" rows={36} />
-              <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
-            </LogPanel>
-          ) : ''}
-        </>
-      ) : (
-        <div className="App-inner">
-          <EggControls />
-          <div className="App-button">
-            <BuyEggBtn />
-          </div>
-        </div>
-      )}
+          </>
+        );
+      })()}
     </div>
   );
 }
