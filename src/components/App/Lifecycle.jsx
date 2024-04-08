@@ -61,6 +61,7 @@ function Lifecycle() {
         autoTrain,
         autoMatch,
         autoCure,
+        planAge,
         paused,
         stat,
         error,
@@ -107,7 +108,7 @@ function Lifecycle() {
       }
 
       // Cure
-      if (autoCure && isStunned) {
+      if (autoCure && isStunned && monster?.age < planAge) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestCure());
