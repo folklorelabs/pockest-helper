@@ -19,8 +19,7 @@ const AGE_INTERVAL = {
   4: '4',
   3: '3',
   2: '2',
-  1: '1',
-  0: '0 (Do nothing)',
+  1: '1 (Do nothing)',
 };
 
 function AutoPlanControls() {
@@ -103,7 +102,7 @@ function AutoPlanControls() {
               <br />
               <em>Age:</em>
               {' '}
-              0, 1, 2, 3, 4, 5, 6
+              1, 2, 3, 4, 5, 6
               <br />
               <em>1st Divergence:</em>
               {' '}
