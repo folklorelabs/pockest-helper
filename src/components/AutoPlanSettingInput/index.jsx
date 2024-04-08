@@ -42,7 +42,7 @@ function AutoPlanSettingInput({ settingName, required }) {
         if (!acc.includes(monEgg)) acc.push(monEgg);
         return acc;
       }, []).join('');
-      return `^[${validEggs}][5-5][ABC][LR][${validStats}]$`;
+      return `^[${validEggs}][0-6][ABC][LR][${validStats}]$`;
     } if (settingName === 'statPlanId') {
       return `^([${validStats}]{0,14})$`;
     }

@@ -12,6 +12,17 @@ import getStunTimer from '../../utils/getStunTimer';
 import getDeathTimer from '../../utils/getDeathTimer';
 import './index.css';
 
+// CONSTS
+const AGE_INTERVAL = {
+  6: '6 (Memento + Sticker)',
+  5: '5 (Sticker)',
+  4: '4',
+  3: '3',
+  2: '2',
+  1: '1',
+  0: '0 (Do nothing)',
+};
+
 function AutoPlanControls() {
   const {
     pockestState,
@@ -21,8 +32,14 @@ function AutoPlanControls() {
     data,
     autoPlan,
     paused,
+    planAge,
   } = pockestState;
   const curAge = data?.monster?.age;
+  const targetMonster = React.useMemo(
+    () => pockestState?.allMonsters
+      ?.find((m) => m.monster_id === pockestState?.monsterId),
+    [pockestState?.allMonsters, pockestState?.monsterId],
+  );
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const stunTimer = React.useMemo(() => {
     const st = getStunTimer(pockestState);
@@ -86,7 +103,7 @@ function AutoPlanControls() {
               <br />
               <em>Age:</em>
               {' '}
-              5
+              0, 1, 2, 3, 4, 5, 6
               <br />
               <em>1st Divergence:</em>
               {' '}
@@ -156,6 +173,26 @@ function AutoPlanControls() {
           </a>
         </div>
         <AutoPlanSettingInput settingName="statPlanId" />
+      </div>
+      <div className="PockestLine">
+        <span className="PockestText">Target Age</span>
+        <select
+          className="PockestSelect"
+          onChange={(e) => {
+            pockestDispatch(pockestPlanSettings({
+              ...pockestState,
+              planAge: parseInt(e.target.value, 10),
+            }));
+          }}
+          value={planAge}
+          disabled={!paused || !targetMonster}
+        >
+          {Object.keys(AGE_INTERVAL).map((k) => (
+            <option key={k} value={k}>
+              {AGE_INTERVAL[k]}
+            </option>
+          ))}
+        </select>
       </div>
       <Timer
         label={ageLabel}
