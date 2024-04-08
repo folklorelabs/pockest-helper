@@ -157,13 +157,18 @@ export function getCurrentPlanSchedule(state) {
   const targetPlan = getTargetMonsterPlan(state);
   const birth = state?.data?.monster?.live_time;
   if (!birth) return {};
+  const deathOffset = state?.planAge && state?.planAge > 1
+    ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
   const cleanSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
       if (!spec) return fullSchedule;
+      if (spec.startTime > deathOffset) return fullSchedule;
+      const start = birth + spec.startTime;
+      const end = spec.endTime > deathOffset ? birth + deathOffset : birth + spec.endTime;
       const schedule = getTimeIntervals(
-        birth + spec.startTime,
-        birth + spec.endTime,
+        start,
+        end,
         spec.cleanFrequency,
         spec.cleanOffset,
       );
@@ -181,9 +186,12 @@ export function getCurrentPlanSchedule(state) {
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
       if (!spec) return fullSchedule;
+      if (spec.startTime > deathOffset) return fullSchedule;
+      const start = birth + spec.startTime;
+      const end = spec.endTime > deathOffset ? birth + deathOffset : birth + spec.endTime;
       const schedule = getTimeIntervals(
-        birth + spec.startTime,
-        birth + spec.endTime,
+        start,
+        end,
         spec.feedFrequency,
         spec.feedOffset,
       );
