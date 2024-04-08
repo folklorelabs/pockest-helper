@@ -65,7 +65,16 @@ function Lifecycle() {
         stat,
         error,
       } = pockestState;
-      if (!data || loading || paused || error) return;
+      if (loading || paused || error) return;
+
+      // No data! Let's refresh to get things moving.
+      // If there is a good reason for no data then refreshing will trigger error or pause.
+      if (!data) {
+        console.log('REFRESH, no data!');
+        await refresh();
+        return;
+      }
+
       const {
         monster,
       } = data;
