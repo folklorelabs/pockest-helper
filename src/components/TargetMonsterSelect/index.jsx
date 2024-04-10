@@ -73,8 +73,9 @@ function TargetMonsterSelect() {
       </option>
       {availableMonsters.map((monster) => (
         <option key={monster?.monster_id} value={monster?.monster_id}>
-          {monster.name_en}
-          {acquiredMementos.includes(monster?.monster_id) ? ' ✓' : ''}
+          {monster?.name_en || monster?.monster_id}
+          {monster?.memento_flg ? ' ✓' : ''}
+          {monster?.unlock ? ' ✓' : ''}
         </option>
       ))}
     </select>
