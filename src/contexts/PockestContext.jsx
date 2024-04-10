@@ -157,8 +157,13 @@ export function getCurrentPlanSchedule(state) {
   const targetPlan = getTargetMonsterPlan(state);
   const birth = state?.data?.monster?.live_time;
   if (!birth) return {};
-  const deathOffset = state?.planAge && state?.planAge > 1
+  let deathOffset = state?.planAge && state?.planAge > 1
     ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
+  if (state.planAge === 5) {
+    // optimize planned age so we can die just 1 hour after evolution
+    deathOffset -= (24 * 60 * 60 * 1000); // -1 day
+    deathOffset += (60 * 60 * 1000); // +1 hour
+  }
   const cleanSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
