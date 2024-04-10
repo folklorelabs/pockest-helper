@@ -117,8 +117,9 @@ function Lifecycle() {
 
       // Clean
       const attemptToClean = (autoClean || autoPlan) && cleanFrequency
-        && (monster && monster?.garbage > 0) && !isStunned;
-      const inCleanWindow = (currentCleanWindow && cleanFrequency === 2)
+        && (monster && monster?.garbage > 0) && !isStunned
+        && monster?.age < planAge;
+      const inCleanWindow = cleanFrequency === 2
         || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
         console.log(now.toLocaleString(), 'CLEAN');
@@ -129,8 +130,9 @@ function Lifecycle() {
 
       // Feed
       const attemptToFeed = (autoFeed || autoPlan) && feedFrequency
-        && (monster && monster?.stomach < feedTarget) && !isStunned;
-      const inFeedWindow = (currentFeedWindow && feedFrequency === 4)
+        && (monster && monster?.stomach < feedTarget) && !isStunned
+        && monster?.age < planAge;
+      const inFeedWindow = feedFrequency === 4
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
         console.log(now.toLocaleString(), 'FEED');
