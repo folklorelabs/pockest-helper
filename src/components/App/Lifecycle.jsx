@@ -13,6 +13,7 @@ import {
   getBestMatch,
   pockestCure,
   fetchMatchList,
+  getPlanDeathOffset,
 } from '../../contexts/PockestContext';
 import getMatchTimer from '../../utils/getMatchTimer';
 import getRandomMinutes from '../../utils/getRandomMinutes';
@@ -61,7 +62,6 @@ function Lifecycle() {
         autoTrain,
         autoMatch,
         autoCure,
-        planAge,
         paused,
         stat,
         error,
@@ -81,6 +81,8 @@ function Lifecycle() {
       } = data;
       const now = new Date();
       const isStunned = monster?.status === 2;
+      const isPlannedDeath = monster?.live_time
+        ? monster.live_time + getPlanDeathOffset(pockestState) <= now : false;
 
       // Small event refresh
       if (data?.next_small_event_timer && now.getTime() > data?.next_small_event_timer) {
@@ -108,7 +110,7 @@ function Lifecycle() {
       }
 
       // Cure
-      if (autoCure && isStunned && monster?.age < planAge) {
+      if (autoCure && isStunned && isPlannedDeath) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestCure());
@@ -118,7 +120,7 @@ function Lifecycle() {
       // Clean
       const attemptToClean = (autoClean || autoPlan) && cleanFrequency
         && (monster && monster?.garbage > 0) && !isStunned
-        && monster?.age < planAge;
+        && isPlannedDeath;
       const inCleanWindow = cleanFrequency === 2
         || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
@@ -131,7 +133,7 @@ function Lifecycle() {
       // Feed
       const attemptToFeed = (autoFeed || autoPlan) && feedFrequency
         && (monster && monster?.stomach < feedTarget) && !isStunned
-        && monster?.age < planAge;
+        && isPlannedDeath;
       const inFeedWindow = feedFrequency === 4
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {

@@ -153,10 +153,7 @@ export function getCurrentPlanStats(state) {
   };
 }
 
-export function getCurrentPlanSchedule(state) {
-  const targetPlan = getTargetMonsterPlan(state);
-  const birth = state?.data?.monster?.live_time;
-  if (!birth) return {};
+export function getPlanDeathOffset(state) {
   let deathOffset = state?.planAge && state?.planAge > 1
     ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
   if (state.planAge === 5) {
@@ -164,6 +161,14 @@ export function getCurrentPlanSchedule(state) {
     deathOffset -= (24 * 60 * 60 * 1000); // -1 day
     deathOffset += (60 * 60 * 1000); // +1 hour
   }
+  return deathOffset;
+}
+
+export function getCurrentPlanSchedule(state) {
+  const targetPlan = getTargetMonsterPlan(state);
+  const birth = state?.data?.monster?.live_time;
+  if (!birth) return {};
+  const deathOffset = getPlanDeathOffset(state);
   const cleanSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];

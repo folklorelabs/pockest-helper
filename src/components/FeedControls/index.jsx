@@ -122,7 +122,7 @@ function FeedControls() {
         </span>
         <span className="PockestText PockestLine-value">
           {(() => {
-            if (currentFeedWindow && feedFrequency === 4) return '∞';
+            if ((!autoPlan || currentFeedWindow) && feedFrequency === 4) return '∞';
             if (!currentFeedWindow) return '--';
             return parseDurationStr(currentFeedWindow.end - now.getTime());
           })()}

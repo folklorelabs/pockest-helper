@@ -110,7 +110,7 @@ function CleanControls() {
         </span>
         <span className="PockestText PockestLine-value">
           {(() => {
-            if (cleanFrequency === 2) return '∞';
+            if ((!autoPlan || currentCleanWindow) && cleanFrequency === 2) return '∞';
             if (!currentCleanWindow) return '--';
             return parseDurationStr(currentCleanWindow.end - now.getTime());
           })()}
