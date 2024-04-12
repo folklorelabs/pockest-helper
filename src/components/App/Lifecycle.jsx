@@ -110,7 +110,7 @@ function Lifecycle() {
       }
 
       // Cure
-      if (autoCure && isStunned && isPlannedDeath) {
+      if (autoCure && isStunned && !isPlannedDeath) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestCure());
@@ -120,7 +120,7 @@ function Lifecycle() {
       // Clean
       const attemptToClean = (autoClean || autoPlan) && cleanFrequency
         && (monster && monster?.garbage > 0) && !isStunned
-        && isPlannedDeath;
+        && !isPlannedDeath;
       const inCleanWindow = cleanFrequency === 2
         || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
@@ -133,7 +133,7 @@ function Lifecycle() {
       // Feed
       const attemptToFeed = (autoFeed || autoPlan) && feedFrequency
         && (monster && monster?.stomach < feedTarget) && !isStunned
-        && isPlannedDeath;
+        && !isPlannedDeath;
       const inFeedWindow = feedFrequency === 4
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
