@@ -154,23 +154,15 @@ export function getCurrentPlanStats(state) {
 }
 
 export function getPlanNeglectOffset(state) {
-  let ageOffset = state?.planAge && state?.planAge > 1
+  const ageOffset = state?.planAge && state?.planAge > 1
     ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
-  if (state.planAge === 5) {
-    // optimize planned age so we can die just 1 hour after evolution
-    ageOffset -= (24 * 60 * 60 * 1000); // -1 day (2d)
-    ageOffset -= (3 * 60 * 60 * 1000); // -3 hour (1d 21h)
-  }
   return ageOffset;
 }
 
 export function getPlanStunOffset(state) {
-  let ageOffset = state?.planAge && state?.planAge > 1
-    ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
-  if (state.planAge === 5) {
-    // optimize planned age so we can die just 1 hour after evolution
-    ageOffset -= (5 * 60 * 60 * 1000); // -5 hour
-  }
+  const ageOffset = state?.planAge && state?.planAge > 1
+    ? Math.max(0, MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] - (5 * 60 * 60 * 1000))
+    : 0;
   return ageOffset;
 }
 
@@ -189,7 +181,7 @@ export function getCurrentPlanSchedule(state) {
       const schedule = getTimeIntervals(
         start,
         end,
-        spec.cleanFrequency,
+        state?.planAge === 5 && div === 'planDiv3' ? 6 : spec.cleanFrequency,
         spec.cleanOffset,
       );
       return [
@@ -212,7 +204,7 @@ export function getCurrentPlanSchedule(state) {
       const schedule = getTimeIntervals(
         start,
         end,
-        spec.feedFrequency,
+        state?.planAge === 5 && div === 'planDiv3' ? 6 : spec.feedFrequency,
         spec.feedOffset,
       );
       return [
