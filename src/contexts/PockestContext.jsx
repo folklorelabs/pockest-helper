@@ -153,29 +153,39 @@ export function getCurrentPlanStats(state) {
   };
 }
 
-export function getPlanDeathOffset(state) {
-  let deathOffset = state?.planAge && state?.planAge > 1
+export function getPlanNeglectOffset(state) {
+  let ageOffset = state?.planAge && state?.planAge > 1
     ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
   if (state.planAge === 5) {
     // optimize planned age so we can die just 1 hour after evolution
-    deathOffset -= (24 * 60 * 60 * 1000); // -1 day
-    deathOffset += (60 * 60 * 1000); // +1 hour
+    ageOffset -= (24 * 60 * 60 * 1000); // -1 day (2d)
+    ageOffset -= (3 * 60 * 60 * 1000); // -3 hour (1d 21h)
   }
-  return deathOffset;
+  return ageOffset;
+}
+
+export function getPlanStunOffset(state) {
+  let ageOffset = state?.planAge && state?.planAge > 1
+    ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
+  if (state.planAge === 5) {
+    // optimize planned age so we can die just 1 hour after evolution
+    ageOffset -= (5 * 60 * 60 * 1000); // -5 hour
+  }
+  return ageOffset;
 }
 
 export function getCurrentPlanSchedule(state) {
   const targetPlan = getTargetMonsterPlan(state);
   const birth = state?.data?.monster?.live_time;
   if (!birth) return {};
-  const deathOffset = getPlanDeathOffset(state);
+  const neglectOffset = getPlanNeglectOffset(state);
   const cleanSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
       if (!spec) return fullSchedule;
-      if (spec.startTime > deathOffset) return fullSchedule;
+      if (spec.startTime > neglectOffset) return fullSchedule;
       const start = birth + spec.startTime;
-      const end = spec.endTime > deathOffset ? birth + deathOffset : birth + spec.endTime;
+      const end = spec.endTime > neglectOffset ? birth + neglectOffset : birth + spec.endTime;
       const schedule = getTimeIntervals(
         start,
         end,
@@ -196,9 +206,9 @@ export function getCurrentPlanSchedule(state) {
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
       if (!spec) return fullSchedule;
-      if (spec.startTime > deathOffset) return fullSchedule;
+      if (spec.startTime > neglectOffset) return fullSchedule;
       const start = birth + spec.startTime;
-      const end = spec.endTime > deathOffset ? birth + deathOffset : birth + spec.endTime;
+      const end = spec.endTime > neglectOffset ? birth + neglectOffset : birth + spec.endTime;
       const schedule = getTimeIntervals(
         start,
         end,
