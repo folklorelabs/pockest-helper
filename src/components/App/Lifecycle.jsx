@@ -84,8 +84,9 @@ function Lifecycle() {
       const isStunned = monster?.status === 2;
       const shouldNeglect = monster?.live_time
         ? monster.live_time + getPlanNeglectOffset(pockestState) <= now : false;
-      const shouldLetDie = monster?.live_time
-        ? monster.live_time + getPlanStunOffset(pockestState) <= now : false;
+      const stunOffset = getPlanStunOffset(pockestState);
+      const shouldLetDie = monster?.live_time && typeof stunOffset === 'number'
+        ? monster.live_time + stunOffset <= now : false;
 
       // Small event refresh
       if (data?.next_small_event_timer && now.getTime() > data?.next_small_event_timer) {

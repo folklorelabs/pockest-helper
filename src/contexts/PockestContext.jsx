@@ -160,6 +160,7 @@ export function getPlanNeglectOffset(state) {
 }
 
 export function getPlanStunOffset(state) {
+  if (state?.planAge === 6) return null;
   const ageOffset = state?.planAge && state?.planAge > 1
     ? Math.max(0, MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] - (5 * 60 * 60 * 1000))
     : 0;
