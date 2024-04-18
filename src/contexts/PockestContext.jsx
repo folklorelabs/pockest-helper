@@ -206,7 +206,10 @@ export function getCurrentPlanSchedule(state) {
         end,
         state?.planAge === 5 && div === 'planDiv3' ? 6 : spec.feedFrequency,
         spec.feedOffset,
-      );
+      ).map((s) => ({
+        ...s,
+        feedTarget: spec.feedTarget,
+      }));
       return [
         ...fullSchedule,
         ...schedule,
