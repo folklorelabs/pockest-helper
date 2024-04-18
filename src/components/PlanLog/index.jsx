@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  getPlanStunOffset,
   getCurrentPlanSchedule,
   usePockestContext,
 } from '../../contexts/PockestContext';
@@ -18,14 +19,27 @@ function PlanLog({
   } = usePockestContext();
   const scheduleLog = React.useMemo(() => {
     const birth = pockestState?.data?.monster?.live_time;
-    const { cleanSchedule, feedSchedule } = getCurrentPlanSchedule(pockestState);
-    const data = [
+    const { cleanSchedule, feedSchedule, trainSchedule } = getCurrentPlanSchedule(pockestState);
+    let data = [];
+    const stunOffset = getPlanStunOffset(pockestState);
+    if (typeof stunOffset === 'number') {
+      data.push({
+        start: birth + getPlanStunOffset(pockestState),
+        label: 'Stop curing',
+      });
+    }
+    data = [
+      ...data,
       ...cleanSchedule.map((w) => ({
         label: 'Clean',
         ...w,
       })),
       ...feedSchedule.map((w) => ({
-        label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')}) `,
+        label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
+        ...w,
+      })),
+      ...trainSchedule.map((w) => ({
+        label: `Train ${w.stat}`,
         ...w,
       })),
     ].sort((a, b) => a.start - b.start).map((d) => ({
