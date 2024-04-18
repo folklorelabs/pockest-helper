@@ -11,6 +11,7 @@ function PlanLog({
   title,
   rows,
 }) {
+  const [isAbsTime, setIsAbsTime] = React.useState(false);
   const textAreaEl = React.useRef();
   const {
     pockestState,
@@ -34,9 +35,9 @@ function PlanLog({
     }));
     return [
       `[Pockest Helper v${import.meta.env.APP_VERSION}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
-      ...data.map((d) => `[${d.startOffsetLabel}] ${d.label}`),
+      ...data.map((d) => `[${isAbsTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`),
     ];
-  }, [pockestState]);
+  }, [pockestState, isAbsTime]);
   return (
     <div className="PlanLog">
       <header className="PlanLog-header">
@@ -47,6 +48,16 @@ function PlanLog({
           {scheduleLog?.length || 0}
           )
         </p>
+        <label className="PockestCheck" htmlFor="PockestHelper_PlanLogAbsTime">
+          <input
+            id="PockestHelper_PlanLogAbsTime"
+            className="PockestCheck-input"
+            type="checkbox"
+            onChange={(e) => setIsAbsTime(e.target.checked)}
+            checked={isAbsTime}
+          />
+          <span className="PockestCheck-text">Absolute Time</span>
+        </label>
       </header>
       <div className="PlanLog-content">
         <textarea
