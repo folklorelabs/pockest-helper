@@ -122,10 +122,10 @@ function Lifecycle() {
       }
 
       // Clean
-      const attemptToClean = (autoClean || autoPlan) && cleanFrequency
+      const attemptToClean = autoClean && cleanFrequency
         && (monster && monster?.garbage > 0) && !isStunned
         && !shouldNeglect;
-      const inCleanWindow = cleanFrequency === 2
+      const inCleanWindow = (!autoPlan && cleanFrequency === 2)
         || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
         console.log(now.toLocaleString(), 'CLEAN');
@@ -135,10 +135,10 @@ function Lifecycle() {
       }
 
       // Feed
-      const attemptToFeed = (autoFeed || autoPlan) && feedFrequency
+      const attemptToFeed = autoFeed && feedFrequency
         && (monster && monster?.stomach < feedTarget) && !isStunned
         && !shouldNeglect;
-      const inFeedWindow = feedFrequency === 4
+      const inFeedWindow = (!autoPlan && feedFrequency === 4)
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
         console.log(now.toLocaleString(), 'FEED');
