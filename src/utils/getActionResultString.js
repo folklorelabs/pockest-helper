@@ -9,10 +9,13 @@ export default function getActionResultString({ pockestState, result, isRelTime 
     const logIndex = pockestState?.log?.findIndex((l) => result?.timestamp
       && l.timestamp === result.timestamp);
     const monsterBirth = result?.monsterBirth || pockestState?.log?.reduce((acc, l, index) => {
+      if (l.timestamp
+        >= pockestState?.data?.monster?.live_time) return pockestState.data.monster.live_time;
       if (index > logIndex) return acc;
+      if (l.logType === 'death' || l.logType === 'departure') return null;
       if (l.logType === 'hatching') return l.timestamp;
       return acc;
-    }, pockestState?.data?.monster?.live_time);
+    }, null);
     if (!monsterBirth) return parseDurationStr(0);
     return result.timestamp >= monsterBirth
       ? parseDurationStr(result.timestamp - monsterBirth)
