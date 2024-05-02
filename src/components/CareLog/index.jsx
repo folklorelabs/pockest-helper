@@ -16,6 +16,7 @@ function CareLog({
   allowClear,
   onlyDiscoveries,
 }) {
+  const [isRelTime, setIsRelTime] = React.useState(false);
   const textAreaEl = React.useRef();
   const {
     pockestState,
@@ -39,8 +40,9 @@ function CareLog({
     ...careLogData.map((entry) => (onlyDiscoveries ? getMatchReportString : getActionResultString)({
       pockestState,
       result: entry,
+      isRelTime,
     })),
-  ], [careLogData, pockestState, onlyDiscoveries]);
+  ], [careLogData, isRelTime, onlyDiscoveries, pockestState]);
   React.useEffect(() => {
     if (!textAreaEl?.current) return () => {};
     textAreaEl.current.scrollTop = textAreaEl.current.scrollHeight;
@@ -56,6 +58,18 @@ function CareLog({
           {careLogData?.length || 0}
           )
         </p>
+        {!onlyDiscoveries ? (
+          <label className="PockestCheck" htmlFor={`PockestHelper_CareLogAbsTime--${title.replace(' ', '')}`}>
+            <input
+              id={`PockestHelper_CareLogAbsTime--${title.replace(' ', '')}`}
+              className="PockestCheck-input"
+              type="checkbox"
+              onChange={(e) => setIsRelTime(e.target.checked)}
+              checked={isRelTime}
+            />
+            <span className="PockestCheck-text">Relative Time</span>
+          </label>
+        ) : ''}
       </header>
       <div className="CareLog-content">
         <textarea

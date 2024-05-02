@@ -4,6 +4,9 @@
 
 .CareLog-header {
   margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 
 .CareLog-title {

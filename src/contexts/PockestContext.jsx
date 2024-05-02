@@ -76,6 +76,7 @@ export function getLogEntry(pockestState) {
     logType: pockestState?.data?.event,
     timestamp: new Date().getTime(),
     monsterId: parseInt(pockestState?.data?.monster?.hash?.split('-')[0] || '-1', 10),
+    monsterBirth: pockestState?.data?.monster?.live_time,
   };
 }
 
