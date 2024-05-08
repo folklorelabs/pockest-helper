@@ -1,25 +1,25 @@
-.CareLog {
+.PlanLog {
   margin-bottom: 2rem;
 }
 
-.CareLog-header {
+.PlanLog-header {
   margin-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
 }
 
-.CareLog-title {
+.PlanLog-title {
   font-size: 1.333em;
   font-family: Oswald, sans-serif;
   text-transform: uppercase;
 }
 
-.CareLog-content {
+.PlanLog-content {
   position: relative;
 }
 
-.CareLog-textarea {
+.PlanLog-textarea {
   display: block;
   width: 100%;
   resize: none;
@@ -30,23 +30,23 @@
   color: #fff;
 }
 
-.CareLog-textarea::-webkit-scrollbar {
+.PlanLog-textarea::-webkit-scrollbar {
   width: 4px;
 }
 
-.CareLog-textarea::-webkit-scrollbar-track {
+.PlanLog-textarea::-webkit-scrollbar-track {
   background: rgba(242, 242, 242, 0);
 }
 
-.CareLog-textarea::-webkit-scrollbar-thumb {
+.PlanLog-textarea::-webkit-scrollbar-thumb {
   background: rgb(188, 188, 188);
 }
 
-.CareLog-textarea::-webkit-scrollbar-thumb:hover {
+.PlanLog-textarea::-webkit-scrollbar-thumb:hover {
   background: rgb(148, 148, 148)
 }
 
-.CareLog .PockestLink {
+.PlanLog .PockestLink {
   text-transform: uppercase;
   font-weight: 700;
   text-decoration: none;
@@ -55,7 +55,7 @@
   padding: 0 0.4rem;
 }
 
-.CareLog-buttons {
+.PlanLog-buttons {
   position: relative;
   display: flex;
   justify-content: space-between;

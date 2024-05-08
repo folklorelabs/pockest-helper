@@ -13,6 +13,8 @@ import {
   getBestMatch,
   pockestCure,
   fetchMatchList,
+  getPlanNeglectOffset,
+  getPlanStunOffset,
 } from '../../contexts/PockestContext';
 import getMatchTimer from '../../utils/getMatchTimer';
 import getRandomMinutes from '../../utils/getRandomMinutes';
@@ -80,6 +82,11 @@ function Lifecycle() {
       } = data;
       const now = new Date();
       const isStunned = monster?.status === 2;
+      const shouldNeglect = monster?.live_time
+        ? monster.live_time + getPlanNeglectOffset(pockestState) <= now : false;
+      const stunOffset = getPlanStunOffset(pockestState);
+      const shouldLetDie = monster?.live_time && typeof stunOffset === 'number'
+        ? monster.live_time + stunOffset <= now : false;
 
       // Small event refresh
       if (data?.next_small_event_timer && now.getTime() > data?.next_small_event_timer) {
@@ -107,7 +114,7 @@ function Lifecycle() {
       }
 
       // Cure
-      if (autoCure && isStunned) {
+      if (autoCure && isStunned && !shouldLetDie) {
         console.log(now.toLocaleString(), 'CURE');
         pockestDispatch(pockestLoading());
         pockestDispatch(await pockestCure());
@@ -115,9 +122,10 @@ function Lifecycle() {
       }
 
       // Clean
-      const attemptToClean = (autoClean || autoPlan) && cleanFrequency
-        && (monster && monster?.garbage > 0) && !isStunned;
-      const inCleanWindow = cleanFrequency === 2
+      const attemptToClean = autoClean && cleanFrequency
+        && (monster && monster?.garbage > 0) && !isStunned
+        && !shouldNeglect;
+      const inCleanWindow = (!autoPlan && cleanFrequency === 2)
         || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
         console.log(now.toLocaleString(), 'CLEAN');
@@ -127,9 +135,10 @@ function Lifecycle() {
       }
 
       // Feed
-      const attemptToFeed = (autoFeed || autoPlan) && feedFrequency
-        && (monster && monster?.stomach < feedTarget) && !isStunned;
-      const inFeedWindow = feedFrequency === 4
+      const attemptToFeed = autoFeed && feedFrequency
+        && (monster && monster?.stomach < feedTarget) && !isStunned
+        && !shouldNeglect;
+      const inFeedWindow = (!autoPlan && feedFrequency === 4)
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
         console.log(now.toLocaleString(), 'FEED');

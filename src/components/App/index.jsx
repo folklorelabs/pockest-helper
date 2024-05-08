@@ -17,6 +17,7 @@ import CareLog from '../CareLog';
 import CureControls from '../CureControls';
 import CharacterSprite from '../CharacterSprite';
 import fetchLatestRelease from '../../utils/fetchLatestRelease';
+import PlanLog from '../PlanLog';
 import './index.css';
 
 function App() {
@@ -113,8 +114,9 @@ function App() {
             </button>
             {(showLog && !minimized) ? (
               <LogPanel>
-                <CareLog title="Care Log" rows={36} />
-                <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} />
+                <CareLog title="Care Log" rows={34} />
+                <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} rows={4} />
+                {pockestState?.autoPlan ? (<PlanLog title="Preset Plan" rows={10} />) : ''}
               </LogPanel>
             ) : ''}
           </>

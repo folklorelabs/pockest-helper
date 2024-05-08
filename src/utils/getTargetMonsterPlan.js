@@ -17,7 +17,13 @@ const PLAN_TIMES = [
 
 export default function getTargetMonsterPlan(state) {
   const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
-  const planId = (monster ? monster?.plan : state?.planId) ?? '';
+  const planId = (() => {
+    const id = (monster ? monster?.plan : state?.planId) ?? '';
+    if (!id) return id;
+    if (typeof state?.planAge !== 'number') return id;
+    if (!monster) return id;
+    return `${id.substring(0, 1)}${state?.planAge}${id.substring(2)}`;
+  })();
 
   const primaryStatLetter = planId.slice(4, 5);
   const primaryStat = Object.keys(STAT_ID)
@@ -93,6 +99,7 @@ export function getCurrentTargetMonsterPlan(state) {
     monsterId: state?.monsterId,
     planId: targetPlan?.planId,
     statPlanId: targetPlan?.statPlanId,
+    planAge: targetPlan?.planAge,
     stat,
     cleanOffset: targetPlanSpecs?.cleanOffset,
     feedOffset: targetPlanSpecs?.feedOffset,

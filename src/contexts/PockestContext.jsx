@@ -27,6 +27,7 @@ const INITIAL_STATE = {
   monsterId: -1,
   planId: '',
   statPlanId: '',
+  planAge: 6,
   autoPlan: true,
   autoFeed: true,
   cleanFrequency: 2,
@@ -75,6 +76,7 @@ export function getLogEntry(pockestState) {
     logType: pockestState?.data?.event,
     timestamp: new Date().getTime(),
     monsterId: parseInt(pockestState?.data?.monster?.hash?.split('-')[0] || '-1', 10),
+    monsterBirth: pockestState?.data?.monster?.live_time,
   };
 }
 
@@ -152,18 +154,40 @@ export function getCurrentPlanStats(state) {
   };
 }
 
+export function getPlanNeglectOffset(state) {
+  let ageOffset = state?.planAge && state?.planAge > 1
+    ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
+  if (state.planAge === 5) {
+    // optimize planned age so we can die just 1 hour after evolution
+    ageOffset -= (24 * 60 * 60 * 1000); // -1 day (2d)
+  }
+  return ageOffset;
+}
+
+export function getPlanStunOffset(state) {
+  if (state?.planAge === 6) return null;
+  const ageOffset = state?.planAge && state?.planAge > 1
+    ? Math.max(0, MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] - (4 * 60 * 60 * 1000))
+    : 0;
+  return ageOffset;
+}
+
 export function getCurrentPlanSchedule(state) {
   const targetPlan = getTargetMonsterPlan(state);
   const birth = state?.data?.monster?.live_time;
   if (!birth) return {};
+  const neglectOffset = getPlanNeglectOffset(state);
   const cleanSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
       if (!spec) return fullSchedule;
+      if (spec.startTime > neglectOffset) return fullSchedule;
+      const start = birth + spec.startTime;
+      const end = spec.endTime > neglectOffset ? birth + neglectOffset : birth + spec.endTime;
       const schedule = getTimeIntervals(
-        birth + spec.startTime,
-        birth + spec.endTime,
-        spec.cleanFrequency,
+        start,
+        end,
+        state?.planAge === 5 && div === 'planDiv3' ? 8 : spec.cleanFrequency,
         spec.cleanOffset,
       );
       return [
@@ -180,12 +204,18 @@ export function getCurrentPlanSchedule(state) {
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
       if (!spec) return fullSchedule;
+      if (spec.startTime > neglectOffset) return fullSchedule;
+      const start = birth + spec.startTime;
+      const end = spec.endTime > neglectOffset ? birth + neglectOffset : birth + spec.endTime;
       const schedule = getTimeIntervals(
-        birth + spec.startTime,
-        birth + spec.endTime,
-        spec.feedFrequency,
+        start,
+        end,
+        state?.planAge === 5 && div === 'planDiv3' ? 8 : spec.feedFrequency,
         spec.feedOffset,
-      );
+      ).map((s) => ({
+        ...s,
+        feedTarget: spec.feedTarget,
+      }));
       return [
         ...fullSchedule,
         ...schedule,
@@ -196,9 +226,21 @@ export function getCurrentPlanSchedule(state) {
     state?.feedFrequency,
     0,
   );
+  const trainSchedule = (Array.from(new Array(14))).reduce((fullSchedule, _unused, index) => {
+    const startOffset = (12 * 60 * 60 * 1000) * index;
+    if (startOffset > neglectOffset) return fullSchedule;
+    return [
+      ...fullSchedule,
+      {
+        start: birth + startOffset,
+        stat: state?.statPlanId?.split('')?.[index] || state?.planId?.slice(-1),
+      },
+    ];
+  }, []);
   return {
     cleanSchedule,
     feedSchedule,
+    trainSchedule,
   };
 }
 
@@ -499,7 +541,6 @@ export async function pockestInit() {
       fetchAllHashes(),
       fetchPockestStatus(),
     ]);
-    console.log(data);
     return [ACTIONS.INIT, {
       allMonsters,
       allHashes,
@@ -526,6 +567,7 @@ function REDUCER(state, [type, payload]) {
         monsterId: payload.monsterId ?? state?.monsterId,
         planId: payload.planId ?? state?.planId,
         statPlanId: payload.statPlanId ?? state?.statPlanId,
+        planAge: payload.planAge ?? state?.planAge,
         autoPlan: payload.autoPlan ?? state?.autoPlan,
         autoFeed: payload.autoFeed ?? state?.autoFeed,
         autoClean: payload.autoClean ?? state?.autoClean,
