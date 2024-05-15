@@ -187,7 +187,7 @@ export function getCurrentPlanSchedule(state) {
       const schedule = getTimeIntervals(
         start,
         end,
-        state?.planAge === 5 && div === 'planDiv3' ? 8 : spec.cleanFrequency,
+        state?.planAge === 5 && div === 'planDiv3' ? 6 : spec.cleanFrequency,
         spec.cleanOffset,
       );
       return [
@@ -210,7 +210,7 @@ export function getCurrentPlanSchedule(state) {
       const schedule = getTimeIntervals(
         start,
         end,
-        state?.planAge === 5 && div === 'planDiv3' ? 8 : spec.feedFrequency,
+        spec.feedFrequency,
         spec.feedOffset,
       ).map((s) => ({
         ...s,
