@@ -36,18 +36,12 @@ function AutoPlanSettingInput({ settingName, required }) {
   const pattern = React.useMemo(() => {
     const validStats = Object.keys(STAT_ABBR).join('');
     if (settingName === 'planId') {
-      const validEggs = pockestState?.allMonsters.reduce((acc, mon) => {
-        const monEgg = mon?.plan?.slice(0, 1);
-        if (!monEgg) return acc;
-        if (!acc.includes(monEgg)) acc.push(monEgg);
-        return acc;
-      }, []).join('');
-      return `^[${validEggs}][1-6][ABC][LR][${validStats}]$`;
+      return `^[0-Z][1-6][ABC][LR][${validStats}]$`;
     } if (settingName === 'statPlanId') {
       return `^([${validStats}]{0,14})$`;
     }
     return '*';
-  }, [pockestState?.allMonsters, settingName]);
+  }, [settingName]);
   return (
     <div className="AutoPlanSettingInput">
       <input
