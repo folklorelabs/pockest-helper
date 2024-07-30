@@ -11,6 +11,9 @@ export default async function fetchAllMonsters() {
     fetch('https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list'),
     chrome.runtime.sendMessage({ type: 'GET_MONSTERS' }),
   ]);
+  if (serviceWorkerRes?.error) {
+    throw new Error(`${serviceWorkerRes.error}`);
+  }
   const { data } = await bucklerRes.json();
   const buckerMonsters = data?.books.reduce((allMonsters, book) => {
     const newAllMonsters = {
