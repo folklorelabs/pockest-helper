@@ -39,9 +39,9 @@ function CompletionLog({
   const stickerString = React.useMemo(() => {
     const dateStr = isRelTime
       ? parseDurationStr(stickerCompletion - now) : stickerCompletion.toLocaleString();
-    const labelStr = `Stickers Only Completion (${targetStickerCount} left)`;
+    const labelStr = `Stickers Only Completion (${targetStickerCount}/${totalCount} left)`;
     return `[${dateStr}] ${labelStr}`;
-  }, [isRelTime, targetStickerCount, now, stickerCompletion]);
+  }, [isRelTime, targetStickerCount, now, stickerCompletion, totalCount]);
   const targetMementoCount = React.useMemo(() => totalCount - (evolvedMonsters
     ?.filter((m) => m?.memento_flg)
     ?.length || 0), [totalCount, evolvedMonsters]);
@@ -54,21 +54,18 @@ function CompletionLog({
   const mementoString = React.useMemo(() => {
     const dateStr = isRelTime
       ? parseDurationStr(mementoCompletion - now) : mementoCompletion.toLocaleString();
-    const labelStr = `Mementos Completion (${targetMementoCount} left)`;
+    const labelStr = `Mementos Completion (${targetMementoCount}/${totalCount} left)`;
     return `[${dateStr}] ${labelStr}`;
-  }, [isRelTime, targetMementoCount, now, mementoCompletion]);
-  const obtainedString = React.useMemo(() => {
+  }, [isRelTime, targetMementoCount, now, mementoCompletion, totalCount]);
+  const timeSpent = React.useMemo(() => {
     const mementosObtained = totalCount - targetMementoCount;
     const stickersObtained = totalCount - targetStickerCount - mementosObtained;
     const obDur = (mementosObtained * 7 * DAY_IN_MS) + (stickersObtained * 3 * DAY_IN_MS)
       + curLiveDur;
-    const dateStr = isRelTime
-      ? `-${parseDurationStr(obDur)}` : (new Date(now.getTime() - obDur)).toLocaleString();
-    return `[${dateStr}] Approximate Start`;
-  }, [totalCount, targetMementoCount, targetStickerCount, curLiveDur, isRelTime, now]);
+    return parseDurationStr(obDur);
+  }, [totalCount, targetMementoCount, targetStickerCount, curLiveDur]);
   const log = [
-    `[Pockest Helper v${import.meta.env.APP_VERSION}] ${title} (${totalCount - targetStickerCount} stickers, ${totalCount - targetMementoCount} mementos)`,
-    obtainedString,
+    `${title} (uptime≈${timeSpent})`,
     stickerString,
     mementoString,
   ];
@@ -116,7 +113,7 @@ function CompletionLog({
 
 CompletionLog.defaultProps = {
   title: 'Completion Stats',
-  rows: 4,
+  rows: 3,
 };
 
 CompletionLog.propTypes = {
