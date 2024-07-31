@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill';
+
 const MONSTER_CACHE_DURATION = 1000 * 60 * 60;
 let monsterCache;
 let lastMonsterCache;
@@ -9,7 +11,7 @@ export default async function fetchAllMonsters() {
     serviceWorkerRes,
   ] = await Promise.all([
     fetch('https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list'),
-    chrome.runtime.sendMessage({ type: 'GET_MONSTERS' }),
+    browser.runtime.sendMessage({ type: 'GET_MONSTERS' }),
   ]);
   if (serviceWorkerRes?.error) {
     throw new Error(`${serviceWorkerRes.error}`);

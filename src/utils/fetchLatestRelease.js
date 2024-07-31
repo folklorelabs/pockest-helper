@@ -1,7 +1,9 @@
+import browser from 'webextension-polyfill';
+
 let cache;
 export default async function fetchLatestReleases() {
   if (cache) return cache;
-  const data = await chrome.runtime.sendMessage({ type: 'GET_LATEST_RELEASE' });
+  const data = await browser.runtime.sendMessage({ type: 'GET_LATEST_RELEASE' });
   if (data?.error) {
     console.error(`${data.error}`);
     return null;

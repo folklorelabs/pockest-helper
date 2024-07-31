@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill';
+
 function generateErrorResponse(id, err) {
   return {
     error: `[service-worker:${id}] ${err}`,
@@ -27,7 +29,7 @@ async function postDiscordMessage(content) {
   return data;
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'GET_MONSTERS') {
     (async () => {
       try {
