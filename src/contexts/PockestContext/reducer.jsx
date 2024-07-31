@@ -56,6 +56,12 @@ export default function REDUCER(state, [type, payload]) {
         ...state,
         loading: false,
         data: payload,
+        cleanTimestamp: (payload?.result?.logType === 'cleaning')
+          ? payload?.result?.timestamp : state.cleanTimestamp,
+        statLog: (payload?.result?.logType === 'training') ? [
+          ...state.statLog,
+          payload?.result?.type,
+        ] : state.statLog,
         log: (payload?.result) ? [
           ...state.log,
           payload?.result,

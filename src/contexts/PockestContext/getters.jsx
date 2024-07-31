@@ -205,6 +205,7 @@ export function getAutoPlanSettings(state) {
       ...newSettings,
       autoPlan: true,
       paused: true,
+      statLog: [],
     };
   }
   if (newSettings.autoPlan) {

@@ -92,7 +92,7 @@ export function getCurrentTargetMonsterPlan(state) {
   })();
   const stat = (() => {
     const curTrainings = state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
-    const numTrains = curTrainings?.length;
+    const numTrains = Math.max(state?.statLog?.length, curTrainings?.length);
     return targetPlan?.statPlan?.[numTrains] || targetPlan?.primaryStat;
   })();
   return {
