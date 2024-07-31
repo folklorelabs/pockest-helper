@@ -1,0 +1,69 @@
+.CompletionLog {
+  margin-bottom: 2rem;
+}
+
+.CompletionLog-header {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.CompletionLog-title {
+  font-size: 1.333em;
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+}
+
+.CompletionLog-content {
+  position: relative;
+}
+
+.CompletionLog-textarea {
+  display: block;
+  width: 100%;
+  resize: none;
+  padding-right: 2.5rem;
+  padding: 0.333rem 0.5rem 0;
+  border-bottom: 0;
+  background: hsla(0, 0%, 100%, 0.2);
+  color: #fff;
+}
+
+.CompletionLog-textarea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.CompletionLog-textarea::-webkit-scrollbar-track {
+  background: rgba(242, 242, 242, 0);
+}
+
+.CompletionLog-textarea::-webkit-scrollbar-thumb {
+  background: rgb(188, 188, 188);
+}
+
+.CompletionLog-textarea::-webkit-scrollbar-thumb:hover {
+  background: rgb(148, 148, 148)
+}
+
+.CompletionLog .PockestLink {
+  text-transform: uppercase;
+  font-weight: 700;
+  text-decoration: none;
+  background: transparent;
+  line-height: 1em;
+  padding: 0 0.4rem;
+}
+
+.CompletionLog-buttons {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0rem 0.5rem;
+  background: hsla(0, 0%, 100%, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+  border-style: solid;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
