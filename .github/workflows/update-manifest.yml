@@ -1,0 +1,36 @@
+name: update-manifest
+
+on:
+  push:
+    branches:
+      - gh-pages
+  schedule:
+    - cron:  '0 * * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 'gh-pages'
+      - name: dependencies
+        run: npm ci
+      - name: generate updateManfiest file
+        run: node ./scripts/genUpdateManifest.js
+      - name: git config
+        uses: ./.github/actions/git-config
+      - name: ghpages deploy
+        run: |
+          if [[ `git status --porcelain` ]]; then
+            git add -A
+            git commit -m 'Automated updateManifest generation'
+            git push
+          else
+            echo "Nothing to commit"
+          fi
+        shell: bash
+
