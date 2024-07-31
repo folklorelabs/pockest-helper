@@ -117,7 +117,7 @@ function App() {
               <LogPanel>
                 <CareLog title="Care Log" rows={21} />
                 <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} rows={2} />
-                {pockestState?.autoPlan ? (<PlanLog title="Preset Plan" rows={16} />) : ''}
+                {pockestState?.autoPlan ? (<PlanLog title="Preset Plan" rows={14} />) : ''}
                 <CompletionLog />
               </LogPanel>
             ) : ''}

@@ -19,38 +19,56 @@ function CompletionLog({
   const {
     pockestState,
   } = usePockestContext();
+  const curLiveDur = React.useMemo(() => (pockestState?.data?.monster?.live_time
+    ? (now.getTime() - pockestState.data.monster.live_time) : 0), [
+    now,
+    pockestState.data.monster.live_time,
+  ]);
   const evolvedMonsters = React.useMemo(() => pockestState?.allMonsters
     ?.filter((m) => m?.age >= 5), [pockestState?.allMonsters]);
   const totalCount = evolvedMonsters?.length || 0;
   const targetStickerCount = React.useMemo(() => totalCount - (evolvedMonsters
     ?.filter((m) => m?.unlock)
     ?.length || 0), [totalCount, evolvedMonsters]);
-  const stickerString = React.useMemo(() => {
-    const curLiveDur = pockestState?.data?.monster?.live_time
-      ? (now.getTime() - pockestState.data.monster.live_time) : 0;
+  const stickerCompletion = React.useMemo(() => {
     const curCompDur = Math.min(DAY_IN_MS * 3, curLiveDur);
     const completionDur = targetStickerCount * (3 * DAY_IN_MS) - curCompDur;
     const completionDate = new Date(now.getTime() + completionDur);
+    return completionDate;
+  }, [targetStickerCount, now, curLiveDur]);
+  const stickerString = React.useMemo(() => {
     const dateStr = isRelTime
-      ? parseDurationStr(completionDate - now) : completionDate.toLocaleString();
-    const labelStr = `All ${totalCount} Stickers (${targetStickerCount} left)`;
+      ? parseDurationStr(stickerCompletion - now) : stickerCompletion.toLocaleString();
+    const labelStr = `Stickers Only Completion (${targetStickerCount} left)`;
     return `[${dateStr}] ${labelStr}`;
-  }, [pockestState.data.monster.live_time, now, targetStickerCount, isRelTime, totalCount]);
+  }, [isRelTime, targetStickerCount, now, stickerCompletion]);
   const targetMementoCount = React.useMemo(() => totalCount - (evolvedMonsters
     ?.filter((m) => m?.memento_flg)
     ?.length || 0), [totalCount, evolvedMonsters]);
-  const mementoString = React.useMemo(() => {
-    const curLiveDur = pockestState?.data?.monster?.live_time
-      ? (now.getTime() - pockestState.data.monster.live_time) : 0;
+  const mementoCompletion = React.useMemo(() => {
     const curCompDur = Math.min(DAY_IN_MS * 7, curLiveDur);
     const completionDur = targetMementoCount * (7 * DAY_IN_MS) - curCompDur;
     const completionDate = new Date(now.getTime() + completionDur);
+    return completionDate;
+  }, [curLiveDur, targetMementoCount, now]);
+  const mementoString = React.useMemo(() => {
     const dateStr = isRelTime
-      ? parseDurationStr(completionDate - now) : completionDate.toLocaleString();
-    const labelStr = `All ${totalCount} Mementos (${targetMementoCount} left)`;
+      ? parseDurationStr(mementoCompletion - now) : mementoCompletion.toLocaleString();
+    const labelStr = `Mementos Completion (${targetMementoCount} left)`;
     return `[${dateStr}] ${labelStr}`;
-  }, [pockestState.data.monster.live_time, now, targetMementoCount, isRelTime, totalCount]);
+  }, [isRelTime, targetMementoCount, now, mementoCompletion]);
+  const obtainedString = React.useMemo(() => {
+    const mementosObtained = totalCount - targetMementoCount;
+    const stickersObtained = totalCount - targetStickerCount - mementosObtained;
+    const obDur = (mementosObtained * 7 * DAY_IN_MS) + (stickersObtained * 3 * DAY_IN_MS)
+      + curLiveDur;
+    const dateStr = isRelTime
+      ? `-${parseDurationStr(obDur)}` : (new Date(now.getTime() - obDur)).toLocaleString();
+    return `[${dateStr}] Approximate Start`;
+  }, [totalCount, targetMementoCount, targetStickerCount, curLiveDur, isRelTime, now]);
   const log = [
+    `[Pockest Helper v${import.meta.env.APP_VERSION}] ${title} (${totalCount - targetStickerCount} stickers, ${totalCount - targetMementoCount} mementos)`,
+    obtainedString,
     stickerString,
     mementoString,
   ];
@@ -98,7 +116,7 @@ function CompletionLog({
 
 CompletionLog.defaultProps = {
   title: 'Completion Stats',
-  rows: 2,
+  rows: 4,
 };
 
 CompletionLog.propTypes = {
