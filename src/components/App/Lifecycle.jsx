@@ -1,20 +1,9 @@
 import React from 'react';
 import { STAT_ID } from '../../config/stats';
 import {
-  pockestLoading,
-  pockestClean,
-  pockestFeed,
-  pockestTrain,
-  pockestMatch,
+  pockestActions,
+  pockestGetters,
   usePockestContext,
-  pockestRefresh,
-  getCurrentPlanStats,
-  getCurrentPlanScheduleWindows,
-  getBestMatch,
-  pockestCure,
-  fetchMatchList,
-  getPlanNeglectOffset,
-  getPlanStunOffset,
 } from '../../contexts/PockestContext';
 import getMatchTimer from '../../utils/getMatchTimer';
 import getRandomMinutes from '../../utils/getRandomMinutes';
@@ -26,11 +15,14 @@ function Lifecycle() {
     cleanFrequency,
     feedFrequency,
     feedTarget,
-  } = React.useMemo(() => getCurrentPlanStats(pockestState), [pockestState]);
+  } = React.useMemo(() => pockestGetters.getCurrentPlanStats(pockestState), [pockestState]);
   const {
     currentCleanWindow,
     currentFeedWindow,
-  } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
+  } = React.useMemo(
+    () => pockestGetters.getCurrentPlanScheduleWindows(pockestState),
+    [pockestState],
+  );
 
   const getNextRefresh = () => {
     const now = new Date();
@@ -39,8 +31,8 @@ function Lifecycle() {
   const nextRandomReset = React.useRef(getNextRefresh());
   const refresh = React.useCallback(async () => {
     nextRandomReset.current = getNextRefresh();
-    pockestDispatch(pockestLoading());
-    pockestDispatch(await pockestRefresh(pockestState));
+    pockestDispatch(pockestActions.pockestLoading());
+    pockestDispatch(await pockestActions.pockestRefresh(pockestState));
   }, [pockestDispatch, pockestState]);
   React.useEffect(() => {
     if (!pockestState?.error || pockestState?.loading) return () => {};
@@ -83,8 +75,8 @@ function Lifecycle() {
       const now = new Date();
       const isStunned = monster?.status === 2;
       const shouldNeglect = monster?.live_time
-        ? monster.live_time + getPlanNeglectOffset(pockestState) <= now : false;
-      const stunOffset = getPlanStunOffset(pockestState);
+        ? monster.live_time + pockestGetters.getPlanNeglectOffset(pockestState) <= now : false;
+      const stunOffset = pockestGetters.getPlanStunOffset(pockestState);
       const shouldLetDie = monster?.live_time && typeof stunOffset === 'number'
         ? monster.live_time + stunOffset <= now : false;
 
@@ -116,8 +108,8 @@ function Lifecycle() {
       // Cure
       if (autoCure && isStunned && !shouldLetDie) {
         console.log(now.toLocaleString(), 'CURE');
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestCure());
+        pockestDispatch(pockestActions.pockestLoading());
+        pockestDispatch(await pockestActions.pockestCure());
         return;
       }
 
@@ -129,8 +121,8 @@ function Lifecycle() {
         || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
         console.log(now.toLocaleString(), 'CLEAN');
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestClean(pockestState));
+        pockestDispatch(pockestActions.pockestLoading());
+        pockestDispatch(await pockestActions.pockestClean(pockestState));
         return;
       }
 
@@ -142,8 +134,8 @@ function Lifecycle() {
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
         console.log(now.toLocaleString(), 'FEED');
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestFeed());
+        pockestDispatch(pockestActions.pockestLoading());
+        pockestDispatch(await pockestActions.pockestFeed());
         return;
       }
 
@@ -154,8 +146,8 @@ function Lifecycle() {
       const willTrain = attemptToTrain && nextTrainingTime && now >= nextTrainingTime;
       if (willTrain) {
         console.log(now.toLocaleString(), `TRAIN, stat=${STAT_ID[stat]}`);
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestTrain(stat));
+        pockestDispatch(pockestActions.pockestLoading());
+        pockestDispatch(await pockestActions.pockestTrain(stat));
         return;
       }
 
@@ -163,8 +155,8 @@ function Lifecycle() {
       const attemptToMatch = autoMatch && monster && !isStunned && !willTrain;
       const nextMatchTime = getMatchTimer(pockestState);
       if (attemptToMatch && nextMatchTime && now.getTime() >= nextMatchTime) {
-        pockestDispatch(pockestLoading());
-        const { exchangeList } = await fetchMatchList();
+        pockestDispatch(pockestActions.pockestLoading());
+        const { exchangeList } = await pockestGetters.fetchMatchList();
         if (monster?.age >= 5) {
           // Report missing hashes, names, and stat vals to discord when found on opponents
           const missing = exchangeList.filter((m) => {
@@ -178,9 +170,9 @@ function Lifecycle() {
             postDiscord(missingReport);
           }
         }
-        const bestMatch = await getBestMatch(pockestState, exchangeList);
+        const bestMatch = await pockestGetters.getBestMatch(pockestState, exchangeList);
         console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
-        pockestDispatch(await pockestMatch(pockestState, bestMatch));
+        pockestDispatch(await pockestActions.pockestMatch(pockestState, bestMatch));
       }
     }, 1000);
     return () => {

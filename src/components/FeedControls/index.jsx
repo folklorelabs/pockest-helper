@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  pockestSettings,
+  pockestActions,
   usePockestContext,
-  getCurrentPlanScheduleWindows,
+  pockestGetters,
 } from '../../contexts/PockestContext';
 import './index.css';
 import useNow from '../../hooks/useNow';
@@ -28,7 +28,7 @@ function FeedControls() {
   const {
     currentFeedWindow,
     nextFeedWindow,
-  } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
+  } = React.useMemo(() => pockestGetters.getCurrentPlanScheduleWindows(pockestState), [pockestState]);
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const stomachTimer = React.useMemo(() => {
     const timer = getStomachTimer(pockestState);
@@ -51,7 +51,7 @@ function FeedControls() {
             id="PockestHelper_AutoFeed"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoFeed: e.target.checked }))}
+            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({ autoFeed: e.target.checked }))}
             checked={autoFeed}
             disabled={!paused || autoPlan}
           />
@@ -76,7 +76,7 @@ function FeedControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ feedFrequency: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({ feedFrequency: parseInt(e.target.value, 10) }));
           }}
           value={feedFrequency}
           disabled={!paused || autoPlan}
@@ -93,7 +93,7 @@ function FeedControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ feedTarget: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({ feedTarget: parseInt(e.target.value, 10) }));
           }}
           value={feedTarget}
           disabled={!paused || autoPlan}

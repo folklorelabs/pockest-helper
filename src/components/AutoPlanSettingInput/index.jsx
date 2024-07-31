@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { STAT_ABBR } from '../../config/stats';
 import {
-  pockestPlanSettings,
+  pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import './index.css';
@@ -28,7 +28,7 @@ function AutoPlanSettingInput({ settingName, required }) {
     setNewValue(inputStr);
     const invalidInput = e?.target?.validity?.patternMismatch;
     if (invalidInput) return;
-    pockestDispatch(pockestPlanSettings({
+    pockestDispatch(pockestActions.pockestPlanSettings({
       ...pockestState,
       [settingName]: inputStr,
     }));

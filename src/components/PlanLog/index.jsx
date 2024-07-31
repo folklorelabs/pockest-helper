@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  getPlanStunOffset,
-  getCurrentPlanSchedule,
+  pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import './index.css';
@@ -19,12 +18,16 @@ function PlanLog({
   } = usePockestContext();
   const scheduleLog = React.useMemo(() => {
     const birth = pockestState?.data?.monster?.live_time;
-    const { cleanSchedule, feedSchedule, trainSchedule } = getCurrentPlanSchedule(pockestState);
+    const {
+      cleanSchedule,
+      feedSchedule,
+      trainSchedule,
+    } = pockestGetters.getCurrentPlanSchedule(pockestState);
     let data = [];
-    const stunOffset = getPlanStunOffset(pockestState);
+    const stunOffset = pockestGetters.getPlanStunOffset(pockestState);
     if (typeof stunOffset === 'number') {
       data.push({
-        start: birth + getPlanStunOffset(pockestState),
+        start: birth + pockestGetters.getPlanStunOffset(pockestState),
         label: 'Stop curing',
       });
     }

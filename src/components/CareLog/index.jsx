@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  pockestClearLog,
+  pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import './index.css';
@@ -98,7 +98,7 @@ function CareLog({
               onClick={() => {
                 const confirm = window.confirm(`Are you sure you want to permanently delete your old ${title.toLowerCase()} entries? This will include all entries before your last egg hatch.`);
                 if (!confirm) return;
-                pockestDispatch(pockestClearLog(pockestState, logTypes));
+                pockestDispatch(pockestActions.pockestClearLog(pockestState, logTypes));
               }}
             >
               ❌ Clean

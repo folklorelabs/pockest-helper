@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   usePockestContext,
-  pockestSettings,
+  pockestActions,
 } from '../../contexts/PockestContext';
 import LogCountLine from '../LogCountLine';
 import { parseDurationStr } from '../../utils/parseDuration';
@@ -35,7 +35,9 @@ function MatchControls() {
             id="PockestHelper_AutoMatch"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoMatch: e.target.checked }))}
+            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({
+              autoMatch: e.target.checked,
+            }))}
             checked={autoMatch}
             disabled={!paused || autoPlan}
           />
@@ -49,7 +51,7 @@ function MatchControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ matchPriority: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({ matchPriority: parseInt(e.target.value, 10) }));
           }}
           value={matchPriority || ''}
           disabled={!paused}

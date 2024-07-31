@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   usePockestContext,
-  pockestPlanSettings,
+  pockestActions,
 } from '../../contexts/PockestContext';
 import TargetMonsterSelect from '../TargetMonsterSelect';
 import AutoPlanSettingInput from '../AutoPlanSettingInput';
@@ -66,7 +66,7 @@ function AutoPlanControls() {
             id="PockestHelper_AutoPlan"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestPlanSettings({
+            onChange={(e) => pockestDispatch(pockestActions.pockestPlanSettings({
               ...pockestState,
               autoPlan: e.target.checked,
             }))}
@@ -178,7 +178,7 @@ function AutoPlanControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestPlanSettings({
+            pockestDispatch(pockestActions.pockestPlanSettings({
               ...pockestState,
               planAge: parseInt(e.target.value, 10),
             }));

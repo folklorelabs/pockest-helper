@@ -1,5 +1,8 @@
 import React from 'react';
-import { pockestLoading, pockestSelectEgg, usePockestContext } from '../../contexts/PockestContext';
+import {
+  pockestActions,
+  usePockestContext,
+} from '../../contexts/PockestContext';
 import usePlanEgg from '../../hooks/usePlanEgg';
 
 function BuyEggBtn() {
@@ -14,8 +17,8 @@ function BuyEggBtn() {
       type="button"
       onClick={async () => {
         if (!planEgg?.id || pockestState?.loading) return;
-        pockestDispatch(pockestLoading());
-        pockestDispatch(await pockestSelectEgg(planEgg.id));
+        pockestDispatch(pockestActions.pockestLoading());
+        pockestDispatch(await pockestActions.pockestSelectEgg(planEgg.id));
       }}
       disabled={!planEgg?.id || pockestState?.loading || !planEggAffordable}
     >

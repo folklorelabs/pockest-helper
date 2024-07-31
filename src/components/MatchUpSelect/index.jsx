@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  getMonsterId,
-  pockestSettings,
+  pockestGetters,
+  pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
 
@@ -16,7 +16,7 @@ function MatchUpSelect() {
     paused,
     allMonsters,
   } = pockestState;
-  const monsterId = React.useMemo(() => getMonsterId(pockestState), [pockestState]);
+  const monsterId = React.useMemo(() => pockestGetters.getMonsterId(pockestState), [pockestState]);
   const curMonster = React.useMemo(() => allMonsters
     .find((m) => m.monster_id === monsterId), [allMonsters, monsterId]);
   const sortedMonsters = React.useMemo(() => allMonsters
@@ -36,7 +36,9 @@ function MatchUpSelect() {
     <select
       className="PockestSelect"
       onChange={(e) => {
-        pockestDispatch(pockestSettings({ matchPreference: parseInt(e.target.value, 10) }));
+        pockestDispatch(pockestActions.pockestSettings({
+          matchPreference: parseInt(e.target.value, 10),
+        }));
       }}
       value={matchPreference || ''}
       disabled={!paused}

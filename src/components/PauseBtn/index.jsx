@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import { pockestPause, usePockestContext } from '../../contexts/PockestContext';
+import { pockestActions, usePockestContext } from '../../contexts/PockestContext';
 import './index.css';
 
 function PauseBtn() {
@@ -11,7 +11,7 @@ function PauseBtn() {
     <button
       className={cx('PockestButton', 'PauseBtn', paused ? 'PockestButton--off' : 'PockestButton--on')}
       type="button"
-      onClick={() => pockestDispatch(pockestPause(!paused))}
+      onClick={() => pockestDispatch(pockestActions.pockestPause(!paused))}
       disabled={!canHelp}
     >
       <span className="PauseBtnTxt">

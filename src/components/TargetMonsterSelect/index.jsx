@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  getMonsterId,
-  pockestPlanSettings,
+  pockestGetters,
+  pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
 
@@ -15,7 +15,7 @@ function TargetMonsterSelect() {
     .map((m) => m?.monster_id), [pockestState?.allMonsters]);
   const availableMonsters = React.useMemo(() => {
     const monster = pockestState?.data?.monster;
-    const curMonsterId = getMonsterId(pockestState);
+    const curMonsterId = pockestGetters.getMonsterId(pockestState);
     if (!curMonsterId) {
       return pockestState?.allMonsters
         ?.filter((m) => {
@@ -60,7 +60,7 @@ function TargetMonsterSelect() {
       className="PockestSelect"
       onChange={(e) => {
         const monsterId = e.target.value ? parseInt(e.target.value, 10) : -1;
-        pockestDispatch(pockestPlanSettings({
+        pockestDispatch(pockestActions.pockestPlanSettings({
           ...pockestState,
           monsterId,
         }));

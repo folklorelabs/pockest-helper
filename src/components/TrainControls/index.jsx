@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  pockestSettings,
+  pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { STAT_ID } from '../../config/stats';
@@ -35,7 +35,7 @@ function TrainControls() {
             id="PockestHelper_AutoTrain"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoTrain: e.target.checked }))}
+            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({ autoTrain: e.target.checked }))}
             checked={autoTrain}
             disabled={!paused || autoPlan}
           />
@@ -58,7 +58,7 @@ function TrainControls() {
           className="PockestSelect"
           value={stat}
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ stat: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({ stat: parseInt(e.target.value, 10) }));
           }}
           disabled={!paused || autoPlan}
         >

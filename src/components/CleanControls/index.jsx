@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  pockestSettings,
+  pockestActions,
   usePockestContext,
-  getCurrentPlanScheduleWindows,
+  pockestGetters,
 } from '../../contexts/PockestContext';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
@@ -29,7 +29,7 @@ function CleanControls() {
   const {
     currentCleanWindow,
     nextCleanWindow,
-  } = React.useMemo(() => getCurrentPlanScheduleWindows(pockestState), [pockestState]);
+  } = React.useMemo(() => pockestGetters.getCurrentPlanScheduleWindows(pockestState), [pockestState]);
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const garbageTimer = React.useMemo(() => {
     const timer = getGarbageTimer(pockestState);
@@ -51,7 +51,7 @@ function CleanControls() {
             id="PockestHelper_AutoClean"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestSettings({ autoClean: e.target.checked }))}
+            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({ autoClean: e.target.checked }))}
             checked={autoClean}
             disabled={!paused || autoPlan}
           />
@@ -81,7 +81,7 @@ function CleanControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
           }}
           value={cleanFrequency}
           disabled={!paused || autoPlan}
