@@ -1,6 +1,7 @@
-import browser from 'webextension-polyfill';
+import fetchJsonArray from './fetchJsonArray';
 
 const MONSTER_CACHE_DURATION = 1000 * 60 * 60;
+
 let monsterCache;
 let lastMonsterCache;
 export default async function fetchAllMonsters() {
@@ -8,14 +9,11 @@ export default async function fetchAllMonsters() {
   if (monsterCache && (now - lastMonsterCache) < MONSTER_CACHE_DURATION) return monsterCache;
   const [
     bucklerRes,
-    serviceWorkerRes,
+    selfHostedMonsters,
   ] = await Promise.all([
     fetch('https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list'),
-    browser.runtime.sendMessage({ type: 'GET_MONSTERS' }),
+    fetchJsonArray('https://folklorelabs.io/pockest-helper-data/monsters.min.json'),
   ]);
-  if (serviceWorkerRes?.error) {
-    throw new Error(`${serviceWorkerRes.error}`);
-  }
   const { data } = await bucklerRes.json();
   const buckerMonsters = data?.books.reduce((allMonsters, book) => {
     const newAllMonsters = {
@@ -35,7 +33,7 @@ export default async function fetchAllMonsters() {
     });
     return newAllMonsters;
   }, {});
-  if (!buckerMonsters) return serviceWorkerRes?.monsters;
+  if (!buckerMonsters) return selfHostedMonsters;
   const allMonsters = Object.keys(buckerMonsters).map((monsterIdStr) => {
     const monsterId = parseInt(monsterIdStr || '-1', 10);
     const matchingBucklerMonsters = buckerMonsters[monsterId];
@@ -43,7 +41,7 @@ export default async function fetchAllMonsters() {
       ...matchingBucklerMonsters[0],
       // TODO: combine/add any diffs found
     };
-    const swMonster = serviceWorkerRes?.monsters?.find((m) => m.monster_id === monsterId);
+    const swMonster = selfHostedMonsters?.find((m) => m.monster_id === monsterId);
     return {
       ...bucklerMonster,
       ...swMonster,

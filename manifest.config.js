@@ -16,9 +16,6 @@ export default defineManifest(() => ({
       ],
     },
   ],
-  background: {
-    service_worker: 'src/service-worker.js',
-  },
   icons: {
     32: 'src/assets/icon32.png',
     48: 'src/assets/icon48.png',
