@@ -65,7 +65,7 @@ function CompletionLog({
     return parseDurationStr(obDur);
   }, [totalCount, targetMementoCount, targetStickerCount, curLiveDur]);
   const log = [
-    `${title} (uptime≈${timeSpent})`,
+    `${title} (uptime ≈ ${timeSpent})`,
     stickerString,
     mementoString,
   ];
