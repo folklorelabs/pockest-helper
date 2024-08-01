@@ -36,6 +36,11 @@ jobs:
           echo DISCORD_WEBHOOK=\"${{ secrets.DISCORD_WEBHOOK }}\" >> .env
       - name: Build
         uses: ./.github/actions/build
+      - name: Publish/Build Web Extension
+        run: |
+          npm i web-ext
+          web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.WEB_EXT_KEY }} --api-secret ${{ secrets.WEB_EXT_SECRET }} -a ./dist
+          node ./scripts/webExtCleanup.js
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
