@@ -23,6 +23,7 @@ export default defineManifest(() => ({
   },
   browser_specific_settings: {
     gecko: {
+      id: 'pockesthelper@folklorelabs.io',
       update_url: 'https://folklorelabs.io/pockest-helper/updateManifest.json',
     },
   },
