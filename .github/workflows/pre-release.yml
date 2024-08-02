@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+env:
+  JWT_ISSUER: ${{ secrets.JWT_ISSUER }}
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
 jobs:
   Pre-release:
     runs-on: ubuntu-latest
