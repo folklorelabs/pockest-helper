@@ -14,6 +14,7 @@ export default async function fetchAllMonsters() {
   if (serviceWorkerRes?.error) {
     throw new Error(`${serviceWorkerRes.error}`);
   }
+  if (!bucklerRes.ok) throw new Error(`Network error (${bucklerRes.status})`);
   const { data } = await bucklerRes.json();
   const buckerMonsters = data?.books.reduce((allMonsters, book) => {
     const newAllMonsters = {

@@ -86,6 +86,7 @@ export async function pockestFeed() {
         'content-type': 'application/json',
       },
     });
+    if (!response.ok) throw new Error(`Network error (${response.status})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -110,6 +111,7 @@ export async function pockestCure() {
         'content-type': 'application/json',
       },
     });
+    if (!response.ok) throw new Error(`Network error (${response.status})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -133,6 +135,7 @@ export async function pockestClean(pockestState) {
         'content-type': 'application/json',
       },
     });
+    if (!response.ok) throw new Error(`Network error (${response.status})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -160,6 +163,7 @@ export async function pockestTrain(type) {
         'content-type': 'application/json',
       },
     });
+    if (!response.ok) throw new Error(`Network error (${response.status})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -189,6 +193,7 @@ export async function pockestMatch(pockestState, match) {
       },
       body: JSON.stringify({ slot: match?.slot }),
     });
+    if (!response.ok) throw new Error(`Network error (${response.status})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -226,6 +231,7 @@ export async function pockestSelectEgg(id) {
         'content-type': 'application/json',
       },
     });
+    if (!response.ok) throw new Error(`Network error (${response.status})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
