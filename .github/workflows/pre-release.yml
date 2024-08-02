@@ -21,7 +21,7 @@ jobs:
         run: npm run build
 
       - name: Zip file
-        run: echo "ZIP_FILE='$(node ./scripts/zipExtension.js)'" >> $GITHUB_ENV
+        run: echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
 
       - name: Pre-release
         uses: softprops/action-gh-release@v1
