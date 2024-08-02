@@ -10,6 +10,7 @@ import getRandomMinutes from '../../utils/getRandomMinutes';
 
 import {
   getStateFromLocalStorage,
+  getStateFromWindow,
   saveStateToLocalStorage,
 } from './state';
 import REDUCER from './reducer';
@@ -20,7 +21,9 @@ import {
 export * as pockestActions from './actions';
 export * as pockestGetters from './getters';
 
-const initialState = getStateFromLocalStorage();
+const stateFromWindow = getStateFromWindow();
+const skipInitialization = !!stateFromWindow;
+const initialState = stateFromWindow || getStateFromLocalStorage();
 
 const PockestContext = createContext({
   pockestState: initialState,
@@ -44,7 +47,7 @@ export function PockestProvider({
       const timeoutMs = getRandomMinutes(60);
       initTimeout = window.setTimeout(init, timeoutMs);
     };
-    init();
+    if (!skipInitialization) init();
     return () => {
       window.clearTimeout(initTimeout);
     };
