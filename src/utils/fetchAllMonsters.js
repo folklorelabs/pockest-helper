@@ -1,22 +1,37 @@
-import fetchJsonArray from './fetchJsonArray';
+import LocalStorageCache from './LocalStorageCache';
 
-const MONSTER_CACHE_DURATION = 1000 * 60 * 60;
+const bucklerCache = new LocalStorageCache('PockestHelperBucklerEncyclopedia');
+const sheetCache = new LocalStorageCache('PockestHelperSheetMonsters');
 
-let monsterCache;
-let lastMonsterCache;
 export default async function fetchAllMonsters() {
-  const now = (new Date()).getTime();
-  if (monsterCache && (now - lastMonsterCache) < MONSTER_CACHE_DURATION) return monsterCache;
   const [
     bucklerRes,
-    selfHostedMonsters,
+    sheetRes,
   ] = await Promise.all([
     fetch('https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list'),
-    fetchJsonArray('https://folklorelabs.io/pockest-helper-data/monsters.min.json'),
+    fetch('https://folklorelabs.io/pockest-helper-data/monsters.min.json'),
   ]);
-  if (!bucklerRes.ok) throw new Error(`Network error (${bucklerRes.status})`);
-  const { data } = await bucklerRes.json();
-  const buckerMonsters = data?.books.reduce((allMonsters, book) => {
+
+  // handle sheet data response
+  const sheetMonsters = sheetRes.ok ? await sheetRes.json() : sheetCache.get();
+  if (!sheetRes.ok) {
+    const err = new Error(`Network error (${sheetRes.status})`);
+    if (!sheetMonsters) throw err;
+    console.error(err);
+  }
+  sheetCache.set(sheetMonsters);
+
+  // handle buckler data response
+  const bucklerData = bucklerRes.ok ? await bucklerRes.json() : bucklerCache.get();
+  if (!bucklerRes.ok) {
+    const err = new Error(`Network error (${bucklerRes.status})`);
+    if (!bucklerData) throw err;
+    console.error(err);
+  }
+  bucklerCache.set(bucklerData);
+
+  // merge all buckler encyclopedia into a flat monsters object
+  const bucklerMonsters = bucklerData?.data?.books.reduce((allMonsters, book) => {
     const newAllMonsters = {
       ...allMonsters,
     };
@@ -34,21 +49,22 @@ export default async function fetchAllMonsters() {
     });
     return newAllMonsters;
   }, {});
-  if (!buckerMonsters) return selfHostedMonsters;
-  const allMonsters = Object.keys(buckerMonsters).map((monsterIdStr) => {
+  if (!bucklerMonsters) return sheetMonsters;
+
+  // inject buckler encyclopedia monster data into each sheet monster
+  const allMonsters = Object.keys(bucklerMonsters).map((monsterIdStr) => {
     const monsterId = parseInt(monsterIdStr || '-1', 10);
-    const matchingBucklerMonsters = buckerMonsters[monsterId];
+    const matchingBucklerMonsters = bucklerMonsters[monsterId];
     const bucklerMonster = {
       ...matchingBucklerMonsters[0],
       // TODO: combine/add any diffs found
     };
-    const swMonster = selfHostedMonsters?.find((m) => m.monster_id === monsterId);
+    const swMonster = sheetMonsters?.find((m) => m.monster_id === monsterId);
     return {
       ...bucklerMonster,
       ...swMonster,
     };
   });
-  monsterCache = allMonsters;
-  lastMonsterCache = (new Date()).getTime();
+
   return allMonsters;
 }
