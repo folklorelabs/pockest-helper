@@ -45,7 +45,7 @@ export function PockestProvider({
     if (!validateStorageSession()) {
       // session invalid, we opened a new tab or something. invalidate the session in state.
       (async () => {
-        console.error('Session is invalid. Are there multiple versions running on different tabs?');
+        console.error('Invalid session detected');
         pockestDispatch(await pockestInvalidateSession());
       })();
       return;
