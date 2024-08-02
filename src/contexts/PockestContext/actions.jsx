@@ -12,6 +12,7 @@ import {
 
 export const ACTIONS = {
   INIT: 'POCKEST_INIT',
+  INVALIDATE_SESSION: 'POCKEST_INVALIDATE_SESSION',
   REFRESH: 'POCKEST_REFRESH',
   LOADING: 'POCKEST_LOADING',
   PAUSE: 'POCKEST_PAUSE',
@@ -281,4 +282,7 @@ export async function pockestInit() {
   } catch (error) {
     return [ACTIONS.ERROR, error?.message];
   }
+}
+export async function pockestInvalidateSession() {
+  return [ACTIONS.INVALIDATE_SESSION];
 }
