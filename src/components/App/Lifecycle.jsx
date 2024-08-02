@@ -58,8 +58,9 @@ function Lifecycle() {
         paused,
         stat,
         error,
+        invalidSession,
       } = pockestState;
-      if (loading || paused || error) return;
+      if (loading || paused || error || invalidSession) return;
 
       // No data! Let's refresh to get things moving.
       // If there is a good reason for no data then refreshing will trigger error or pause.

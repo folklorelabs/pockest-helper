@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import getRandomMinutes from '../../utils/getRandomMinutes';
 
 import {
+  startStorageSession,
+  validateStorageSession,
   getStateFromLocalStorage,
   getStateFromSessionStorage,
   saveStateToLocalStorage,
@@ -17,11 +19,13 @@ import {
 import REDUCER from './reducer';
 import {
   pockestInit,
+  pockestInvalidateSession,
 } from './actions';
 
 export * as pockestActions from './actions';
 export * as pockestGetters from './getters';
 
+startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
 const skipInitialization = !!initialStateFromStorage;
 const initialState = initialStateFromStorage || getStateFromLocalStorage();
@@ -37,6 +41,15 @@ export function PockestProvider({
   const [pockestState, pockestDispatch] = useReducer(REDUCER, initialState);
 
   useEffect(() => {
+    if (pockestState?.invalidSession) return;
+    if (!validateStorageSession()) {
+      // session invalid, we opened a new tab or something. invalidate the session in state.
+      (async () => {
+        console.error('Session is invalid. Are there multiple versions running on different tabs?');
+        pockestDispatch(await pockestInvalidateSession());
+      })();
+      return;
+    }
     saveStateToLocalStorage(pockestState);
     saveStateToSessionStorage(pockestState);
   }, [pockestState]);
