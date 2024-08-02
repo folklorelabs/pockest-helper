@@ -12,6 +12,7 @@ import {
   getStateFromLocalStorage,
   getStateFromWindow,
   saveStateToLocalStorage,
+  saveStateToWindow,
 } from './state';
 import REDUCER from './reducer';
 import {
@@ -37,6 +38,7 @@ export function PockestProvider({
 
   useEffect(() => {
     saveStateToLocalStorage(pockestState);
+    saveStateToWindow(pockestState);
   }, [pockestState]);
 
   // grab data on init
