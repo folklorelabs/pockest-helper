@@ -1,5 +1,8 @@
 import LocalStorageCache from './LocalStorageCache';
 
+const BUCKLER_ENCYCLO_URL = 'https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list';
+const SHEET_MONSTERS_URL = 'https://folklorelabs.io/pockest-helper-data/monsters.min.json';
+
 const bucklerCache = new LocalStorageCache('PockestHelperBucklerEncyclopedia');
 const sheetCache = new LocalStorageCache('PockestHelperSheetMonsters');
 
@@ -8,14 +11,14 @@ export default async function fetchAllMonsters() {
     bucklerRes,
     sheetRes,
   ] = await Promise.all([
-    fetch('https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list'),
-    fetch('https://folklorelabs.io/pockest-helper-data/monsters.min.json'),
+    fetch(BUCKLER_ENCYCLO_URL),
+    fetch(SHEET_MONSTERS_URL),
   ]);
 
   // handle sheet data response
   const sheetMonsters = sheetRes.ok ? await sheetRes.json() : sheetCache.get();
   if (!sheetRes.ok) {
-    const err = new Error(`Network error (${sheetRes.status})`);
+    const err = new Error(`API ${sheetRes.status} response (${SHEET_MONSTERS_URL})`);
     if (!sheetMonsters) throw err;
     console.error(err);
   }
@@ -24,12 +27,12 @@ export default async function fetchAllMonsters() {
   // handle buckler data response
   let bucklerData = bucklerRes.ok ? await bucklerRes.json() : bucklerCache.get();
   if (!bucklerRes.ok) {
-    const err = new Error(`Network error (${bucklerRes.status})`);
+    const err = new Error(`API ${bucklerRes.status} response (${BUCKLER_ENCYCLO_URL})`);
     if (!bucklerData) throw err;
     console.error(err);
   }
   if (!bucklerData?.data) {
-    const err = new Error(`Buckler API: ${bucklerData?.message}`);
+    const err = new Error(`Buckler Response: ${bucklerData?.message}`);
     bucklerData = bucklerCache.get();
     if (!bucklerData) throw err;
     console.error(err);

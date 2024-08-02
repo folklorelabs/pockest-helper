@@ -6,9 +6,9 @@ const EXT_RC_ID = 'pockesthelper-beta@folklorelabs.io';
 
 async function fetchJsonArray(url) {
   const response = await fetch(url);
-  if (!response.ok) throw new Error(`Network error (${response.status})`);
+  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const data = await response.json();
-  if (!Array.isArray(data)) throw new Error(`Unexpected response type ${typeof data}`);
+  if (!Array.isArray(data)) throw new Error(`Unexpected API response type ${typeof data} (${url})`);
   return data;
 }
 

@@ -23,15 +23,17 @@ export function isMonsterGone(pockestState) {
 }
 
 export async function fetchMatchList() {
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/list');
-  if (!response.ok) throw new Error(`Network error (${response.status})`);
+  const url = 'https://www.streetfighter.com/6/buckler/api/minigame/exchange/list';
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const { data } = await response.json();
   return data;
 }
 
 export async function fetchPockestStatus() {
-  const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/status');
-  if (!response.ok) throw new Error(`Network error (${response.status})`);
+  const url = 'https://www.streetfighter.com/6/buckler/api/minigame/status';
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const resJson = await response.json();
   const data = {
     event: resJson?.event || resJson?.message || resJson?.data?.message,

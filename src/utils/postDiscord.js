@@ -7,9 +7,9 @@ async function postDiscordMessage(content) {
       'content-type': 'application/json',
     },
   });
-  if (!response.ok) throw new Error(`Network error (${response.status} ${response.statusText})`);
+  if (!response.ok) throw new Error(`API ${response.status} response (DISCORD_WEBHOOK)`);
   const data = await response.json();
-  if (data.code) throw new Error(`${data.message} (${data.code})`);
+  if (data.code) throw new Error(`Discord Response: ${data.message} (${data.code})`);
   return data;
 }
 
