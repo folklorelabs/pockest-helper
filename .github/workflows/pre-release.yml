@@ -23,6 +23,13 @@ jobs:
       - name: Zip file
         run: echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
 
+      - name: Dotenv config
+        run: |
+          touch .env
+          echo JWT_ISSUER=\"${{ secrets.JWT_ISSUER }}\" >> .env
+          node -pe "require('dotenv').config() && process.env.JWT_ISSUER.length"
+          node -pe "require('dotenv').config() && process.env.JWT_ISSUER"
+
       - name: Publish/Build Web Extension
         run: |
           npm i -g web-ext
