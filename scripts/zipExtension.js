@@ -18,5 +18,5 @@ async function zip(srcDir, fileName) {
 (async () => {
   const fileName = EXT_FILE.replace('[VERSION]', version);
   const fullFilePath = await zip(EXT_SRC, fileName);
-  console.log(fullFilePath);
+  console.log(fileName);
 })();
