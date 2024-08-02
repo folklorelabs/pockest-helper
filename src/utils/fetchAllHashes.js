@@ -1,10 +1,15 @@
-let hashesCache;
+import LocalStorageCache from './LocalStorageCache';
+
+const cache = new LocalStorageCache('PockestHelperSheetHashes');
+
 export default async function fetchAllHashes() {
-  if (hashesCache) return hashesCache;
   const data = await chrome.runtime.sendMessage({ type: 'GET_HASHES' });
   if (data?.error) {
-    throw new Error(`${data.error}`);
+    const cachedData = cache.get();
+    if (!cachedData) throw new Error(`${data.error}`);
+    console.error(data?.error);
+    return cachedData;
   }
-  hashesCache = data?.hashes;
+  cache.set(data?.hashes);
   return data?.hashes;
 }
