@@ -154,7 +154,7 @@ export async function pockestClean(pockestState) {
 export async function pockestTrain(type) {
   try {
     if (type < 1 || type > 3) {
-      return [ACTIONS.ERROR, '[pockestTrain] type needs to be 1, 2, or 3'];
+      return [ACTIONS.ERROR, `[pockestTrain] type needs to be 1, 2, or 3. Received ${type}.`];
     }
     const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/training', {
       body: `{"type":${type}}`,
@@ -184,7 +184,7 @@ export async function pockestTrain(type) {
 export async function pockestMatch(pockestState, match) {
   try {
     if (match?.slot < 1) {
-      return [ACTIONS.ERROR, '[pockestMatch] slot needs to be > 1'];
+      return [ACTIONS.ERROR, `[pockestMatch] slot needs to be > 1, receive ${match}`];
     }
     const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/start', {
       method: 'POST',
@@ -223,7 +223,7 @@ export async function pockestMatch(pockestState, match) {
 }
 export async function pockestSelectEgg(id) {
   try {
-    if (id < 1) return [ACTIONS.ERROR, '[pockestSelectEgg] id needs to be > 0'];
+    if (id < 1) return [ACTIONS.ERROR, `[pockestSelectEgg] id needs to be > 0, received ${id}`];
     const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/eggs', {
       body: `{"id":${id}}`,
       method: 'POST',
