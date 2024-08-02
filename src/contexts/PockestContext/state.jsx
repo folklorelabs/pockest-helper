@@ -49,11 +49,12 @@ export function saveStateToLocalStorage(state) {
   window.localStorage.setItem('PockestHelperLog', JSON.stringify(state?.log));
 }
 
-export function getStateFromWindow() {
-  return window.PockestHelperState;
+export function getStateFromSessionStorage() {
+  const stateFromStorage = window.sessionStorage.getItem('PockestHelperState');
+  return stateFromStorage && JSON.parse(stateFromStorage);
 }
 
-export function saveStateToWindow(state) {
+export function saveStateToSessionStorage(state) {
   const stateToSave = JSON.parse(JSON.stringify(state));
-  window.PockestHelperState = stateToSave;
+  window.sessionStorage.setItem('PockestHelperState', JSON.stringify(stateToSave));
 }
