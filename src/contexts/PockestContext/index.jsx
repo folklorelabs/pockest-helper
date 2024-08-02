@@ -10,9 +10,9 @@ import getRandomMinutes from '../../utils/getRandomMinutes';
 
 import {
   getStateFromLocalStorage,
-  getStateFromWindow,
+  getStateFromSessionStorage,
   saveStateToLocalStorage,
-  saveStateToWindow,
+  saveStateToSessionStorage,
 } from './state';
 import REDUCER from './reducer';
 import {
@@ -22,9 +22,9 @@ import {
 export * as pockestActions from './actions';
 export * as pockestGetters from './getters';
 
-const stateFromWindow = getStateFromWindow();
-const skipInitialization = !!stateFromWindow;
-const initialState = stateFromWindow || getStateFromLocalStorage();
+const initialStateFromStorage = getStateFromSessionStorage();
+const skipInitialization = !!initialStateFromStorage;
+const initialState = initialStateFromStorage || getStateFromLocalStorage();
 
 const PockestContext = createContext({
   pockestState: initialState,
@@ -38,7 +38,7 @@ export function PockestProvider({
 
   useEffect(() => {
     saveStateToLocalStorage(pockestState);
-    saveStateToWindow(pockestState);
+    saveStateToSessionStorage(pockestState);
   }, [pockestState]);
 
   // grab data on init
