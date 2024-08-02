@@ -25,7 +25,7 @@ jobs:
 
       - name: Publish/Build Web Extension
         run: |
-          npm i web-ext
+          npm i -g web-ext
           web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.WEB_EXT_KEY }} --api-secret ${{ secrets.WEB_EXT_SECRET }} -a ./dist
           echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
 
