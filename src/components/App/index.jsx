@@ -64,6 +64,16 @@ function App() {
             </div>
           );
         }
+        if (pockestState?.invalidSession) {
+          return (
+            <div className="App-inner">
+              <p className="App-updateText">
+                Uh oh! Your session appears to be invalid.
+                Did you open Pockest Helper in another tab?
+              </p>
+            </div>
+          );
+        }
         if (pockestState?.initialized && !pockestState?.data?.monster) {
           return (
             <div className="App-inner">

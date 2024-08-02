@@ -77,6 +77,12 @@ export default function REDUCER(state, [type, payload]) {
         ...state,
         log: payload,
       };
+    case ACTIONS.INVALIDATE_SESSION:
+      return {
+        ...state,
+        paused: true,
+        invalidSession: true,
+      };
     case ACTIONS.ERROR:
       return {
         ...state,
