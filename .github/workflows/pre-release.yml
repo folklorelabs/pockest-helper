@@ -30,11 +30,15 @@ jobs:
           web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.JWT_ISSUER }} --api-secret ${{ secrets.JWT_SECRET }} -a ./dist
           echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
 
+      - name: Release Candiate Env Var
+        run: |
+          echo "IS_RC=$(node -pe "/rc.*$/.test(require('./package.json').version)")" >> $GITHUB_ENV
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: $(node -pe "/rc.*$/.test(require('./package.json').version)")
+          prerelease: ${{ env.IS_RC }}
           generate_release_notes: true
           files: |
             ${{ env.ZIP_FILE }}
