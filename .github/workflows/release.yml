@@ -24,6 +24,12 @@ jobs:
       - name: Zip file
         run: echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
 
+      - name: Publish/Build Web Extension
+        run: |
+          npm i web-ext
+          web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.WEB_EXT_KEY }} --api-secret ${{ secrets.WEB_EXT_SECRET }} -a ./dist
+          echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -32,4 +38,5 @@ jobs:
           generate_release_notes: true
           files: |
             ${{ env.ZIP_FILE }}
+            ${{ env.XPI_FILE }}
 

@@ -1,4 +1,4 @@
-name: update-manifest
+name: Update Manifest
 
 on:
   push:
@@ -17,12 +17,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: 'gh-pages'
+
       - name: dependencies
         run: npm ci
+
       - name: generate updateManfiest file
         run: node ./scripts/genUpdateManifest.js
+
       - name: git config
         uses: ./.github/actions/git-config
+
       - name: ghpages deploy
         run: |
           if [[ `git status --porcelain` ]]; then
