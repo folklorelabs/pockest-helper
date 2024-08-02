@@ -14,6 +14,7 @@ export default async function fetchAllMonsters() {
     fetch('https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list'),
     fetchJsonArray('https://folklorelabs.io/pockest-helper-data/monsters.min.json'),
   ]);
+  if (!bucklerRes.ok) throw new Error(`Network error (${bucklerRes.status})`);
   const { data } = await bucklerRes.json();
   const buckerMonsters = data?.books.reduce((allMonsters, book) => {
     const newAllMonsters = {

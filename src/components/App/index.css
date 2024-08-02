@@ -4,7 +4,7 @@
   font-size: 1rem;
   line-height: 1.2;
   font-family: "Noto Sans", sans-serif;
-  width: 280px;
+  width: 284px;
   transition: 0.5s transform;
   border-top: 4px solid #d5a613;
 }
@@ -230,7 +230,7 @@
 }
 
 .PockestCheck-input:checked~.PockestCheck-text::before {
-  background: url(/6/buckler/assets/images/auth/icon_check.png) no-repeat 50%;
+  background: url('https://www.streetfighter.com/6/buckler/assets/images/auth/icon_check.png') no-repeat 50%;
   background-size: contain;
 }
 

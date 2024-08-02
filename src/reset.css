@@ -1,20 +1,20 @@
 @font-face {
   font-family: Noto Sans;
-  src: url(https://www.capcom-games.com/common/font/SourceSans3-VF.woff2) format("woff2");
+  src: url('https://www.capcom-games.com/common/font/SourceSans3-VF.woff2') format("woff2");
   font-display: swap;
   font-weight: 100 900
 }
 
 @font-face {
   font-family: Noto Sans JP;
-  src: url(https://www.capcom-games.com/common/font/SourceHanSansJP-VF.otf.woff2) format("woff2");
+  src: url('https://www.capcom-games.com/common/font/SourceHanSansJP-VF.otf.woff2') format("woff2");
   font-display: swap;
   font-weight: 100 900
 }
 
 @font-face {
   font-family: Oswald;
-  src: url(/6/buckler/assets/images/common/font/Oswald-VariableFont_wght.woff) format("woff"), url(/6/buckler/assets/images/common/font/Oswald-VariableFont_wght.woff2) format("woff2");
+  src: url('https://www.streetfighter.com/6/buckler/assets/images/common/font/Oswald-VariableFont_wght.woff') format("woff"), url('https://www.streetfighter.com/6/buckler/assets/images/common/font/Oswald-VariableFont_wght.woff2') format("woff2");
   font-display: swap;
   font-weight: 100 900
 }

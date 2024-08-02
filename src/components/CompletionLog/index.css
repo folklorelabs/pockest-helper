@@ -25,9 +25,15 @@
   resize: none;
   padding-right: 2.5rem;
   padding: 0.333rem 0.5rem 0;
+  border-color: #ffffff4d;
+  border-style: solid;
+  border-left-width: 1px;
+  border-right-width: 1px;
+  border-top-width: 1px;
   border-bottom: 0;
   background: hsla(0, 0%, 100%, 0.2);
   color: #fff;
+  margin: 0;
 }
 
 .CompletionLog-textarea::-webkit-scrollbar {

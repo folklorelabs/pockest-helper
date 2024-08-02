@@ -54,7 +54,7 @@
 }
 
 .PauseBtn.PockestButton--on .PauseBtnTxt::after {
-  background-image: url(/6/buckler/assets/images/auth/icon_check.png);
+  background-image: url('https://www.streetfighter.com/6/buckler/assets/images/auth/icon_check.png');
   /* filter: hue-rotate(-13deg) saturate(84%) brightness(88%); */
   filter: brightness(15%) saturate(0);
   opacity: 0.9;
