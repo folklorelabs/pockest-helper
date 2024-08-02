@@ -21,13 +21,10 @@ jobs:
           fetch-tags: true
       - name: Git config
         uses: ./.github/actions/git-config
-      - name: Git tag
+      - name: Git tag and push
         id: tag
-        run: echo "TAG_NAME=$(npm version patch)" >> $GITHUB_ENV
-      - name: Manfiest version amend
-        run: node ./scripts/syncManifestVersion.js && git add -A && git commit --amend --no-edit
-      - name: Git push
         run: |
+          echo "TAG_NAME=$(npm version patch)" >> $GITHUB_ENV
           git push
           git push --tags
       - name: Dotenv config
