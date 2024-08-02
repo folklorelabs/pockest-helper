@@ -13,8 +13,10 @@ async function fetchJsonArray(url) {
 }
 
 function shapeExtVersion(r) {
+  const [version, label = ''] = r.tag_name.replace('v', '').split('-');
+  const rcVersion = label.split('.')[1];
   return {
-    version: r.tag_name.replace('v', '').split('-')[0],
+    version: !rcVersion ? version : `${version}.${rcVersion}`,
     update_link: r.assets.find((a) => /\.xpi$/.test(a.name))?.browser_download_url,
   };
 }
