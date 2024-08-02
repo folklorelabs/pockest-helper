@@ -2,8 +2,9 @@ const cache = {};
 export default async function fetchCharAssets(hash) {
   if (!hash) return null;
   if (cache[hash]) return cache[hash];
-  const response = await fetch(`https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${hash}.json`);
-  if (!response.ok) throw new Error(`Network error (${response.status})`);
+  const url = `https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${hash}.json`;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const { frames, meta } = await response.json();
   const newData = {
     image: `https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${meta?.image}`,

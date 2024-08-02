@@ -79,14 +79,15 @@ export async function pockestRefresh(pockestState) {
 }
 export async function pockestFeed() {
   try {
-    const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/serving', {
+    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/serving';
+    const response = await fetch(url, {
       body: '{"type":1}',
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
     });
-    if (!response.ok) throw new Error(`Network error (${response.status})`);
+    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -104,14 +105,15 @@ export async function pockestFeed() {
 }
 export async function pockestCure() {
   try {
-    const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cure', {
+    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/cure';
+    const response = await fetch(url, {
       body: '{"type":1}',
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
     });
-    if (!response.ok) throw new Error(`Network error (${response.status})`);
+    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -128,14 +130,15 @@ export async function pockestCure() {
 }
 export async function pockestClean(pockestState) {
   try {
-    const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/cleaning', {
+    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/cleaning';
+    const response = await fetch(url, {
       body: '{"type":1}',
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
     });
-    if (!response.ok) throw new Error(`Network error (${response.status})`);
+    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -156,14 +159,15 @@ export async function pockestTrain(type) {
     if (type < 1 || type > 3) {
       return [ACTIONS.ERROR, `[pockestTrain] type needs to be 1, 2, or 3. Received ${type}.`];
     }
-    const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/training', {
+    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/training';
+    const response = await fetch(url, {
       body: `{"type":${type}}`,
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
     });
-    if (!response.ok) throw new Error(`Network error (${response.status})`);
+    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -186,14 +190,15 @@ export async function pockestMatch(pockestState, match) {
     if (match?.slot < 1) {
       return [ACTIONS.ERROR, `[pockestMatch] slot needs to be > 1, receive ${match}`];
     }
-    const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/exchange/start', {
+    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/exchange/start';
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
       body: JSON.stringify({ slot: match?.slot }),
     });
-    if (!response.ok) throw new Error(`Network error (${response.status})`);
+    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,
@@ -224,14 +229,15 @@ export async function pockestMatch(pockestState, match) {
 export async function pockestSelectEgg(id) {
   try {
     if (id < 1) return [ACTIONS.ERROR, `[pockestSelectEgg] id needs to be > 0, received ${id}`];
-    const response = await fetch('https://www.streetfighter.com/6/buckler/api/minigame/eggs', {
+    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/eggs';
+    const response = await fetch(url, {
       body: `{"id":${id}}`,
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
     });
-    if (!response.ok) throw new Error(`Network error (${response.status})`);
+    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
     const resJson = await response.json();
     const data = {
       event: resJson.event,

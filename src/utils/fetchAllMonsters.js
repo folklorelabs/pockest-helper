@@ -1,5 +1,7 @@
 import LocalStorageCache from './LocalStorageCache';
 
+const BUCKLER_ENCYCLO_URL = 'https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list';
+
 const bucklerCache = new LocalStorageCache('PockestHelperBucklerEncyclopedia');
 const sheetCache = new LocalStorageCache('PockestHelperSheetMonsters');
 
@@ -8,7 +10,7 @@ export default async function fetchAllMonsters() {
     bucklerRes,
     sheetRes,
   ] = await Promise.all([
-    fetch('https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list'),
+    fetch(BUCKLER_ENCYCLO_URL),
     chrome.runtime.sendMessage({ type: 'GET_MONSTERS' }),
   ]);
 
@@ -23,12 +25,12 @@ export default async function fetchAllMonsters() {
   // handle buckler data response
   let bucklerData = bucklerRes.ok ? await bucklerRes.json() : bucklerCache.get();
   if (!bucklerRes.ok) {
-    const err = new Error(`Network error (${bucklerRes.status})`);
+    const err = new Error(`API ${bucklerRes.status} response (${BUCKLER_ENCYCLO_URL})`);
     if (!bucklerData) throw err;
     console.error(err);
   }
   if (!bucklerData?.data) {
-    const err = new Error(`Buckler API: ${bucklerData?.message}`);
+    const err = new Error(`Buckler Response: ${bucklerData?.message}`);
     bucklerData = bucklerCache.get();
     if (!bucklerData) throw err;
     console.error(err);

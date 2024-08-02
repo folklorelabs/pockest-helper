@@ -6,9 +6,9 @@ function generateErrorResponse(id, err) {
 
 async function fetchJsonArray(url) {
   const response = await fetch(url);
-  if (!response.ok) throw new Error(`Network error (${response.status})`);
+  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const data = await response.json();
-  if (!Array.isArray(data)) throw new Error(`Unexpected response type ${typeof data}`);
+  if (!Array.isArray(data)) throw new Error(`Unexpected API response type ${typeof data} (${url})`);
   return data;
 }
 
@@ -21,7 +21,7 @@ async function postDiscordMessage(content) {
       'content-type': 'application/json',
     },
   });
-  if (!response.ok) throw new Error(`Network error (${response.status} ${response.statusText})`);
+  if (!response.ok) throw new Error(`API ${response.status} response (DISCORD_WEBHOOK)`);
   const data = await response.json();
   if (data.code) throw new Error(`${data.message} (${data.code})`);
   return data;
