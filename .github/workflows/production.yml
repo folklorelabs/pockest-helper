@@ -19,20 +19,28 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-tags: true
+
       - name: Git config
         uses: ./.github/actions/git-config
+
       - name: Git tag and push
         id: tag
         run: |
           echo "TAG_NAME=$(npm version patch)" >> $GITHUB_ENV
           git push
           git push --tags
+
       - name: Dotenv config
         run: |
           touch .env
           echo DISCORD_WEBHOOK=\"${{ secrets.DISCORD_WEBHOOK }}\" >> .env
+
       - name: Build
         uses: ./.github/actions/build
+
+      - name: Zip file
+        run: echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
@@ -41,4 +49,4 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
-            ./dist/PockestHelper.zip
+            ${{ env.ZIP_FILE }}
