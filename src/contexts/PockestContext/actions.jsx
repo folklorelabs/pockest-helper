@@ -74,7 +74,7 @@ export async function pockestRefresh(pockestState) {
     }
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error];
+    return [ACTIONS.ERROR, error?.message];
   }
 }
 export async function pockestFeed() {
@@ -99,7 +99,7 @@ export async function pockestFeed() {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error];
+    return [ACTIONS.ERROR, error?.message];
   }
 }
 export async function pockestCure() {
@@ -123,7 +123,7 @@ export async function pockestCure() {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error];
+    return [ACTIONS.ERROR, error?.message];
   }
 }
 export async function pockestClean(pockestState) {
@@ -148,7 +148,7 @@ export async function pockestClean(pockestState) {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error];
+    return [ACTIONS.ERROR, error?.message];
   }
 }
 export async function pockestTrain(type) {
@@ -178,7 +178,7 @@ export async function pockestTrain(type) {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error];
+    return [ACTIONS.ERROR, error?.message];
   }
 }
 export async function pockestMatch(pockestState, match) {
@@ -218,7 +218,7 @@ export async function pockestMatch(pockestState, match) {
     }
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error];
+    return [ACTIONS.ERROR, error?.message];
   }
 }
 export async function pockestSelectEgg(id) {
@@ -244,7 +244,7 @@ export async function pockestSelectEgg(id) {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error];
+    return [ACTIONS.ERROR, error?.message];
   }
 }
 export function pockestClearLog(pockestState, logTypes) {
@@ -273,6 +273,6 @@ export async function pockestInit() {
       data,
     }];
   } catch (error) {
-    return [ACTIONS.ERROR, error];
+    return [ACTIONS.ERROR, error?.message];
   }
 }
