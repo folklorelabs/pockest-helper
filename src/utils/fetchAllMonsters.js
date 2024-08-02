@@ -21,9 +21,15 @@ export default async function fetchAllMonsters() {
   sheetCache.set(sheetMonsters);
 
   // handle buckler data response
-  const bucklerData = bucklerRes.ok ? await bucklerRes.json() : bucklerCache.get();
+  let bucklerData = bucklerRes.ok ? await bucklerRes.json() : bucklerCache.get();
   if (!bucklerRes.ok) {
     const err = new Error(`Network error (${bucklerRes.status})`);
+    if (!bucklerData) throw err;
+    console.error(err);
+  }
+  if (!bucklerData?.data) {
+    const err = new Error(`Buckler API: ${bucklerData?.message}`);
+    bucklerData = bucklerCache.get();
     if (!bucklerData) throw err;
     console.error(err);
   }
