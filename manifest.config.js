@@ -7,7 +7,7 @@ const rcVersion = label.split('.')[1];
 
 export default defineManifest(() => ({
   manifest_version: 3,
-  name: 'Pockest Helper',
+  name: !rcVersion ? 'Pockest Helper' : '[BETA] Pockest Helper',
   version: !rcVersion ? version : `${version}.${rcVersion}`,
   version_name: versionName,
   content_scripts: [
