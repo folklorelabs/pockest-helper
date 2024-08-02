@@ -51,7 +51,7 @@ export function saveStateToLocalStorage(state) {
 
 export function getStateFromSessionStorage() {
   const stateFromStorage = window.sessionStorage.getItem('PockestHelperState');
-  return stateFromStorage && JSON.parse(stateFromStorage) : null;
+  return stateFromStorage && JSON.parse(stateFromStorage);
 }
 
 export function saveStateToSessionStorage(state) {
