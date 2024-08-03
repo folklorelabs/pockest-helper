@@ -75,7 +75,7 @@ export async function pockestRefresh(pockestState) {
     }
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error?.message];
+    return [ACTIONS.ERROR, `[pockestRefresh] ${error?.message}`];
   }
 }
 export async function pockestFeed() {
@@ -101,7 +101,7 @@ export async function pockestFeed() {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error?.message];
+    return [ACTIONS.ERROR, `[pockestFeed] ${error?.message}`];
   }
 }
 export async function pockestCure() {
@@ -126,7 +126,7 @@ export async function pockestCure() {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error?.message];
+    return [ACTIONS.ERROR, `[pockestCure] ${error?.message}`];
   }
 }
 export async function pockestClean(pockestState) {
@@ -152,13 +152,13 @@ export async function pockestClean(pockestState) {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error?.message];
+    return [ACTIONS.ERROR, `[pockestClean] ${error?.message}`];
   }
 }
 export async function pockestTrain(type) {
   try {
     if (type < 1 || type > 3) {
-      return [ACTIONS.ERROR, `[pockestTrain] type needs to be 1, 2, or 3. Received ${type}.`];
+      throw new Error(`Invalid param: type needs to be 1, 2, or 3. Received ${type}.`);
     }
     const url = 'https://www.streetfighter.com/6/buckler/api/minigame/training';
     const response = await fetch(url, {
@@ -175,7 +175,7 @@ export async function pockestTrain(type) {
       ...resJson.data,
     };
     if (data?.event !== 'training') {
-      return [ACTIONS.ERROR, '[pockestTrain] server responded with failure'];
+      throw new Error(`Buckler Response: ${data?.event || data?.message}`);
     }
     data.result = {
       ...getLogEntry({ data }),
@@ -183,13 +183,13 @@ export async function pockestTrain(type) {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error?.message];
+    return [ACTIONS.ERROR, `[pockestTrain] ${error?.message}`];
   }
 }
 export async function pockestMatch(pockestState, match) {
   try {
     if (match?.slot < 1) {
-      return [ACTIONS.ERROR, `[pockestMatch] slot needs to be > 1, receive ${match}`];
+      throw new Error(`Invalid param: slot needs to be > 1, receive ${match}`);
     }
     const url = 'https://www.streetfighter.com/6/buckler/api/minigame/exchange/start';
     const response = await fetch(url, {
@@ -206,7 +206,7 @@ export async function pockestMatch(pockestState, match) {
       ...resJson.data,
     };
     if (data?.exchangable === false) {
-      return [ACTIONS.ERROR, '[pockestMatch] server responded with failure'];
+      throw new Error(`Buckler Response: ${data?.event || data?.message}`);
     }
     data.result = {
       ...getLogEntry({ data }),
@@ -224,12 +224,12 @@ export async function pockestMatch(pockestState, match) {
     }
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error?.message];
+    return [ACTIONS.ERROR, `[pockestMatch] ${error?.message}`];
   }
 }
 export async function pockestSelectEgg(id) {
   try {
-    if (id < 1) return [ACTIONS.ERROR, `[pockestSelectEgg] id needs to be > 0, received ${id}`];
+    if (id < 1) throw new Error(`Invalid param: id needs to be > 0, received ${id}`);
     const url = 'https://www.streetfighter.com/6/buckler/api/minigame/eggs';
     const response = await fetch(url, {
       body: `{"id":${id}}`,
@@ -251,7 +251,7 @@ export async function pockestSelectEgg(id) {
     };
     return [ACTIONS.REFRESH, data];
   } catch (error) {
-    return [ACTIONS.ERROR, error?.message];
+    return [ACTIONS.ERROR, `[pockestSelectEgg] ${error?.message}`];
   }
 }
 export function pockestClearLog(pockestState, logTypes) {
@@ -280,7 +280,7 @@ export async function pockestInit() {
       data,
     }];
   } catch (error) {
-    return [ACTIONS.ERROR, error?.message];
+    return [ACTIONS.ERROR, `[pockestInit] ${error?.message}`];
   }
 }
 export async function pockestInvalidateSession() {

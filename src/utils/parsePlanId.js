@@ -6,6 +6,7 @@ export const LEGACY_PLAN_REGEX = /^([W|G|Y|B|R|L])([1-6])([A|B|C][L|R])([T|S|P])
 export const PLAN_REGEX = /^(\d*)([A|B|C][L|R])([T|S|P])([1-6])$/;
 
 export function parsePlanId(planId) {
+  if (!planId) return null;
   const isLegacy = LEGACY_PLAN_REGEX.test(planId);
   const planIdSplit = isLegacy ? LEGACY_PLAN_REGEX.exec(planId)
     : PLAN_REGEX.exec(planId);

@@ -32,7 +32,7 @@ export default function getTargetMonsterPlan(state) {
     primaryStat,
     primaryStatLetter,
     planAge,
-  } = parsePlanId(statePlanId);
+  } = parsePlanId(statePlanId) ?? {};
 
   const statPlanId = (() => {
     if (monster?.statPlan) return monster.statPlan;
@@ -46,19 +46,19 @@ export default function getTargetMonsterPlan(state) {
 
   const statPlan = statPlanId.split('').map((statLetter) => STAT_ABBR[statLetter]);
 
-  const planDiv1 = planRoute[0] ? {
+  const planDiv1 = planRoute?.[0] ? {
     startTime: 0,
     endTime: PLAN_TIMES[0] - 1000,
     ...PLAN_DEFAULTS,
     ...planRoute[0],
   } : null;
-  const planDiv2 = planRoute[1] ? {
+  const planDiv2 = planRoute?.[1] ? {
     startTime: PLAN_TIMES[0],
     endTime: PLAN_TIMES[1] - 1000,
     ...PLAN_DEFAULTS,
     ...planRoute[1],
   } : null;
-  const planDiv3 = planRoute[2] ? {
+  const planDiv3 = planRoute?.[2] ? {
     startTime: PLAN_TIMES[1],
     endTime: PLAN_TIMES[2] - 1000,
     ...PLAN_DEFAULTS,

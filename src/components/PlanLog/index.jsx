@@ -33,18 +33,18 @@ function PlanLog({
     }
     data = [
       ...data,
-      ...cleanSchedule.map((w) => ({
+      ...(cleanSchedule?.map((w) => ({
         label: 'Clean',
         ...w,
-      })),
-      ...feedSchedule.map((w) => ({
+      })) ?? []),
+      ...(feedSchedule?.map((w) => ({
         label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
         ...w,
-      })),
-      ...trainSchedule.map((w) => ({
+      })) ?? []),
+      ...(trainSchedule?.map((w) => ({
         label: `Train ${w.stat}`,
         ...w,
-      })),
+      })) ?? []),
     ].sort((a, b) => a.start - b.start).map((d) => ({
       ...d,
       startOffsetLabel: parseDurationStr(d.start - birth),
