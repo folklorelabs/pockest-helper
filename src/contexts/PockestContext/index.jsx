@@ -27,7 +27,6 @@ export * as pockestGetters from './getters';
 
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
-const skipInitialization = !!initialStateFromStorage;
 const initialState = initialStateFromStorage || getStateFromLocalStorage();
 
 const PockestContext = createContext({
@@ -45,7 +44,6 @@ export function PockestProvider({
     if (!validateStorageSession()) {
       // session invalid, we opened a new tab or something. invalidate the session in state.
       (async () => {
-        console.error('Invalid session detected');
         pockestDispatch(await pockestInvalidateSession());
       })();
       return;
@@ -62,7 +60,7 @@ export function PockestProvider({
       const timeoutMs = getRandomMinutes(60);
       initTimeout = window.setTimeout(init, timeoutMs);
     };
-    if (!skipInitialization) init();
+    init();
     return () => {
       window.clearTimeout(initTimeout);
     };
