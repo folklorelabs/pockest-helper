@@ -22,7 +22,7 @@ function CompletionLog({
   const curLiveDur = React.useMemo(() => (pockestState?.data?.monster?.live_time
     ? (now.getTime() - pockestState.data.monster.live_time) : 0), [
     now,
-    pockestState.data.monster.live_time,
+    pockestState?.data?.monster?.live_time,
   ]);
   const evolvedMonsters = React.useMemo(() => pockestState?.allMonsters
     ?.filter((m) => m?.age >= 5), [pockestState?.allMonsters]);

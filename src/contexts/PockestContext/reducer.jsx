@@ -93,7 +93,7 @@ export default function REDUCER(state, [type, payload]) {
           {
             ...getLogEntry(state),
             logType: 'error',
-            error: `${payload.stack}`,
+            error: `${payload}`,
           },
         ],
       };
