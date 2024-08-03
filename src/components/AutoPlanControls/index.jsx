@@ -98,7 +98,7 @@ function AutoPlanControls() {
               <br />
               <em>Egg Generation:</em>
               {' '}
-              1, 2, 3, 4, 5, 6, 7, ...
+              1, 2, 3, 4, 5, ...
               <br />
               <em>1st Divergence:</em>
               {' '}
