@@ -89,7 +89,7 @@ function CompletionLog({
       <div className="CompletionLog-content">
         <textarea
           ref={textAreaEl}
-          className="CompletionLog-textarea"
+          className="PockestTextArea CompletionLog-textarea"
           value={log.join('\n')}
           readOnly
           rows={rows}
@@ -113,7 +113,7 @@ function CompletionLog({
 
 CompletionLog.defaultProps = {
   title: 'Completion Stats',
-  rows: 3,
+  rows: 4,
 };
 
 CompletionLog.propTypes = {

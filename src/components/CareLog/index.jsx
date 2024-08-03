@@ -74,7 +74,7 @@ function CareLog({
       <div className="CareLog-content">
         <textarea
           ref={textAreaEl}
-          className="CareLog-textarea"
+          className="PockestTextArea CareLog-textarea"
           value={careLog.join('\n')}
           readOnly
           rows={rows}
