@@ -175,6 +175,36 @@
   border-color: red;
 }
 
+.PockestTextArea {
+  display: block;
+  width: 100%;
+  resize: none;
+  padding-right: 2.5rem;
+  padding: 0.333rem 0.5rem 0;
+  border-color: #ffffff4d;
+  border-style: solid;
+  border-width: 1px;
+  background: hsla(0, 0%, 100%, 0.2);
+  color: #fff;
+  margin: 0;
+}
+
+.PockestTextArea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.PockestTextArea::-webkit-scrollbar-track {
+  background: rgba(242, 242, 242, 0);
+}
+
+.PockestTextArea::-webkit-scrollbar-thumb {
+  background: rgb(188, 188, 188);
+}
+
+.PockestTextArea::-webkit-scrollbar-thumb:hover {
+  background: rgb(148, 148, 148)
+}
+
 .PockestCheck {
   display: flex;
   justify-content: center;

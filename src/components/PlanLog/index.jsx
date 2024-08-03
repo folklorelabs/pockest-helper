@@ -79,7 +79,7 @@ function PlanLog({
       <div className="PlanLog-content">
         <textarea
           ref={textAreaEl}
-          className="PlanLog-textarea"
+          className="PockestTextArea PlanLog-textarea"
           value={scheduleLog.join('\n')}
           readOnly
           rows={rows}
