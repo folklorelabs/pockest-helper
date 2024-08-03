@@ -27,7 +27,6 @@ export * as pockestGetters from './getters';
 
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
-const skipInitialization = !!initialStateFromStorage;
 const initialState = initialStateFromStorage || getStateFromLocalStorage();
 
 const PockestContext = createContext({
@@ -62,7 +61,7 @@ export function PockestProvider({
       const timeoutMs = getRandomMinutes(60);
       initTimeout = window.setTimeout(init, timeoutMs);
     };
-    if (!skipInitialization) init();
+    init();
     return () => {
       window.clearTimeout(initTimeout);
     };
