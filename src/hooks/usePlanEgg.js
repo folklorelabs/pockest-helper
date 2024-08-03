@@ -14,24 +14,20 @@ function useEggs(pockestState) {
     })();
   }, []);
   const targetPlan = React.useMemo(() => getTargetMonsterPlan(pockestState), [pockestState]);
-  const planEgg = React.useMemo(
-    () => eggData?.eggs?.find((egg) => egg?.name_en?.slice(0, 1) === targetPlan?.planEgg),
-    [eggData?.eggs, targetPlan?.planEgg],
-  );
   const planEggCost = React.useMemo(
-    () => (planEgg?.unlock ? 0 : planEgg?.buckler_point),
-    [planEgg],
+    () => (targetPlan?.planEgg?.unlock ? 0 : targetPlan?.planEgg?.buckler_point),
+    [targetPlan?.planEgg],
   );
   const planEggAffordable = React.useMemo(
     () => planEggCost <= eggData?.user_buckler_point,
     [eggData?.user_buckler_point, planEggCost],
   );
   const returnVal = React.useMemo(() => ({
-    planEgg,
+    planEgg: targetPlan?.planEgg,
     planEggCost,
     planEggAffordable,
     userBucklerPointBalance: eggData?.user_buckler_point,
-  }), [eggData?.user_buckler_point, planEgg, planEggAffordable, planEggCost]);
+  }), [eggData?.user_buckler_point, planEggAffordable, planEggCost, targetPlan?.planEgg]);
   return returnVal;
 }
 

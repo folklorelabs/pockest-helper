@@ -1,4 +1,5 @@
-import { STAT_ID, STAT_ABBR } from '../config/stats';
+import { STAT_ABBR } from '../config/stats';
+import { LEGACY_EGG_IDS } from '../config/eggs';
 import ROUTES from '../config/routes';
 
 const PLAN_DEFAULTS = {
@@ -15,19 +16,46 @@ const PLAN_TIMES = [
   168 * 60 * 60 * 1000,
 ];
 
+const LEGACY_PLAN_REGEX = /^([W|G|Y|B|R|L])([1-6])([A|B|C][L|R])([T|S|P])$/;
+const PLAN_REGEX = /^(\d*)([A|B|C][L|R])([T|S|P])([1-6])$/;
+
+export function parsePlanId(planId) {
+  const isLegacy = LEGACY_PLAN_REGEX.test(planId);
+  const planIdSplit = isLegacy ? LEGACY_PLAN_REGEX.exec(planId)
+    : PLAN_REGEX.exec(planId);
+  if (!planIdSplit) return null;
+  const planEggString = isLegacy ? `${LEGACY_EGG_IDS.indexOf(planIdSplit[1])}` : planIdSplit[1];
+  const primaryStatLetter = isLegacy ? planIdSplit[4] : planIdSplit[3];
+  const routeId = isLegacy ? planIdSplit[3] : planIdSplit[2];
+  const planAgeString = isLegacy ? planIdSplit[2] : planIdSplit[4];
+  return {
+    planId: `${planEggString}${routeId}${primaryStatLetter}${planAgeString}`,
+    planEgg: parseInt(planEggString, 10),
+    planRoute: ROUTES[routeId],
+    primaryStatLetter,
+    primaryStat: `${STAT_ABBR[primaryStatLetter]}`,
+    planAge: parseInt(planAgeString, 10),
+  };
+}
+
 export default function getTargetMonsterPlan(state) {
   const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
-  const planId = (() => {
-    const id = (monster ? monster?.plan : state?.planId) ?? '';
-    if (!id) return id;
+  const statePlanId = (() => {
+    const isMonsterPlan = !!monster;
+    if (!isMonsterPlan) return state?.planId ?? '';
+    const id = monster?.planId ?? '';
     if (typeof state?.planAge !== 'number') return id;
-    if (!monster) return id;
-    return `${id.substring(0, 1)}${state?.planAge}${id.substring(2)}`;
+    return LEGACY_PLAN_REGEX.test(id) ? `${id.substring(0, 1)}${state?.planAge}${id.substring(2)}`
+      : `${id.substring(0, id.length - 1)}${state?.planAge}`;
   })();
-
-  const primaryStatLetter = planId.slice(4, 5);
-  const primaryStat = Object.keys(STAT_ID)
-    .find((k) => STAT_ID[k].slice(0, 1).toUpperCase() === primaryStatLetter);
+  const {
+    planId,
+    planEgg,
+    planRoute,
+    primaryStat,
+    primaryStatLetter,
+    planAge,
+  } = parsePlanId(statePlanId);
 
   const statPlanId = (() => {
     if (monster?.statPlan) return monster.statPlan;
@@ -41,29 +69,23 @@ export default function getTargetMonsterPlan(state) {
 
   const statPlan = statPlanId.split('').map((statLetter) => STAT_ABBR[statLetter]);
 
-  const planEgg = planId.slice(0, 1);
-
-  const planAge = parseInt(planId.slice(1, 2), 10) || 0;
-
-  const routeId = planId.slice(2, 4);
-  const route = routeId ? ROUTES[routeId] : [];
-  const planDiv1 = route[0] ? {
+  const planDiv1 = planRoute[0] ? {
     startTime: 0,
     endTime: PLAN_TIMES[0] - 1000,
     ...PLAN_DEFAULTS,
-    ...route[0],
+    ...planRoute[0],
   } : null;
-  const planDiv2 = route[1] ? {
+  const planDiv2 = planRoute[1] ? {
     startTime: PLAN_TIMES[0],
     endTime: PLAN_TIMES[1] - 1000,
     ...PLAN_DEFAULTS,
-    ...route[1],
+    ...planRoute[1],
   } : null;
-  const planDiv3 = route[2] ? {
+  const planDiv3 = planRoute[2] ? {
     startTime: PLAN_TIMES[1],
     endTime: PLAN_TIMES[2] - 1000,
     ...PLAN_DEFAULTS,
-    ...route[2],
+    ...planRoute[2],
   } : null;
 
   return {

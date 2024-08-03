@@ -96,13 +96,9 @@ function AutoPlanControls() {
               are unique paths through the evolution tree and are made up of 5 letters.
               <br />
               <br />
-              <em>Egg:</em>
+              <em>Egg Generation:</em>
               {' '}
-              W, G, Y, B, R
-              <br />
-              <em>Age:</em>
-              {' '}
-              1, 2, 3, 4, 5, 6
+              0, 1, 2, 3, 4, 5, 6, 7, ...
               <br />
               <em>1st Divergence:</em>
               {' '}
@@ -116,12 +112,16 @@ function AutoPlanControls() {
               {' '}
               P, S, T
               <br />
+              <em>Age:</em>
+              {' '}
+              1, 2, 3, 4, 5, 6
+              <br />
               <br />
               <em>Example:</em>
               {' '}
-              G5ART
+              1ART5
               <br />
-              Green egg taking the AR path all the way
+              Green Polka-dot egg taking the AR path all the way
               through age 5 with Technique as a primary stat.
             </span>
           </a>

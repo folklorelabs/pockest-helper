@@ -170,7 +170,7 @@ export function getCurrentPlanSchedule(state) {
       ...fullSchedule,
       {
         start: birth + startOffset,
-        stat: state?.statPlanId?.split('')?.[index] || state?.planId?.slice(-1),
+        stat: state?.statPlanId?.split('')?.[index] || state?.planId?.slice(-2, -1),
       },
     ];
   }, []);

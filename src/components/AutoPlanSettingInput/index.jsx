@@ -36,7 +36,7 @@ function AutoPlanSettingInput({ settingName, required }) {
   const pattern = React.useMemo(() => {
     const validStats = Object.keys(STAT_ABBR).join('');
     if (settingName === 'planId') {
-      return `^[0-Z][1-6][ABC][LR][${validStats}]$`;
+      return `^[\\d*][ABC][LR][${validStats}][1-6]$`;
     } if (settingName === 'statPlanId') {
       return `^([${validStats}]{0,14})$`;
     }
