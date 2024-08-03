@@ -42,10 +42,16 @@ function EggControls() {
             <span>❗</span>
           ) : ''}
           <span className="PockestToolTip-text">
-            You do not have enough
-            {' '}
-            <em>buckler points</em>
-            . Your current balance is
+            {!planEggAffordable ? (
+              <>
+                You do not have enough
+                {' '}
+                <em>buckler points</em>
+                .
+                {' '}
+              </>
+            ) : ''}
+            Your current balance is
             {' '}
             <em>{userBucklerPointBalance ?? '--'}</em>
             .

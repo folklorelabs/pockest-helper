@@ -1,5 +1,5 @@
-import { STAT_ID, STAT_ABBR } from '../config/stats';
-import ROUTES from '../config/routes';
+import { STAT_ABBR } from '../config/stats';
+import { parsePlanId, LEGACY_PLAN_REGEX } from './parsePlanId';
 
 const PLAN_DEFAULTS = {
   cleanFrequency: null,
@@ -17,17 +17,22 @@ const PLAN_TIMES = [
 
 export default function getTargetMonsterPlan(state) {
   const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
-  const planId = (() => {
-    const id = (monster ? monster?.plan : state?.planId) ?? '';
-    if (!id) return id;
+  const statePlanId = (() => {
+    const isMonsterPlan = !!monster;
+    if (!isMonsterPlan) return state?.planId ?? '';
+    const id = monster?.planId ?? '';
     if (typeof state?.planAge !== 'number') return id;
-    if (!monster) return id;
-    return `${id.substring(0, 1)}${state?.planAge}${id.substring(2)}`;
+    return LEGACY_PLAN_REGEX.test(id) ? `${id.substring(0, 1)}${state?.planAge}${id.substring(2)}`
+      : `${id.substring(0, id.length - 1)}${state?.planAge}`;
   })();
-
-  const primaryStatLetter = planId.slice(4, 5);
-  const primaryStat = Object.keys(STAT_ID)
-    .find((k) => STAT_ID[k].slice(0, 1).toUpperCase() === primaryStatLetter);
+  const {
+    planId,
+    planEgg,
+    planRoute,
+    primaryStat,
+    primaryStatLetter,
+    planAge,
+  } = parsePlanId(statePlanId) ?? {};
 
   const statPlanId = (() => {
     if (monster?.statPlan) return monster.statPlan;
@@ -41,29 +46,23 @@ export default function getTargetMonsterPlan(state) {
 
   const statPlan = statPlanId.split('').map((statLetter) => STAT_ABBR[statLetter]);
 
-  const planEgg = planId.slice(0, 1);
-
-  const planAge = parseInt(planId.slice(1, 2), 10) || 0;
-
-  const routeId = planId.slice(2, 4);
-  const route = routeId ? ROUTES[routeId] : [];
-  const planDiv1 = route[0] ? {
+  const planDiv1 = planRoute?.[0] ? {
     startTime: 0,
     endTime: PLAN_TIMES[0] - 1000,
     ...PLAN_DEFAULTS,
-    ...route[0],
+    ...planRoute[0],
   } : null;
-  const planDiv2 = route[1] ? {
+  const planDiv2 = planRoute?.[1] ? {
     startTime: PLAN_TIMES[0],
     endTime: PLAN_TIMES[1] - 1000,
     ...PLAN_DEFAULTS,
-    ...route[1],
+    ...planRoute[1],
   } : null;
-  const planDiv3 = route[2] ? {
+  const planDiv3 = planRoute?.[2] ? {
     startTime: PLAN_TIMES[1],
     endTime: PLAN_TIMES[2] - 1000,
     ...PLAN_DEFAULTS,
-    ...route[2],
+    ...planRoute[2],
   } : null;
 
   return {
