@@ -1,3 +1,4 @@
+import log from '../../utils/log';
 import {
   ACTIONS,
 } from './actions';
@@ -7,7 +8,7 @@ import {
 } from './getters';
 
 export default function REDUCER(state, [type, payload]) {
-  console.log('STATE CHANGE', { state, type, payload });
+  log('STATE CHANGE', { state, type, payload });
   switch (type) {
     case ACTIONS.LOADING:
       return {

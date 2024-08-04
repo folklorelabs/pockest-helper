@@ -6,7 +6,6 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import getRandomMinutes from '../../utils/getRandomMinutes';
 
 import {
   startStorageSession,
@@ -18,7 +17,6 @@ import {
 } from './state';
 import REDUCER from './reducer';
 import {
-  pockestInit,
   pockestInvalidateSession,
 } from './actions';
 
@@ -51,20 +49,6 @@ export function PockestProvider({
     saveStateToLocalStorage(pockestState);
     saveStateToSessionStorage(pockestState);
   }, [pockestState]);
-
-  // grab data on init
-  useEffect(() => {
-    let initTimeout;
-    const init = async () => {
-      pockestDispatch(await pockestInit());
-      const timeoutMs = getRandomMinutes(60);
-      initTimeout = window.setTimeout(init, timeoutMs);
-    };
-    init();
-    return () => {
-      window.clearTimeout(initTimeout);
-    };
-  }, []);
 
   // wrap value in memo so we only re-render when necessary
   const providerValue = useMemo(() => ({
