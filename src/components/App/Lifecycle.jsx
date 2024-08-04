@@ -53,7 +53,7 @@ function Lifecycle() {
       const nextInitStr = window.sessionStorage.getItem('PockestHelperTimeout-init');
       const nextInit = nextInitStr ? parseInt(nextInitStr, 10) : now;
       const nextStatusStr = window.sessionStorage.getItem('PockestHelperTimeout-status');
-      const nextStatus = nextStatusStr ? parseInt(nextStatusStr, 10) : now;
+      const nextStatus = nextStatusStr && parseInt(nextStatusStr, 10);
       const refreshes = [];
       if (now >= nextInit) refreshes.push(refreshInit());
       if (now >= nextStatus) refreshes.push(refreshStatus());
