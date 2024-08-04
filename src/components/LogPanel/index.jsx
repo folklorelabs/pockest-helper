@@ -1,4 +1,5 @@
 import React from 'react';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
 import {
   useAppContext,
@@ -6,9 +7,12 @@ import {
 import './index.css';
 
 function LogPanel({ children }) {
-  const { setShowLog } = useAppContext();
+  const {
+    setShowLog,
+    logStyle,
+  } = useAppContext();
   return (
-    <div className="LogPanel">
+    <div className={cx('LogPanel', `LogPanel--${logStyle}`)}>
       <button
         className="LogPanel-close"
         type="button"

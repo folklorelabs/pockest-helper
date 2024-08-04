@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import debounce from '../utils/debounce';
 
 // STATE
 const INITIAL_STATE = {
@@ -12,12 +13,23 @@ export function AppProvider({
   children,
 }) {
   const [showLog, setShowLog] = React.useState(INITIAL_STATE.showLog);
+  const [winWidth, setWinWidth] = React.useState(window.innerWidth);
+  const logStyle = React.useMemo(() => (winWidth >= 768 ? 'default' : 'compact'), [winWidth]);
+
+  React.useEffect(() => {
+    const resizeHandler = debounce(() => setWinWidth(window.innerWidth));
+    window.addEventListener('resize', resizeHandler);
+    return () => {
+      window.removeEventListener('resize', resizeHandler);
+    };
+  }, []);
 
   // wrap value in memo so we only re-render when necessary
   const providerValue = React.useMemo(() => ({
     showLog,
     setShowLog,
-  }), [showLog]);
+    logStyle,
+  }), [showLog, logStyle]);
 
   return (
     <AppContext.Provider value={providerValue}>
