@@ -6,7 +6,6 @@ import React, {
   useContext,
 } from 'react';
 import PropTypes from 'prop-types';
-import getRandomMinutes from '../../utils/getRandomMinutes';
 
 import {
   startStorageSession,
@@ -18,7 +17,6 @@ import {
 } from './state';
 import REDUCER from './reducer';
 import {
-  pockestInit,
   pockestInvalidateSession,
 } from './actions';
 
@@ -51,25 +49,6 @@ export function PockestProvider({
     saveStateToLocalStorage(pockestState);
     saveStateToSessionStorage(pockestState);
   }, [pockestState]);
-
-  // grab data on init
-  useEffect(() => {
-    let rafId;
-    const init = async () => {
-      const nextInitStr = window.sessionStorage.getItem('PockestHelperNextInit');
-      const nextInit = nextInitStr ? parseInt(nextInitStr, 10) : Date.now();
-      if (Date.now() >= nextInit) {
-        const newNextInit = Date.now() + getRandomMinutes(60);
-        window.sessionStorage.setItem('PockestHelperNextInit', newNextInit);
-        pockestDispatch(await pockestInit());
-      }
-      rafId = window.requestAnimationFrame(init);
-    };
-    init();
-    return () => {
-      window.cancelAnimationFrame(rafId);
-    };
-  }, []);
 
   // wrap value in memo so we only re-render when necessary
   const providerValue = useMemo(() => ({

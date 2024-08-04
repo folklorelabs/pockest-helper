@@ -5,6 +5,7 @@ import {
   pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
+import log from '../../utils/log';
 import getMatchTimer from '../../utils/getMatchTimer';
 import getRandomMinutes from '../../utils/getRandomMinutes';
 import postDiscord from '../../utils/postDiscord';
@@ -24,26 +25,58 @@ function Lifecycle() {
     [pockestState],
   );
 
-  const getNextRefresh = () => {
-    const now = new Date();
-    return new Date(now.getTime() + getRandomMinutes(5, 5));
-  };
-  const nextRandomReset = React.useRef(getNextRefresh());
-  const refresh = React.useCallback(async () => {
-    nextRandomReset.current = getNextRefresh();
+  // refresh init and set next for 20-30 minutes later
+  const refreshInit = React.useCallback(async () => {
+    const newNextInit = Date.now() + getRandomMinutes(20, 10);
+    const newNextStatus = Date.now() + getRandomMinutes(5, 5);
+    window.sessionStorage.setItem('PockestHelperTimeout-init', newNextInit);
+    window.sessionStorage.setItem('PockestHelperTimeout-status', newNextStatus);
+    log(`REFRESH INIT\nnext init @ ${(new Date(newNextInit)).toLocaleString()}\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}`);
+    pockestDispatch(pockestActions.pockestLoading());
+    pockestDispatch(await pockestActions.pockestInit());
+  }, [pockestDispatch]);
+
+  // refresh status and set next for 5-10 minutes later
+  const refreshStatus = React.useCallback(async () => {
+    const newNextStatus = Date.now() + getRandomMinutes(5, 5);
+    window.sessionStorage.setItem('PockestHelperTimeout-status', newNextStatus);
+    log(`REFRESH STATUS\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}`);
     pockestDispatch(pockestActions.pockestLoading());
     pockestDispatch(await pockestActions.pockestRefresh(pockestState));
   }, [pockestDispatch, pockestState]);
+
+  // refresh check loop
+  React.useEffect(() => {
+    let rafId;
+    const rafRefresh = async () => {
+      const now = Date.now();
+      const nextInitStr = window.sessionStorage.getItem('PockestHelperTimeout-init');
+      const nextInit = nextInitStr ? parseInt(nextInitStr, 10) : now;
+      const nextStatusStr = window.sessionStorage.getItem('PockestHelperTimeout-status');
+      const nextStatus = nextStatusStr ? parseInt(nextStatusStr, 10) : now;
+      const refreshes = [];
+      if (now >= nextInit) refreshes.push(refreshInit());
+      if (now >= nextStatus) refreshes.push(refreshStatus());
+      await Promise.all(refreshes);
+      rafId = window.requestAnimationFrame(rafRefresh);
+    };
+    rafRefresh();
+    return () => {
+      window.cancelAnimationFrame(rafId);
+    };
+  }, [pockestDispatch, refreshInit, refreshStatus]);
+
   React.useEffect(() => {
     if (!pockestState?.error || pockestState?.loading) return () => {};
     const errorTimeoutMs = getRandomMinutes(1, 3);
     const errorTimeout = window.setTimeout(async () => {
-      await refresh();
+      await refreshInit();
     }, errorTimeoutMs);
     return () => {
       window.clearTimeout(errorTimeout);
     };
-  }, [refresh, pockestState, pockestState?.error]);
+  }, [pockestState, pockestState?.error, refreshInit]);
+
   React.useEffect(() => {
     const interval = window.setInterval(async () => {
       const {
@@ -61,19 +94,19 @@ function Lifecycle() {
         invalidSession,
       } = pockestState;
       if (loading || paused || error || invalidSession) return;
+      const now = new Date();
 
       // No data! Let's refresh to get things moving.
       // If there is a good reason for no data then refreshing will trigger error or pause.
       if (!data) {
-        console.log('REFRESH, no data!');
-        await refresh();
+        log('Triggering refresh due to no data found.');
+        await refreshStatus();
         return;
       }
 
       const {
         monster,
       } = data;
-      const now = new Date();
       const isStunned = monster?.status === 2;
       const shouldNeglect = monster?.live_time
         ? monster.live_time + pockestGetters.getPlanNeglectOffset(pockestState) <= now : false;
@@ -83,32 +116,22 @@ function Lifecycle() {
 
       // Small event refresh
       if (data?.next_small_event_timer && now.getTime() > data?.next_small_event_timer) {
-        console.log(now.toLocaleString(), 'REFRESH, next_small_event_timer');
-        await refresh();
+        log('Triggering refresh due to next_small_event_timer.');
+        await refreshStatus();
         return;
       }
 
       // Big event refresh
       // no refresh if stunned cause the timer doesn't update and it will loop infinitely
       if (data?.next_big_event_timer && now.getTime() > data?.next_big_event_timer && !isStunned) {
-        console.log(now.toLocaleString(), 'REFRESH, next_big_event_timer');
-        await refresh();
-        return;
-      }
-
-      // Random refresh
-      const shouldRandomReset = currentCleanWindow || currentFeedWindow
-        || cleanFrequency === 2 || feedFrequency === 4;
-      if (shouldRandomReset && now > nextRandomReset.current) {
-        nextRandomReset.current = getNextRefresh();
-        console.log(now.toLocaleString(), `REFRESH, random, next @ ${nextRandomReset.current.toLocaleString()}`);
-        await refresh();
+        log('Triggering refresh due to next_big_event_timer.');
+        await refreshStatus();
         return;
       }
 
       // Cure
       if (autoCure && isStunned && !shouldLetDie) {
-        console.log(now.toLocaleString(), 'CURE');
+        log('CURE');
         pockestDispatch(pockestActions.pockestLoading());
         pockestDispatch(await pockestActions.pockestCure());
         return;
@@ -121,7 +144,7 @@ function Lifecycle() {
       const inCleanWindow = (!autoPlan && cleanFrequency === 2)
         || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
-        console.log(now.toLocaleString(), 'CLEAN');
+        log('CLEAN');
         pockestDispatch(pockestActions.pockestLoading());
         pockestDispatch(await pockestActions.pockestClean(pockestState));
         return;
@@ -134,7 +157,7 @@ function Lifecycle() {
       const inFeedWindow = (!autoPlan && feedFrequency === 4)
         || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
-        console.log(now.toLocaleString(), 'FEED');
+        log('FEED');
         pockestDispatch(pockestActions.pockestLoading());
         pockestDispatch(await pockestActions.pockestFeed());
         return;
@@ -146,7 +169,7 @@ function Lifecycle() {
         && new Date(monster?.training_time);
       const willTrain = attemptToTrain && nextTrainingTime && now >= nextTrainingTime;
       if (willTrain) {
-        console.log(now.toLocaleString(), `TRAIN, stat=${STAT_ID[stat]}`);
+        log(`TRAIN, stat=${STAT_ID[stat]}`);
         pockestDispatch(pockestActions.pockestLoading());
         pockestDispatch(await pockestActions.pockestTrain(stat));
         return;
@@ -172,7 +195,7 @@ function Lifecycle() {
           }
         }
         const bestMatch = await pockestGetters.getBestMatch(pockestState, exchangeList);
-        console.log(now.toLocaleString(), `MATCH, bestMatch=${bestMatch?.name_en}`);
+        log(`MATCH, bestMatch=${bestMatch?.name_en}`);
         pockestDispatch(await pockestActions.pockestMatch(pockestState, bestMatch));
       }
     }, 1000);
@@ -187,7 +210,7 @@ function Lifecycle() {
     feedTarget,
     pockestDispatch,
     pockestState,
-    refresh,
+    refreshStatus,
   ]);
 }
 
