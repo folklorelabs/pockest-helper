@@ -41,14 +41,14 @@ function AppMain() {
           </p>
         ) : ''}
         {(() => {
-          if (!pockestState?.initialized && pockestState?.error) {
-            return <AppMainContentInitError />;
-          }
           if (pockestState?.invalidSession) {
             return <AppMainContentInvalidSession />;
           }
           if (!pockestState?.initialized && pockestState.loading) {
             return <AppMainContentLoading />;
+          }
+          if (!pockestState?.initialized && pockestState?.error) {
+            return <AppMainContentInitError />;
           }
           if (pockestState?.initialized && !pockestState?.data?.monster) {
             return <AppMainContentEggPurchase />;
