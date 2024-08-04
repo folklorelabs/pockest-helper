@@ -54,15 +54,20 @@ export function PockestProvider({
 
   // grab data on init
   useEffect(() => {
-    let initTimeout;
+    let rafId;
     const init = async () => {
-      pockestDispatch(await pockestInit());
-      const timeoutMs = getRandomMinutes(60);
-      initTimeout = window.setTimeout(init, timeoutMs);
+      const nextInitStr = window.sessionStorage.getItem('PockestHelperNextInit');
+      const nextInit = nextInitStr ? parseInt(nextInitStr, 10) : Date.now();
+      if (Date.now() >= nextInit) {
+        const newNextInit = Date.now() + getRandomMinutes(60);
+        window.sessionStorage.setItem('PockestHelperNextInit', newNextInit);
+        pockestDispatch(await pockestInit());
+      }
+      rafId = window.requestAnimationFrame(init);
     };
     init();
     return () => {
-      window.clearTimeout(initTimeout);
+      window.cancelAnimationFrame(rafId);
     };
   }, []);
 
