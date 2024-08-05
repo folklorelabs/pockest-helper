@@ -1,6 +1,5 @@
 import React from 'react';
 import cx from 'classnames';
-import Lifecycle from './Lifecycle';
 import { usePockestContext } from '../../contexts/PockestContext';
 import { useAppContext } from '../../contexts/AppContext';
 import LogPanel from '../LogPanel';
@@ -22,7 +21,6 @@ function App() {
   const [lol, setLol] = React.useState(true);
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
-      <Lifecycle />
       <button className="AppMinBtn" type="button" onClick={() => setMinimized(!minimized)}>
         ⧉
       </button>

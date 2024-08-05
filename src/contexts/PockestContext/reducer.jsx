@@ -44,6 +44,7 @@ export default function REDUCER(state, [type, payload]) {
       return {
         ...state,
         initialized: true,
+        loading: false,
         data: payload?.data,
         allMonsters: payload?.allMonsters,
         allHashes: payload?.allHashes,
