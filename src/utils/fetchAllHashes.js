@@ -1,15 +1,17 @@
+import fetchJsonArray from './fetchJsonArray';
 import LocalStorageCache from './LocalStorageCache';
 
 const cache = new LocalStorageCache('PockestHelperSheetHashes');
 
 export default async function fetchAllHashes() {
-  const data = await chrome.runtime.sendMessage({ type: 'GET_HASHES' });
-  if (data?.error) {
+  try {
+    const hashes = await fetchJsonArray('https://folklorelabs.io/pockest-helper-data/hashes.min.json');
+    cache.set(hashes);
+    return hashes;
+  } catch (err) {
     const cachedData = cache.get();
-    if (!cachedData) throw new Error(`${data.error}`);
-    console.error(data?.error);
+    if (!cachedData) throw new Error(`${err}`);
+    console.error(err);
     return cachedData;
   }
-  cache.set(data?.hashes);
-  return data?.hashes;
 }

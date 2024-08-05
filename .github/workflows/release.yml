@@ -4,13 +4,13 @@ on:
   push:
     tags:
       - "v*"
-      - "!v*-rc*"
 
 permissions:
   contents: write
 
 jobs:
-  Release:
+  release:
+    name: Publish Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,18 +18,63 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Dotenv config
+        run: |
+          touch .env
+          echo DISCORD_WEBHOOK=\"${{ secrets.DISCORD_WEBHOOK }}\" >> .env
+
       - name: Build
         run: npm run build
 
       - name: Zip file
         run: echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
 
+      - name: Publish web extension
+        run: |
+          npm i -g web-ext
+          web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.JWT_ISSUER }} --api-secret ${{ secrets.JWT_SECRET }} -a ./dist
+          echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
+
+      - name: Release env vars
+        run: |
+          echo "IS_RC=$(node -pe "/rc.*$/.test(require('./package.json').version)")" >> $GITHUB_ENV
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: false
+          prerelease: ${{ env.IS_RC }}
           generate_release_notes: true
           files: |
             ${{ env.ZIP_FILE }}
+            ${{ env.XPI_FILE }}
+
+  update-manifest:
+    name: Publish updateManfiest.json
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 'gh-pages'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate updateManfiest.json
+        run: node ./scripts/genUpdateManifest.js
+
+      - name: Git config
+        uses: ./.github/actions/git-config
+
+      - name: Deploy
+        run: |
+          if [[ `git status --porcelain` ]]; then
+            git add -A
+            git commit -m 'Automated updateManifest.json publish'
+            git push
+          else
+            echo "Nothing to commit"
+          fi
+        shell: bash
 

@@ -1,11 +1,15 @@
 import { defineManifest } from '@crxjs/vite-plugin';
-import { version } from './package.json';
+import { version as versionName } from './package.json';
+
+// Convert from Semver (example: 0.1.0-rc.6)
+const [version, label = ''] = versionName.split('-');
+const rcVersion = label.split('.')[1];
 
 export default defineManifest(() => ({
   manifest_version: 3,
-  name: 'Pockest Helper',
-  version: version.split('-')[0],
-  version_name: version,
+  name: !rcVersion ? 'Pockest Helper' : '[BETA] Pockest Helper',
+  version: !rcVersion ? version : `${version}.${rcVersion}`,
+  version_name: versionName,
   content_scripts: [
     {
       matches: [
@@ -16,12 +20,15 @@ export default defineManifest(() => ({
       ],
     },
   ],
-  background: {
-    service_worker: 'src/service-worker.js',
-  },
   icons: {
     32: 'src/assets/icon32.png',
     48: 'src/assets/icon48.png',
     128: 'src/assets/icon128.png',
+  },
+  browser_specific_settings: {
+    gecko: {
+      id: !rcVersion ? 'pockesthelper@folklorelabs.io' : 'pockesthelper-beta@folklorelabs.io',
+      update_url: 'https://folklorelabs.io/pockest-helper/updateManifest.json',
+    },
   },
 }));
