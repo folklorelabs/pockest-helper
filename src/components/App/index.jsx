@@ -7,7 +7,7 @@ import CareLog from '../CareLog';
 import CharacterSprite from '../CharacterSprite';
 import PlanLog from '../PlanLog';
 import CompletionLog from '../CompletionLog';
-import AppMainInitError from './AppMain--initError';
+import AppMainError from './AppMain--error';
 import AppMainInvalidSession from './AppMain--invalidSession';
 import AppMainLoading from './AppMain--loading';
 import AppMainEggPurchase from './AppMain--eggPurchase';
@@ -38,8 +38,11 @@ function App() {
         if (!pockestState?.initialized && pockestState.loading) {
           return <AppMainLoading />;
         }
+        if (!pockestState?.initialized && pockestState?.error?.includes('403') && pockestState?.error?.includes('buckler')) {
+          return <AppMainError msg="Please ensure you are logged into Buckler (403 Auth Error)" />;
+        }
         if (!pockestState?.initialized && pockestState?.error) {
-          return <AppMainInitError />;
+          return <AppMainError msg="We encountered a critical error and were unable to initialize" />;
         }
         if (pockestState?.initialized && !pockestState?.data?.monster) {
           return <AppMainEggPurchase />;

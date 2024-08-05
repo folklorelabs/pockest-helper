@@ -90,7 +90,30 @@
   padding: 0 1rem;
 }
 
-#PockestHelperExtension .AppUpdateAlert {
+#PockestHelperExtension .App-updateTitle {
+  font-size: 1.5em;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}
+
+#PockestHelperExtension .App-updateTitle--error {
+  color: red;
+  font-weight: bold;
+}
+
+#PockestHelperExtension .App-updateText {
+  font-size: 1em;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+#PockestHelperExtension .App-updateText--error {
+  color: red;
+  font-weight: bold;
+}
+
+#PockestHelperExtension .AppUpdateAlert,
+#PockestHelperExtension .App-updateTextSecondary {
   font-size: 0.8em;
   margin-bottom: 1rem;
   text-align: center;
