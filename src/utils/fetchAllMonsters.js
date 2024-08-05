@@ -44,7 +44,7 @@ export default async function fetchAllMonsters() {
     const newAllMonsters = {
       ...allMonsters,
     };
-    const { monster } = book;
+    const { id: eggId, monster } = book;
     const monsterProps = Object.keys(monster);
     const genePropKeys = monsterProps.filter((k) => k.includes('gene'));
     genePropKeys.forEach((gk) => {
@@ -52,7 +52,10 @@ export default async function fetchAllMonsters() {
       geneMonsters.forEach((gm) => {
         newAllMonsters[gm?.monster_id] = [
           ...(newAllMonsters[gm?.monster_id] || []),
-          gm,
+          {
+            ...gm,
+            eggId,
+          },
         ];
       });
     });

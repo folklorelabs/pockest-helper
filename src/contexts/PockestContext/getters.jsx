@@ -210,6 +210,7 @@ export function getAutoPlanSettings(state) {
       autoPlan: true,
       paused: true,
       statLog: [],
+      egg: null,
     };
   }
   if (newSettings.autoPlan) {

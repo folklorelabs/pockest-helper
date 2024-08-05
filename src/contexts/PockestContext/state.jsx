@@ -4,6 +4,7 @@ const INITIAL_STATE = {
   allHashes: [],
   paused: true,
   monsterId: -1,
+  egg: null,
   planId: '',
   statPlanId: '',
   statLog: [],
