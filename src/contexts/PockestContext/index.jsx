@@ -44,7 +44,10 @@ export function PockestProvider({
     cleanFrequency,
     feedFrequency,
     feedTarget,
-  } = React.useMemo(() => pockestGetters.getCurrentPlanStats(pockestState), [pockestState]);
+  } = React.useMemo(
+    () => pockestGetters.getCurrentPlanStats(pockestState),
+    [pockestState],
+  );
   const {
     currentCleanWindow,
     currentFeedWindow,
