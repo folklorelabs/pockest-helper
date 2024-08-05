@@ -7,8 +7,12 @@ import CareLog from '../CareLog';
 import CharacterSprite from '../CharacterSprite';
 import PlanLog from '../PlanLog';
 import CompletionLog from '../CompletionLog';
+import AppMainInitError from './AppMain--initError';
+import AppMainInvalidSession from './AppMain--invalidSession';
+import AppMainLoading from './AppMain--loading';
+import AppMainEggPurchase from './AppMain--eggPurchase';
+import AppMainCare from './AppMain--care';
 import './index.css';
-import AppMain from './AppMain';
 
 function App() {
   const {
@@ -27,7 +31,21 @@ function App() {
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
       </header>
-      <AppMain />
+      {(() => {
+        if (pockestState?.invalidSession) {
+          return <AppMainInvalidSession />;
+        }
+        if (!pockestState?.initialized && pockestState.loading) {
+          return <AppMainLoading />;
+        }
+        if (!pockestState?.initialized && pockestState?.error) {
+          return <AppMainInitError />;
+        }
+        if (pockestState?.initialized && !pockestState?.data?.monster) {
+          return <AppMainEggPurchase />;
+        }
+        return <AppMainCare />;
+      })()}
       <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
         {lol ? (
           <CharacterSprite

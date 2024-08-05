@@ -9,27 +9,37 @@
   border-top: 4px solid #d5a613;
 }
 
-.App-inner {
-  /* 2.2 + 1.5 + 2.4 + 2 + 2.43 */
-  max-height: calc(100vh - 10.53rem);
-  height: 963px;
+.AppMain {
+  /* 4px border + (2.2 + (1.2 * 2) + 1.5 header) */
+  height: calc(100vh - 4px - 6.1rem);
+  max-height: 963px;
   overflow-y: auto;
   padding: 0 1rem;
 }
 
-#PockestHelperExtension .App-inner::-webkit-scrollbar {
+.AppMain--care,
+.AppMain--eggPurchase {
+  /* 4px border + (2.2 + (1.2 * 2) + 1.5 header) + (2 + 2.7 footer) */
+  height: calc(100vh - 4px - 10.8rem);
+}
+
+.AppMain--eggPurchase {
+  max-height: 140px;
+}
+
+#PockestHelperExtension .AppMain::-webkit-scrollbar {
   width: 2px;
 }
 
-#PockestHelperExtension .App-inner::-webkit-scrollbar-track {
+#PockestHelperExtension .AppMain::-webkit-scrollbar-track {
   background: rgba(242, 242, 242, 0);
 }
 
-#PockestHelperExtension .App-inner::-webkit-scrollbar-thumb {
+#PockestHelperExtension .AppMain::-webkit-scrollbar-thumb {
   background: rgb(100, 100, 100);
 }
 
-#PockestHelperExtension .App-inner::-webkit-scrollbar-thumb:hover {
+#PockestHelperExtension .AppMain::-webkit-scrollbar-thumb:hover {
   background: rgb(135, 135, 135)
 }
 
@@ -76,7 +86,7 @@
   width: 100%;
 }
 
-#PockestHelperExtension .App-footer {
+#PockestHelperExtension .AppMain-footer {
   padding: 0 1rem;
 }
 
