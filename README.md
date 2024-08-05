@@ -33,7 +33,7 @@ _Pockest Helper is a community-driven passion project and is_ ___NOT___ _affilia
 
 1. Using Firefox, navigate to the [latest release](https://github.com/folklorelabs/pockest-helper/releases/latest) and download the .xpi asset file that matches the format `PockestHelper_vX.X.X.xpi`.
 2. Firefox should prompt you to install this addon. Follow the on-screen prompts and accept the required permissions.
-3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Firefox and it will automatically load the helper!
+3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) and it will automatically load the helper!
 
 ## FAQ
 
