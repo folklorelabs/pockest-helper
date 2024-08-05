@@ -42,6 +42,8 @@ Pockest Helper is built based on the knowledge shared in the [Pockest Guide on S
 
 Yes. For more advanced users that need to give their computer a rest, feel free to refer to "Preset Plan" within the log panel to time these breaks based on activity gaps. There is about ~1 hour of leeway with most of these timings, but not being precise may lead to death or path divergance.
 
+If you have an old Android mobile device laying around, you could also try installing [Kiwi Browser](https://play.google.com/store/apps/details?id=com.kiwibrowser.browser) and [Caffeine](https://play.google.com/store/apps/details?id=moe.zhs.caffeine). Kiwi is able to run Pockest Helper and Caffeine will keep the screen on.
+
 ### The extension/addon is broken for me! What can I do?
 
 Sorry about that! Feel free to join the [Pockest Guide Discord](https://discord.gg/492bdzBDu) if you have any questions or feedback. There is a dedicated `#pockest-helper` channel for assistance and/or reporting bugs. Also please keep in mind that testing some features/fixes may take collaboration and/or multiple days because verifying/debugging the issue often requires re-creating specific evolution conditions which takes time.
