@@ -29,13 +29,13 @@ jobs:
       - name: Zip file
         run: echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
 
-      - name: Publish/Build Web Extension
+      - name: Publish web extension
         run: |
           npm i -g web-ext
           web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.JWT_ISSUER }} --api-secret ${{ secrets.JWT_SECRET }} -a ./dist
           echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
 
-      - name: Release Candiate Env Var
+      - name: Release env vars
         run: |
           echo "IS_RC=$(node -pe "/rc.*$/.test(require('./package.json').version)")" >> $GITHUB_ENV
 
