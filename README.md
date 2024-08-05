@@ -2,11 +2,11 @@
 
 ## What is this?
 
-This is a browser extension/addon that tracks and automatically cares for [Street Fighter Pockest Monsters](https://www.streetfighter.com/6/buckler/minigame).
+Pockest Helper is a browser extension/addon that tracks and automatically cares for [Street Fighter Pockest Monsters](https://www.streetfighter.com/6/buckler/minigame).
 
 ![A screenshot of Pockest Helper in action](https://github.com/folklorelabs/pockest-helper/assets/98740773/a90060c8-69d9-40e4-a763-0e6bc4178cf6)
 
-THIS EXTENSION IS NOT AFFILIATED WITH CAPCOM, STREET FIGHTER, OR BUCKLER BOOTCAMP IN ANY WAY. IT IS A PASSION PROJECT AND ENTIRELY COMMUNITY-DRIVEN.
+POCKEST HELPER IS NOT AFFILIATED WITH CAPCOM, STREET FIGHTER, OR BUCKLER BOOTCAMP IN ANY WAY. IT IS A PASSION PROJECT AND ENTIRELY COMMUNITY-DRIVEN.
 
 ## Installation
 
@@ -26,18 +26,22 @@ THIS EXTENSION IS NOT AFFILIATED WITH CAPCOM, STREET FIGHTER, OR BUCKLER BOOTCAM
 
 ## FAQ
 
-### Will installing this extension midway through a monster's life cause issue?
-
-The extensions will not enact any changes on your behalf until you click the "AUTO-CARE" button. Please make sure you have set the proper options before clicking this button or it may affect the outcome of your final monster.
-
-### Why didn't I get the monster I selected?
-
-The requirements for specific monsters are quite complex. You will want to refrain from manually taking ANY actions when using the preset option or you may end up with a different monster. This includes matching, curing, etc. The extension follows the [Pockest Guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624) closely, and the guide is a great reference if you would like to better understand how Pockest Helper works under the hood.
-
 ### Is this against TOS?
 
 Terms of service calls like this are at the discretion of the service owner (i.e. Capcom). So use this at your own risk. That being said, we haven't had any reports or issues so far!
 
-### The app or a feature is broken for me. What can I do?
+### Why didn't I get the monster I selected?
 
-Sorry about that! Feel free to join the [Pockest Guide Discord](https://discord.gg/492bdzBDu) if you have any questions or feedback. There is a dedicated `#pockest-helper` channel. Also please keep in mind that testing some features/fixes may take collaboration and/or multiple days because verifying functionality often requires specific game events.
+The requirements for specific monsters are quite complex. You will want to refrain from manually taking ANY actions when using the preset option or you may end up with a different/dead monster. This includes matching, curing, etc. Similarly, you should not change the preset option during a monster's life for the same reasons.
+
+### How does Pockest Helper work?
+
+Pockest Helper is built based on the knowledge shared in the [Pockest Guide on Steam](https://steamcommunity.com/sharedfiles/filedetails/?id=3003515624). Please refer to the guide if you're interested in learning how Pockest Helper works under the hood. Thanks for the awesome guide and all of the collaboration SHIII3rd; Pockest Helper wouldn't exist without you!
+
+### Do I need to leave Pockest Helper running 24/7?
+
+Yes. For more advanced users that need to give their computer a rest, feel free to refer to "Preset Plan" within the log panel to time these breaks based on activity gaps. There is about ~1 hour of leeway with most of these timings, but not being precise may lead to death or path divergance.
+
+### The extension/addon is broken for me! What can I do?
+
+Sorry about that! Feel free to join the [Pockest Guide Discord](https://discord.gg/492bdzBDu) if you have any questions or feedback. There is a dedicated `#pockest-helper` channel for assistance and/or reporting bugs. Also please keep in mind that testing some features/fixes may take collaboration and/or multiple days because verifying/debugging the issue often requires re-creating specific evolution conditions which takes time.
