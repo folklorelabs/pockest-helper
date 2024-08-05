@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   release:
-    name: Publish Release
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
