@@ -259,12 +259,11 @@ export async function pockestInit() {
     const [
       allMonsters,
       allHashes,
-      data,
     ] = await Promise.all([
       fetchAllMonsters(),
       fetchAllHashes(),
-      fetchPockestStatus(),
     ]);
+    const data = await fetchPockestStatus();
     return [ACTIONS.INIT, {
       allMonsters,
       allHashes,
