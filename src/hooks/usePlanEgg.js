@@ -2,8 +2,8 @@ import React from 'react';
 import fetchAllEggs from '../utils/fetchAllEggs';
 import getTargetMonsterPlan from '../utils/getTargetMonsterPlan';
 
-function useEggs(pockestState) {
-  const [eggData, setEggData] = React.useState({});
+function usePlanEgg(pockestState) {
+  const [eggData, setEggData] = React.useState();
   React.useEffect(() => {
     (async () => {
       const res = await fetchAllEggs();
@@ -13,22 +13,22 @@ function useEggs(pockestState) {
       });
     })();
   }, []);
-  const targetPlan = React.useMemo(() => getTargetMonsterPlan(pockestState), [pockestState]);
-  const planEggCost = React.useMemo(
-    () => (targetPlan?.planEgg?.unlock ? 0 : targetPlan?.planEgg?.buckler_point),
-    [targetPlan?.planEgg],
-  );
-  const planEggAffordable = React.useMemo(
-    () => planEggCost <= eggData?.user_buckler_point,
-    [eggData?.user_buckler_point, planEggCost],
-  );
-  const returnVal = React.useMemo(() => ({
-    planEgg: targetPlan?.planEgg,
-    planEggCost,
-    planEggAffordable,
-    userBucklerPointBalance: eggData?.user_buckler_point,
-  }), [eggData?.user_buckler_point, planEggAffordable, planEggCost, targetPlan?.planEgg]);
+  const planEgg = React.useMemo(() => {
+    if (!eggData) return null;
+    const targetPlan = getTargetMonsterPlan(pockestState);
+    const egg = eggData?.eggs?.find((e) => e?.id === targetPlan?.planEgg);
+    return egg;
+  }, [eggData, pockestState]);
+  const returnVal = React.useMemo(() => {
+    const planEggCost = planEgg?.unlock ? 0 : planEgg?.buckler_point;
+    return {
+      planEgg,
+      planEggCost,
+      planEggAffordable: planEggCost <= eggData?.user_buckler_point,
+      userBucklerPointBalance: eggData?.user_buckler_point,
+    };
+  }, [eggData, planEgg]);
   return returnVal;
 }
 
-export default useEggs;
+export default usePlanEgg;
