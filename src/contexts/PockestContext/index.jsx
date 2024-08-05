@@ -105,15 +105,25 @@ export function PockestProvider({
     };
   }, [pockestDispatch, refreshInit, refreshStatus]);
 
-  // refresh loop if there is an error
+  // error loop: attempt to re-init every 1-3 minutes if there is an error
   React.useEffect(() => {
     if (!pockestState?.error || pockestState?.loading) return () => {};
-    const errorTimeoutMs = getRandomMinutes(1, 3);
-    const errorTimeout = window.setTimeout(async () => {
+    let rafId;
+    const rafRefresh = async () => {
+      const now = Date.now();
+      const nextInitStr = window.sessionStorage.getItem('PockestHelperTimeout-error');
+      const nextInit = nextInitStr ? parseInt(nextInitStr, 10) : now;
+      if (now >= nextInit) {
+        const newNextInit = Date.now() + getRandomMinutes(1, 3);
+        window.sessionStorage.setItem('PockestHelperTimeout-error', newNextInit);
+        log(`REFRESH ERROR\nnext error refresh @ ${(new Date(newNextInit)).toLocaleString()}`);
       await refreshInit();
-    }, errorTimeoutMs);
+      }
+      rafId = window.requestAnimationFrame(rafRefresh);
+    };
+    rafRefresh();
     return () => {
-      window.clearTimeout(errorTimeout);
+      window.cancelAnimationFrame(rafId);
     };
   }, [pockestState, pockestState?.error, refreshInit]);
 
