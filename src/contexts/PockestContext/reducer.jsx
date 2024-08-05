@@ -58,8 +58,10 @@ export default function REDUCER(state, [type, payload]) {
         ...state,
         loading: false,
         data: payload,
-        egg: payload?.result?.logType === 'hatching' ? payload?.result?.eggType
-          : state?.egg,
+        eggId: payload?.result?.logType === 'hatching' ? payload?.result?.eggType
+          : state?.eggId,
+        eggTimestamp: payload?.result?.logType === 'hatching' ? payload?.result?.monsterBirth
+          : state?.eggTimestamp,
         cleanTimestamp: (payload?.result?.logType === 'cleaning')
           ? payload?.result?.timestamp : state.cleanTimestamp,
         statLog: (payload?.result?.logType === 'training') ? [

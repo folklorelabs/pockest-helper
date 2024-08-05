@@ -15,10 +15,11 @@ export function getLogEntry(pockestState) {
 
 export function isMonsterGone(pockestState) {
   if (['monster_not_found', 'departure', 'death'].includes(pockestState?.data?.event)) return true;
-  if (!pockestState?.data?.monster) return true; // inconclusive?
+  if (!pockestState?.error && !pockestState?.data?.monster) return true;
   const now = (new Date()).getTime();
   const isDead = now >= getDeathTimer(pockestState);
-  const hasLeft = now >= (pockestState.data.monster.live_time + MONSTER_LIFESPAN[5]);
+  const birthTimestamp = pockestState?.eggTimestamp || pockestState?.data?.monster?.live_time;
+  const hasLeft = now >= (birthTimestamp + MONSTER_LIFESPAN[5]);
   return isDead || hasLeft;
 }
 
@@ -210,7 +211,8 @@ export function getAutoPlanSettings(state) {
       autoPlan: true,
       paused: true,
       statLog: [],
-      egg: null,
+      eggId: null,
+      eggTimestamp: null,
     };
   }
   if (newSettings.autoPlan) {
