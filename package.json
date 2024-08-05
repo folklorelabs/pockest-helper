@@ -1,7 +1,7 @@
 {
   "name": "pockest-helper",
   "private": true,
-  "version": "1.2.0-rc.19",
+  "version": "1.2.0-rc.20",
   "scripts": {
     "build": "vite build",
     "dev": "vite",
