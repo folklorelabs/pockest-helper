@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import AppUpdateAlert from './AppUpdateAlert';
+import AppUpdateAlert from '../AppUpdateAlert';
 
 function AppMain({
   className,

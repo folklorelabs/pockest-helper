@@ -20,7 +20,7 @@ function AppUpdateAlert() {
   }, [remoteVersion]);
   if (!isOutdated) return '';
   return (
-    <p className="App-updateText">
+    <p className="AppUpdateAlert">
       <a href="https://github.com/folklorelabs/pockest-helper/releases/latest" target="_blank" rel="noreferrer">
         New version available (
         {remoteVersion}
