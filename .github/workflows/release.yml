@@ -44,6 +44,7 @@ jobs:
           prerelease: ${{ env.IS_RC }}
           generate_release_notes: true
           files: |
+            ./README.md
             ${{ env.ZIP_FILE }}
             ${{ env.XPI_FILE }}
 
