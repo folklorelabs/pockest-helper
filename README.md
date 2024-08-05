@@ -37,7 +37,7 @@ _Pockest Helper is a community-driven passion project and is_ ___NOT___ _affilia
 1. Navigate to the [latest release](https://github.com/folklorelabs/pockest-helper/releases/latest) and download the zip asset file that matches the format `PockestHelper_vX.X.X.zip`.
 2. Open Kiwi and navigate to the **Manage Extensions** page (`kiwi://extensions/`). Click the "+ (from .zip/.crx/.user.js)" button and select the .zip file from step #1.
   a. You will need to enable "Developer Mode" in the top right of that screen to see this button.
-3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Edge and it will automatically load the helper!
+3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Kiwi and it will automatically load the helper!
 
 ## FAQ
 
