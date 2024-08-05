@@ -1,11 +1,20 @@
 import log from '../../utils/log';
 import {
-  ACTIONS,
-} from './actions';
-import {
   getAutoPlanSettings,
   getLogEntry,
 } from './getters';
+
+export const ACTIONS = {
+  INIT: 'POCKEST_INIT',
+  INVALIDATE_SESSION: 'POCKEST_INVALIDATE_SESSION',
+  REFRESH: 'POCKEST_REFRESH',
+  LOADING: 'POCKEST_LOADING',
+  PAUSE: 'POCKEST_PAUSE',
+  ERROR: 'POCKEST_ERROR',
+  ERROR_HATCH_SYNC: 'POCKEST_ERROR_HATCH_SYNC',
+  SETTINGS: 'POCKEST_SETTINGS',
+  SET_LOG: 'POCKEST_SET_LOG',
+};
 
 export default function REDUCER(state, [type, payload]) {
   log('STATE CHANGE', { state, type, payload });

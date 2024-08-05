@@ -9,17 +9,8 @@ import {
   fetchPockestStatus,
   getLogEntry,
 } from './getters';
+import { ACTIONS } from './reducer';
 
-export const ACTIONS = {
-  INIT: 'POCKEST_INIT',
-  INVALIDATE_SESSION: 'POCKEST_INVALIDATE_SESSION',
-  REFRESH: 'POCKEST_REFRESH',
-  LOADING: 'POCKEST_LOADING',
-  PAUSE: 'POCKEST_PAUSE',
-  ERROR: 'POCKEST_ERROR',
-  SETTINGS: 'POCKEST_SETTINGS',
-  SET_LOG: 'POCKEST_SET_LOG',
-};
 export function pockestLoading() {
   return [ACTIONS.LOADING];
 }
