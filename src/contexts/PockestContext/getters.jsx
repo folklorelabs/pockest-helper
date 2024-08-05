@@ -1,3 +1,4 @@
+import log from '../../utils/log';
 import getTimeIntervals from '../../utils/getTimeIntervals';
 import getTotalStats from '../../utils/getTotalStats';
 import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../../utils/getTargetMonsterPlan';
@@ -206,6 +207,7 @@ export function getAutoPlanSettings(state) {
     autoPlan: state.autoPlan,
   };
   if (isMonsterGone(state)) {
+    log('Monster is gone! Automatically adjusting settings');
     newSettings = {
       ...newSettings,
       autoPlan: true,
