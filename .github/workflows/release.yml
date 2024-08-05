@@ -58,16 +58,16 @@ jobs:
         with:
           ref: 'gh-pages'
 
-      - name: dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: generate updateManfiest file
+      - name: Generate updateManfiest.json
         run: node ./scripts/genUpdateManifest.js
 
-      - name: git config
+      - name: Git config
         uses: ./.github/actions/git-config
 
-      - name: ghpages deploy
+      - name: Deploy
         run: |
           if [[ `git status --porcelain` ]]; then
             git add -A
