@@ -22,7 +22,7 @@ _Pockest Helper is a community-driven passion project and is_ ___NOT___ _affilia
     * Chrome: Toggle on top right
     * Edge: Toggle on left side
     * Kiwi: Toggle on top right
-5. Delete any old versions of Pockest Helper
+5. Delete any old versions of Pockest Helper already installed on this browser
 6. Click the button to install the addon on the **Manage Extensions** page:
     * Chrome: "Load Unpacked" on top left 
     * Edge: "Load Unpacked" on top center
