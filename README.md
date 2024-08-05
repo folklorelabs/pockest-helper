@@ -2,16 +2,27 @@
 
 ## What is this?
 
-This is a [Chrome Extension](chrome://extensions/) that tracks and automatically cares for [Street Fighter Pockest Monsters](https://www.streetfighter.com/6/buckler/minigame). It is a passion project and is still in early development.
+This is a browser extension/addon that tracks and automatically cares for [Street Fighter Pockest Monsters](https://www.streetfighter.com/6/buckler/minigame).
 
 ![A screenshot of Pockest Helper in action](https://github.com/folklorelabs/pockest-helper/assets/98740773/a90060c8-69d9-40e4-a763-0e6bc4178cf6)
 
+THIS EXTENSION IS NOT AFFILIATED WITH CAPCOM, STREET FIGHTER, OR BUCKLER BOOTCAMP IN ANY WAY. IT IS A PASSION PROJECT AND ENTIRELY COMMUNITY-DRIVEN.
 
 ## Installation
 
-1. [Download the latest release](https://github.com/folklorelabs/pockest-helper/releases/latest)
+### Chrome or Kiwi (Mobile)
+
+1. Navigate to the [latest release](https://github.com/folklorelabs/pockest-helper/releases/latest) and download the zip asset file that matches the format `PockestHelper_vX.X.X.zip`.
 2. Open Chrome and go to the **Manage Extensions** page (`chrome://extensions/`) and install the release by dragging and dropping the `PockestHelper.zip` file onto the page.
+  a. You will need to enable "Developer Mode" in the top right of that screen.
+  b. Some users have reported needing to unzip the `PockestHelper_vX.X.X.zip` file first and then installing the directory instead. Try this if the zip file doesn't work for you.
 3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Chrome and it will automatically load the helper!
+
+### Firefox
+
+1. Using Firefox, navigate to the [latest release](https://github.com/folklorelabs/pockest-helper/releases/latest) and download the .xpi asset file that matches the format `PockestHelper_vX.X.X.xpi`.
+2. Firefox should prompt you to install this addon. Follow the on-screen prompts and accept the required permissions.
+3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Firefox and it will automatically load the helper!
 
 ## FAQ
 
@@ -25,7 +36,7 @@ The requirements for specific monsters are quite complex. You will want to refra
 
 ### Is this against TOS?
 
-Terms of service calls like this are at the discretion of the service owner (i.e. Capcom), so use at your own risk. That being said, we haven't had any reports of issues so far!
+Terms of service calls like this are at the discretion of the service owner (i.e. Capcom). So use this at your own risk. That being said, we haven't had any reports or issues so far!
 
 ### The app or a feature is broken for me. What can I do?
 
