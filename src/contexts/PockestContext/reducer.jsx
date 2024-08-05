@@ -118,6 +118,7 @@ export default function REDUCER(state, [type, payload]) {
         error: payload,
         eggId: null,
         eggTimestamp: state?.data?.monster?.live_time,
+        statLog: state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training').map((e) => e.type) ?? [],
         log: [
           ...state.log,
           {
