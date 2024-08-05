@@ -26,17 +26,15 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Zip file
-        run: echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
-
       - name: Publish web extension
         run: |
           npm i -g web-ext
-          web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.JWT_ISSUER }} --api-secret ${{ secrets.JWT_SECRET }} -a ./dist
-          echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
+          web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.JWT_ISSUER }} --api-secret ${{ secrets.JWT_SECRET }} -a ./artifacts
 
       - name: Release vars
         run: |
+          echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
+          echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
           echo "IS_RC=$(node -pe "/rc.*$/.test(require('./package.json').version)")" >> $GITHUB_ENV
 
       - name: Release
