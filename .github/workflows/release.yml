@@ -35,7 +35,7 @@ jobs:
           web-ext sign -s ./dist --channel unlisted --api-key ${{ secrets.JWT_ISSUER }} --api-secret ${{ secrets.JWT_SECRET }} -a ./dist
           echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
 
-      - name: Release env vars
+      - name: Release vars
         run: |
           echo "IS_RC=$(node -pe "/rc.*$/.test(require('./package.json').version)")" >> $GITHUB_ENV
 
