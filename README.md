@@ -6,7 +6,7 @@ Pockest Helper is a browser extension/addon that tracks and automatically cares 
 
 ![A screenshot of Pockest Helper in action](https://github.com/folklorelabs/pockest-helper/assets/98740773/a90060c8-69d9-40e4-a763-0e6bc4178cf6)
 
-POCKEST HELPER IS NOT AFFILIATED WITH CAPCOM, STREET FIGHTER, OR BUCKLER BOOTCAMP IN ANY WAY. IT IS A PASSION PROJECT AND ENTIRELY COMMUNITY-DRIVEN.
+_Pockest Helper is a community-driven passion project and is_ ___NOT___ _affiliated with or endorsed by Capcom or Street Fighter in any way_
 
 ## Installation
 
