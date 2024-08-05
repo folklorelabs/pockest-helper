@@ -274,6 +274,6 @@ export async function pockestInit() {
     return [ACTIONS.ERROR, `[pockestInit] ${error?.message}`];
   }
 }
-export async function pockestInvalidateSession() {
+export function pockestInvalidateSession() {
   return [ACTIONS.INVALIDATE_SESSION];
 }
