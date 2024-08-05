@@ -12,7 +12,7 @@
 .App-inner {
   /* 2.2 + 1.5 + 2.4 + 2 + 2.43 */
   max-height: calc(100vh - 10.53rem);
-  height: 954px;
+  height: 963px;
   overflow-y: auto;
   padding: 0 1rem;
 }
