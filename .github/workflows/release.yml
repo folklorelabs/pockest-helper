@@ -21,7 +21,7 @@ jobs:
       - name: Dotenv config
         run: |
           touch .env
-          echo DISCORD_WEBHOOK=\"${{ vars.DISCORD_WEBHOOK }}\" >> .env
+          echo DISCORD_WEBHOOK=\"${{ secrets.DISCORD_WEBHOOK }}\" >> .env
 
       - name: Build
         run: npm run build
