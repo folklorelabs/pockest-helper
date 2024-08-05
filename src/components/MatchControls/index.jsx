@@ -51,7 +51,9 @@ function MatchControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({ matchPriority: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({
+              matchPriority: parseInt(e.target.value, 10),
+            }));
           }}
           value={matchPriority || ''}
           disabled={!paused}
