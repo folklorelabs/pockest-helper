@@ -66,6 +66,18 @@ export function PockestProvider({
     saveStateToSessionStorage(pockestState);
   }, [pockestState]);
 
+  useEffect(() => {
+    if (pockestState?.error) return;
+    const bucklerLiveTimestamp = pockestState?.data?.monster?.live_time;
+    const stateLiveTimestamp = pockestState?.eggTimestamp;
+    const missingStateTimestamp = bucklerLiveTimestamp && !stateLiveTimestamp;
+    const desyncedTimestamp = stateLiveTimestamp && bucklerLiveTimestamp
+      && stateLiveTimestamp !== bucklerLiveTimestamp;
+    if (missingStateTimestamp || desyncedTimestamp) {
+      pockestDispatch(pockestActions.pockestErrorHatchSync('Pockest Helper detected a Monster that it did not hatch. Please refrain from manually hatching monsters as this will reduce the effectiveness of Pockest Helper.'));
+    }
+  }, [pockestState]);
+
   // refresh init and set next for 20-30 minutes later
   const refreshInit = React.useCallback(async () => {
     const newNextInit = Date.now() + getRandomMinutes(20, 10);
@@ -117,7 +129,7 @@ export function PockestProvider({
         const newNextInit = Date.now() + getRandomMinutes(1, 3);
         window.sessionStorage.setItem('PockestHelperTimeout-error', newNextInit);
         log(`REFRESH ERROR\nnext error refresh @ ${(new Date(newNextInit)).toLocaleString()}`);
-      await refreshInit();
+        await refreshInit();
       }
       rafId = window.requestAnimationFrame(rafRefresh);
     };

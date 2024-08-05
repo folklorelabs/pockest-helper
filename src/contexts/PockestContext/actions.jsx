@@ -277,3 +277,6 @@ export async function pockestInit() {
 export function pockestInvalidateSession() {
   return [ACTIONS.INVALIDATE_SESSION];
 }
+export function pockestErrorHatchSync(errMsg) {
+  return [ACTIONS.ERROR_HATCH_SYNC, errMsg];
+}

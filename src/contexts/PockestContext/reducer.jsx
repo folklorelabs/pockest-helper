@@ -112,6 +112,21 @@ export default function REDUCER(state, [type, payload]) {
           },
         ],
       };
+    case ACTIONS.ERROR_HATCH_SYNC:
+      return {
+        ...state,
+        error: payload,
+        eggId: null,
+        eggTimestamp: state?.data?.monster?.live_time,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state),
+            logType: 'error',
+            error: `${payload}`,
+          },
+        ],
+      };
     default:
       return { ...state };
   }
