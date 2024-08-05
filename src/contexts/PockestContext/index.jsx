@@ -14,6 +14,8 @@ import {
   getStateFromSessionStorage,
   saveStateToLocalStorage,
   saveStateToSessionStorage,
+  getSessionTimeout,
+  setSessionTimeout,
 } from './state';
 import REDUCER from './reducer';
 
@@ -23,7 +25,6 @@ import * as pockestGetters from './getters';
 
 import log from '../../utils/log';
 import getMatchTimer from '../../utils/getMatchTimer';
-import getRandomMinutes from '../../utils/getRandomMinutes';
 import postDiscord from '../../utils/postDiscord';
 
 startStorageSession();
@@ -80,10 +81,8 @@ export function PockestProvider({
 
   // refresh init and set next for 20-30 minutes later
   const refreshInit = React.useCallback(async () => {
-    const newNextInit = Date.now() + getRandomMinutes(20, 10);
-    const newNextStatus = Date.now() + getRandomMinutes(5, 5);
-    window.sessionStorage.setItem('PockestHelperTimeout-init', newNextInit);
-    window.sessionStorage.setItem('PockestHelperTimeout-status', newNextStatus);
+    const newNextInit = setSessionTimeout('PockestHelperTimeout-init', 20, 10);
+    const newNextStatus = setSessionTimeout('PockestHelperTimeout-status', 5, 5);
     log(`REFRESH INIT\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}\nnext init @ ${(new Date(newNextInit)).toLocaleString()}`);
     pockestDispatch(pockestActions.pockestLoading());
     pockestDispatch(await pockestActions.pockestInit());
@@ -91,8 +90,7 @@ export function PockestProvider({
 
   // refresh status and set next for 5-10 minutes later
   const refreshStatus = React.useCallback(async () => {
-    const newNextStatus = Date.now() + getRandomMinutes(5, 5);
-    window.sessionStorage.setItem('PockestHelperTimeout-status', newNextStatus);
+    const newNextStatus = setSessionTimeout('PockestHelperTimeout-status', 5, 5);
     log(`REFRESH STATUS\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}`);
     pockestDispatch(pockestActions.pockestLoading());
     pockestDispatch(await pockestActions.pockestRefresh(pockestState));
@@ -103,11 +101,9 @@ export function PockestProvider({
     let rafId;
     const rafRefresh = async () => {
       const now = Date.now();
-      const nextInitStr = window.sessionStorage.getItem('PockestHelperTimeout-init');
-      const nextInit = nextInitStr && parseInt(nextInitStr, 10);
+      const nextInit = getSessionTimeout('PockestHelperTimeout-init');
       if (now >= nextInit) await refreshInit();
-      const nextStatusStr = window.sessionStorage.getItem('PockestHelperTimeout-status');
-      const nextStatus = nextStatusStr && parseInt(nextStatusStr, 10);
+      const nextStatus = getSessionTimeout('PockestHelperTimeout-status');
       if (now >= nextStatus) await refreshStatus();
       rafId = window.requestAnimationFrame(rafRefresh);
     };
@@ -123,11 +119,9 @@ export function PockestProvider({
     let rafId;
     const rafRefresh = async () => {
       const now = Date.now();
-      const nextInitStr = window.sessionStorage.getItem('PockestHelperTimeout-error');
-      const nextInit = nextInitStr ? parseInt(nextInitStr, 10) : now;
+      const nextInit = getSessionTimeout('PockestHelperTimeout-error');
       if (now >= nextInit) {
-        const newNextInit = Date.now() + getRandomMinutes(1, 3);
-        window.sessionStorage.setItem('PockestHelperTimeout-error', newNextInit);
+        const newNextInit = setSessionTimeout('PockestHelperTimeout-error', 1, 3);
         log(`REFRESH ERROR\nnext error refresh @ ${(new Date(newNextInit)).toLocaleString()}`);
         await refreshInit();
       }

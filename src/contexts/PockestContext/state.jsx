@@ -1,3 +1,5 @@
+import getRandomMinutes from '../../utils/getRandomMinutes';
+
 const INITIAL_STATE = {
   data: {},
   allMonsters: [],
@@ -73,4 +75,16 @@ export function getStateFromSessionStorage() {
 
 export function saveStateToSessionStorage(state) {
   window.sessionStorage.setItem('PockestHelperState', JSON.stringify(state));
+}
+
+export function setSessionTimeout(id, staticMin, dynamicMin) {
+  const timeout = Date.now() + getRandomMinutes(staticMin, dynamicMin);
+  window.sessionStorage.setItem(id, timeout);
+  return timeout;
+}
+
+export function getSessionTimeout(id) {
+  const timeoutStr = window.sessionStorage.getItem(id);
+  const timeout = timeoutStr && parseInt(timeoutStr, 10);
+  return timeout;
 }
