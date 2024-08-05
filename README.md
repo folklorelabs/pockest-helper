@@ -10,34 +10,30 @@ _Pockest Helper is a community-driven passion project and is_ ___NOT___ _affilia
 
 ## Installation
 
-### Chrome
+### Chrome / Edge / Kiwi
 
 1. Navigate to the [latest release](https://github.com/folklorelabs/pockest-helper/releases/latest) and download the zip asset file that matches the format `PockestHelper_vX.X.X.zip`.
 2. Extract the contents of `PockestHelper_vX.X.X.zip` into its own directory.
-3. Open Chrome and navigate to the **Manage Extensions** page (`chrome://extensions/`). Click the "Load Unpacked" button and select the directory created in step #2.
-  a. You will need to enable "Developer Mode" in the top right of that screen to see this button.
-4. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Chrome and it will automatically load the helper!
+3. Navigate to the **Manage Extensions** page:
+  a. Chrome: `chrome://extensions/`
+  b. Edge: `edge://extensions/`
+  c. Kiwi: `kiwi://extensions/`
+4. Ensure "Developer Mode" is enabled on the **Manage Extensions** page:
+  a. Chrome: Toggle on top right
+  b. Edge: Toggle on left side
+  c. Kiwi: Toggle on top right
+5. Delete any old versions of Pockest Helper
+6. Click the button to install the addon on the **Manage Extensions** page:
+  a. Chrome: "Load Unpacked" on top left 
+  b. Edge: "Load Unpacked" on top center
+  c. Kiwi: "+ (from .zip/.crx/.user.js)" on top center
+4. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) and it will automatically load the helper!
 
 ### Firefox
 
 1. Using Firefox, navigate to the [latest release](https://github.com/folklorelabs/pockest-helper/releases/latest) and download the .xpi asset file that matches the format `PockestHelper_vX.X.X.xpi`.
 2. Firefox should prompt you to install this addon. Follow the on-screen prompts and accept the required permissions.
 3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Firefox and it will automatically load the helper!
-
-### Edge
-
-1. Navigate to the [latest release](https://github.com/folklorelabs/pockest-helper/releases/latest) and download the zip asset file that matches the format `PockestHelper_vX.X.X.zip`.
-2. Extract the contents of `PockestHelper_vX.X.X.zip` into its own directory.
-3. Open Edge and navigate to the **Manage Extensions** page (`edge://extensions/`). Click the "Load Unpacked" button and select the directory created in step #2.
-  a. You will need to enable "Developer Mode" on the left side of that screen to see this button.
-4. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Edge and it will automatically load the helper!
-
-### Kiwi
-
-1. Navigate to the [latest release](https://github.com/folklorelabs/pockest-helper/releases/latest) and download the zip asset file that matches the format `PockestHelper_vX.X.X.zip`.
-2. Open Kiwi and navigate to the **Manage Extensions** page (`kiwi://extensions/`). Click the "+ (from .zip/.crx/.user.js)" button and select the .zip file from step #1.
-  a. You will need to enable "Developer Mode" in the top right of that screen to see this button.
-3. Navigate to [https://www.streetfighter.com/6/buckler/minigame](https://www.streetfighter.com/6/buckler/minigame) within Kiwi and it will automatically load the helper!
 
 ## FAQ
 
