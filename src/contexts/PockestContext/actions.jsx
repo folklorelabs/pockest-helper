@@ -264,7 +264,6 @@ export function pockestClearLog(pockestState, logTypes) {
   return [ACTIONS.SET_LOG, newLog];
 }
 export async function pockestInit() {
-  console.log('ok go');
   try {
     const [
       allMonsters,
@@ -275,7 +274,6 @@ export async function pockestInit() {
       fetchAllHashes(),
       fetchPockestStatus(),
     ]);
-    console.log('bet?');
     return [ACTIONS.INIT, {
       allMonsters,
       allHashes,
