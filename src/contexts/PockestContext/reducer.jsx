@@ -63,7 +63,6 @@ export default function REDUCER(state, [type, payload]) {
         }),
       };
     case ACTIONS.REFRESH:
-      log();
       return {
         ...state,
         loading: false,
