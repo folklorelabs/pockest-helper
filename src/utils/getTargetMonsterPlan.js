@@ -1,19 +1,6 @@
 import { STAT_ABBR } from '../config/stats';
+import daysToMs from './daysToMs';
 import { parsePlanId, LEGACY_PLAN_REGEX } from './parsePlanId';
-
-const PLAN_DEFAULTS = {
-  cleanFrequency: null,
-  feedFrequency: null,
-  cleanOffset: 0,
-  feedOffset: 0,
-  feedTarget: 6,
-};
-
-const PLAN_TIMES = [
-  12 * 60 * 60 * 1000,
-  36 * 60 * 60 * 1000,
-  168 * 60 * 60 * 1000,
-];
 
 export default function getTargetMonsterPlan(state) {
   const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
@@ -47,22 +34,19 @@ export default function getTargetMonsterPlan(state) {
   const statPlan = statPlanId.split('').map((statLetter) => STAT_ABBR[statLetter]);
 
   const planDiv1 = planRoute?.[0] ? {
-    startTime: 0,
-    endTime: PLAN_TIMES[0] - 1000,
-    ...PLAN_DEFAULTS,
     ...planRoute[0],
+    startTime: 0,
+    endTime: daysToMs(0.5) - 1000, // -1s so we don't trigger another event
   } : null;
   const planDiv2 = planRoute?.[1] ? {
-    startTime: PLAN_TIMES[0],
-    endTime: PLAN_TIMES[1] - 1000,
-    ...PLAN_DEFAULTS,
     ...planRoute[1],
+    startTime: daysToMs(0.5),
+    endTime: daysToMs(1.5) - 1000, // -1s so we don't trigger another event
   } : null;
   const planDiv3 = planRoute?.[2] ? {
-    startTime: PLAN_TIMES[1],
-    endTime: PLAN_TIMES[2] - 1000,
-    ...PLAN_DEFAULTS,
     ...planRoute[2],
+    startTime: daysToMs(1.5),
+    endTime: daysToMs(7) - 1000, // -1s so we don't trigger another event
   } : null;
 
   return {
