@@ -82,6 +82,20 @@ export async function getBestMatch(state, exchangeList) {
   return sortedMatches?.[0];
 }
 
+export function getOwnedMementoMonsterIds(state) {
+  return state?.allMonsters
+    ?.filter((m) => m?.memento_flg)
+    .map((m) => m?.monster_id) ?? [];
+}
+
+export function getCurrentMonsterLogs(state, logType) {
+  return state?.log.filter((entry) => {
+    if (!state?.data?.monster) return false;
+    if (logType && entry?.logType !== logType) return false;
+    return entry.timestamp >= state?.data?.monster?.live_time;
+  });
+}
+
 export function getCurrentPlanStats(state) {
   if (state?.autoPlan) {
     return getCurrentTargetMonsterPlan(state);
