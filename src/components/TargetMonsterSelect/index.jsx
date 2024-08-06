@@ -10,9 +10,10 @@ function TargetMonsterSelect() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const acquiredMementos = React.useMemo(() => pockestState?.allMonsters
-    ?.filter((m) => m?.memento_flg)
-    .map((m) => m?.monster_id), [pockestState?.allMonsters]);
+  const acquiredMementos = React.useMemo(
+    () => pockestGetters.getOwnedMementoMonsterIds(pockestState),
+    [pockestState],
+  );
   const availableMonsters = React.useMemo(() => {
     const monster = pockestState?.data?.monster;
     const curMonsterId = pockestGetters.getMonsterId(pockestState);
