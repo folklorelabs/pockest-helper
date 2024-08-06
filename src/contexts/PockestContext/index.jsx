@@ -58,7 +58,7 @@ export function PockestProvider({
 
   // invalidate session if need be
   useEffect(() => {
-    if (pockestState?.invalidSession) return;
+    if (!pockestState?.initialized || pockestState?.invalidSession) return;
     if (!validateStorageSession()) {
       // session invalid, we opened a new tab or something. invalidate the session in state.
       (async () => {
@@ -70,8 +70,10 @@ export function PockestProvider({
     saveStateToSessionStorage(pockestState);
   }, [pockestState]);
 
+  // detect hatch sync issues
   useEffect(() => {
-    if (pockestState?.error) return;
+    if (pockestState?.error || pockestState?.loading
+      || !pockestState?.initialized || pockestState?.invalidSession) return;
     const bucklerLiveTimestamp = pockestState?.data?.monster?.live_time;
     const stateLiveTimestamp = pockestState?.eggTimestamp;
     const missingStateTimestamp = bucklerLiveTimestamp && !stateLiveTimestamp;
@@ -101,6 +103,8 @@ export function PockestProvider({
 
   // refresh check loop
   React.useEffect(() => {
+    if (pockestState?.error || pockestState?.loading
+      || pockestState?.invalidSession) return () => {};
     let rafId;
     const rafRefresh = async () => {
       const now = Date.now();
@@ -114,12 +118,13 @@ export function PockestProvider({
     return () => {
       window.cancelAnimationFrame(rafId);
     };
-  }, [pockestDispatch, refreshInit, refreshStatus]);
+  }, [pockestState, refreshInit, refreshStatus]);
 
   // error loop: attempt to re-init every 1-3 minutes if there is an error
   React.useEffect(() => window.sessionStorage.removeItem('PockestHelperTimeout-error'), []); // remove on load to kick start
   React.useEffect(() => {
-    if (!pockestState?.error || pockestState?.loading) return () => {};
+    if (!pockestState?.error || pockestState?.loading
+        || pockestState?.invalidSession) return () => {};
     let rafId;
     const rafRefresh = async () => {
       const now = Date.now();
@@ -271,7 +276,6 @@ export function PockestProvider({
     currentFeedWindow,
     feedFrequency,
     feedTarget,
-    pockestDispatch,
     pockestState,
     refreshStatus,
   ]);
@@ -280,7 +284,7 @@ export function PockestProvider({
   const providerValue = useMemo(() => ({
     pockestState,
     pockestDispatch,
-  }), [pockestState, pockestDispatch]);
+  }), [pockestState]);
 
   return (
     <PockestContext.Provider value={providerValue}>
