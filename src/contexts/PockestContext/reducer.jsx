@@ -63,17 +63,18 @@ export default function REDUCER(state, [type, payload]) {
         }),
       };
     case ACTIONS.REFRESH:
+      log();
       return {
         ...state,
         loading: false,
         data: payload,
-        eggId: payload?.result?.logType === 'hatching' ? payload?.result?.eggType
+        eggId: payload?.event === 'hatching' ? payload?.result?.eggType
           : state?.eggId,
-        eggTimestamp: payload?.result?.logType === 'hatching' ? payload?.result?.monsterBirth
+        eggTimestamp: payload?.event === 'hatching' ? payload?.result?.monsterBirth
           : state?.eggTimestamp,
-        cleanTimestamp: (payload?.result?.logType === 'cleaning')
+        cleanTimestamp: (payload?.event === 'cleaning')
           ? payload?.result?.timestamp : state.cleanTimestamp,
-        statLog: (payload?.result?.logType === 'training') ? [
+        statLog: (payload?.event === 'training') ? [
           ...state.statLog,
           payload?.result?.type,
         ] : state.statLog,

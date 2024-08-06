@@ -15,6 +15,7 @@ export function getLogEntry(pockestState) {
 }
 
 export function isMonsterGone(pockestState) {
+  if (pockestState?.data?.event === 'hatching') return false;
   if (['monster_not_found', 'departure', 'death'].includes(pockestState?.data?.event)) return true;
   if (!pockestState?.error && !pockestState?.data?.monster) return true;
   const now = (new Date()).getTime();
