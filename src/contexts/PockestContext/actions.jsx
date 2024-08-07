@@ -41,12 +41,12 @@ export async function pockestRefresh(pockestState) {
         const matchingHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.hash);
         if (!matchingHash) {
-          reports.push(`New monster: ${data?.monster?.name_en}: ${data?.monster?.hash} (P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})`);
+          reports.push(`<⬆️MONSTER> ${data?.monster?.name_en}: ${data?.monster?.hash} (P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})`);
         }
         const matchingMementoHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.memento_hash);
         if (!matchingMementoHash) {
-          reports.push(`New memento: ${data?.monster?.memento_name_en}: ${data?.monster?.memento_hash} (${data?.monster?.name_en})`);
+          reports.push(`<🏆MEMENTO> ${data?.monster?.memento_name_en}: ${data?.monster?.memento_hash} (${data?.monster?.name_en})`);
         }
         if (reports.length) {
           const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${reports.join('\n')}`;
