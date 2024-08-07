@@ -72,14 +72,13 @@ export function PockestProvider({
 
   // detect hatch sync issues
   useEffect(() => {
-    if (pockestState?.error || pockestState?.loading
-      || !pockestState?.initialized || pockestState?.invalidSession) return;
+    if (pockestState?.invalidSession) return; // we're in bad state; don't update anything
+    if (!pockestState?.initialized) return; // haven't kicked things off yet
+    if (pockestState?.error || pockestState?.loading) return; // already recovering elsewhere
+    if (!pockestState?.data?.monster?.live_time || pockestState?.data?.event === 'hatching') return; // nothing to desync from
     const bucklerLiveTimestamp = pockestState?.data?.monster?.live_time;
     const stateLiveTimestamp = pockestState?.eggTimestamp;
-    const missingStateTimestamp = bucklerLiveTimestamp && !stateLiveTimestamp;
-    const desyncedTimestamp = stateLiveTimestamp && bucklerLiveTimestamp
-      && stateLiveTimestamp !== bucklerLiveTimestamp;
-    if (missingStateTimestamp || desyncedTimestamp) {
+    if (!stateLiveTimestamp || stateLiveTimestamp !== bucklerLiveTimestamp) {
       pockestDispatch(pockestActions.pockestErrorHatchSync('Pockest Helper detected a Monster that it did not hatch. Please refrain from manually hatching monsters as this will reduce the effectiveness of Pockest Helper.'));
     }
   }, [pockestState]);
