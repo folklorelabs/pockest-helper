@@ -89,6 +89,12 @@ export function getOwnedMementoMonsterIds(state) {
     .map((m) => m?.monster_id) ?? [];
 }
 
+export function getOwnedMementoMonsterNames(state) {
+  const mementosOwned = getOwnedMementoMonsterIds(state);
+  return mementosOwned.map((id) => state.allMonsters
+    ?.find((m) => m.monster_id === id)?.name_en);
+}
+
 export function getCurrentMonsterLogs(state, logType) {
   return state?.log.filter((entry) => {
     if (!state?.data?.monster) return false;
