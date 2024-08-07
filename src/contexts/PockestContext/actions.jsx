@@ -23,8 +23,8 @@ export function pockestPause(paused) {
 export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
 }
-export function pockestPlanSettings(pockestState) {
-  const newSettings = getAutoPlanSettings(pockestState);
+export function pockestPlanSettings(pockestState, settingsOverride) {
+  const newSettings = getAutoPlanSettings(pockestState, null, settingsOverride);
   return [ACTIONS.SETTINGS, newSettings];
 }
 export async function pockestRefresh(pockestState) {

@@ -28,8 +28,7 @@ function AutoPlanSettingInput({ settingName, required }) {
     setNewValue(inputStr);
     const invalidInput = e?.target?.validity?.patternMismatch;
     if (invalidInput) return;
-    pockestDispatch(pockestActions.pockestPlanSettings({
-      ...pockestState,
+    pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
       [settingName]: inputStr,
     }));
   }, [pockestDispatch, pockestState, settingName]);

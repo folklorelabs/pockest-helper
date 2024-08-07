@@ -248,8 +248,10 @@ export function isMonsterMissing(state, data) {
   return data?.event === 'monster_not_found';
 }
 
-export function getAutoPlanSettings(state, data) {
-  const newSettings = {};
+export function getAutoPlanSettings(state, data, settingsOverride = {}) {
+  const newSettings = {
+    ...settingsOverride,
+  };
   if (isMonsterDead(state, data)
     || isMonsterDeparted(state, data)
     || isMonsterMissing(state, data)) {
@@ -259,9 +261,10 @@ export function getAutoPlanSettings(state, data) {
     newSettings.eggId = null;
     newSettings.eggTimestamp = null;
   }
-  if (state.autoPlan || newSettings.autoPlan) {
+  if (newSettings.autoPlan ?? state.autoPlan) {
     const targetMonsterPlan = getCurrentTargetMonsterPlan({
       ...state,
+      ...newSettings,
       data,
     });
     newSettings.autoPlan = true;

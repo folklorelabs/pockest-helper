@@ -66,8 +66,7 @@ function AutoPlanControls() {
             id="PockestHelper_AutoPlan"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestPlanSettings({
-              ...pockestState,
+            onChange={(e) => pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
               autoPlan: e.target.checked,
             }))}
             checked={autoPlan}
@@ -178,8 +177,7 @@ function AutoPlanControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestActions.pockestPlanSettings({
-              ...pockestState,
+            pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
               planAge: parseInt(e.target.value, 10),
             }));
           }}
