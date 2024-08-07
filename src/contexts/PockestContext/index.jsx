@@ -259,7 +259,7 @@ export function PockestProvider({
           if (missing.length) {
             const missingStrs = missing.map((m) => `🔎${m.name_en}: ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
             const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster sightings:\n${missingStrs.join('\n')}`;
-            postDiscord(missingReport, 'DISCORD_MATCH_WEBHOOK');
+            postDiscord(missingReport, 'DISCORD_EVO_WEBHOOK');
           }
         }
         const bestMatch = await pockestGetters.getBestMatch(pockestState, exchangeList);
