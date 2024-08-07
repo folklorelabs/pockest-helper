@@ -21,7 +21,7 @@ function AppUpdateAlert() {
   if (!isOutdated) return '';
   return (
     <p className="AppUpdateAlert">
-      <a href="https://github.com/folklorelabs/pockest-helper/releases/latest" target="_blank" rel="noreferrer">
+      <a href={`https://github.com/folklorelabs/pockest-helper/releases/${remoteVersion}`} target="_blank" rel="noreferrer">
         New version available (
         {remoteVersion}
         )

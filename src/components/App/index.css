@@ -12,7 +12,7 @@
 .AppMain {
   /* 4px border + (2.2 + (1.2 * 2) + 1.5 header) */
   height: calc(100vh - 4px - 6.1rem);
-  max-height: 964px;
+  max-height: 990px;
   overflow-y: auto;
   padding: 0 1rem;
 }
