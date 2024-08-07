@@ -1,6 +1,6 @@
 export const ROUTE_DEFAULT = {
-  cleanFrequency: null,
-  feedFrequency: null,
+  cleanFrequency: 2,
+  feedFrequency: 4,
   cleanOffset: 0,
   feedOffset: 0,
   feedTarget: 6,
@@ -10,25 +10,17 @@ export const ROUTES = {
   AL: [
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
   ],
   AR: [
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
     {
       ...ROUTE_DEFAULT,
@@ -37,32 +29,24 @@ export const ROUTES = {
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
   ],
   BL: [
     {
       ...ROUTE_DEFAULT,
       cleanFrequency: 12,
-      feedFrequency: 4,
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
   ],
   BR: [
     {
       ...ROUTE_DEFAULT,
       cleanFrequency: 12,
-      feedFrequency: 4,
     },
     {
       ...ROUTE_DEFAULT,
@@ -71,8 +55,6 @@ export const ROUTES = {
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
   ],
   CL: [
@@ -83,13 +65,9 @@ export const ROUTES = {
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
   ],
   CR: [
@@ -108,8 +86,6 @@ export const ROUTES = {
     },
     {
       ...ROUTE_DEFAULT,
-      cleanFrequency: 2,
-      feedFrequency: 4,
     },
   ],
 };
