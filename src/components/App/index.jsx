@@ -8,7 +8,6 @@ import CharacterSprite from '../CharacterSprite';
 import PlanLog from '../PlanLog';
 import CompletionLog from '../CompletionLog';
 import AppMainError from './AppMain--error';
-import AppMainInvalidSession from './AppMain--invalidSession';
 import AppMainLoading from './AppMain--loading';
 import AppMainEggPurchase from './AppMain--eggPurchase';
 import AppMainCare from './AppMain--care';
@@ -33,7 +32,7 @@ function App() {
       </header>
       {(() => {
         if (pockestState?.invalidSession) {
-          return <AppMainInvalidSession />;
+          return <AppMainError msg="Your session appears to be invalid. Did you open Pockest Helper in another tab?" />;
         }
         if (!pockestState?.initialized && pockestState.loading) {
           return <AppMainLoading />;
