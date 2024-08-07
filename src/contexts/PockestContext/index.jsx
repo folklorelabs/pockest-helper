@@ -105,20 +105,15 @@ export function PockestProvider({
   React.useEffect(() => {
     if (pockestState?.error || pockestState?.loading
       || pockestState?.invalidSession) return () => {};
-    let rafId;
-    let rafExpired;
-    const rafRefresh = async () => {
+    const interval = window.setInterval(async () => {
       const now = Date.now();
       const nextInit = getSessionTimeout('PockestHelperTimeout-init');
       if (now >= nextInit) await refreshInit();
       const nextStatus = getSessionTimeout('PockestHelperTimeout-status');
       if (now >= nextStatus) await refreshStatus();
-      if (!rafExpired) rafId = window.requestAnimationFrame(rafRefresh);
-    };
-    rafId = window.requestAnimationFrame(rafRefresh);
+    }, 1000);
     return () => {
-      rafExpired = true;
-      window.cancelAnimationFrame(rafId);
+      window.clearInterval(interval);
     };
   }, [pockestState, refreshInit, refreshStatus]);
 
@@ -127,23 +122,17 @@ export function PockestProvider({
   React.useEffect(() => {
     if (!pockestState?.error || pockestState?.loading
         || pockestState?.invalidSession) return () => {};
-    let rafId;
-    let rafExpired;
-    const rafRefresh = async () => {
+    const interval = window.setInterval(async () => {
       const now = Date.now();
       const nextInit = getSessionTimeout('PockestHelperTimeout-error');
       if (now >= nextInit) {
         const newNextInit = setSessionTimeout('PockestHelperTimeout-error', 1, 3);
         log(`REFRESH ERROR\nnext error refresh @ ${(new Date(newNextInit)).toLocaleString()}\n${pockestState?.error}`);
         await refreshInit();
-      } else if (!rafExpired) {
-        rafId = window.requestAnimationFrame(rafRefresh);
       }
-    };
-    rafId = window.requestAnimationFrame(rafRefresh);
+    }, 1000);
     return () => {
-      rafExpired = true;
-      window.cancelAnimationFrame(rafId);
+      window.clearInterval(interval);
     };
   }, [pockestState, refreshInit]);
 
