@@ -17,7 +17,8 @@
         "src/**/*.tsx"
       ],
       "env": {
-        "browser": true
+        "browser": true,
+        "webextensions": true
       },
       "extends": [
         "airbnb",
