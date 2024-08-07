@@ -57,10 +57,7 @@ export default function REDUCER(state, [type, payload]) {
         data: payload?.data,
         allMonsters: payload?.allMonsters,
         allHashes: payload?.allHashes,
-        ...getAutoPlanSettings({
-          ...state,
-          data: payload?.data,
-        }),
+        ...getAutoPlanSettings(state, payload?.data),
       };
     case ACTIONS.REFRESH:
       return {
@@ -81,11 +78,7 @@ export default function REDUCER(state, [type, payload]) {
           ...state.log,
           payload?.result,
         ] : state.log,
-        ...getAutoPlanSettings({
-          ...state,
-          data: payload?.data ?? state?.data,
-          result: payload?.result,
-        }),
+        ...getAutoPlanSettings(state, payload?.data),
       };
     case ACTIONS.SET_LOG:
       return {
