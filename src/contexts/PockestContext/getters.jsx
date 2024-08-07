@@ -1,4 +1,3 @@
-import log from '../../utils/log';
 import getTimeIntervals from '../../utils/getTimeIntervals';
 import getTotalStats from '../../utils/getTotalStats';
 import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../../utils/getTargetMonsterPlan';
