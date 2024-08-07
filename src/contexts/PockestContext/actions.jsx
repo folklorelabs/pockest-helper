@@ -1,4 +1,3 @@
-import getTotalStats from '../../utils/getTotalStats';
 import fetchAllMonsters from '../../utils/fetchAllMonsters';
 import fetchAllHashes from '../../utils/fetchAllHashes';
 import postDiscord from '../../utils/postDiscord';
