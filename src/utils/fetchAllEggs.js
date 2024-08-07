@@ -1,3 +1,4 @@
+import logError from './logError';
 import LocalStorageCache from './LocalStorageCache';
 
 const cache = new LocalStorageCache('PockestHelperBucklerEggs');
@@ -10,14 +11,14 @@ export default async function fetchAllEggs() {
     const cachedData = cache.get();
     const err = new Error(`API ${response.status} response (${bucklerUrl})`);
     if (!cachedData) throw err;
-    console.error(err);
+    logError(err);
     return cachedData;
   }
   if (!bucklerData?.data) {
     const err = new Error(`Buckler Response: ${bucklerData?.message}`);
     bucklerData = cache.get();
     if (!bucklerData) throw err;
-    console.error(err);
+    logError(err);
   }
   cache.set(bucklerData?.data);
   return bucklerData?.data;

@@ -1,5 +1,6 @@
 import fetchJsonArray from './fetchJsonArray';
 import LocalStorageCache from './LocalStorageCache';
+import logError from './logError';
 
 const cache = new LocalStorageCache('PockestHelperReleases');
 
@@ -10,7 +11,7 @@ export default async function fetchLatestReleases() {
     cache.set(latestRelease);
     return latestRelease;
   } catch (err) {
-    console.error(`${err}`);
+    logError(`${err}`);
     return cache.get();
   }
 }

@@ -1,2 +1,2 @@
-scripts/deploy.js
-build
+dist
+package-lock.json

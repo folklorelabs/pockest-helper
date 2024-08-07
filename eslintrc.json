@@ -12,7 +12,10 @@
   },
   "overrides": [
     {
-      "files": ["src/**/*.ts", "src/**/*.tsx"],
+      "files": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
+      ],
       "env": {
         "browser": true
       },
@@ -26,12 +29,14 @@
       }
     },
     {
-      "files": ["scripts/**/*.js"],
-      "parserOptions": {
-        "sourceType": "commonjs"
-      },
+      "files": [
+        "scripts/**/*.js"
+      ],
       "rules": {
         "no-console": "off"
+      },
+      "parserOptions": {
+        "sourceType": "commonjs"
       },
       "env": {
         "node": true

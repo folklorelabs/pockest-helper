@@ -1,3 +1,5 @@
+import logError from './logError';
+
 async function postDiscordMessage(content) {
   if (!import.meta.env.DISCORD_WEBHOOK) throw new Error('Missing DISCORD_WEBHOOK env var');
   const response = await fetch(import.meta.env.DISCORD_WEBHOOK, {
@@ -18,7 +20,7 @@ export default async function postDiscord(content) {
     const data = await postDiscordMessage(content);
     return data;
   } catch (err) {
-    console.error(`${err}`);
+    logError(`${err}`);
     return null;
   }
 }

@@ -1,5 +1,6 @@
 import fetchJsonArray from './fetchJsonArray';
 import LocalStorageCache from './LocalStorageCache';
+import logError from './logError';
 
 const cache = new LocalStorageCache('PockestHelperSheetHashes');
 
@@ -11,7 +12,7 @@ export default async function fetchAllHashes() {
   } catch (err) {
     const cachedData = cache.get();
     if (!cachedData) throw new Error(`${err}`);
-    console.error(err);
+    logError(err);
     return cachedData;
   }
 }
