@@ -4,12 +4,13 @@ import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../../utils/g
 import getDeathTimer from '../../utils/getDeathTimer';
 import { MONSTER_LIFESPAN } from '../../utils/getAgeTimer';
 import daysToMs from '../../utils/daysToMs';
+import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 
 export function getLogEntry(pockestState) {
   return {
     logType: pockestState?.data?.event,
     timestamp: new Date().getTime(),
-    monsterId: parseInt(pockestState?.data?.monster?.hash?.split('-')[0] || '-1', 10),
+    monsterId: getMonsterIdFromHash(pockestState?.data?.monster?.hash),
     monsterBirth: pockestState?.data?.monster?.live_time,
   };
 }
