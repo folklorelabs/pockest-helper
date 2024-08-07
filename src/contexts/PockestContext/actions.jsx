@@ -51,7 +51,7 @@ export async function pockestRefresh(pockestState) {
         }
         if (reports.length) {
           const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${reports.join('\n')}`;
-          postDiscord(missingReport);
+          postDiscord(missingReport, 'DISCORD_EVO_WEBHOOK');
         }
       }
     }
@@ -210,7 +210,7 @@ export async function pockestMatch(pockestState, match) {
         pockestState,
         result: data.result,
       })}`;
-      postDiscord(report);
+      postDiscord(report, 'DISCORD_MATCH_WEBHOOK');
     }
     return [ACTIONS.REFRESH, data];
   } catch (error) {
