@@ -34,14 +34,14 @@ function App() {
         if (pockestState?.invalidSession) {
           return <AppMainError msg="Your session appears to be invalid. Did you open Pockest Helper in another tab?" />;
         }
-        if (!pockestState?.initialized && pockestState.loading) {
-          return <AppMainLoading />;
-        }
         if (!pockestState?.initialized && pockestState?.error?.includes('403') && pockestState?.error?.includes('buckler')) {
           return <AppMainError msg="Please ensure you are logged into Buckler (403 Auth Error)" />;
         }
         if (!pockestState?.initialized && pockestState?.error) {
           return <AppMainError msg="We encountered a critical error and were unable to initialize" />;
+        }
+        if (!pockestState?.initialized) {
+          return <AppMainLoading />;
         }
         if (pockestState?.initialized && !pockestState?.data?.monster) {
           return <AppMainEggPurchase />;
