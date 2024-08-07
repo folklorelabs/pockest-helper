@@ -7,8 +7,10 @@ import {
   getAutoPlanSettings,
   fetchPockestStatus,
   getLogEntry,
+  getOwnedMementoMonsterNames,
 } from './getters';
 import { ACTIONS } from './reducer';
+import daysToMs from '../../utils/daysToMs';
 
 export function pockestLoading() {
   return [ACTIONS.LOADING];
@@ -41,17 +43,41 @@ export async function pockestRefresh(pockestState) {
         const matchingHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.hash);
         if (!matchingHash) {
-          reports.push(`<⬆️MONSTER> ${data?.monster?.name_en}: ${data?.monster?.hash} (P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})`);
+          const mementosOwned = getOwnedMementoMonsterNames(pockestState);
+          reports.push(`<⬆️MONSTER> ${data?.monster?.name_en} / ${data?.monster?.hash}\nStats: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}\nMementos: ${mementosOwned.join('/')})`);
         }
         const matchingMementoHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.memento_hash);
         if (!matchingMementoHash) {
-          reports.push(`<🏆MEMENTO> ${data?.monster?.memento_name_en}: ${data?.monster?.memento_hash} (${data?.monster?.name_en})`);
+          reports.push(`<🏆MEMENTO> ${data?.monster?.memento_name_en} / ${data?.monster?.memento_hash} (${data?.monster?.name_en})`);
         }
         if (reports.length) {
           const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${reports.join('\n')}`;
           postDiscord(missingReport, 'DISCORD_EVO_WEBHOOK');
         }
+      }
+    }
+    if (data?.monster
+      && Date.now() > (data.monster.live_time + daysToMs(3)) && data.monster.age < 5) {
+      const mementosOwned = getOwnedMementoMonsterNames(pockestState);
+
+      // add failed evo to log
+      data.result = {
+        ...getLogEntry({ data }),
+        logType: 'evoFailure',
+        planId: pockestState?.planId,
+        power: data?.monster?.power,
+        speed: data?.monster?.speed,
+        technic: data?.monster?.technic,
+        mementosOwned,
+      };
+
+      // send new path data to discord
+      const targetMonster = pockestState?.allMonsters
+        ?.find((m) => m.planId === pockestState?.planId);
+      if (`${targetMonster.monster_id}` === '-1') {
+        const failureReport = `<🤦‍♂️EVO_FAILURE> ${targetMonster.planId} (P: ${pockestState?.data?.monster?.power}, S: ${pockestState?.data?.monster?.speed}, T: ${pockestState?.data?.monster?.technic})\nMementos: ${mementosOwned.join(', ')}`;
+        postDiscord(`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${failureReport}`, 'DISCORD_EVO_WEBHOOK');
       }
     }
     if (['death', 'departure'].includes(data?.event)) {
