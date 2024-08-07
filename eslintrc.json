@@ -1,0 +1,41 @@
+{
+  "env": {
+    "browser": true,
+    "webextensions": true
+  },
+  "extends": [
+    "airbnb",
+    "airbnb/hooks"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.ts", "src/**/*.tsx"],
+      "env": {
+        "browser": true
+      },
+      "extends": [
+        "airbnb",
+        "airbnb/hooks",
+        "airbnb-typescript"
+      ],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      }
+    },
+    {
+      "files": ["scripts/**/*.js"],
+      "parserOptions": {
+        "sourceType": "commonjs"
+      },
+      "rules": {
+        "no-console": "off"
+      },
+      "env": {
+        "node": true
+      }
+    }
+  ]
+}
