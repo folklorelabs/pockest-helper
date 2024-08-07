@@ -45,5 +45,6 @@ async function cleanUpManfiest(dir) {
   await fs.rmSync(EXT_WD, { recursive: true, force: true });
 
   // print abs file path
+  // eslint-disable-next-line no-console
   console.log(destFilePath);
 })();

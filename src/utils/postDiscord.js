@@ -1,3 +1,5 @@
+import logError from './logError';
+
 async function postDiscordMessage(content, envUrlId) {
   if (!import.meta.env[envUrlId]) throw new Error(`Missing ${envUrlId} env var`);
   const response = await fetch(import.meta.env[envUrlId], {
@@ -18,7 +20,7 @@ export default async function postDiscord(content, envUrlId) {
     const data = await postDiscordMessage(content, envUrlId);
     return data;
   } catch (err) {
-    console.error(`${err}`);
+    logError(`${err}`);
     return null;
   }
 }

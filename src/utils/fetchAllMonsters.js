@@ -1,4 +1,5 @@
 import LocalStorageCache from './LocalStorageCache';
+import logError from './logError';
 
 const BUCKLER_ENCYCLO_URL = 'https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list';
 const SHEET_MONSTERS_URL = 'https://folklorelabs.io/pockest-helper-data/monsters.min.json';
@@ -20,7 +21,7 @@ export default async function fetchAllMonsters() {
   if (!sheetRes.ok) {
     const err = new Error(`API ${sheetRes.status} response (${SHEET_MONSTERS_URL})`);
     if (!sheetMonsters) throw err;
-    console.error(err);
+    logError(err);
   }
   sheetCache.set(sheetMonsters);
 
@@ -29,13 +30,13 @@ export default async function fetchAllMonsters() {
   if (!bucklerRes.ok) {
     const err = new Error(`API ${bucklerRes.status} response (${BUCKLER_ENCYCLO_URL})`);
     if (!bucklerData) throw err;
-    console.error(err);
+    logError(err);
   }
   if (!bucklerData?.data) {
     const err = new Error(`Buckler Response: ${bucklerData?.message}`);
     bucklerData = bucklerCache.get();
     if (!bucklerData) throw err;
-    console.error(err);
+    logError(err);
   }
   bucklerCache.set(bucklerData);
 
