@@ -106,16 +106,18 @@ export function PockestProvider({
     if (pockestState?.error || pockestState?.loading
       || pockestState?.invalidSession) return () => {};
     let rafId;
+    let rafExpired;
     const rafRefresh = async () => {
       const now = Date.now();
       const nextInit = getSessionTimeout('PockestHelperTimeout-init');
       if (now >= nextInit) await refreshInit();
       const nextStatus = getSessionTimeout('PockestHelperTimeout-status');
       if (now >= nextStatus) await refreshStatus();
-      rafId = window.requestAnimationFrame(rafRefresh);
+      if (!rafExpired) rafId = window.requestAnimationFrame(rafRefresh);
     };
-    rafRefresh();
+    rafId = window.requestAnimationFrame(rafRefresh);
     return () => {
+      rafExpired = true;
       window.cancelAnimationFrame(rafId);
     };
   }, [pockestState, refreshInit, refreshStatus]);
@@ -126,6 +128,7 @@ export function PockestProvider({
     if (!pockestState?.error || pockestState?.loading
         || pockestState?.invalidSession) return () => {};
     let rafId;
+    let rafExpired;
     const rafRefresh = async () => {
       const now = Date.now();
       const nextInit = getSessionTimeout('PockestHelperTimeout-error');
@@ -133,12 +136,13 @@ export function PockestProvider({
         const newNextInit = setSessionTimeout('PockestHelperTimeout-error', 1, 3);
         log(`REFRESH ERROR\nnext error refresh @ ${(new Date(newNextInit)).toLocaleString()}\n${pockestState?.error}`);
         await refreshInit();
-      } else {
+      } else if (!rafExpired) {
         rafId = window.requestAnimationFrame(rafRefresh);
       }
     };
-    rafRefresh();
+    rafId = window.requestAnimationFrame(rafRefresh);
     return () => {
+      rafExpired = true;
       window.cancelAnimationFrame(rafId);
     };
   }, [pockestState, refreshInit]);
