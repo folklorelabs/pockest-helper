@@ -225,6 +225,7 @@ export function getCurrentPlanScheduleWindows(state) {
 }
 
 export function isMonsterDead(state, data) {
+  if (data?.event === 'hatching') return false;
   if (data?.event === 'death') return true;
   const now = Date.now();
   const deathTimestamp = getDeathTimer({
@@ -235,6 +236,7 @@ export function isMonsterDead(state, data) {
 }
 
 export function isMonsterDeparted(state, data) {
+  if (data?.event === 'hatching') return false;
   if (data?.event === 'departure') return true;
   const monster = data?.monster || state?.data?.monster;
   const now = Date.now();
@@ -245,6 +247,7 @@ export function isMonsterDeparted(state, data) {
 }
 
 export function isMonsterMissing(state, data) {
+  if (data?.event === 'hatching') return false;
   return data?.event === 'monster_not_found';
 }
 
