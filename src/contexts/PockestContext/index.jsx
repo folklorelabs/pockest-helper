@@ -102,8 +102,10 @@ export function PockestProvider({
 
   // refresh check loop
   React.useEffect(() => {
-    if (pockestState?.error || pockestState?.loading
-      || pockestState?.invalidSession) return () => {};
+    if (pockestState?.error
+      || pockestState?.loading
+      || pockestState?.invalidSession
+    ) return () => {};
     const interval = window.setInterval(async () => {
       const now = Date.now();
       const nextInit = getSessionTimeout('PockestHelperTimeout-init');
@@ -119,8 +121,10 @@ export function PockestProvider({
   // error loop: attempt to re-init every 1-3 minutes if there is an error
   React.useEffect(() => window.sessionStorage.removeItem('PockestHelperTimeout-error'), []); // remove on load to kick start
   React.useEffect(() => {
-    if (!pockestState?.error || pockestState?.loading
-        || pockestState?.invalidSession) return () => {};
+    if (!pockestState?.error
+      || pockestState?.loading
+      || pockestState?.invalidSession
+    ) return () => {};
     const interval = window.setInterval(async () => {
       const now = Date.now();
       const nextInit = getSessionTimeout('PockestHelperTimeout-error');
@@ -137,23 +141,23 @@ export function PockestProvider({
 
   // Lifecycle loop
   React.useEffect(() => {
+    if (!pockestState?.initialized
+      || pockestState?.loading
+      || pockestState?.paused
+      || pockestState?.error
+      || pockestState?.invalidSession
+    ) return () => {};
     const interval = window.setInterval(async () => {
       const {
         data,
-        loading,
-        initialized,
         autoPlan,
         autoClean,
         autoFeed,
         autoTrain,
         autoMatch,
         autoCure,
-        paused,
         stat,
-        error,
-        invalidSession,
       } = pockestState;
-      if (!initialized || loading || paused || error || invalidSession) return;
       const now = new Date();
 
       // No data! Let's refresh to get things moving.
