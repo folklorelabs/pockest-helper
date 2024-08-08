@@ -257,7 +257,8 @@ export function getAutoPlanSettings(state, data, settingsOverride = {}) {
   };
   if (isMonsterDead(state, data)
     || isMonsterDeparted(state, data)
-    || isMonsterMissing(state, data)) {
+    || isMonsterMissing(state, data)
+  ) {
     newSettings.autoPlay = true;
     newSettings.paused = true;
     newSettings.statLog = [];
