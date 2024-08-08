@@ -101,6 +101,7 @@ export function PockestProvider({
   }, [pockestState]);
 
   // refresh check loop
+  React.useEffect(() => window.sessionStorage.removeItem('PockestHelperTimeout-init'), []); // remove on load to kick start
   React.useEffect(() => {
     if (pockestState?.error
       || pockestState?.loading
