@@ -2,7 +2,7 @@ import LocalStorageCache from './LocalStorageCache';
 import logError from './logError';
 
 const BUCKLER_ENCYCLO_URL = 'https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list';
-const SHEET_MONSTERS_URL = 'https://folklorelabs.io/pockest-helper-data/monsters.min.json';
+const SHEET_MONSTERS_URL = 'https://folklorelabs.io/pockest-helper-data/v2/monsters.min.json';
 
 const bucklerCache = new LocalStorageCache('PockestHelperBucklerEncyclopedia');
 const sheetCache = new LocalStorageCache('PockestHelperSheetMonsters');
