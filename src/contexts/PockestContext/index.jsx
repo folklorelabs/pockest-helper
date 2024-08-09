@@ -14,8 +14,9 @@ import {
   getStateFromSessionStorage,
   saveStateToLocalStorage,
   saveStateToSessionStorage,
-  getSessionTimeout,
-  setSessionTimeout,
+  getRefreshTimeout,
+  setRefreshTimeout,
+  REFRESH_TIMEOUT,
 } from './state';
 import REDUCER from './reducer';
 
@@ -88,7 +89,7 @@ export function PockestProvider({
 
   // refresh status and set next for 5-10 minutes later
   const refreshStatus = React.useCallback(async () => {
-    const newNextStatus = setSessionTimeout('PockestHelperTimeout-status', 5, 5);
+    const newNextStatus = setRefreshTimeout(REFRESH_TIMEOUT.STATUS, 5, 5);
     log(`REFRESH STATUS\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}`);
     pockestDispatch(pockestActions.pockestLoading());
     pockestDispatch(await pockestActions.pockestRefresh(pockestState));
@@ -102,7 +103,7 @@ export function PockestProvider({
     ) return () => {};
     const interval = window.setInterval(async () => {
       const now = Date.now();
-      const nextStatus = getSessionTimeout('PockestHelperTimeout-status');
+      const nextStatus = getRefreshTimeout(REFRESH_TIMEOUT.STATUS);
       if (now >= nextStatus) await refreshStatus();
     }, 1000);
     return () => {
@@ -111,7 +112,6 @@ export function PockestProvider({
   }, [pockestState, refreshStatus]);
 
   // error loop: attempt to re-init every 1-3 minutes if there is an error
-  React.useEffect(() => window.sessionStorage.removeItem('PockestHelperTimeout-error'), []); // remove on load to kick start
   React.useEffect(() => {
     if (!pockestState?.error
       || pockestState?.loading
@@ -119,9 +119,9 @@ export function PockestProvider({
     ) return () => {};
     const interval = window.setInterval(async () => {
       const now = Date.now();
-      const nextInit = getSessionTimeout('PockestHelperTimeout-error');
+      const nextInit = getRefreshTimeout(REFRESH_TIMEOUT.ERROR);
       if (now >= nextInit) {
-        const newNextInit = setSessionTimeout('PockestHelperTimeout-error', 1, 3);
+        const newNextInit = setRefreshTimeout(REFRESH_TIMEOUT.ERROR, 1, 3);
         log(`REFRESH ERROR\nnext error refresh @ ${(new Date(newNextInit)).toLocaleString()}\n${pockestState?.error}`);
         await refreshStatus();
       }
