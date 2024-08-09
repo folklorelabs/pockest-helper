@@ -12,6 +12,7 @@ import AppMainLoading from './AppMain--loading';
 import AppMainEggPurchase from './AppMain--eggPurchase';
 import AppMainCare from './AppMain--care';
 import './index.css';
+import AppUpdateAlert from '../AppUpdateAlert';
 
 function App() {
   const {
@@ -29,6 +30,7 @@ function App() {
       </button>
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
+        <AppUpdateAlert />
       </header>
       {(() => {
         if (pockestState?.invalidSession) {
