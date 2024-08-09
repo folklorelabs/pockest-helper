@@ -12,6 +12,7 @@ import {
 } from './getters';
 import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
+import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 
 export function pockestLoading() {
   return [ACTIONS.LOADING];
@@ -41,9 +42,10 @@ export async function pockestStatus(pockestState) {
       // send any useful info to discord
       if (data?.monster?.age >= 5) {
         const reports = [];
-        const matchingHash = pockestState?.allHashes
-          .find((m2) => m2?.id === data?.monster?.hash);
-        if (!matchingHash) {
+        const matchingHash = pockestState?.allHashes.find((m2) => m2?.id === data?.monster?.hash);
+        const matchingMonster = pockestState?.allMonsters
+          .find((m) => m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
+        if (!matchingHash || matchingMonster?.requiredMemento === 9999) {
           const mementosOwned = getOwnedMementoMonsterNames(pockestState);
           reports.push(`<⬆️MONSTER> ${data?.monster?.name_en} / ${data?.monster?.hash}\nStats: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}\nMementos: ${mementosOwned.join('/')})`);
         }
