@@ -14,6 +14,7 @@ import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 import { getRefreshTimeout, REFRESH_TIMEOUT, setRefreshTimeout } from './state';
+import { STAT_ID_ABBR } from '../../config/stats';
 
 export function pockestLoading() {
   return [ACTIONS.LOADING];
@@ -66,7 +67,10 @@ export async function pockestRefresh(pockestState) {
           .find((m) => m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
         if (!matchingMonster?.confirmed) {
           const mementosOwned = getOwnedMementoMonsterNames(pockestState);
-          reports.push(`<⬆️MONSTER> ${data?.monster?.name_en} (${pockestState?.planId})\nHash: ${data?.monster?.hash}\nStat Training: ${pockestState?.statLog.join(', ')}\nStat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}\nOwned Mementos: ${mementosOwned.join(', ')}`);
+          const statLogStr = `Stat Training: ${pockestState?.statLog?.map((s) => STAT_ID_ABBR[s])?.join(', ')}`;
+          const statTotalsStr = `Stat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}`;
+          const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ')}`;
+          reports.push(`<⬆️MONSTER> ${data?.monster?.name_en} (${pockestState?.planId})\nHash: ${data?.monster?.hash}\n${statLogStr}\n${statTotalsStr}\n${ownedMementosStr}`);
         }
         const matchingMementoHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.memento_hash);
@@ -93,7 +97,10 @@ export async function pockestRefresh(pockestState) {
       const targetMonster = pockestState?.allMonsters
         ?.find((m) => m.planId === pockestState?.planId);
       if (!targetMonster?.confirmed) {
-        const failureReport = `<🤦‍♂️EVO_FAILURE> ${targetMonster.planId}\nStat Training: ${pockestState?.statLog.join(', ')}\nStat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})\nOwned Mementos: ${mementosOwned.join(', ')}`;
+        const statLogStr = `Stat Training: ${pockestState?.statLog?.map((s) => STAT_ID_ABBR[s])?.join(', ')}`;
+        const statTotalsStr = `Stat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}`;
+        const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ')}`;
+        const failureReport = `<🤦‍♂️EVO_FAILURE> ${targetMonster.planId}\n${statLogStr}\n${statLogStr}\n${statTotalsStr}\n${ownedMementosStr}`;
         postDiscord(`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${failureReport}`, 'DISCORD_EVO_WEBHOOK');
       }
 
