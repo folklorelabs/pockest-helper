@@ -77,6 +77,9 @@ export function saveStateToSessionStorage(state) {
   window.sessionStorage.setItem('PockestHelperState', JSON.stringify(state));
 }
 
+window.sessionStorage.removeItem('PockestHelperTimeout-status'); // remove on load to kick start
+window.sessionStorage.removeItem('PockestHelperTimeout-sheetData'); // remove on load to kick start
+
 export function setSessionTimeout(id, staticMin, dynamicMin) {
   const timeout = Date.now() + getRandomMinutes(staticMin, dynamicMin);
   window.sessionStorage.setItem(id, timeout);

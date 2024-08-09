@@ -13,6 +13,8 @@ import {
 import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
+import { getSessionTimeout, setSessionTimeout } from './state';
+import log from '../../utils/log';
 
 export function pockestLoading() {
   return [ACTIONS.LOADING];
@@ -29,16 +31,35 @@ export function pockestPlanSettings(pockestState, settingsOverride) {
   const newSettings = getAutoPlanSettings(pockestState, null, settingsOverride);
   return [ACTIONS.SETTINGS, newSettings];
 }
-export async function pockestStatus(pockestState) {
+
+export async function pockestRefresh(pockestState) {
   try {
+    const payload = {};
+
+    // get sheet data if stale
+    const now = Date.now();
+    const nextSheetTimestamp = getSessionTimeout('PockestHelperTimeout-sheetData');
+    if (!pockestState?.allMonsters || !pockestState?.allHashes || now >= nextSheetTimestamp) {
+      const newNextInit = setSessionTimeout('PockestHelperTimeout-sheetData', 20, 10);
+      log(`REFRESH SHEET DATA\nnext @ ${(new Date(newNextInit)).toLocaleString()}`);
+      const [
+        allMonsters,
+        allHashes,
+      ] = await Promise.all([
+        fetchAllMonsters(),
+        fetchAllHashes(),
+      ]);
+      payload.allMonsters = allMonsters;
+      payload.allHashes = allHashes;
+    }
+
+    // get buckler data
     const data = await fetchPockestStatus();
-    const payload = {
-      data,
-    };
+    payload.data = data;
     if (data?.event === 'death') return [ACTIONS.REFRESH_DEATH, payload];
     if (data?.event === 'departure') return [ACTIONS.REFRESH_DEPARTURE, payload];
     if (data?.event === 'monster_not_found') return [ACTIONS.REFRESH_MONSTER_NOT_FOUND, payload];
-    if (data?.event === 'evolution' || (data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash)) {
+    if (data?.event === 'evolution' || (data?.monster && pockestState?.data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash)) {
       // send any useful info to discord
       if (data?.monster?.age >= 5) {
         const reports = [];
@@ -82,7 +103,7 @@ export async function pockestStatus(pockestState) {
     }
     return [ACTIONS.REFRESH_STATUS, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestStatus] ${error?.message}`];
+    return [ACTIONS.ERROR, `[pockestRefresh] ${error?.message}`];
   }
 }
 export async function pockestFeed() {
@@ -104,7 +125,7 @@ export async function pockestFeed() {
     const payload = {
       data,
     };
-    return [ACTIONS.REFRESH_MEAL, payload];
+    return [ACTIONS.EVENT_MEAL, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestFeed] ${error?.message}`];
   }
@@ -128,7 +149,7 @@ export async function pockestCure() {
     const payload = {
       data,
     };
-    return [ACTIONS.REFRESH_CURE, payload];
+    return [ACTIONS.EVENT_CURE, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestCure] ${error?.message}`];
   }
@@ -152,7 +173,7 @@ export async function pockestClean() {
     const payload = {
       data,
     };
-    return [ACTIONS.REFRESH_CLEANING, payload];
+    return [ACTIONS.EVENT_CLEANING, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestClean] ${error?.message}`];
   }
@@ -183,7 +204,7 @@ export async function pockestTrain(type) {
     if (data?.event !== 'training') {
       throw new Error(`Buckler Response: ${data?.event || data?.message}`);
     }
-    return [ACTIONS.REFRESH_TRAINING, payload];
+    return [ACTIONS.EVENT_TRAINING, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestTrain] ${error?.message}`];
   }
@@ -227,7 +248,7 @@ export async function pockestMatch(pockestState, match) {
       })}`;
       postDiscord(report, 'DISCORD_MATCH_WEBHOOK');
     }
-    return [ACTIONS.REFRESH_EXCHANGE, payload];
+    return [ACTIONS.EVENT_EXCHANGE, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestMatch] ${error?.message}`];
   }
@@ -253,7 +274,7 @@ export async function pockestSelectEgg(id) {
       data,
       args: { id },
     };
-    return [ACTIONS.REFRESH_HATCHING, payload];
+    return [ACTIONS.EVENT_HATCHING, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestSelectEgg] ${error?.message}`];
   }
@@ -266,25 +287,6 @@ export function pockestClearLog(pockestState, logTypes) {
     ?.filter((entry) => !logTypes.includes(entry.logType)
     || entry.timestamp >= pockestState?.data?.monster?.live_time);
   return [ACTIONS.SET_LOG, newLog];
-}
-export async function pockestInit() {
-  try {
-    const [
-      allMonsters,
-      allHashes,
-    ] = await Promise.all([
-      fetchAllMonsters(),
-      fetchAllHashes(),
-    ]);
-    const data = await fetchPockestStatus();
-    return [ACTIONS.INIT, {
-      allMonsters,
-      allHashes,
-      data,
-    }];
-  } catch (error) {
-    return [ACTIONS.ERROR, `[pockestInit] ${error?.message}`];
-  }
 }
 export function pockestInvalidateSession() {
   return [ACTIONS.INVALIDATE_SESSION];

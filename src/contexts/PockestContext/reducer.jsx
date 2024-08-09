@@ -8,13 +8,13 @@ import {
 export const ACTIONS = {
   INIT: 'POCKEST_INIT',
   INVALIDATE_SESSION: 'POCKEST_INVALIDATE_SESSION',
+  EVENT_HATCHING: 'POCKEST_EVENT_HATCHING',
+  EVENT_CLEANING: 'POCKEST_EVENT_CLEANING',
+  EVENT_TRAINING: 'POCKEST_EVENT_TRAINING',
+  EVENT_MEAL: 'POCKEST_EVENT_MEAL',
+  EVENT_EXCHANGE: 'POCKEST_EVENT_EXCHANGE',
+  EVENT_CURE: 'POCKEST_EVENT_CURE',
   REFRESH_STATUS: 'POCKEST_REFRESH_STATUS',
-  REFRESH_HATCHING: 'POCKEST_REFRESH_HATCHING',
-  REFRESH_CLEANING: 'POCKEST_REFRESH_CLEANING',
-  REFRESH_TRAINING: 'POCKEST_REFRESH_TRAINING',
-  REFRESH_MEAL: 'POCKEST_REFRESH_MEAL',
-  REFRESH_EXCHANGE: 'POCKEST_REFRESH_EXCHANGE',
-  REFRESH_CURE: 'POCKEST_REFRESH_CURE',
   REFRESH_EVOLUTION_SUCCESS: 'POCKEST_REFRESH_EVOLUTION_SUCCESS',
   REFRESH_EVOLUTION_FAILURE: 'POCKEST_REFRESH_EVOLUTION_FAILURE',
   REFRESH_DEATH: 'POCKEST_REFRESH_DEATH',
@@ -61,19 +61,12 @@ export default function REDUCER(state, [type, payload]) {
         ...state,
         paused: payload.paused ?? state?.paused,
       };
-    case ACTIONS.INIT:
-      return {
-        ...state,
-        initialized: true,
-        loading: false,
-        data: payload?.data,
-        allMonsters: payload?.allMonsters,
-        allHashes: payload?.allHashes,
-        ...getAutoPlanSettings(state, payload?.data),
-      };
     case ACTIONS.REFRESH_STATUS:
       return {
         ...state,
+        initialized: true,
+        allMonsters: payload?.allMonsters || state?.allMonsters,
+        allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
         ...getAutoPlanSettings(state, payload?.data),
@@ -83,7 +76,7 @@ export default function REDUCER(state, [type, payload]) {
         ...state,
         log: payload,
       };
-    case ACTIONS.REFRESH_HATCHING:
+    case ACTIONS.EVENT_HATCHING:
       return {
         ...state,
         loading: false,
@@ -101,7 +94,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoPlanSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_CLEANING:
+    case ACTIONS.EVENT_CLEANING:
       return {
         ...state,
         loading: false,
@@ -117,7 +110,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoPlanSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_MEAL:
+    case ACTIONS.EVENT_MEAL:
       return {
         ...state,
         loading: false,
@@ -132,7 +125,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoPlanSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_CURE:
+    case ACTIONS.EVENT_CURE:
       return {
         ...state,
         loading: false,
@@ -146,7 +139,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoPlanSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_EXCHANGE:
+    case ACTIONS.EVENT_EXCHANGE:
       return {
         ...state,
         loading: false,
@@ -161,7 +154,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoPlanSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_TRAINING:
+    case ACTIONS.EVENT_TRAINING:
       return {
         ...state,
         loading: false,
@@ -182,6 +175,9 @@ export default function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH_EVOLUTION_SUCCESS:
       return {
         ...state,
+        initialized: true,
+        allMonsters: payload?.allMonsters || state?.allMonsters,
+        allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
         log: [
@@ -211,6 +207,9 @@ export default function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH_EVOLUTION_FAILURE:
       return {
         ...state,
+        initialized: true,
+        allMonsters: payload?.allMonsters || state?.allMonsters,
+        allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
         evolutionFailed: true,
@@ -232,6 +231,9 @@ export default function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH_DEATH:
       return {
         ...state,
+        initialized: true,
+        allMonsters: payload?.allMonsters || state?.allMonsters,
+        allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
         log: [
@@ -246,6 +248,9 @@ export default function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH_DEPARTURE:
       return {
         ...state,
+        initialized: true,
+        allMonsters: payload?.allMonsters || state?.allMonsters,
+        allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
         log: [
@@ -260,6 +265,9 @@ export default function REDUCER(state, [type, payload]) {
     case ACTIONS.REFRESH_MONSTER_NOT_FOUND:
       return {
         ...state,
+        initialized: true,
+        allMonsters: payload?.allMonsters || state?.allMonsters,
+        allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
         ...getAutoPlanSettings(state, payload?.data),

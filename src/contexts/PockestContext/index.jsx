@@ -86,25 +86,15 @@ export function PockestProvider({
     }
   }, [pockestState]);
 
-  // refresh init and set next for 20-30 minutes later
-  const refreshInit = React.useCallback(async () => {
-    const newNextInit = setSessionTimeout('PockestHelperTimeout-init', 20, 10);
-    const newNextStatus = setSessionTimeout('PockestHelperTimeout-status', 5, 5);
-    log(`REFRESH INIT\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}\nnext init @ ${(new Date(newNextInit)).toLocaleString()}`);
-    pockestDispatch(pockestActions.pockestLoading());
-    pockestDispatch(await pockestActions.pockestInit());
-  }, []);
-
   // refresh status and set next for 5-10 minutes later
   const refreshStatus = React.useCallback(async () => {
     const newNextStatus = setSessionTimeout('PockestHelperTimeout-status', 5, 5);
     log(`REFRESH STATUS\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}`);
     pockestDispatch(pockestActions.pockestLoading());
-    pockestDispatch(await pockestActions.pockestStatus(pockestState));
+    pockestDispatch(await pockestActions.pockestRefresh(pockestState));
   }, [pockestState]);
 
   // refresh check loop
-  React.useEffect(() => window.sessionStorage.removeItem('PockestHelperTimeout-init'), []); // remove on load to kick start
   React.useEffect(() => {
     if (pockestState?.error
       || pockestState?.loading
@@ -112,15 +102,13 @@ export function PockestProvider({
     ) return () => {};
     const interval = window.setInterval(async () => {
       const now = Date.now();
-      const nextInit = getSessionTimeout('PockestHelperTimeout-init');
-      if (now >= nextInit) await refreshInit();
       const nextStatus = getSessionTimeout('PockestHelperTimeout-status');
       if (now >= nextStatus) await refreshStatus();
     }, 1000);
     return () => {
       window.clearInterval(interval);
     };
-  }, [pockestState, refreshInit, refreshStatus]);
+  }, [pockestState, refreshStatus]);
 
   // error loop: attempt to re-init every 1-3 minutes if there is an error
   React.useEffect(() => window.sessionStorage.removeItem('PockestHelperTimeout-error'), []); // remove on load to kick start
@@ -135,13 +123,13 @@ export function PockestProvider({
       if (now >= nextInit) {
         const newNextInit = setSessionTimeout('PockestHelperTimeout-error', 1, 3);
         log(`REFRESH ERROR\nnext error refresh @ ${(new Date(newNextInit)).toLocaleString()}\n${pockestState?.error}`);
-        await refreshInit();
+        await refreshStatus();
       }
     }, 1000);
     return () => {
       window.clearInterval(interval);
     };
-  }, [pockestState, refreshInit]);
+  }, [pockestState, refreshStatus]);
 
   // Lifecycle loop
   React.useEffect(() => {
