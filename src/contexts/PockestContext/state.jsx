@@ -84,7 +84,8 @@ export const REFRESH_TIMEOUT = {
 };
 
 // remove on load to kick start
-REFRESH_TIMEOUT.forEach((to) => window.sessionStorage.removeItem(to));
+Object.keys(REFRESH_TIMEOUT)
+  .forEach((key) => window.sessionStorage.removeItem(REFRESH_TIMEOUT[key]));
 
 export function setRefreshTimeout(id, staticMin, dynamicMin) {
   const timeout = Date.now() + getRandomMinutes(staticMin, dynamicMin);
