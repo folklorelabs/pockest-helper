@@ -238,9 +238,9 @@ export function PockestProvider({
         if (monster?.age >= 5) {
           // Report missing hashes, names, and stat vals to discord when found on opponents
           const missing = exchangeList.filter((m) => {
-            const matchingHash = pockestState?.allHashes
-              .find((m2) => m2?.id === m?.hash);
-            return !matchingHash;
+            const matchingMonster = pockestState?.allMonsters
+              .find((m2) => m2?.monster_id === m?.monster_id);
+            return !matchingMonster?.confirmed;
           });
           if (missing.length) {
             const missingStrs = missing.map((m) => `<🔎DISCOVERY> ${m.name_en} / ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);

@@ -61,10 +61,10 @@ export async function pockestRefresh(pockestState) {
       // send any useful info to discord
       if (data?.monster?.age >= 5) {
         const reports = [];
-        const matchingHash = pockestState?.allHashes.find((m2) => m2?.id === data?.monster?.hash);
         const matchingMonster = pockestState?.allMonsters
+          .filter((m) => m.confirmed)
           .find((m) => m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
-        if (!matchingHash || matchingMonster?.requiredMemento === -1) {
+        if (!matchingMonster?.confirmed) {
           const mementosOwned = getOwnedMementoMonsterNames(pockestState);
           reports.push(`<⬆️MONSTER> ${data?.monster?.name_en} (${pockestState?.planId})\nHash: ${data?.monster?.hash}\nStat Training: ${pockestState?.statLog.join(', ')}\nStat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}\nOwned Mementos: ${mementosOwned.join(', ')}`);
         }
@@ -92,7 +92,7 @@ export async function pockestRefresh(pockestState) {
       const mementosOwned = getOwnedMementoMonsterNames(pockestState);
       const targetMonster = pockestState?.allMonsters
         ?.find((m) => m.planId === pockestState?.planId);
-      if (targetMonster.monster_id === -1 || targetMonster?.requiredMemento === -1) {
+      if (!targetMonster?.confirmed) {
         const failureReport = `<🤦‍♂️EVO_FAILURE> ${targetMonster.planId}\nStat Training: ${pockestState?.statLog.join(', ')}\nStat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic})\nOwned Mementos: ${mementosOwned.join(', ')}`;
         postDiscord(`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${failureReport}`, 'DISCORD_EVO_WEBHOOK');
       }

@@ -19,6 +19,7 @@ function TargetMonsterSelect() {
     const curMonsterId = pockestGetters.getMonsterId(pockestState);
     if (!curMonsterId) {
       return pockestState?.allMonsters
+        ?.filter((m) => m.confirmed)
         ?.filter((m) => {
           const mAgeStr = m?.plan?.slice(1, 2);
           const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
@@ -32,12 +33,14 @@ function TargetMonsterSelect() {
           return 0;
         });
     }
-    const allAvailIds = pockestState?.allMonsters?.filter((m) => {
-      const isOlder = m?.age > monster?.age;
-      const hasRequiredMems = !m?.requiredMemento
-        || acquiredMementos.includes(m.requiredMemento);
-      return isOlder && hasRequiredMems;
-    })
+    const allAvailIds = pockestState?.allMonsters
+      ?.filter((m) => m.confirmed)
+      ?.filter((m) => {
+        const isOlder = m?.age > monster?.age;
+        const hasRequiredMems = !m?.requiredMemento
+          || acquiredMementos.includes(m.requiredMemento);
+        return isOlder && hasRequiredMems;
+      })
       .reduce((all, m) => {
         // only return decendants of current monster
         const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
@@ -48,9 +51,10 @@ function TargetMonsterSelect() {
         ];
       }, [curMonsterId]);
     return pockestState?.allMonsters
-      .filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
-      .filter((m) => !pockestState?.eggId || m.eggId === pockestState?.eggId)
-      .sort((a, b) => {
+      ?.filter((m) => m.confirmed)
+      ?.filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
+      ?.filter((m) => !pockestState?.eggId || m.eggId === pockestState?.eggId)
+      ?.sort((a, b) => {
         if (a.name_en < b.name_en) return -1;
         if (b.name_en < a.name_en) return 1;
         return 0;
