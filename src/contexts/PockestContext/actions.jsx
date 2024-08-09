@@ -14,7 +14,6 @@ import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 import { getRefreshTimeout, REFRESH_TIMEOUT, setRefreshTimeout } from './state';
-import log from '../../utils/log';
 
 export function pockestLoading() {
   return [ACTIONS.LOADING];
@@ -40,8 +39,7 @@ export async function pockestRefresh(pockestState) {
     const now = Date.now();
     const nextSheetTimestamp = getRefreshTimeout(REFRESH_TIMEOUT.SHEET);
     if (!pockestState?.allMonsters || !pockestState?.allHashes || now >= nextSheetTimestamp) {
-      const newNextInit = setRefreshTimeout(REFRESH_TIMEOUT.SHEET, 20, 10);
-      log(`REFRESH SHEET DATA\nnext @ ${(new Date(newNextInit)).toLocaleString()}`);
+      setRefreshTimeout(REFRESH_TIMEOUT.SHEET, 20, 10);
       const [
         allMonsters,
         allHashes,

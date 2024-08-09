@@ -89,8 +89,7 @@ export function PockestProvider({
 
   // refresh status and set next for 5-10 minutes later
   const refreshStatus = React.useCallback(async () => {
-    const newNextStatus = setRefreshTimeout(REFRESH_TIMEOUT.STATUS, 5, 5);
-    log(`REFRESH STATUS\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}`);
+    setRefreshTimeout(REFRESH_TIMEOUT.STATUS, 5, 5);
     pockestDispatch(pockestActions.pockestLoading());
     pockestDispatch(await pockestActions.pockestRefresh(pockestState));
   }, [pockestState]);
@@ -121,8 +120,7 @@ export function PockestProvider({
       const now = Date.now();
       const nextInit = getRefreshTimeout(REFRESH_TIMEOUT.ERROR);
       if (now >= nextInit) {
-        const newNextInit = setRefreshTimeout(REFRESH_TIMEOUT.ERROR, 1, 3);
-        log(`REFRESH ERROR\nnext error refresh @ ${(new Date(newNextInit)).toLocaleString()}\n${pockestState?.error}`);
+        setRefreshTimeout(REFRESH_TIMEOUT.ERROR, 1, 3);
         await refreshStatus();
       }
     }, 1000);

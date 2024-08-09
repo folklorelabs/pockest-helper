@@ -1,4 +1,5 @@
 import getRandomMinutes from '../../utils/getRandomMinutes';
+import log from '../../utils/log';
 
 const INITIAL_STATE = {
   data: {},
@@ -89,6 +90,7 @@ Object.keys(REFRESH_TIMEOUT)
 
 export function setRefreshTimeout(id, staticMin, dynamicMin) {
   const timeout = Date.now() + getRandomMinutes(staticMin, dynamicMin);
+  log(`NEXT REFRESH (${id}) @ ${(new Date(timeout)).toLocaleString()}`);
   window.sessionStorage.setItem(id, timeout);
   return timeout;
 }
