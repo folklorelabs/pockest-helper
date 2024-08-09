@@ -260,11 +260,6 @@ export function getAutoPlanSettings(state, data, settingsOverride = {}) {
     || isMonsterDeparted(state, data)
     || isMonsterMissing(state, data)
   ) {
-    console.log('Monster missing! Auto settings.', {
-      dead: isMonsterDead(state, data),
-      departed: isMonsterDeparted(state, data),
-      missing: isMonsterMissing(state, data),
-    });
     newSettings.autoPlay = true;
     newSettings.paused = true;
     newSettings.statLog = [];

@@ -73,16 +73,15 @@ export function PockestProvider({
 
   // detect hatch sync issues
   useEffect(() => {
-    if (pockestState?.invalidSession) return; // we're in bad state; don't update anything
-    if (!pockestState?.initialized) return; // haven't kicked things off yet
-    if (pockestState?.error || pockestState?.loading) console.log('NO hatch sync', 'error || loading', pockestState); // already recovering elsewhere
-    if (pockestState?.error || pockestState?.loading) return; // already recovering elsewhere
-    if (!pockestState?.data?.monster?.live_time || pockestState?.data?.event === 'hatching') console.log('NO hatch sync', 'monster no live or hatching', pockestState); // already recovering elsewhere
-    if (!pockestState?.data?.monster?.live_time || pockestState?.data?.event === 'hatching') return; // nothing to desync from
+    if (pockestState?.invalidSession // we're in bad state; don't update anything
+      || !pockestState?.initialized // we're in bad state; don't update anything
+      || pockestState?.error || pockestState?.loading // already recovering elsewhere
+      || !pockestState?.data?.monster?.live_time || pockestState?.data?.event === 'hatching' // nothing to desync from
+    ) return;
     const bucklerLiveTimestamp = pockestState?.data?.monster?.live_time;
     const stateLiveTimestamp = pockestState?.eggTimestamp;
-    if (!stateLiveTimestamp || stateLiveTimestamp !== bucklerLiveTimestamp) console.log('YES detect hatch sync', `${bucklerLiveTimestamp} !== ${stateLiveTimestamp}`, pockestState);
     if (!stateLiveTimestamp || stateLiveTimestamp !== bucklerLiveTimestamp) {
+      log('Detected hatch sync', `bucklerLiveTimestamp (${bucklerLiveTimestamp}) !== stateLiveTimestamp (${stateLiveTimestamp})`, pockestState);
       pockestDispatch(pockestActions.pockestErrorHatchSync('Pockest Helper detected a Monster that it did not hatch. Please refrain from manually hatching monsters as this will reduce the effectiveness of Pockest Helper.'));
     }
   }, [pockestState]);
