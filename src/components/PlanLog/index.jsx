@@ -11,7 +11,7 @@ function PlanLog({
   title,
   rows,
 }) {
-  const [isRelTime, setIsRelTime] = React.useState(true);
+  const [isRelTime, setIsRelTime] = React.useState(false);
   const textAreaEl = React.useRef();
   const {
     pockestState,
