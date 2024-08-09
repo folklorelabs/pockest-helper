@@ -45,7 +45,7 @@ export async function pockestStatus(pockestState) {
         const matchingHash = pockestState?.allHashes.find((m2) => m2?.id === data?.monster?.hash);
         const matchingMonster = pockestState?.allMonsters
           .find((m) => m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
-        if (!matchingHash || matchingMonster?.requiredMemento === 9999) {
+        if (!matchingHash || matchingMonster?.requiredMemento === -1) {
           const mementosOwned = getOwnedMementoMonsterNames(pockestState);
           reports.push(`<⬆️MONSTER> ${data?.monster?.name_en} / ${data?.monster?.hash}\nStat Training: ${pockestState?.statLog.join(', ')}\nStat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}\nOwned Mementos: ${mementosOwned.join('/')}`);
         }
