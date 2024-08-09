@@ -34,7 +34,6 @@ function TargetMonsterSelect() {
         });
     }
     const allAvailIds = pockestState?.allMonsters
-      ?.filter((m) => m.confirmed)
       ?.filter((m) => {
         const isOlder = m?.age > monster?.age;
         const hasRequiredMems = !m?.requiredMemento
@@ -50,6 +49,7 @@ function TargetMonsterSelect() {
           m.monster_id,
         ];
       }, [curMonsterId]);
+    console.log({ allAvailIds });
     return pockestState?.allMonsters
       ?.filter((m) => m.confirmed)
       ?.filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
