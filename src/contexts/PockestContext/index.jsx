@@ -74,10 +74,13 @@ export function PockestProvider({
   useEffect(() => {
     if (pockestState?.invalidSession) return; // we're in bad state; don't update anything
     if (!pockestState?.initialized) return; // haven't kicked things off yet
+    if (pockestState?.error || pockestState?.loading) console.log('NO hatch sync', 'error || loading', pockestState); // already recovering elsewhere
     if (pockestState?.error || pockestState?.loading) return; // already recovering elsewhere
+    if (!pockestState?.data?.monster?.live_time || pockestState?.data?.event === 'hatching') console.log('NO hatch sync', 'monster no live or hatching', pockestState); // already recovering elsewhere
     if (!pockestState?.data?.monster?.live_time || pockestState?.data?.event === 'hatching') return; // nothing to desync from
     const bucklerLiveTimestamp = pockestState?.data?.monster?.live_time;
     const stateLiveTimestamp = pockestState?.eggTimestamp;
+    if (!stateLiveTimestamp || stateLiveTimestamp !== bucklerLiveTimestamp) console.log('YES detect hatch sync', `${bucklerLiveTimestamp} !== ${stateLiveTimestamp}`, pockestState);
     if (!stateLiveTimestamp || stateLiveTimestamp !== bucklerLiveTimestamp) {
       pockestDispatch(pockestActions.pockestErrorHatchSync('Pockest Helper detected a Monster that it did not hatch. Please refrain from manually hatching monsters as this will reduce the effectiveness of Pockest Helper.'));
     }
@@ -97,7 +100,7 @@ export function PockestProvider({
     const newNextStatus = setSessionTimeout('PockestHelperTimeout-status', 5, 5);
     log(`REFRESH STATUS\nnext status @ ${(new Date(newNextStatus)).toLocaleString()}`);
     pockestDispatch(pockestActions.pockestLoading());
-    pockestDispatch(await pockestActions.pockestRefresh(pockestState));
+    pockestDispatch(await pockestActions.pockestStatus(pockestState));
   }, [pockestState]);
 
   // refresh check loop
@@ -211,7 +214,7 @@ export function PockestProvider({
       if (attemptToClean && inCleanWindow) {
         log('CLEAN');
         pockestDispatch(pockestActions.pockestLoading());
-        pockestDispatch(await pockestActions.pockestClean(pockestState));
+        pockestDispatch(await pockestActions.pockestClean());
         return;
       }
 

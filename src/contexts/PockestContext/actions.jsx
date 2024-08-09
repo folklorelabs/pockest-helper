@@ -8,6 +8,7 @@ import {
   fetchPockestStatus,
   getLogEntry,
   getOwnedMementoMonsterNames,
+  getCurrentMonsterLogs,
 } from './getters';
 import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
@@ -27,17 +28,17 @@ export function pockestPlanSettings(pockestState, settingsOverride) {
   const newSettings = getAutoPlanSettings(pockestState, null, settingsOverride);
   return [ACTIONS.SETTINGS, newSettings];
 }
-export async function pockestRefresh(pockestState) {
+export async function pockestStatus(pockestState) {
   try {
     const data = await fetchPockestStatus();
-    if (data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash) {
-      // add evolution to log
-      data.result = {
-        ...getLogEntry({ data }),
-        logType: 'age',
-        monsterBefore: pockestState?.data?.monster,
-      };
-      // send new lvl 5 monster data to discord
+    const payload = {
+      data,
+    };
+    if (data?.event === 'death') return [ACTIONS.REFRESH_DEATH, payload];
+    if (data?.event === 'departure') return [ACTIONS.REFRESH_DEPARTURE, payload];
+    if (data?.event === 'monster_not_found') return [ACTIONS.REFRESH_MONSTER_NOT_FOUND, payload];
+    if (data?.event === 'evolution' || (data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash)) {
+      // send any useful info to discord
       if (data?.monster?.age >= 5) {
         const reports = [];
         const matchingHash = pockestState?.allHashes
@@ -56,42 +57,30 @@ export async function pockestRefresh(pockestState) {
           postDiscord(missingReport, 'DISCORD_EVO_WEBHOOK');
         }
       }
+
+      return [ACTIONS.REFRESH_EVOLUTION_SUCCESS, payload];
     }
-    if (data?.monster
-      && Date.now() > (data.monster.live_time + daysToMs(3)) && data.monster.age < 5) {
+    const isEvoFailureEvent = (() => {
+      if (data.monster.age >= 5) return false; // successful evolution already
+      if (Date.now() <= data.monster.live_time + daysToMs(3)) return false; // not evo time yet
+      if (pockestState.evolutionFailed || getCurrentMonsterLogs(pockestState, 'evolution_failure')) return false; // logged already
+      return true;
+    })();
+    if (isEvoFailureEvent) {
+      // send any useful info to discord
       const mementosOwned = getOwnedMementoMonsterNames(pockestState);
-
-      // add failed evo to log
-      data.result = {
-        ...getLogEntry({ data }),
-        logType: 'evoFailure',
-        planId: pockestState?.planId,
-        power: data?.monster?.power,
-        speed: data?.monster?.speed,
-        technic: data?.monster?.technic,
-        mementosOwned,
-      };
-
-      // send new path data to discord
       const targetMonster = pockestState?.allMonsters
         ?.find((m) => m.planId === pockestState?.planId);
       if (`${targetMonster.monster_id}` === '-1') {
         const failureReport = `<🤦‍♂️EVO_FAILURE> ${targetMonster.planId} (P: ${pockestState?.data?.monster?.power}, S: ${pockestState?.data?.monster?.speed}, T: ${pockestState?.data?.monster?.technic})\nMementos: ${mementosOwned.join(', ')}`;
         postDiscord(`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${failureReport}`, 'DISCORD_EVO_WEBHOOK');
       }
+
+      return [ACTIONS.REFRESH_EVOLUTION_FAILURE, payload];
     }
-    if (['death', 'departure'].includes(data?.event)) {
-      const monster = data?.monster || pockestState?.data?.monster;
-      data.result = getLogEntry({
-        data: {
-          ...data,
-          monster,
-        },
-      });
-    }
-    return [ACTIONS.REFRESH, data];
+    return [ACTIONS.REFRESH_STATUS, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestRefresh] ${error?.message}`];
+    return [ACTIONS.ERROR, `[pockestStatus] ${error?.message}`];
   }
 }
 export async function pockestFeed() {
@@ -110,12 +99,10 @@ export async function pockestFeed() {
       event: resJson.event,
       ...resJson.data,
     };
-    data.result = {
-      ...getLogEntry({ data }),
-      ...data?.serving,
-      stomach: data?.monster?.stomach,
+    const payload = {
+      data,
     };
-    return [ACTIONS.REFRESH, data];
+    return [ACTIONS.REFRESH_MEAL, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestFeed] ${error?.message}`];
   }
@@ -136,16 +123,15 @@ export async function pockestCure() {
       event: resJson.event,
       ...resJson.data,
     };
-    data.result = {
-      ...getLogEntry({ data }),
-      ...data?.cure, // TODO: check that this is correct
+    const payload = {
+      data,
     };
-    return [ACTIONS.REFRESH, data];
+    return [ACTIONS.REFRESH_CURE, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestCure] ${error?.message}`];
   }
 }
-export async function pockestClean(pockestState) {
+export async function pockestClean() {
   try {
     const url = 'https://www.streetfighter.com/6/buckler/api/minigame/cleaning';
     const response = await fetch(url, {
@@ -161,12 +147,10 @@ export async function pockestClean(pockestState) {
       event: resJson.event,
       ...resJson.data,
     };
-    data.result = {
-      ...getLogEntry({ data }),
-      ...data?.cleaning,
-      garbageBefore: pockestState?.data?.monster?.garbage,
+    const payload = {
+      data,
     };
-    return [ACTIONS.REFRESH, data];
+    return [ACTIONS.REFRESH_CLEANING, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestClean] ${error?.message}`];
   }
@@ -190,14 +174,14 @@ export async function pockestTrain(type) {
       event: resJson.event,
       ...resJson.data,
     };
+    const payload = {
+      data,
+      args: { type },
+    };
     if (data?.event !== 'training') {
       throw new Error(`Buckler Response: ${data?.event || data?.message}`);
     }
-    data.result = {
-      ...getLogEntry({ data }),
-      ...data?.training,
-    };
-    return [ACTIONS.REFRESH, data];
+    return [ACTIONS.REFRESH_TRAINING, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestTrain] ${error?.message}`];
   }
@@ -221,23 +205,27 @@ export async function pockestMatch(pockestState, match) {
       event: resJson.event,
       ...resJson.data,
     };
+    const payload = {
+      data,
+      args: { match },
+    };
     if (data?.exchangable === false) {
       throw new Error(`Buckler Response: ${data?.event || data?.message}`);
     }
-    data.result = {
-      ...getLogEntry({ data }),
+    const result = {
+      ...getLogEntry(pockestState, data),
       ...data?.exchangeResult,
       target_monster_name_en: match?.name_en,
     };
-    const isDisc = isMatchDiscovery(pockestState, data.result);
+    const isDisc = isMatchDiscovery(pockestState, result);
     if (isDisc) {
       const report = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${getMatchReportString({
         pockestState,
-        result: data.result,
+        result,
       })}`;
       postDiscord(report, 'DISCORD_MATCH_WEBHOOK');
     }
-    return [ACTIONS.REFRESH, data];
+    return [ACTIONS.REFRESH_EXCHANGE, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestMatch] ${error?.message}`];
   }
@@ -259,12 +247,11 @@ export async function pockestSelectEgg(id) {
       event: resJson.event,
       ...resJson.data,
     };
-    data.result = {
-      ...getLogEntry({ data }),
-      eggType: id,
-      timestamp: data?.monster?.live_time,
+    const payload = {
+      data,
+      args: { id },
     };
-    return [ACTIONS.REFRESH, data];
+    return [ACTIONS.REFRESH_HATCHING, payload];
   } catch (error) {
     return [ACTIONS.ERROR, `[pockestSelectEgg] ${error?.message}`];
   }

@@ -6,12 +6,13 @@ import { MONSTER_LIFESPAN } from '../../utils/getAgeTimer';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 
-export function getLogEntry(pockestState) {
+export function getLogEntry(pockestState, data) {
+  const mergedData = data ?? pockestState?.data;
   return {
-    logType: pockestState?.data?.event,
+    logType: mergedData?.event,
     timestamp: new Date().getTime(),
-    monsterId: getMonsterIdFromHash(pockestState?.data?.monster?.hash),
-    monsterBirth: pockestState?.data?.monster?.live_time,
+    monsterId: getMonsterIdFromHash(mergedData?.monster?.hash),
+    monsterBirth: mergedData?.monster?.live_time,
   };
 }
 
@@ -259,6 +260,11 @@ export function getAutoPlanSettings(state, data, settingsOverride = {}) {
     || isMonsterDeparted(state, data)
     || isMonsterMissing(state, data)
   ) {
+    console.log('Monster missing! Auto settings.', {
+      dead: isMonsterDead(state, data),
+      departed: isMonsterDeparted(state, data),
+      missing: isMonsterMissing(state, data),
+    });
     newSettings.autoPlay = true;
     newSettings.paused = true;
     newSettings.statLog = [];

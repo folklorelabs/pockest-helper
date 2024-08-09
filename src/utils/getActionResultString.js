@@ -33,20 +33,26 @@ export default function getActionResultString({ pockestState, result, isRelTime 
       return `vs ${result?.target_monster_name_en || b?.name_en}`;
     }
     if (logType === 'cure') return 'cured 🩹';
-    if (logType === 'age') return 'appears';
+    if (logType === 'age' || logType === 'evolution') return 'appears';
     if (logType === 'hatching') return 'hatched';
     if (logType === 'error') return `ERROR❗${result?.error}`;
     if (logType === 'death') return 'died 🪦';
-    if (logType === 'evoFailure') return 'failed evo 🤦‍♂️';
+    if (logType === 'evolution_failure') return 'failed evo 🤦‍♂️';
     if (logType === 'departure') return 'departed 🛫';
     return '';
   })();
   const resultsStr = (() => {
-    if (logType === 'age') return [`⬆️ ${result?.monsterBefore?.name_en}`, `P: ${result?.monsterBefore?.power}`, `S: ${result?.monsterBefore?.speed}`, `T: ${result?.monsterBefore?.technic}`];
+    if (logType === 'age' || logType === 'evolution') {
+      const monsterBefore = {
+        ...result?.monsterBefore,
+        ...result?.evolutions?.[result.evolutions.length - 1],
+      };
+      return [`⬆️ ${monsterBefore?.name_en}`, `P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`];
+    }
     if (logType === 'cleaning') return [`💩${result?.garbageBefore || 0} → 0`];
     if (logType === 'meal') return [`❤️${(result?.stomach || 0) - 1} → ${result?.stomach || 0}`];
     if (logType === 'training') return [`+${result?.up_status}${STAT_ICON[result?.type]}`];
-    if (logType === 'evoFailure') return [`${result?.planId}`, `P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`, `MEMS: ${result?.mementosOwned.join('/')}`];
+    if (logType === 'evolution_failure') return [`${result?.planId}`, `P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`, `MEMS: ${result?.mementosOwned.map((mId) => pockestState?.allMonsters.find((m) => m.monster_id === mId)).join('/')}`];
     if (logType === 'exchange') {
       return [
         result?.is_spmatch && '🔥fever',

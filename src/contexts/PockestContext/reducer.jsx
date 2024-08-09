@@ -2,12 +2,24 @@ import log from '../../utils/log';
 import {
   getAutoPlanSettings,
   getLogEntry,
+  getOwnedMementoMonsterIds,
 } from './getters';
 
 export const ACTIONS = {
   INIT: 'POCKEST_INIT',
   INVALIDATE_SESSION: 'POCKEST_INVALIDATE_SESSION',
-  REFRESH: 'POCKEST_REFRESH',
+  REFRESH_STATUS: 'POCKEST_REFRESH_STATUS',
+  REFRESH_HATCHING: 'POCKEST_REFRESH_HATCHING',
+  REFRESH_CLEANING: 'POCKEST_REFRESH_CLEANING',
+  REFRESH_TRAINING: 'POCKEST_REFRESH_TRAINING',
+  REFRESH_MEAL: 'POCKEST_REFRESH_MEAL',
+  REFRESH_EXCHANGE: 'POCKEST_REFRESH_EXCHANGE',
+  REFRESH_CURE: 'POCKEST_REFRESH_CURE',
+  REFRESH_EVOLUTION_SUCCESS: 'POCKEST_REFRESH_EVOLUTION_SUCCESS',
+  REFRESH_EVOLUTION_FAILURE: 'POCKEST_REFRESH_EVOLUTION_FAILURE',
+  REFRESH_DEATH: 'POCKEST_REFRESH_DEATH',
+  REFRESH_DEPARTURE: 'POCKEST_REFRESH_DEPARTURE',
+  REFRESH_MONSTER_NOT_FOUND: 'POCKEST_REFRESH_MONSTER_NOT_FOUND',
   LOADING: 'POCKEST_LOADING',
   PAUSE: 'POCKEST_PAUSE',
   ERROR: 'POCKEST_ERROR',
@@ -59,31 +71,198 @@ export default function REDUCER(state, [type, payload]) {
         allHashes: payload?.allHashes,
         ...getAutoPlanSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH:
+    case ACTIONS.REFRESH_STATUS:
       return {
         ...state,
         loading: false,
-        data: payload,
-        eggId: payload?.event === 'hatching' ? payload?.result?.eggType
-          : state?.eggId,
-        eggTimestamp: payload?.event === 'hatching' ? payload?.result?.monsterBirth
-          : state?.eggTimestamp,
-        cleanTimestamp: (payload?.event === 'cleaning')
-          ? payload?.result?.timestamp : state.cleanTimestamp,
-        statLog: (payload?.event === 'training') ? [
-          ...state.statLog,
-          payload?.result?.type,
-        ] : state.statLog,
-        log: (payload?.result) ? [
-          ...state.log,
-          payload?.result,
-        ] : state.log,
+        data: payload?.data,
         ...getAutoPlanSettings(state, payload?.data),
       };
     case ACTIONS.SET_LOG:
       return {
         ...state,
         log: payload,
+      };
+    case ACTIONS.REFRESH_HATCHING:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        eggId: payload?.args?.id,
+        eggTimestamp: payload?.data?.monster?.live_time,
+        evolutionFailed: false,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            eggType: payload?.args?.id,
+            timestamp: payload?.data?.monster?.live_time,
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_CLEANING:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        cleanTimestamp: payload?.data?.result?.timestamp,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            ...payload?.data?.cleaning,
+            garbageBefore: state?.data?.monster?.garbage,
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_MEAL:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            ...payload?.data?.serving,
+            stomach: payload?.data?.monster?.stomach,
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_CURE:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            ...payload?.data?.cure,
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_EXCHANGE:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            ...payload?.data?.exchangeResult,
+            target_monster_name_en: payload?.args?.match?.name_en,
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_TRAINING:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        statLog: [
+          ...state.statLog,
+          payload?.data?.result?.type,
+        ],
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            ...payload?.data?.training,
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_EVOLUTION_SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            logType: 'evolution',
+            power: payload?.data?.monster?.power,
+            speed: payload?.data?.monster?.speed,
+            technic: payload?.data?.monster?.technic,
+            evolutions: payload?.data?.evolutions || [
+              {
+                hash: state?.data?.monster?.hash,
+                name: state?.data?.monster?.name,
+                name_en: state?.data?.monster?.name_en,
+              },
+              {
+                hash: payload?.data?.monster?.hash,
+                name: payload?.data?.monster?.name,
+                name_en: payload?.data?.monster?.name_en,
+              },
+            ],
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_EVOLUTION_FAILURE:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        evolutionFailed: true,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            ...getLogEntry(state, payload?.data),
+            logType: 'evolution_failure',
+            planId: state?.planId,
+            power: payload?.data?.monster?.power,
+            speed: payload?.data?.monster?.speed,
+            technic: payload?.data?.monster?.technic,
+            mementosOwned: getOwnedMementoMonsterIds(state),
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_DEATH:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            evolutions: payload?.data?.evolutions,
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_DEPARTURE:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state, payload?.data),
+            memento: payload?.data?.memento,
+          },
+        ],
+        ...getAutoPlanSettings(state, payload?.data),
+      };
+    case ACTIONS.REFRESH_MONSTER_NOT_FOUND:
+      return {
+        ...state,
+        loading: false,
+        data: payload?.data,
+        ...getAutoPlanSettings(state, payload?.data),
       };
     case ACTIONS.INVALIDATE_SESSION:
       return {
@@ -111,6 +290,7 @@ export default function REDUCER(state, [type, payload]) {
         error: payload,
         eggId: null,
         eggTimestamp: state?.data?.monster?.live_time,
+        evolutionFailed: false,
         statLog: state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training').map((e) => e.type) ?? [],
         log: [
           ...state.log,
