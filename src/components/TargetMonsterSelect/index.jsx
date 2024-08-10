@@ -21,7 +21,7 @@ function TargetMonsterSelect() {
       return pockestState?.allMonsters
         ?.filter((m) => m.confirmed)
         ?.filter((m) => {
-          const mAgeStr = m?.plan?.slice(1, 2);
+          const mAgeStr = m?.planId?.slice(-1);
           const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
           const hasRequiredMems = !m?.requiredMemento
             || acquiredMementos.includes(m.requiredMemento);
