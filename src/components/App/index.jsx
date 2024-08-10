@@ -13,6 +13,7 @@ import AppMainEggPurchase from './AppMain--eggPurchase';
 import AppMainCare from './AppMain--care';
 import './index.css';
 import AppUpdateAlert from '../AppUpdateAlert';
+import { IconChevronDown, IconChevronUp, IconLog } from '../icons';
 
 function App() {
   const {
@@ -20,14 +21,41 @@ function App() {
   } = usePockestContext();
   const {
     showLog,
+    setShowLog,
   } = useAppContext();
   const [minimized, setMinimized] = React.useState(false);
   const [lol, setLol] = React.useState(true);
+
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
-      <button className="AppMinBtn" type="button" onClick={() => setMinimized(!minimized)}>
-        ⧉
-      </button>
+      <div className="AppMinBtnLayout">
+        <button
+          title={showLog ? 'Hide log' : 'Show log'}
+          className="AppMinBtn"
+          type="button"
+          onClick={() => {
+            setShowLog(!showLog)
+            setMinimized(false)
+          }}
+        >
+          <IconLog size={16} />
+        </button>
+        <button
+          title={minimized ? 'Maximize' : 'Minimize'}
+          className="AppMinBtn"
+          type="button"
+          onClick={() => {
+            setMinimized(!minimized)
+
+            if (!minimized) {
+              setShowLog(false)
+            }
+          }}
+        >
+          {minimized ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+        </button>
+      </div>
+
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
         <AppUpdateAlert />
