@@ -48,10 +48,14 @@
   overflow: visible;
 }
 
-#PockestHelperExtension .AppMinBtn {
+#PockestHelperExtension .AppMinBtnLayout {
   position: absolute;
   top: 4px;
   right: 0;
+  display: flex;
+}
+
+#PockestHelperExtension .AppMinBtn {
   background: none;
   border: 0;
   color: #fff;
