@@ -162,6 +162,10 @@ export function getCurrentPlanSchedule(state) {
     state?.cleanFrequency,
     0,
   );
+  if (cleanSchedule?.[0]?.start === birth) {
+    // remove unnecessary first clean
+    cleanSchedule.shift();
+  }
   const feedSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
     .reduce((fullSchedule, div) => {
       const spec = targetPlan[div];
