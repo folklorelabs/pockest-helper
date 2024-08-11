@@ -6,6 +6,7 @@ import {
 } from '../../contexts/PockestContext';
 import './index.css';
 import { parseDurationStr } from '../../utils/parseDuration';
+import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
 
 function PlanLog({
   title,
@@ -24,24 +25,34 @@ function PlanLog({
       trainSchedule,
     } = pockestGetters.getCurrentPlanSchedule(pockestState);
     let data = [];
+    const isDone = (type, scheduleEntry, grace = (1000 * 60 * 60)) => {
+      const logs = getCurrentMonsterLogs(pockestState, type);
+      return logs.find((l) => l?.timestamp >= scheduleEntry.start
+        && l?.timestamp < (scheduleEntry.start + grace));
+    };
     const stunOffset = pockestGetters.getPlanStunOffset(pockestState);
     if (typeof stunOffset === 'number') {
+      const start = birth + pockestGetters.getPlanStunOffset(pockestState);
       data.push({
-        start: birth + pockestGetters.getPlanStunOffset(pockestState),
+        start,
+        completion: `${Date.now() >= start ? '☑' : '☐'}`,
         label: 'Stop curing',
       });
     }
     data = [
       ...data,
       ...(cleanSchedule?.map((w) => ({
+        completion: `${isDone('cleaning', w) ? '☑' : '☐'}`,
         label: 'Clean',
         ...w,
       })) ?? []),
       ...(feedSchedule?.map((w) => ({
+        completion: `${isDone('meal', w) ? '☑' : '☐'}`,
         label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
         ...w,
       })) ?? []),
       ...(trainSchedule?.map((w) => ({
+        completion: `${isDone('training', w, 1000 * 60 * 60 * 12) ? '☑' : '☐'}`,
         label: `Train ${w.stat}`,
         ...w,
       })) ?? []),
@@ -52,7 +63,7 @@ function PlanLog({
     }));
     return [
       `[Pockest Helper v${import.meta.env.APP_VERSION}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
-      ...data.map((d) => `[${!isRelTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`),
+      ...data.map((d) => `${d.completion} [${!isRelTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`),
     ];
   }, [pockestState, isRelTime]);
   return (
