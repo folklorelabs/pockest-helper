@@ -242,8 +242,8 @@ export function PockestProvider({
             return !matchingMonster?.confirmed;
           });
           if (missing.length) {
-            const missingStrs = missing.map((m) => `<🔎DISCOVERY> ${m.name_en} / ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
-            const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}] New monster sightings:\n${missingStrs.join('\n')}`;
+            const missingStrs = missing.map((m) => `<🔎SIGHTING> ${m.name_en} / ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
+            const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${missingStrs.join('\n')}`;
             postDiscord(missingReport, 'DISCORD_EVO_WEBHOOK');
           }
         }
