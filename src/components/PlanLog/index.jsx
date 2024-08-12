@@ -24,6 +24,7 @@ function PlanLog({
       feedSchedule,
       trainSchedule,
     } = pockestGetters.getCurrentPlanSchedule(pockestState);
+    const matchSchedule = pockestGetters.getMatchSchedule(pockestState);
     let data = [];
     const isDone = (type, scheduleEntry, grace = (1000 * 60 * 60)) => {
       const logs = getCurrentMonsterLogs(pockestState, type);
@@ -54,6 +55,11 @@ function PlanLog({
       ...(trainSchedule?.map((w) => ({
         completion: `${isDone('training', w, 1000 * 60 * 60 * 12) ? '☑' : '☐'}`,
         label: `Train ${w.stat}`,
+        ...w,
+      })) ?? []),
+      ...(matchSchedule?.map((w) => ({
+        completion: `${isDone('exchange', w, 1000 * 60 * 60 * 12) ? '☑' : '☐'}`,
+        label: 'Match',
         ...w,
       })) ?? []),
     ].sort((a, b) => a.start - b.start).map((d) => ({

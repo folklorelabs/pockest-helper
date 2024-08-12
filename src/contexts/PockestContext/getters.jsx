@@ -5,6 +5,7 @@ import getDeathTimer from '../../utils/getDeathTimer';
 import { MONSTER_LIFESPAN } from '../../utils/getAgeTimer';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
+import getFirstMatchTime from '../../utils/getFirstMatchTime';
 
 export function getLogEntry(pockestState, data) {
   const mergedData = data ?? pockestState?.data;
@@ -208,6 +209,17 @@ export function getCurrentPlanSchedule(state) {
     feedSchedule,
     trainSchedule,
   };
+}
+
+export function getMatchSchedule(state) {
+  const birth = state?.data?.monster?.live_time;
+  if (!birth) return [];
+  const firstMatchTime = getFirstMatchTime(state);
+  const numMatches = Math.ceil((birth + daysToMs(7) - firstMatchTime) / daysToMs(1));
+  const schedule = Array.from(new Array(numMatches)).map((v, i) => ({
+    start: firstMatchTime + (i * daysToMs(1)),
+  }));
+  return schedule;
 }
 
 export function getCurrentPlanScheduleWindows(state) {

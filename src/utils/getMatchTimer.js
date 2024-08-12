@@ -1,7 +1,6 @@
-import { MONSTER_LIFESPAN } from './getAgeTimer';
+import getFirstMatchTime from './getFirstMatchTime';
 
-export const OPTIMAL_MATCH_TIME = MONSTER_LIFESPAN[3];
-export const TRAINING_THRESHOLD = 1000 * 60 * 60;
+const TRAINING_THRESHOLD = 1000 * 60 * 60;
 
 export default function getMatchTimer(pockestState) {
   const monster = pockestState?.data?.monster;
@@ -13,7 +12,7 @@ export default function getMatchTimer(pockestState) {
   if (pockestState?.planAge <= monster?.age) return nextAvailableMatch;
 
   // figure out optimal first matchtime and latest of next avail or that
-  const firstMatch = monster.live_time + OPTIMAL_MATCH_TIME;
+  const firstMatch = getFirstMatchTime(pockestState);
   const nextOptimalMatch = Math.max(firstMatch, nextAvailableMatch);
 
   // adjust for training time (we don't want to match right before we can train)
