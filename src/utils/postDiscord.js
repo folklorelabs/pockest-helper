@@ -10,17 +10,12 @@ async function postDiscordMessage(content, envUrlId) {
     },
   });
   if (!response.ok) throw new Error(`API ${response.status} response (${envUrlId})`);
-  const data = await response.json();
-  if (data.code) throw new Error(`Discord Response: ${data.message} (${data.code})`);
-  return data;
 }
 
 export default async function postDiscord(content, envUrlId) {
   try {
-    const data = await postDiscordMessage(content, envUrlId);
-    return data;
+    await postDiscordMessage(content, envUrlId);
   } catch (err) {
     logError(`${err}`);
-    return null;
   }
 }
