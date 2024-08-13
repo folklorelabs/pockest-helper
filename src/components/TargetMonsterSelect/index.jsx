@@ -4,6 +4,7 @@ import {
   pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
+import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
 
 function TargetMonsterSelect() {
   const {
@@ -59,11 +60,24 @@ function TargetMonsterSelect() {
         return 0;
       });
   }, [acquiredMementos, pockestState]);
+  const curMonsterNonHatchLogs = React.useMemo(
+    () => getCurrentMonsterLogs(pockestState).filter((l) => l.logType !== 'hatching'),
+    [pockestState],
+  );
   if (!pockestState?.allMonsters?.length) return '';
   return (
     <select
       className="PockestSelect"
       onChange={(e) => {
+        const shouldConfirm = pockestState?.data?.monster?.live_time
+          && curMonsterNonHatchLogs.length;
+        // eslint-disable-next-line no-alert
+        const shouldAbort = shouldConfirm && !window.confirm('Are you sure you want to change the target monster? Doing so at this time may result in unexpected results such as death or failure to evolve.');
+        if (shouldAbort) {
+          e.target.value = `${pockestState?.monsterId}`;
+          e.preventDefault();
+          return;
+        }
         const monsterId = e.target.value ? parseInt(e.target.value, 10) : -1;
         pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
           monsterId,
