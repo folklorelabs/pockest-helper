@@ -243,7 +243,7 @@ export function PockestProvider({
           });
           if (missing.length) {
             const missingStrs = missing.map((m) => {
-              const header = '🔎 **SIGHTING** 🔎';
+              const header = '\n🔎 **SIGHTING** 🔎';
               const nameStr = `Name: **${m.name_en}** (${m.name})`;
               const hashStr = `Hash: **${m?.hash}**`;
               const statsTotal = m ? m.power + m.speed + m.technic : 0;

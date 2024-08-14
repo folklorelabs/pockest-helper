@@ -29,7 +29,7 @@ export async function postDiscord(content, url, id) {
     window.sessionStorage.setItem(DISCORD_ATTEMPT_TIMESTAMP_ID, Date.now());
     if (!url) throw new Error(`Missing ${id} env var`);
     const response = await fetch(url, {
-      body: JSON.stringify({ content: `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${content}` }),
+      body: JSON.stringify({ content: `*[Pockest Helper v${import.meta.env.APP_VERSION}]*\n${content}` }),
       method: 'POST',
       headers: {
         'content-type': 'application/json',

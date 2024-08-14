@@ -67,7 +67,7 @@ export async function pockestRefresh(pockestState) {
           .find((m) => m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
         if (!matchingMonster?.confirmed) {
           const mementosOwned = getOwnedMementoMonsterNames(pockestState);
-          const header = '⬆️ **EVOLUTION SUCCESS** ⬆️';
+          const header = '\n⬆️ **EVOLUTION SUCCESS** ⬆️';
           const nameStr = `Name: **${data?.monster?.name_en}** (${data?.monster?.name})`;
           const hashStr = `Hash: **${data?.monster?.hash}**`;
           const planIdStr = `**${pockestState?.planId}**`;
@@ -84,7 +84,7 @@ export async function pockestRefresh(pockestState) {
         const matchingMementoHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.memento_hash);
         if (!matchingMementoHash) {
-          const header = '🏆 **MEMENTO** 🏆';
+          const header = '\n🏆 **MEMENTO** 🏆';
           const fromStr = `From: **${data?.monster?.name_en}** (${data?.monster?.name})`;
           const nameStr = `Name: **${data?.monster?.memento_name_en}** (${data?.monster?.memento_name})`;
           const hashStr = `Hash: **${data?.monster?.memento_hash}**`;
@@ -111,7 +111,7 @@ export async function pockestRefresh(pockestState) {
         ?.find((m) => m.planId === pockestState?.planId);
       if (!targetMonster?.confirmed) {
         const mementosOwned = getOwnedMementoMonsterNames(pockestState);
-        const header = '🤦‍♂️ **EVOLUTION FAILURE** 🤦‍♂️';
+        const header = '\n🤦‍♂️ **EVOLUTION FAILURE** 🤦‍♂️';
         const planIdStr = `**${pockestState?.planId}**`;
         const statPlanStr = `**${pockestState?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}**`;
         const planStr = `Plan: **${planIdStr}** / **${statPlanStr}**`;
