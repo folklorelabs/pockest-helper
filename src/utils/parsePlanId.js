@@ -1,6 +1,6 @@
 import { STAT_ABBR } from '../config/stats';
-import { LEGACY_EGG_IDS } from '../config/eggs';
-import { ROUTES } from '../config/routes';
+import LEGACY_EGG_IDS from '../config/LEGACY_EGG_IDS';
+import ROUTES from '../config/ROUTES';
 
 export const LEGACY_PLAN_REGEX = /^([W|G|Y|B|R|L])([1-6])([A|B|C][L|R])([T|S|P])$/;
 export const PLAN_REGEX = /^(\d*)([A|B|C][L|R])([T|S|P])([1-6])$/;
