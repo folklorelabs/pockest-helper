@@ -31,24 +31,25 @@ function App() {
       <div className="AppMinBtnLayout">
         <button
           title={showLog ? 'Hide log' : 'Show log'}
+          aria-label={showLog ? 'Hide log' : 'Show log'}
           className="AppMinBtn"
           type="button"
           onClick={() => {
-            setShowLog(!showLog)
-            setMinimized(false)
+            setShowLog(!showLog);
+            setMinimized(false);
           }}
         >
           <IconLog size={16} />
         </button>
         <button
           title={minimized ? 'Maximize' : 'Minimize'}
+          aria-label={minimized ? 'Maximize' : 'Minimize'}
           className="AppMinBtn"
           type="button"
           onClick={() => {
-            setMinimized(!minimized)
-
+            setMinimized(!minimized);
             if (!minimized) {
-              setShowLog(false)
+              setShowLog(false);
             }
           }}
         >
