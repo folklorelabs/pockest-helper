@@ -20,6 +20,7 @@ import {
 } from './state';
 import REDUCER from './reducer';
 
+import { APP_VERSION } from '../../config/env';
 import { STAT_ID } from '../../config/stats';
 import * as pockestActions from './actions';
 import * as pockestGetters from './getters';
@@ -243,7 +244,7 @@ export function PockestProvider({
           });
           if (missing.length) {
             const missingStrs = missing.map((m) => `<🔎SIGHTING> ${m.name_en} / ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
-            const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${missingStrs.join('\n')}`;
+            const missingReport = `[Pockest Helper v${APP_VERSION}]\n${missingStrs.join('\n')}`;
             postDiscord(missingReport, 'DISCORD_EVO_WEBHOOK');
           }
         }

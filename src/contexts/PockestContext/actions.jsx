@@ -1,3 +1,4 @@
+import { APP_VERSION } from '../../config/env';
 import fetchAllMonsters from '../../utils/fetchAllMonsters';
 import fetchAllHashes from '../../utils/fetchAllHashes';
 import postDiscord from '../../utils/postDiscord';
@@ -78,7 +79,7 @@ export async function pockestRefresh(pockestState) {
           reports.push(`<🏆MEMENTO> ${data?.monster?.memento_name_en} (${data?.monster?.memento_hash}) from ${data?.monster?.name_en}`);
         }
         if (reports.length) {
-          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${reports.join('\n')}`;
+          const missingReport = `[Pockest Helper v${APP_VERSION}]\n${reports.join('\n')}`;
           postDiscord(missingReport, 'DISCORD_EVO_WEBHOOK');
         }
       }
@@ -101,7 +102,7 @@ export async function pockestRefresh(pockestState) {
         const statTotalsStr = `Stat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}`;
         const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ')}`;
         const failureReport = `<🤦‍♂️EVO_FAILURE> ${targetMonster.planId}\n${statLogStr}\n${statLogStr}\n${statTotalsStr}\n${ownedMementosStr}`;
-        postDiscord(`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${failureReport}`, 'DISCORD_EVO_WEBHOOK');
+        postDiscord(`[Pockest Helper v${APP_VERSION}]\n${failureReport}`, 'DISCORD_EVO_WEBHOOK');
       }
 
       return [ACTIONS.REFRESH_EVOLUTION_FAILURE, payload];
@@ -247,7 +248,7 @@ export async function pockestMatch(pockestState, match) {
     };
     const isDisc = isMatchDiscovery(pockestState, result);
     if (isDisc) {
-      const report = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${getMatchReportString({
+      const report = `[Pockest Helper v${APP_VERSION}]\n${getMatchReportString({
         pockestState,
         result,
       })}`;

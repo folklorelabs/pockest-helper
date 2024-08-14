@@ -4,9 +4,10 @@ import {
   pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import './index.css';
+import { APP_VERSION } from '../../config/env';
 import { parseDurationStr } from '../../utils/parseDuration';
 import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
+import './index.css';
 
 function PlanLog({
   title,
@@ -68,7 +69,7 @@ function PlanLog({
       startLabel: (new Date(d.start)).toLocaleString(),
     }));
     return [
-      `[Pockest Helper v${import.meta.env.APP_VERSION}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
+      `[Pockest Helper v${APP_VERSION}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
       ...data.map((d) => `${d.completion} [${!isRelTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`),
     ];
   }, [pockestState, isRelTime]);

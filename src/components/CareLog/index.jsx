@@ -4,10 +4,11 @@ import {
   pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import './index.css';
+import { APP_VERSION } from '../../config/env';
 import isMatchDiscovery from '../../utils/isMatchDiscovery';
 import getActionResultString from '../../utils/getActionResultString';
 import getMatchReportString from '../../utils/getMatchReportString';
+import './index.css';
 
 function CareLog({
   title,
@@ -36,7 +37,7 @@ function CareLog({
     [log, onlyDiscoveries, logTypes, pockestState],
   );
   const careLog = React.useMemo(() => [
-    `[Pockest Helper v${import.meta.env.APP_VERSION}]`,
+    `[Pockest Helper v${APP_VERSION}]`,
     ...careLogData.map((entry) => (onlyDiscoveries ? getMatchReportString : getActionResultString)({
       pockestState,
       result: entry,

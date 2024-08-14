@@ -1,6 +1,7 @@
 import React from 'react';
 import semverLt from 'semver/functions/lt';
 import fetchLatestRelease from '../../utils/fetchLatestRelease';
+import { APP_VERSION } from '../../config/env';
 
 function AppUpdateAlert() {
   const [remoteVersion, setRemoteVersion] = React.useState();
@@ -11,7 +12,7 @@ function AppUpdateAlert() {
     })();
   }, []);
   const isOutdated = React.useMemo(() => {
-    const curVersion = import.meta.env.APP_VERSION;
+    const curVersion = APP_VERSION;
     if (!remoteVersion || !curVersion) return false;
     return semverLt(
       curVersion,
