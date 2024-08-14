@@ -85,10 +85,10 @@ export async function pockestRefresh(pockestState) {
           .find((m2) => m2?.id === data?.monster?.memento_hash);
         if (!matchingMementoHash) {
           const header = '\n🏆 **MEMENTO** 🏆';
-          const fromStr = `From: **${data?.monster?.name_en}** (${data?.monster?.name})`;
           const nameStr = `Name: **${data?.monster?.memento_name_en}** (${data?.monster?.memento_name})`;
           const hashStr = `Hash: **${data?.monster?.memento_hash}**`;
-          const report = `${header}\n${fromStr}\n${nameStr}\n${hashStr}`;
+          const fromStr = `From: **${data?.monster?.name_en}** (${data?.monster?.name})`;
+          const report = `${header}\n${nameStr}\n${hashStr}\n${fromStr}`;
           reports.push(report);
         }
         if (reports.length) {
