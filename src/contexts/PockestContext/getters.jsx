@@ -1,3 +1,4 @@
+import MONSTER_AGE from '../../config/MONSTER_AGE';
 import getTimeIntervals from '../../utils/getTimeIntervals';
 import getTotalStats from '../../utils/getTotalStats';
 import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../../utils/getTargetMonsterPlan';
@@ -24,7 +25,7 @@ export function isMonsterGone(pockestState) {
   const now = (new Date()).getTime();
   const isDead = now >= getDeathTimer(pockestState);
   const birthTimestamp = pockestState?.eggTimestamp || pockestState?.data?.monster?.live_time;
-  const hasLeft = now >= (birthTimestamp + MONSTER_LIFESPAN[5]);
+  const hasLeft = now >= (birthTimestamp + MONSTER_AGE[6]);
   return isDead || hasLeft;
 }
 
@@ -119,7 +120,7 @@ export function getCurrentPlanStats(state) {
 
 export function getPlanNeglectOffset(state) {
   let ageOffset = state?.planAge && state?.planAge > 1
-    ? MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] : 0;
+    ? MONSTER_AGE[Math.max(2, state.planAge)] : 0;
   if (state.planAge === 5) {
     // optimize planned age so we can die just 1 hour after evolution
     ageOffset -= (24 * 60 * 60 * 1000); // -1 day (2d)
@@ -130,7 +131,7 @@ export function getPlanNeglectOffset(state) {
 export function getPlanStunOffset(state) {
   if (state?.planAge === 6) return null;
   const ageOffset = state?.planAge && state?.planAge > 1
-    ? Math.max(0, MONSTER_LIFESPAN[Math.max(1, state.planAge - 1)] - (4 * 60 * 60 * 1000))
+    ? Math.max(0, MONSTER_AGE[Math.max(2, state.planAge)] - (4 * 60 * 60 * 1000))
     : 0;
   return ageOffset;
 }

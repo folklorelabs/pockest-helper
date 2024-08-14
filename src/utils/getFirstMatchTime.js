@@ -1,6 +1,6 @@
-import { MONSTER_LIFESPAN } from './getAgeTimer';
+import MONSTER_AGE from '../config/MONSTER_AGE';
 
-const OPTIMAL_MATCH_TIME = MONSTER_LIFESPAN[3];
+const OPTIMAL_MATCH_TIME = MONSTER_AGE[4]; // start matching at age 4
 
 export default function getFirstMatchTime(pockestState) {
   const monster = pockestState?.data?.monster;
