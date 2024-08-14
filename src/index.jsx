@@ -27,9 +27,3 @@ ReactDOM.createRoot(mainEl).render(
     </PockestProvider>
   </React.StrictMode>,
 );
-
-console.log({
-  1: import.meta.env.APP_VERSION,
-  2: import.meta.env.DISCORD_MATCH_WEBHOOK?.split('/').pop(),
-  3: import.meta.env.DISCORD_EVO_WEBHOOK?.split('/').pop(),
-});
