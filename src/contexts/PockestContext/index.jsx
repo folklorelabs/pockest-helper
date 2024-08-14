@@ -242,8 +242,16 @@ export function PockestProvider({
             return !matchingMonster?.confirmed;
           });
           if (missing.length) {
-            const missingStrs = missing.map((m) => `<🔎SIGHTING> ${m.name_en} / ${m.hash} (P: ${m.power}, S: ${m.speed}, T: ${m.technic})`);
-            const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${missingStrs.join('\n')}`;
+            const missingStrs = missing.map((m) => {
+              const header = '🔎 **SIGHTING** 🔎';
+              const nameStr = `Name: **${m.name_en}** (${m.name})`;
+              const hashStr = `Hash: **${m?.hash}**`;
+              const statsTotal = m ? m.power + m.speed + m.technic : 0;
+              const statBreakdownStr = `**P** ${m?.power} + **S** ${m?.speed} + **T** ${m?.technic} = ${statsTotal}`;
+              const statsStr = `Stats: ${statBreakdownStr}`;
+              return `${header}\n${nameStr}\n${hashStr}\n${statsStr}`;
+            });
+            const missingReport = `${missingStrs.join('\n')}`;
             postDiscordEvo(missingReport);
           }
         }

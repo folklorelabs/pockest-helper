@@ -67,18 +67,32 @@ export async function pockestRefresh(pockestState) {
           .find((m) => m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
         if (!matchingMonster?.confirmed) {
           const mementosOwned = getOwnedMementoMonsterNames(pockestState);
-          const statLogStr = `Stat Training: ${pockestState?.statLog?.map((s) => STAT_ID_ABBR[s])?.join(', ')}`;
-          const statTotalsStr = `Stat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}`;
-          const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ')}`;
-          reports.push(`<⬆️MONSTER> ${data?.monster?.name_en} (${pockestState?.planId})\nHash: ${data?.monster?.hash}\n${statLogStr}\n${statTotalsStr}\n${ownedMementosStr}`);
+          const header = '⬆️ **EVOLUTION SUCCESS** ⬆️';
+          const nameStr = `Name: **${data?.monster?.name_en}** (${data?.monster?.name})`;
+          const hashStr = `Hash: **${data?.monster?.hash}**`;
+          const planIdStr = `**${pockestState?.planId}**`;
+          const statPlanStr = `**${pockestState?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}**`;
+          const planStr = `Plan: ${planIdStr} / ${statPlanStr}`;
+          const statsTotal = data?.monster
+            ? data.monster.power + data.monster.speed + data.monster.technic : 0;
+          const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
+          const statsStr = `Stats: ${statBreakdownStr}`;
+          const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ') || '**None**'}`;
+          const report = `${header}\n${nameStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`;
+          reports.push(report);
         }
         const matchingMementoHash = pockestState?.allHashes
           .find((m2) => m2?.id === data?.monster?.memento_hash);
         if (!matchingMementoHash) {
-          reports.push(`<🏆MEMENTO> ${data?.monster?.memento_name_en} (${data?.monster?.memento_hash}) from ${data?.monster?.name_en}`);
+          const header = '🏆 **MEMENTO** 🏆';
+          const fromStr = `From: **${data?.monster?.name_en}** (${data?.monster?.name})`;
+          const nameStr = `Name: **${data?.monster?.memento_name_en}** (${data?.monster?.memento_name})`;
+          const hashStr = `Hash: **${data?.monster?.memento_hash}**`;
+          const report = `${header}\n${fromStr}\n${nameStr}\n${hashStr}`;
+          reports.push(report);
         }
         if (reports.length) {
-          const missingReport = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${reports.join('\n')}`;
+          const missingReport = `${reports.join('\n')}`;
           postDiscordEvo(missingReport);
         }
       }
@@ -93,15 +107,21 @@ export async function pockestRefresh(pockestState) {
     })();
     if (isEvoFailureEvent) {
       // send any useful info to discord
-      const mementosOwned = getOwnedMementoMonsterNames(pockestState);
       const targetMonster = pockestState?.allMonsters
         ?.find((m) => m.planId === pockestState?.planId);
       if (!targetMonster?.confirmed) {
-        const statLogStr = `Stat Training: ${pockestState?.statLog?.map((s) => STAT_ID_ABBR[s])?.join(', ')}`;
-        const statTotalsStr = `Stat Totals: P: ${data?.monster?.power}, S: ${data?.monster?.speed}, T: ${data?.monster?.technic}`;
-        const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ')}`;
-        const failureReport = `<🤦‍♂️EVO_FAILURE> ${targetMonster.planId}\n${statLogStr}\n${statLogStr}\n${statTotalsStr}\n${ownedMementosStr}`;
-        postDiscordEvo(`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${failureReport}`);
+        const mementosOwned = getOwnedMementoMonsterNames(pockestState);
+        const header = '🤦‍♂️ **EVOLUTION FAILURE** 🤦‍♂️';
+        const planIdStr = `**${pockestState?.planId}**`;
+        const statPlanStr = `**${pockestState?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}**`;
+        const planStr = `Plan: **${planIdStr}** / **${statPlanStr}**`;
+        const statsTotal = data?.monster
+          ? data.monster.power + data.monster.speed + data.monster.technic : 0;
+        const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
+        const statsStr = `Stats: ${statBreakdownStr}`;
+        const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ') || '**None**'}`;
+        const report = `${header}\n${planStr}\n${statsStr}\n${ownedMementosStr}`;
+        postDiscordEvo(`${report}`);
       }
 
       return [ACTIONS.REFRESH_EVOLUTION_FAILURE, payload];
@@ -247,7 +267,7 @@ export async function pockestMatch(pockestState, match) {
     };
     const isDisc = isMatchDiscovery(pockestState, result);
     if (isDisc) {
-      const report = `[Pockest Helper v${import.meta.env.APP_VERSION}]\n${getMatchReportString({
+      const report = `${getMatchReportString({
         pockestState,
         result,
       })}`;

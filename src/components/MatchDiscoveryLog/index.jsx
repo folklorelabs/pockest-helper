@@ -24,14 +24,11 @@ function MatchDiscoveryLog({
     },
     [pockestState],
   );
-  const careLog = React.useMemo(() => [
-    `[Pockest Helper v${import.meta.env.APP_VERSION}] Match Report`,
-    ...careLogData.map((entry) => getMatchReportString({
-      pockestState,
-      result: entry,
-      isRelTime: true,
-    })),
-  ].join('\n'), [careLogData, pockestState]);
+  const careLog = React.useMemo(() => careLogData.map((entry) => getMatchReportString({
+    pockestState,
+    result: entry,
+    isRelTime: true,
+  })).join('\n'), [careLogData, pockestState]);
   React.useEffect(() => {
     if (!textAreaEl?.current) return () => {};
     textAreaEl.current.scrollTop = textAreaEl.current.scrollHeight;
@@ -62,7 +59,7 @@ function MatchDiscoveryLog({
         <textarea
           ref={textAreaEl}
           className="PockestTextArea MatchDiscoveryLog-textarea"
-          value={careLog}
+          value={`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${careLog}`}
           readOnly
           rows={rows}
         />
