@@ -1,6 +1,6 @@
 import log from '../../utils/log';
 import {
-  getAutoPlanSettings,
+  getAutoSettings,
   getLogEntry,
   getOwnedMementoMonsterIds,
 } from './getters';
@@ -69,7 +69,7 @@ export default function REDUCER(state, [type, payload]) {
         allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.SET_LOG:
       return {
@@ -92,7 +92,7 @@ export default function REDUCER(state, [type, payload]) {
             timestamp: payload?.data?.monster?.live_time,
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.EVENT_CLEANING:
       return {
@@ -108,7 +108,7 @@ export default function REDUCER(state, [type, payload]) {
             garbageBefore: state?.data?.monster?.garbage,
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.EVENT_MEAL:
       return {
@@ -123,7 +123,7 @@ export default function REDUCER(state, [type, payload]) {
             stomach: payload?.data?.monster?.stomach,
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.EVENT_CURE:
       return {
@@ -137,7 +137,7 @@ export default function REDUCER(state, [type, payload]) {
             ...payload?.data?.cure,
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.EVENT_EXCHANGE:
       return {
@@ -152,7 +152,7 @@ export default function REDUCER(state, [type, payload]) {
             target_monster_name_en: payload?.args?.match?.name_en,
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.EVENT_TRAINING:
       return {
@@ -170,7 +170,7 @@ export default function REDUCER(state, [type, payload]) {
             ...payload?.data?.training,
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.REFRESH_EVOLUTION_SUCCESS:
       return {
@@ -202,7 +202,7 @@ export default function REDUCER(state, [type, payload]) {
             ],
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.REFRESH_EVOLUTION_FAILURE:
       return {
@@ -226,7 +226,7 @@ export default function REDUCER(state, [type, payload]) {
             mementosOwned: getOwnedMementoMonsterIds(state),
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.REFRESH_DEATH:
       return {
@@ -243,7 +243,7 @@ export default function REDUCER(state, [type, payload]) {
             evolutions: payload?.data?.evolutions,
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.REFRESH_DEPARTURE:
       return {
@@ -260,7 +260,7 @@ export default function REDUCER(state, [type, payload]) {
             memento: payload?.data?.memento,
           },
         ],
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.REFRESH_MONSTER_NOT_FOUND:
       return {
@@ -270,7 +270,7 @@ export default function REDUCER(state, [type, payload]) {
         allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
-        ...getAutoPlanSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.INVALIDATE_SESSION:
       return {

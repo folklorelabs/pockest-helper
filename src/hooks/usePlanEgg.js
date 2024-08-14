@@ -1,6 +1,6 @@
 import React from 'react';
+import { pockestGetters } from '../contexts/PockestContext';
 import fetchAllEggs from '../utils/fetchAllEggs';
-import getTargetMonsterPlan from '../utils/getTargetMonsterPlan';
 
 function usePlanEgg(pockestState) {
   const [eggData, setEggData] = React.useState();
@@ -15,7 +15,7 @@ function usePlanEgg(pockestState) {
   }, []);
   const planEgg = React.useMemo(() => {
     if (!eggData) return null;
-    const targetPlan = getTargetMonsterPlan(pockestState);
+    const targetPlan = pockestGetters?.getTargetMonsterPlan(pockestState);
     const egg = eggData?.eggs?.find((e) => e?.id === targetPlan?.planEgg);
     return egg;
   }, [eggData, pockestState]);
