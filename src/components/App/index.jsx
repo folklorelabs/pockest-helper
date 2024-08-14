@@ -4,6 +4,7 @@ import { usePockestContext } from '../../contexts/PockestContext';
 import { useAppContext } from '../../contexts/AppContext';
 import LogPanel from '../LogPanel';
 import CareLog from '../CareLog';
+import MatchDiscoveryLog from '../MatchDiscoveryLog';
 import CharacterSprite from '../CharacterSprite';
 import PlanLog from '../PlanLog';
 import CompletionLog from '../CompletionLog';
@@ -92,7 +93,7 @@ function App() {
       {(showLog && !minimized) ? (
         <LogPanel>
           <CareLog title="Care Log" rows={22} />
-          <CareLog title="Newly Discovered Fever Matches" logTypes={['exchange']} onlyDiscoveries allowClear={false} rows={3} />
+          <MatchDiscoveryLog title="Newly Discovered Fever Matches" rows={3} />
           {pockestState?.autoPlan ? (<PlanLog title="Preset Plan" rows={10} />) : ''}
           <CompletionLog />
         </LogPanel>
