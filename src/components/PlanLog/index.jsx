@@ -17,7 +17,7 @@ function PlanLog({
   const {
     pockestState,
   } = usePockestContext();
-  const scheduleLog = React.useMemo(() => {
+  const schedule = React.useMemo(() => {
     const birth = pockestState?.data?.monster?.live_time;
     const {
       cleanSchedule,
@@ -36,29 +36,29 @@ function PlanLog({
       const start = birth + pockestGetters.getPlanStunOffset(pockestState);
       data.push({
         start,
-        completion: `${Date.now() >= start ? '☑' : '☐'}`,
+        completion: Date.now() >= start,
         label: 'Stop curing',
       });
     }
     data = [
       ...data,
       ...(cleanSchedule?.map((w) => ({
-        completion: `${isDone('cleaning', w) ? '☑' : '☐'}`,
+        completion: isDone('cleaning', w),
         label: 'Clean',
         ...w,
       })) ?? []),
       ...(feedSchedule?.map((w) => ({
-        completion: `${isDone('meal', w) ? '☑' : '☐'}`,
+        completion: isDone('meal', w),
         label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
         ...w,
       })) ?? []),
       ...(trainSchedule?.map((w) => ({
-        completion: `${isDone('training', w, 1000 * 60 * 60 * 12) ? '☑' : '☐'}`,
+        completion: isDone('training', w, 1000 * 60 * 60 * 12),
         label: `Train ${w.stat}`,
         ...w,
       })) ?? []),
       ...(matchSchedule?.map((w) => ({
-        completion: `${isDone('exchange', w, 1000 * 60 * 60 * 12) ? '☑' : '☐'}`,
+        completion: isDone('exchange', w, 1000 * 60 * 60 * 12),
         label: 'Match',
         ...w,
       })) ?? []),
@@ -67,11 +67,23 @@ function PlanLog({
       startOffsetLabel: parseDurationStr(d.start - birth),
       startLabel: (new Date(d.start)).toLocaleString(),
     }));
-    return [
-      `[Pockest Helper v${import.meta.env.APP_VERSION}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
-      ...data.map((d) => `${d.completion} [${!isRelTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`),
-    ];
-  }, [pockestState, isRelTime]);
+    return data;
+  }, [pockestState]);
+  const scheduleLog = React.useMemo(() => [
+    `[Pockest Helper v${import.meta.env.APP_VERSION}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
+    ...schedule.map((d) => `${d.completion ? '☑' : '☐'} [${!isRelTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`),
+  ].join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule]);
+  React.useEffect(() => {
+    if (!textAreaEl?.current) return () => {};
+    const lineHeight = textAreaEl.current.scrollHeight / (schedule.length + 1);
+    const lastSuccessIndex = schedule?.reduce(
+      (latestIndex, item, itemIndex) => (item?.completion ? itemIndex : latestIndex),
+      0,
+    );
+    const fromTop = Math.max(0, lineHeight * (lastSuccessIndex - rows / 2 + 1));
+    textAreaEl.current.scrollTop = fromTop;
+    return () => {};
+  }, [rows, schedule, scheduleLog]);
   return (
     <div className="PlanLog">
       <header className="PlanLog-header">
@@ -79,7 +91,7 @@ function PlanLog({
           {title}
           {' '}
           (
-          {scheduleLog?.length || 0}
+          {schedule?.length || 0}
           )
         </p>
         <label className="PockestCheck" htmlFor={`PockestHelper_PlanLogAbsTime--${title.replace(' ', '')}`}>
@@ -97,7 +109,7 @@ function PlanLog({
         <textarea
           ref={textAreaEl}
           className="PockestTextArea PlanLog-textarea"
-          value={scheduleLog.join('\n')}
+          value={scheduleLog}
           readOnly
           rows={rows}
         />
@@ -108,7 +120,7 @@ function PlanLog({
             type="button"
             className="PockestLink PlanLog-copy"
             aria-label={`Copy ${title.toLowerCase()} to clipboard`}
-            onClick={() => navigator.clipboard.writeText(scheduleLog.join('\n'))}
+            onClick={() => navigator.clipboard.writeText(scheduleLog)}
           >
             📋 Copy
           </button>
