@@ -1,29 +1,34 @@
-import {
-  DISCORD_EVO_WEBHOOK,
-  DISCORD_MATCH_WEBHOOK,
-} from '../config/env';
 import logError from './logError';
 
-const URLS = {
-  DISCORD_EVO_WEBHOOK,
-  DISCORD_MATCH_WEBHOOK,
-};
-
-async function postDiscordMessage(content, envUrlId) {
-  if (!URLS[envUrlId]) throw new Error(`Missing ${envUrlId} env var`);
-  const response = await fetch(URLS[envUrlId], {
-    body: JSON.stringify({ content }),
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-  });
-  if (!response.ok) throw new Error(`API ${response.status} response (${envUrlId})`);
+export async function postDiscordEvo(content) {
+  try {
+    const url = import.meta.env.DISCORD_EVO_WEBHOOK;
+    if (!url) throw new Error('Missing DISCORD_EVO_WEBHOOK env var');
+    const response = await fetch(url, {
+      body: JSON.stringify({ content }),
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+    });
+    if (!response.ok) throw new Error(`API ${response.status} response (DISCORD_EVO_WEBHOOK)`);
+  } catch (err) {
+    logError(`${err}`);
+  }
 }
 
-export default async function postDiscord(content, envUrlId) {
+export async function postDiscordMatch(content) {
   try {
-    await postDiscordMessage(content, envUrlId);
+    const url = import.meta.env.DISCORD_MATCH_WEBHOOK;
+    if (!url) throw new Error('Missing DISCORD_MATCH_WEBHOOK env var');
+    const response = await fetch(url, {
+      body: JSON.stringify({ content }),
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+    });
+    if (!response.ok) throw new Error(`API ${response.status} response (DISCORD_MATCH_WEBHOOK)`);
   } catch (err) {
     logError(`${err}`);
   }

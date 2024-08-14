@@ -4,7 +4,6 @@ import { PockestProvider } from './contexts/PockestContext';
 import { AppProvider } from './contexts/AppContext';
 import App from './components/App';
 import log from './utils/log';
-import * as ENV from './config/env';
 import './reset.css';
 import './index.css';
 
@@ -30,7 +29,7 @@ ReactDOM.createRoot(mainEl).render(
 );
 
 console.log({
-  1: ENV.APP_VERSION,
-  2: ENV.DISCORD_MATCH_WEBHOOK?.split('/').pop(),
-  3: ENV.DISCORD_EVO_WEBHOOK?.split('/').pop(),
+  1: import.meta.env.APP_VERSION,
+  2: import.meta.env.DISCORD_MATCH_WEBHOOK?.split('/').pop(),
+  3: import.meta.env.DISCORD_EVO_WEBHOOK?.split('/').pop(),
 });
