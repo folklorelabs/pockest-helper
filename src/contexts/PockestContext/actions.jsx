@@ -77,7 +77,7 @@ export async function pockestRefresh(pockestState) {
             ? data.monster.power + data.monster.speed + data.monster.technic : 0;
           const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
           const statsStr = `Stats: ${statBreakdownStr}`;
-          const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ') || '**None**'}`;
+          const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
           const report = `${header}\n${nameStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`;
           reports.push(report);
         }
@@ -119,7 +119,7 @@ export async function pockestRefresh(pockestState) {
           ? data.monster.power + data.monster.speed + data.monster.technic : 0;
         const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
         const statsStr = `Stats: ${statBreakdownStr}`;
-        const ownedMementosStr = `Owned Mementos: ${mementosOwned.join(', ') || '**None**'}`;
+        const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
         const report = `${header}\n${planStr}\n${statsStr}\n${ownedMementosStr}`;
         postDiscordEvo(`${report}`);
       }
