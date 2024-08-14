@@ -17,9 +17,9 @@ export async function postDiscord(content, url, id) {
 }
 
 export async function postDiscordEvo(content) {
-  await postDiscord(content, import.meta.env.DISCORD_EVO_WEBHOOK, 'DISCORD_EVO_WEBHOOK');
+  await postDiscord(content, import.meta.env.DISCORD_WEBHOOK_EVO, 'DISCORD_WEBHOOK_EVO');
 }
 
 export async function postDiscordMatch(content) {
-  await postDiscord(content, import.meta.env.DISCORD_MATCH_WEBHOOK, 'DISCORD_MATCH_WEBHOOK');
+  await postDiscord(content, import.meta.env.DISCORD_WEBHOOK_MATCH, 'DISCORD_WEBHOOK_MATCH');
 }

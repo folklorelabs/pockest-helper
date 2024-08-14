@@ -12,7 +12,7 @@ export default defineConfig({
   ],
   define: {
     'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
-    'import.meta.env.DISCORD_MATCH_WEBHOOK': JSON.stringify(process.env.DISCORD_MATCH_WEBHOOK),
-    'import.meta.env.DISCORD_EVO_WEBHOOK': JSON.stringify(process.env.DISCORD_EVO_WEBHOOK),
+    'import.meta.env.DISCORD_WEBHOOK_MATCH': JSON.stringify(process.env.DISCORD_WEBHOOK_MATCH),
+    'import.meta.env.DISCORD_WEBHOOK_EVO': JSON.stringify(process.env.DISCORD_WEBHOOK_EVO),
   },
 });
