@@ -161,7 +161,7 @@ export default function REDUCER(state, [type, payload]) {
         data: payload?.data,
         statLog: [
           ...state.statLog,
-          payload?.data?.result?.type,
+          payload?.data?.training?.type,
         ],
         log: [
           ...state.log,
