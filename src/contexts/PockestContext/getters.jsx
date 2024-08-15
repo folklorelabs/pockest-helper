@@ -499,37 +499,3 @@ export function getDiscordReportMemento(state, data) {
   const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${fromStr}${csv}`;
   return report;
 }
-
-const pockestState = JSON.parse(window.sessionStorage.PockestHelperState);
-console.log(getDiscordReportEvoSuccess(pockestState, pockestState?.data));
-console.log(getDiscordReportEvoFailure(pockestState, pockestState?.data));
-console.log(getDiscordReportMemento(pockestState, pockestState?.data));
-console.log(getDiscordReportMemento(pockestState, {
-  ...pockestState?.data,
-  monster: {
-    ...pockestState?.data?.monster,
-    age: 5,
-    exchange_time: 1723750557000,
-    exchange_time_par: 29,
-    garbage: 0,
-    hash: '4004-eJcEMJMX',
-    live_time: 1723275084000,
-    live_time_d: 1723275084000,
-    max_memento_point: 4000,
-    memento_flg: 0,
-    memento_hash: '4004-bFwrKIMX',
-    memento_name: 'トゲ腕輪',
-    memento_name_en: 'Spiked Bracelet',
-    memento_point: 4301,
-    name: '春麗',
-    name_en: 'Chun-Li',
-    power: 0,
-    speed: 2018,
-    status: 1,
-    stomach: 6,
-    technic: 0,
-    training_is_fever: false,
-    training_time: 1723707355000,
-    training_time_par: 58,
-  },
-}));
