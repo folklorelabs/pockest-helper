@@ -27,6 +27,7 @@ import * as pockestGetters from './getters';
 import log from '../../utils/log';
 import getMatchTimer from '../../utils/getMatchTimer';
 import { postDiscordEvo } from '../../utils/postDiscord';
+import combineDiscordReports from '../../utils/combineDiscordReports';
 
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
@@ -242,18 +243,10 @@ export function PockestProvider({
             return !matchingMonster?.confirmed;
           });
           if (missing.length) {
-            const reports = missing.map((match) => pockestGetters
+            const reportReqs = missing.map((match) => pockestGetters
               .getDiscordReportSighting(pockestState, data, { match }));
-            const content = `${reports.map((r) => r.content).join('\n')}`;
-            const files = reports.reduce((acc, r) => [
-              ...acc,
-              ...(r.files || []),
-            ], []);
-            const embeds = reports.reduce((acc, r) => [
-              ...acc,
-              ...(r.embeds || []),
-            ], []);
-            const report = { content, files, embeds };
+            const reports = await Promise.all(reportReqs);
+            const report = combineDiscordReports(reports);
             postDiscordEvo(report);
           }
         }

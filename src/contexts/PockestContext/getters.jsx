@@ -453,7 +453,7 @@ export async function getDiscordReportEvoSuccess(state, data) {
       name: 'EVOLUTION SUCCESS',
       icon_url: `attachment://${data?.monster?.hash}.png`,
     },
-    url: 'https://folklorelabs.io/pockest-helper-data/v2/monsters.json',
+    url: `https://folklorelabs.io/pockest-helper-data/v2/monsters.json?hash=${data?.monster?.hash}`, // hack for grouping files into embed
   };
   const files = [
     { base64: winB64, name: `${data?.monster?.hash}.png` },
@@ -563,7 +563,7 @@ export async function getDiscordReportSighting(state, data, args) {
       name: 'SIGHTING',
       icon_url: `attachment://${args?.match?.hash}.png`,
     },
-    url: 'https://folklorelabs.io/pockest-helper-data/v2/hashes.json',
+    url: `https://folklorelabs.io/pockest-helper-data/v2/hashes.json?hash=${args?.match?.hash}`, // hack for grouping files into embed
   };
   const files = [
     { base64: winB64, name: `${args?.match?.hash}.png` },

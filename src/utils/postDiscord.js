@@ -44,21 +44,38 @@ const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
   return blob;
 };
 
-export async function postDiscord(id, url, data) {
+export async function postDiscord(id, url, report) {
   try {
     window.sessionStorage.setItem(DISCORD_ATTEMPT_TIMESTAMP_ID, Date.now());
     if (!url) throw new Error(`Missing ${id} env var`);
 
+    if (report?.embeds?.length > 10) {
+      const batchedReports = report.embeds.reduce((acc, embed, index) => {
+        const batchIndex = Math.floor(index / 8);
+        acc[batchIndex] = acc[batchIndex] || {
+          ...report,
+          embeds: [],
+          files: [],
+        };
+        acc[batchIndex].embeds.push(embed);
+        acc[batchIndex].files.push(report.files[index]);
+        return acc;
+      }, []);
+      console.log({ batchedReports });
+      await Promise.all(batchedReports.map(async (r) => postDiscord(id, url, r)));
+      return;
+    }
+
     const headers = new Headers();
     const body = new FormData();
-    data?.files?.forEach((fileMeta, index) => {
+    report?.files?.forEach((fileMeta, index) => {
       const b64Data = fileMeta?.base64?.split('base64,')[1];
       body.append(`file[${index + 1}]`, b64toBlob(b64Data), fileMeta.name);
     });
     const payload = {};
-    if (data?.content) payload.content = `*[Pockest Helper v${import.meta.env.APP_VERSION}]*\n${data?.content}`;
-    if (data?.attachments) payload.attachments = data?.attachments;
-    if (data?.embeds) payload.embeds = data?.embeds;
+    if (report?.content) payload.content = `*[Pockest Helper v${import.meta.env.APP_VERSION}]*\n${report?.content}`;
+    if (report?.attachments) payload.attachments = report?.attachments;
+    if (report?.embeds) payload.embeds = report?.embeds;
     body.append('payload_json', JSON.stringify(payload));
     const requestOptions = {
       method: 'POST',
@@ -74,14 +91,14 @@ export async function postDiscord(id, url, data) {
   }
 }
 
-export async function postDiscordEvo(data) {
-  await postDiscord('DISCORD_WEBHOOK_EVO', import.meta.env.DISCORD_WEBHOOK_EVO, data);
+export async function postDiscordEvo(report) {
+  await postDiscord('DISCORD_WEBHOOK_EVO', import.meta.env.DISCORD_WEBHOOK_EVO, report);
 }
 
-export async function postDiscordMatch(data) {
-  await postDiscord('DISCORD_WEBHOOK_MATCH', import.meta.env.DISCORD_WEBHOOK_MATCH, data);
+export async function postDiscordMatch(report) {
+  await postDiscord('DISCORD_WEBHOOK_MATCH', import.meta.env.DISCORD_WEBHOOK_MATCH, report);
 }
 
-export async function postDiscordTest(data) {
-  await postDiscord('DISCORD_WEBHOOK_TEST', import.meta.env.DISCORD_WEBHOOK_TEST, data);
+export async function postDiscordTest(report) {
+  await postDiscord('DISCORD_WEBHOOK_TEST', import.meta.env.DISCORD_WEBHOOK_TEST, report);
 }

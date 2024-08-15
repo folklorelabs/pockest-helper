@@ -2,6 +2,7 @@ import fetchAllMonsters from '../../utils/fetchAllMonsters';
 import fetchAllHashes from '../../utils/fetchAllHashes';
 import { postDiscordEvo, postDiscordMatch } from '../../utils/postDiscord';
 import isMatchDiscovery from '../../utils/isMatchDiscovery';
+import combineDiscordReports from '../../utils/combineDiscordReports';
 import {
   getAutoSettings,
   fetchPockestStatus,
@@ -90,16 +91,7 @@ export async function pockestRefresh(pockestState) {
           reports.push(mementoReport);
         }
         if (reports.length) {
-          const content = `${reports.map((r) => r.content).join('\n')}`;
-          const files = reports.reduce((acc, r) => [
-            ...acc,
-            ...(r.files || []),
-          ], []);
-          const embeds = reports.reduce((acc, r) => [
-            ...acc,
-            ...(r.embeds || []),
-          ], []);
-          const report = { content, files, embeds };
+          const report = combineDiscordReports(reports);
           postDiscordEvo(report);
         }
       }

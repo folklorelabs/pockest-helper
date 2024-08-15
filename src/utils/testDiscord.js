@@ -1,4 +1,5 @@
 import { pockestGetters } from '../contexts/PockestContext';
+import combineDiscordReports from './combineDiscordReports';
 import { postDiscordTest } from './postDiscord';
 
 const pockestState = JSON.parse(window.sessionStorage.PockestHelperState);
@@ -100,18 +101,9 @@ export async function testDiscordMatch() {
     pockestGetters.getDiscordReportMatch(pockestState, matchData, matchArgs),
     await pockestGetters.getDiscordReportSighting(pockestState, matchData, matchArgs),
   ];
-  const content = `${reports.map((r) => r.content).join('\n')}`;
-  const files = reports.reduce((acc, r) => [
-    ...acc,
-    ...(r.files || []),
-  ], []);
-  const embeds = reports.reduce((acc, r) => [
-    ...acc,
-    ...(r.embeds || []),
-  ], []);
-  const options = { content, files, embeds };
-  await postDiscordTest(options);
-  return options;
+  const report = combineDiscordReports(reports);
+  await postDiscordTest(report);
+  return report;
 }
 
 export async function testDiscordEvo() {
@@ -121,16 +113,33 @@ export async function testDiscordEvo() {
     await pockestGetters.getDiscordReportMemento(pockestState, pockestState?.data),
     await pockestGetters.getDiscordReportMemento(pockestState, chunData),
   ];
-  const content = `${reports.map((r) => r.content).join('\n')}`;
-  const files = reports.reduce((acc, r) => [
-    ...acc,
-    ...(r.files || []),
-  ], []);
-  const embeds = reports.reduce((acc, r) => [
-    ...acc,
-    ...(r.embeds || []),
-  ], []);
-  const options = { content, files, embeds };
-  await postDiscordTest(options);
-  return options;
+  const report = combineDiscordReports(reports);
+  await postDiscordTest(report);
+  return report;
+}
+
+export async function testDiscordMatchList() {
+  const data = pockestState?.data;
+  const monster = data?.monster;
+  const { exchangeList } = await pockestGetters.fetchMatchList();
+  console.log({ exchangeList });
+  if (monster?.age >= 5) {
+    // Report missing hashes, names, and stat vals to discord when found on opponents
+    const missing = exchangeList.filter((m) => {
+      const matchingMonster = pockestState?.allMonsters
+        .find((m2) => m2?.monster_id === m?.monster_id);
+      return !matchingMonster?.confirmed;
+    });
+    console.log({ missing });
+    if (missing.length) {
+      const reportReqs = missing.map((match) => pockestGetters
+        .getDiscordReportSighting(pockestState, data, { match }));
+      const reports = await Promise.all(reportReqs);
+      console.log({ reports });
+      const report = combineDiscordReports(reports);
+      await postDiscordTest(report);
+      return report;
+    }
+  }
+  return null;
 }
