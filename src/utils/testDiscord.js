@@ -107,14 +107,55 @@ export async function testDiscordMatch() {
   return null;
 }
 
+export async function testDiscordMatchManual(monsterName = 'Evil Ryu', opponentName = 'Lucia') {
+  const monster = pockestState?.allMonsters?.find((m) => m.name_en === monsterName);
+  const monsterHash = pockestState?.allHashes?.find((h) => h?.id?.includes(monster.monster_id))?.id;
+  const opponent = pockestState?.allMonsters?.find((m) => m.name_en === opponentName);
+  const state = {
+    ...pockestState,
+    data: {
+      monster: {
+        ...pockestState?.data?.monster,
+        name_en: monster?.name_en,
+        hash: monsterHash,
+      },
+    },
+  };
+  const result = {
+    is_spmatch: monster?.matchFever?.includes(opponent.monster_id),
+    target_monster_id: opponent.monster_id,
+  };
+
+  const report = pockestGetters
+    .getDiscordReportMatch(state, result, opponentName);
+  postDiscordTest(report);
+  return report;
+}
+
 export async function testDiscordEvo() {
   const reports = [
     await pockestGetters.getDiscordReportEvoSuccess(pockestState, pockestState?.data),
     pockestGetters.getDiscordReportEvoFailure(pockestState, pockestState?.data),
     await pockestGetters.getDiscordReportMemento(pockestState, pockestState?.data),
+  ];
+  const report = combineDiscordReports(reports);
+  await postDiscordTest(report);
+  return report;
+}
+
+export async function testDiscordEvoManual() {
+  const reports = [
+    await pockestGetters.getDiscordReportEvoSuccess(pockestState, chunData),
+    pockestGetters.getDiscordReportEvoFailure(pockestState, chunData),
     await pockestGetters.getDiscordReportMemento(pockestState, chunData),
   ];
   const report = combineDiscordReports(reports);
+  await postDiscordTest(report);
+  return report;
+}
+
+export async function testDiscordEvoChun() {
+  const report = await pockestGetters.getDiscordReportMemento(pockestState, chunData);
   await postDiscordTest(report);
   return report;
 }
@@ -143,4 +184,30 @@ export async function testDiscordMatchList() {
     }
   }
   return null;
+}
+
+export async function testDiscordMatchListManual() {
+  const data = pockestState?.data;
+  const match = {
+    fighters_id: 'pBun',
+    hash: '4010-rZNIvHno',
+    monster_id: 4010,
+    name: 'エドモンド本田',
+    name_en: 'Honda',
+    power: 0,
+    short_id: 4234122683,
+    slot: 8,
+    speed: 0,
+    technic: 3076,
+  };
+  const report = await pockestGetters.getDiscordReportSighting(pockestState, data, { match });
+  await postDiscordTest(report);
+  return report;
+}
+
+export async function testDiscordStyles() {
+  await testDiscordMatchManual('Ryu', 'Ken');
+  await testDiscordMatchManual('Evil Ryu', 'Lucia');
+  await testDiscordEvoManual();
+  await testDiscordMatchListManual();
 }
