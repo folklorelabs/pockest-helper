@@ -244,12 +244,13 @@ export function PockestProvider({
           if (missing.length) {
             const missingStrs = missing.map((m) => {
               const header = '\n🔎 **SIGHTING** 🔎';
-              const nameStr = `Name: **${m.name_en}** (${m.name})`;
-              const hashStr = `Hash: **${m?.hash}**`;
+              const nameEnStr = `\nName (EN): **${m.name_en}**`;
+              const nameStr = `\nName: **${m.name}**`;
+              const hashStr = `\nHash: **${m?.hash}**`;
               const statsTotal = m ? m.power + m.speed + m.technic : 0;
               const statBreakdownStr = `**P** ${m?.power} + **S** ${m?.speed} + **T** ${m?.technic} = ${statsTotal}`;
-              const statsStr = `Stats: ${statBreakdownStr}`;
-              return `${header}\n${nameStr}\n${hashStr}\n${statsStr}`;
+              const statsStr = `\nStats: ${statBreakdownStr}`;
+              return `${header}${nameEnStr}${nameStr}${hashStr}${statsStr}`;
             });
             const missingReport = `${missingStrs.join('\n')}`;
             postDiscordEvo(missingReport);

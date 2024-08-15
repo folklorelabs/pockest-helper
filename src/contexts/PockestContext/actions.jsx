@@ -7,14 +7,15 @@ import {
   getAutoSettings,
   fetchPockestStatus,
   getLogEntry,
-  getOwnedMementoMonsterNames,
   getCurrentMonsterLogs,
+  getDiscordReportEvoSuccess,
+  getDiscordReportMemento,
+  isConfirmedMonster,
+  getDiscordReportEvoFailure,
 } from './getters';
 import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
-import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 import { getRefreshTimeout, REFRESH_TIMEOUT, setRefreshTimeout } from './state';
-import { STAT_ID_ABBR } from '../../config/stats';
 
 export function pockestLoading() {
   return [ACTIONS.LOADING];
@@ -34,12 +35,20 @@ export function pockestPlanSettings(pockestState, settingsOverride) {
 
 export async function pockestRefresh(pockestState) {
   try {
-    const payload = {};
+    // get buckler data and create payload obj
+    const data = await fetchPockestStatus();
+    const payload = { data };
+
+    const isEvolution = data?.event === 'evolution' || (data?.monster && pockestState?.data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash);
 
     // get sheet data if stale
     const now = Date.now();
     const nextSheetTimestamp = getRefreshTimeout(REFRESH_TIMEOUT.SHEET);
-    if (!pockestState?.allMonsters || !pockestState?.allHashes || now >= nextSheetTimestamp) {
+    if (
+      !pockestState?.allMonsters || !pockestState?.allHashes // missing data
+      || isEvolution // if evolution then we can expect new encylopedia data
+      || now >= nextSheetTimestamp // stale data
+    ) {
       setRefreshTimeout(REFRESH_TIMEOUT.SHEET, 20, 10);
       const [
         allMonsters,
@@ -52,51 +61,39 @@ export async function pockestRefresh(pockestState) {
       payload.allHashes = allHashes;
     }
 
-    // get buckler data
-    const data = await fetchPockestStatus();
-    payload.data = data;
+    // figure out what sort of action to call
+    const mergedState = {
+      ...pockestState,
+      allMonsters: payload?.allMonsters || pockestState?.allMonsters || [],
+      allHashes: payload?.allHashes || pockestState?.allHashes || [],
+    };
+    const shouldDiscordReport = !isConfirmedMonster(mergedState, data);
     if (data?.event === 'death') return [ACTIONS.REFRESH_DEATH, payload];
-    if (data?.event === 'departure') return [ACTIONS.REFRESH_DEPARTURE, payload];
+    if (data?.event === 'departure') {
+      if (shouldDiscordReport) {
+        const mementoReport = getDiscordReportMemento(mergedState, data);
+        postDiscordEvo(mementoReport);
+      }
+      return [ACTIONS.REFRESH_DEPARTURE, payload];
+    }
     if (data?.event === 'monster_not_found') return [ACTIONS.REFRESH_MONSTER_NOT_FOUND, payload];
-    if (data?.event === 'evolution' || (data?.monster && pockestState?.data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash)) {
+    if (isEvolution) {
       // send any useful info to discord
-      if (data?.monster?.age >= 5) {
+      if (data?.monster?.age >= 5 && shouldDiscordReport) {
         const reports = [];
-        const matchingMonster = pockestState?.allMonsters
-          .filter((m) => m.confirmed)
-          .find((m) => m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
-        if (!matchingMonster?.confirmed) {
-          const mementosOwned = getOwnedMementoMonsterNames(pockestState);
-          const header = '\n⬆️ **EVOLUTION SUCCESS** ⬆️';
-          const nameStr = `Name: **${data?.monster?.name_en}** (${data?.monster?.name})`;
-          const hashStr = `Hash: **${data?.monster?.hash}**`;
-          const planIdStr = `**${pockestState?.planId}**`;
-          const statPlanStr = `**${pockestState?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}**`;
-          const planStr = `Plan: ${planIdStr} / ${statPlanStr}`;
-          const statsTotal = data?.monster
-            ? data.monster.power + data.monster.speed + data.monster.technic : 0;
-          const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
-          const statsStr = `Stats: ${statBreakdownStr}`;
-          const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
-          const report = `${header}\n${nameStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`;
-          reports.push(report);
-        }
-        const matchingMementoHash = pockestState?.allHashes
-          .find((m2) => m2?.id === data?.monster?.memento_hash);
+        const evoReport = getDiscordReportEvoSuccess(mergedState, data);
+        reports.push(evoReport);
+        const matchingMementoHash = mergedState.allHashes.find((m2) => data?.monster?.memento_hash
+          && m2?.id === data?.monster?.memento_hash);
         if (!matchingMementoHash) {
-          const header = '\n🏆 **MEMENTO** 🏆';
-          const nameStr = `Name: **${data?.monster?.memento_name_en}** (${data?.monster?.memento_name})`;
-          const hashStr = `Hash: **${data?.monster?.memento_hash}**`;
-          const fromStr = `From: **${data?.monster?.name_en}** (${data?.monster?.name})`;
-          const report = `${header}\n${nameStr}\n${hashStr}\n${fromStr}`;
-          reports.push(report);
+          const mementoReport = getDiscordReportMemento(mergedState, data);
+          reports.push(mementoReport);
         }
         if (reports.length) {
           const missingReport = `${reports.join('\n')}`;
           postDiscordEvo(missingReport);
         }
       }
-
       return [ACTIONS.REFRESH_EVOLUTION_SUCCESS, payload];
     }
     const isEvoFailureEvent = (() => {
@@ -107,23 +104,12 @@ export async function pockestRefresh(pockestState) {
     })();
     if (isEvoFailureEvent) {
       // send any useful info to discord
-      const targetMonster = pockestState?.allMonsters
+      const targetMonster = mergedState?.allMonsters
         ?.find((m) => m.planId === pockestState?.planId);
       if (!targetMonster?.confirmed) {
-        const mementosOwned = getOwnedMementoMonsterNames(pockestState);
-        const header = '\n🤦‍♂️ **EVOLUTION FAILURE** 🤦‍♂️';
-        const planIdStr = `**${pockestState?.planId}**`;
-        const statPlanStr = `**${pockestState?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}**`;
-        const planStr = `Plan: **${planIdStr}** / **${statPlanStr}**`;
-        const statsTotal = data?.monster
-          ? data.monster.power + data.monster.speed + data.monster.technic : 0;
-        const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
-        const statsStr = `Stats: ${statBreakdownStr}`;
-        const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
-        const report = `${header}\n${planStr}\n${statsStr}\n${ownedMementosStr}`;
+        const report = getDiscordReportEvoFailure(pockestState, data);
         postDiscordEvo(`${report}`);
       }
-
       return [ACTIONS.REFRESH_EVOLUTION_FAILURE, payload];
     }
     return [ACTIONS.REFRESH_STATUS, payload];

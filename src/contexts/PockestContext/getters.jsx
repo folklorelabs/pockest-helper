@@ -1,4 +1,4 @@
-import { STAT_ABBR } from '../../config/stats';
+import { STAT_ABBR, STAT_ID_ABBR } from '../../config/stats';
 import MONSTER_AGE from '../../config/MONSTER_AGE';
 import getTimeIntervals from '../../utils/getTimeIntervals';
 import getTotalStats from '../../utils/getTotalStats';
@@ -7,6 +7,7 @@ import { parsePlanId, LEGACY_PLAN_REGEX } from '../../utils/parsePlanId';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 import getFirstMatchTime from '../../utils/getFirstMatchTime';
+import leadingZero from '../../utils/leadingZero';
 
 export function getLogEntry(pockestState, data) {
   const mergedData = data ?? pockestState?.data;
@@ -409,3 +410,126 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
   }
   return newSettings;
 }
+
+export function isConfirmedMonster(state, data) {
+  const matchingMonster = state.allMonsters.find((m) => data?.monster?.hash
+    && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
+  return matchingMonster?.confirmed;
+}
+
+export function getDiscordReportEvoSuccess(state, data) {
+  const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
+    && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
+  const mementosOwned = getOwnedMementoMonsterNames(state);
+  const header = '\n⬆️ **EVOLUTION SUCCESS** ⬆️';
+  const nameEnStr = `\nName (EN): **${encycloData?.name_en}**`;
+  const nameStr = `\nName: **${encycloData?.name}**`;
+  const descStr = `\nDescription: **${encycloData?.description}**`;
+  const descEnStr = `\nDescription (EN): **${encycloData?.description_en}**`;
+  const hashStr = `\nHash: **${encycloData?.hash}**`;
+  const planIdStr = `${state?.planId}`;
+  const statPlanStr = `${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`;
+  const planStr = `\nPlan: **${planIdStr}** / **${statPlanStr}**`;
+  const statsTotal = data?.monster
+    ? data.monster.power + data.monster.speed + data.monster.technic : 0;
+  const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
+  const statsStr = `\nStats: ${statBreakdownStr}`;
+  const ownedMementosStr = `\nOwned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
+  const sheetId = (() => {
+    const leafPlan = encycloData?.planId?.slice(0, -2);
+    const leafMonsters = state?.allMonsters
+      ?.filter((m) => m?.planId && m?.monster_id && m?.planId.includes(leafPlan));
+    const leafId = (leafMonsters && leafMonsters.length < 3) ? '' : leadingZero(leafMonsters
+      .sort((a, b) => b.monster_id - a.monster_id)
+      .findIndex((m) => m?.hash === data?.monster?.hash) + 1);
+    return `${leadingZero(encycloData?.eggId)}05${leafId || 'XX'}`;
+  })();
+  const highestStat = ['power', 'speed', 'technic'].reduce((highestKey, key) => {
+    const highestVal = highestKey ? data?.monster?.[highestKey] : 0;
+    const val = data?.monster?.[key];
+    if (val > highestVal) return key;
+    return highestKey;
+  }, '').slice(0, 1).toUpperCase();
+  const numStats = ['power', 'speed', 'technic'].reduce((total, key) => {
+    const val = data?.monster?.[key];
+    if (val > 0) return total + 1;
+    return total;
+  }, 0);
+  const csv = `\nCSV: \`${sheetId}\tchar\t${encycloData?.hash}\thttps://www.streetfighter.com/6/buckler/assets/minigame/img/char/${encycloData?.hash}.png\t${highestStat}\t${encycloData?.name}\t${encycloData?.name_en}\t${numStats === 1 ? 'O' : ''}\t${numStats === 2 ? 'O' : ''}\t${numStats === 3 ? 'O' : ''}\t${statPlanStr}\t\t${encycloData?.description.replace(/\n/g, '\\n')}\t${encycloData?.description_en.replace(/\n/g, '\\n')}\``;
+  const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${planStr}${statsStr}${ownedMementosStr}${csv}`;
+  return report;
+}
+
+export function getDiscordReportEvoFailure(state, data) {
+  const mementosOwned = getOwnedMementoMonsterNames(state);
+  const header = '\n🤦‍♂️ **EVOLUTION FAILURE** 🤦‍♂️';
+  const planIdStr = `**${state?.planId}**`;
+  const statPlanStr = `**${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}**`;
+  const planStr = `\nPlan: ${planIdStr} / ${statPlanStr}`;
+  const statsTotal = data?.monster
+    ? data.monster.power + data.monster.speed + data.monster.technic : 0;
+  const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
+  const statsStr = `\nStats: ${statBreakdownStr}`;
+  const ownedMementosStr = `\nOwned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
+  const report = `${header}${planStr}${statsStr}${ownedMementosStr}`;
+  return report;
+}
+
+export function getDiscordReportMemento(state, data) {
+  const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
+    && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
+  const newMementoData = encycloData?.memento_hash !== '???' ? encycloData : data?.monster;
+  const header = '\n🏆 **MEMENTO** 🏆';
+  const nameEnStr = `\nName (EN): **${newMementoData?.memento_name_en}**`;
+  const nameStr = `\nName: **${newMementoData?.memento_name}**`;
+  const descEnStr = newMementoData?.memento_description_en ? `\nDescription (EN): **${newMementoData?.memento_description_en}**` : '';
+  const descStr = newMementoData?.memento_description ? `\nDescription: **${newMementoData?.memento_description}**` : '';
+  const hashStr = `\nHash: **${newMementoData?.memento_hash}**`;
+  const fromStr = `\nFrom: **${newMementoData?.name_en}** (${newMementoData?.name})`;
+  const sheetId = (() => {
+    const leafPlan = encycloData?.planId?.slice(0, -2);
+    const leafMonsters = state?.allMonsters
+      ?.filter((m) => m?.planId && m?.monster_id && m?.planId.includes(leafPlan));
+    const leafId = (leafMonsters && leafMonsters.length < 3) ? '' : leadingZero(leafMonsters
+      .sort((a, b) => b.monster_id - a.monster_id)
+      .findIndex((m) => m?.hash === data?.monster?.hash) + 1);
+    return `${leadingZero(encycloData?.eggId)}06${leafId || 'XX'}`;
+  })();
+  const csv = `\nCSV: \`${sheetId}\tmemento\t${newMementoData?.memento_hash}\thttps://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}.png\t4500\t${newMementoData?.memento_name}\t${newMementoData?.memento_name_en}\t\t\t\t\t\t${encycloData?.memento_description?.replace(/\n/g, '\\n')}\t${encycloData?.memento_description_en?.replace(/\n/g, '\\n')}\``;
+  const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${fromStr}${csv}`;
+  return report;
+}
+
+const pockestState = JSON.parse(window.sessionStorage.PockestHelperState);
+console.log(getDiscordReportEvoSuccess(pockestState, pockestState?.data));
+console.log(getDiscordReportEvoFailure(pockestState, pockestState?.data));
+console.log(getDiscordReportMemento(pockestState, pockestState?.data));
+console.log(getDiscordReportMemento(pockestState, {
+  ...pockestState?.data,
+  monster: {
+    ...pockestState?.data?.monster,
+    age: 5,
+    exchange_time: 1723750557000,
+    exchange_time_par: 29,
+    garbage: 0,
+    hash: '4004-eJcEMJMX',
+    live_time: 1723275084000,
+    live_time_d: 1723275084000,
+    max_memento_point: 4000,
+    memento_flg: 0,
+    memento_hash: '4004-bFwrKIMX',
+    memento_name: 'トゲ腕輪',
+    memento_name_en: 'Spiked Bracelet',
+    memento_point: 4301,
+    name: '春麗',
+    name_en: 'Chun-Li',
+    power: 0,
+    speed: 2018,
+    status: 1,
+    stomach: 6,
+    technic: 0,
+    training_is_fever: false,
+    training_time: 1723707355000,
+    training_time_par: 58,
+  },
+}));
