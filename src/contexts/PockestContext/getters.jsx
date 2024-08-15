@@ -173,7 +173,7 @@ export function getTargetMonsterCurrentRouteSpec(state) {
   const curAge = state?.data?.monster?.age;
   const currentRouteSpec = targetPlan?.planRoute
     ?.find((r) => curAge >= r?.ageStart && curAge < r?.ageEnd);
-  return currentRouteSpec;
+  return currentRouteSpec || {};
 }
 
 export function getTargetMonsterCurrentStat(state) {
