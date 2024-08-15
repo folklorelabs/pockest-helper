@@ -80,7 +80,7 @@ function PlanLog({
     return data;
   }, [pockestState]);
   const scheduleLog = React.useMemo(() => [
-    `${APP_NAME} Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
+    `[${APP_NAME}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
     ...schedule.map((d) => {
       const icon = (() => {
         if (d.completion) return '☑';

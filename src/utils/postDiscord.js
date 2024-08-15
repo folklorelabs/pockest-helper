@@ -73,7 +73,7 @@ export async function postDiscord(id, url, report) {
       body.append(`file[${index + 1}]`, b64toBlob(b64Data), fileMeta.name);
     });
     const payload = {};
-    payload.content = `*${APP_NAME}*${report?.content ? `\n${report?.content}` : ''}`;
+    payload.content = `*[${APP_NAME}]*${report?.content ? `\n${report?.content}` : ''}`;
     if (report?.attachments) payload.attachments = report?.attachments;
     if (report?.embeds) payload.embeds = report?.embeds;
     body.append('payload_json', JSON.stringify(payload));

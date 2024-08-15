@@ -7,8 +7,8 @@ import {
 } from '../../contexts/PockestContext';
 import getActionResultString from '../../utils/getActionResultString';
 import getMatchReportString from '../../utils/getMatchReportString';
-import './index.css';
 import APP_NAME from '../../config/APP_NAME';
+import './index.css';
 
 function CareLog({
   title,
@@ -37,7 +37,7 @@ function CareLog({
     [log, onlyDiscoveries, logTypes, pockestState],
   );
   const careLog = React.useMemo(() => [
-    APP_NAME,
+    `[${APP_NAME}]`,
     ...careLogData.map((entry) => (onlyDiscoveries ? getMatchReportString : getActionResultString)({
       pockestState,
       result: entry,

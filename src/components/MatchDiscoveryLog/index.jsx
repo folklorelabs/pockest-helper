@@ -65,7 +65,7 @@ function MatchDiscoveryLog({
         <textarea
           ref={textAreaEl}
           className="PockestTextArea MatchDiscoveryLog-textarea"
-          value={`${APP_NAME}\n${content}`}
+          value={`[${APP_NAME}]\n${content}`}
           readOnly
           rows={rows}
         />
