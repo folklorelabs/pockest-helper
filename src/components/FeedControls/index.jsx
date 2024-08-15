@@ -4,12 +4,12 @@ import {
   usePockestContext,
   pockestGetters,
 } from '../../contexts/PockestContext';
-import './index.css';
 import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
 import getStomachTimer from '../../utils/getStomachTimer';
 import LogCountLine from '../LogCountLine';
 import getAgeTimer from '../../utils/getAgeTimer';
+import './index.css';
 
 // CONSTS
 const FEED_INTERVAL = {
@@ -28,7 +28,10 @@ function FeedControls() {
   const {
     currentFeedWindow,
     nextFeedWindow,
-  } = React.useMemo(() => pockestGetters.getCurrentPlanScheduleWindows(pockestState), [pockestState]);
+  } = React.useMemo(
+    () => pockestGetters.getCurrentPlanScheduleWindows(pockestState),
+    [pockestState],
+  );
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const stomachTimer = React.useMemo(() => {
     const timer = getStomachTimer(pockestState);
@@ -51,7 +54,9 @@ function FeedControls() {
             id="PockestHelper_AutoFeed"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({ autoFeed: e.target.checked }))}
+            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({
+              autoFeed: e.target.checked,
+            }))}
             checked={autoFeed}
             disabled={!paused || autoPlan}
           />
@@ -68,7 +73,7 @@ function FeedControls() {
           Next Hunger
         </span>
         <span className="PockestText PockestLine-value">
-          {stomachTimer ? parseDurationStr(stomachTimer - now.getTime()) : '--'}
+          {stomachTimer ? parseDurationStr(stomachTimer - now) : '--'}
         </span>
       </div>
       <div className="PockestLine">
@@ -76,7 +81,9 @@ function FeedControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({ feedFrequency: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({
+              feedFrequency: parseInt(e.target.value, 10),
+            }));
           }}
           value={feedFrequency}
           disabled={!paused || autoPlan}
@@ -93,7 +100,9 @@ function FeedControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({ feedTarget: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({
+              feedTarget: parseInt(e.target.value, 10),
+            }));
           }}
           value={feedTarget}
           disabled={!paused || autoPlan}
@@ -112,7 +121,7 @@ function FeedControls() {
         <span className="PockestText PockestLine-value">
           {(() => {
             if (feedFrequency === 4 || !nextFeedWindow) return '--';
-            return parseDurationStr(nextFeedWindow.start - now.getTime());
+            return parseDurationStr(nextFeedWindow.start - now);
           })()}
         </span>
       </div>
@@ -124,7 +133,7 @@ function FeedControls() {
           {(() => {
             if (feedFrequency === 4) return '∞';
             if (!currentFeedWindow) return '--';
-            return parseDurationStr(currentFeedWindow.end - now.getTime());
+            return parseDurationStr(currentFeedWindow.end - now);
           })()}
         </span>
       </div>

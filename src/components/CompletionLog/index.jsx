@@ -20,7 +20,7 @@ function CompletionLog({
     pockestState,
   } = usePockestContext();
   const curLiveDur = React.useMemo(() => (pockestState?.data?.monster?.live_time
-    ? (now.getTime() - pockestState.data.monster.live_time) : 0), [
+    ? (now - pockestState.data.monster.live_time) : 0), [
     now,
     pockestState?.data?.monster?.live_time,
   ]);
@@ -33,7 +33,7 @@ function CompletionLog({
   const stickerCompletion = React.useMemo(() => {
     const curCompDur = Math.min(DAY_IN_MS * 3, curLiveDur);
     const completionDur = targetStickerCount * (3 * DAY_IN_MS) - curCompDur;
-    const completionDate = new Date(now.getTime() + completionDur);
+    const completionDate = now + completionDur;
     return completionDate;
   }, [targetStickerCount, now, curLiveDur]);
   const stickerString = React.useMemo(() => {
@@ -48,7 +48,7 @@ function CompletionLog({
   const mementoCompletion = React.useMemo(() => {
     const curCompDur = Math.min(DAY_IN_MS * 7, curLiveDur);
     const completionDur = targetMementoCount * (7 * DAY_IN_MS) - curCompDur;
-    const completionDate = new Date(now.getTime() + completionDur);
+    const completionDate = now + completionDur;
     return completionDate;
   }, [curLiveDur, targetMementoCount, now]);
   const mementoString = React.useMemo(() => {

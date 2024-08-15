@@ -71,7 +71,7 @@ function MatchControls() {
           Next Match
         </span>
         <span className="PockestText PockestLine-value">
-          {nextMatchTimer ? parseDurationStr(nextMatchTimer - now.getTime()) : '--'}
+          {nextMatchTimer ? parseDurationStr(nextMatchTimer - now) : '--'}
         </span>
       </div>
       <LogCountLine

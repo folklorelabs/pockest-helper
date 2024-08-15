@@ -29,7 +29,10 @@ function CleanControls() {
   const {
     currentCleanWindow,
     nextCleanWindow,
-  } = React.useMemo(() => pockestGetters.getCurrentPlanScheduleWindows(pockestState), [pockestState]);
+  } = React.useMemo(
+    () => pockestGetters.getCurrentPlanScheduleWindows(pockestState),
+    [pockestState],
+  );
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const garbageTimer = React.useMemo(() => {
     const timer = getGarbageTimer(pockestState);
@@ -51,7 +54,9 @@ function CleanControls() {
             id="PockestHelper_AutoClean"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({ autoClean: e.target.checked }))}
+            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({
+              autoClean: e.target.checked,
+            }))}
             checked={autoClean}
             disabled={!paused || autoPlan}
           />
@@ -72,7 +77,7 @@ function CleanControls() {
             const nextSmall = data?.next_small_event_timer;
             if (!nextSmall) return '--';
             if (!garbageTimer) return '??';
-            return parseDurationStr(garbageTimer - now.getTime());
+            return parseDurationStr(garbageTimer - now);
           })()}
         </span>
       </div>
@@ -81,7 +86,9 @@ function CleanControls() {
         <select
           className="PockestSelect"
           onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({ cleanFrequency: parseInt(e.target.value, 10) }));
+            pockestDispatch(pockestActions.pockestSettings({
+              cleanFrequency: parseInt(e.target.value, 10),
+            }));
           }}
           value={cleanFrequency}
           disabled={!paused || autoPlan}
@@ -100,7 +107,7 @@ function CleanControls() {
         <span className="PockestText PockestLine-value">
           {(() => {
             if (cleanFrequency === 2 || !nextCleanWindow) return '--';
-            return parseDurationStr(nextCleanWindow.start - now.getTime());
+            return parseDurationStr(nextCleanWindow.start - now);
           })()}
         </span>
       </div>
@@ -112,7 +119,7 @@ function CleanControls() {
           {(() => {
             if (cleanFrequency === 2) return '∞';
             if (!currentCleanWindow) return '--';
-            return parseDurationStr(currentCleanWindow.end - now.getTime());
+            return parseDurationStr(currentCleanWindow.end - now);
           })()}
         </span>
       </div>
