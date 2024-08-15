@@ -417,6 +417,65 @@ export function isConfirmedMonster(state, data) {
   return matchingMonster?.confirmed;
 }
 
+export function getDiscordReportCSV(state, data, type) {
+  const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
+    && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
+  const newMementoData = encycloData?.memento_hash !== '???' ? encycloData : data?.monster;
+  const sheetId = (() => {
+    const typeId = type === 'char' ? '05' : '06';
+    const leafPlan = encycloData?.planId?.slice(0, -2);
+    const leafMonsters = state?.allMonsters
+      ?.filter((m) => m?.planId && m?.monster_id && m?.planId.includes(leafPlan));
+    const leafId = (leafMonsters && leafMonsters.length < 3) ? '' : leadingZero(leafMonsters
+      .sort((a, b) => b.monster_id - a.monster_id)
+      .findIndex((m) => m?.hash === data?.monster?.hash) + 1);
+    return `${leadingZero(encycloData?.eggId)}${typeId}${leafId || 'XX'}`;
+  })();
+  const numStats = type === 'char' ? ['power', 'speed', 'technic'].reduce((total, key) => {
+    const val = data?.monster?.[key];
+    if (val > 0) return total + 1;
+    return total;
+  }, 0) : null;
+  const csvArr = type === 'char' ? [
+    sheetId,
+    type,
+    encycloData?.hash,
+    `https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${encycloData?.hash}.png`,
+    ['power', 'speed', 'technic'].reduce((highestKey, key) => {
+      const highestVal = highestKey ? data?.monster?.[highestKey] : 0;
+      const val = data?.monster?.[key];
+      if (val > highestVal) return key;
+      return highestKey;
+    }, '').slice(0, 1).toUpperCase(), // highest stat
+    encycloData?.name,
+    encycloData?.name_en,
+    numStats === 1 ? 'O' : '',
+    numStats === 2 ? 'O' : '',
+    numStats === 3 ? 'O' : '',
+    `${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`, // statPlan
+    '', // lock
+    encycloData?.description,
+    encycloData?.description_en,
+  ] : [
+    sheetId,
+    'memento',
+    newMementoData?.memento_hash,
+    `https://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}_memento.png`,
+    4500,
+    newMementoData?.memento_name,
+    newMementoData?.memento_name_en,
+    '',
+    '',
+    '',
+    '',
+    '', // lock
+    encycloData?.memento_description,
+    encycloData?.memento_description_en,
+  ];
+  const csv = csvArr.map((item) => (item ? `"${item}"` : '')).map((item) => item?.replace(/\n/g, '\\n')).join(',');
+  return csv;
+}
+
 export function getDiscordReportEvoSuccess(state, data) {
   const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
     && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
@@ -435,28 +494,9 @@ export function getDiscordReportEvoSuccess(state, data) {
   const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
   const statsStr = `\nStats: ${statBreakdownStr}`;
   const ownedMementosStr = `\nOwned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
-  const sheetId = (() => {
-    const leafPlan = encycloData?.planId?.slice(0, -2);
-    const leafMonsters = state?.allMonsters
-      ?.filter((m) => m?.planId && m?.monster_id && m?.planId.includes(leafPlan));
-    const leafId = (leafMonsters && leafMonsters.length < 3) ? '' : leadingZero(leafMonsters
-      .sort((a, b) => b.monster_id - a.monster_id)
-      .findIndex((m) => m?.hash === data?.monster?.hash) + 1);
-    return `${leadingZero(encycloData?.eggId)}05${leafId || 'XX'}`;
-  })();
-  const highestStat = ['power', 'speed', 'technic'].reduce((highestKey, key) => {
-    const highestVal = highestKey ? data?.monster?.[highestKey] : 0;
-    const val = data?.monster?.[key];
-    if (val > highestVal) return key;
-    return highestKey;
-  }, '').slice(0, 1).toUpperCase();
-  const numStats = ['power', 'speed', 'technic'].reduce((total, key) => {
-    const val = data?.monster?.[key];
-    if (val > 0) return total + 1;
-    return total;
-  }, 0);
-  const csv = `\nCSV: \`${sheetId}\tchar\t${encycloData?.hash}\thttps://www.streetfighter.com/6/buckler/assets/minigame/img/char/${encycloData?.hash}.png\t${highestStat}\t${encycloData?.name}\t${encycloData?.name_en}\t${numStats === 1 ? 'O' : ''}\t${numStats === 2 ? 'O' : ''}\t${numStats === 3 ? 'O' : ''}\t${statPlanStr}\t\t${encycloData?.description.replace(/\n/g, '\\n')}\t${encycloData?.description_en.replace(/\n/g, '\\n')}\``;
-  const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${planStr}${statsStr}${ownedMementosStr}${csv}`;
+  const csv = getDiscordReportCSV(state, data, 'char');
+  const csvStr = `\nCSV: \`${csv}\``;
+  const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${planStr}${statsStr}${ownedMementosStr}${csvStr}`;
   return report;
 }
 
@@ -486,16 +526,8 @@ export function getDiscordReportMemento(state, data) {
   const descStr = newMementoData?.memento_description ? `\nDescription: **${newMementoData?.memento_description}**` : '';
   const hashStr = `\nHash: **${newMementoData?.memento_hash}**`;
   const fromStr = `\nFrom: **${newMementoData?.name_en}** (${newMementoData?.name})`;
-  const sheetId = (() => {
-    const leafPlan = encycloData?.planId?.slice(0, -2);
-    const leafMonsters = state?.allMonsters
-      ?.filter((m) => m?.planId && m?.monster_id && m?.planId.includes(leafPlan));
-    const leafId = (leafMonsters && leafMonsters.length < 3) ? '' : leadingZero(leafMonsters
-      .sort((a, b) => b.monster_id - a.monster_id)
-      .findIndex((m) => m?.hash === data?.monster?.hash) + 1);
-    return `${leadingZero(encycloData?.eggId)}06${leafId || 'XX'}`;
-  })();
-  const csv = `\nCSV: \`${sheetId}\tmemento\t${newMementoData?.memento_hash}\thttps://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}.png\t4500\t${newMementoData?.memento_name}\t${newMementoData?.memento_name_en}\t\t\t\t\t\t${encycloData?.memento_description?.replace(/\n/g, '\\n')}\t${encycloData?.memento_description_en?.replace(/\n/g, '\\n')}\``;
-  const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${fromStr}${csv}`;
+  const csv = getDiscordReportCSV(state, data, 'memento');
+  const csvStr = `\nCSV: \`${csv}\``;
+  const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${fromStr}${csvStr}`;
   return report;
 }
