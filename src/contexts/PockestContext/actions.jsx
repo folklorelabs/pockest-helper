@@ -2,7 +2,6 @@ import fetchAllMonsters from '../../utils/fetchAllMonsters';
 import fetchAllHashes from '../../utils/fetchAllHashes';
 import { postDiscordEvo, postDiscordMatch } from '../../utils/postDiscord';
 import isMatchDiscovery from '../../utils/isMatchDiscovery';
-import getMatchReportString from '../../utils/getMatchReportString';
 import {
   getAutoSettings,
   fetchPockestStatus,
@@ -12,6 +11,7 @@ import {
   getDiscordReportMemento,
   isConfirmedMonster,
   getDiscordReportEvoFailure,
+  getDiscordReportMatch,
 } from './getters';
 import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
@@ -71,8 +71,8 @@ export async function pockestRefresh(pockestState) {
     if (data?.event === 'death') return [ACTIONS.REFRESH_DEATH, payload];
     if (data?.event === 'departure') {
       if (shouldDiscordReport) {
-        const mementoReport = getDiscordReportMemento(mergedState, data);
-        postDiscordEvo(mementoReport);
+        const report = await getDiscordReportMemento(mergedState, data);
+        postDiscordEvo(report);
       }
       return [ACTIONS.REFRESH_DEPARTURE, payload];
     }
@@ -81,17 +81,26 @@ export async function pockestRefresh(pockestState) {
       // send any useful info to discord
       if (data?.monster?.age >= 5 && shouldDiscordReport) {
         const reports = [];
-        const evoReport = getDiscordReportEvoSuccess(mergedState, data);
+        const evoReport = await getDiscordReportEvoSuccess(mergedState, data);
         reports.push(evoReport);
         const matchingMementoHash = mergedState.allHashes.find((m2) => data?.monster?.memento_hash
           && m2?.id === data?.monster?.memento_hash);
         if (!matchingMementoHash) {
-          const mementoReport = getDiscordReportMemento(mergedState, data);
+          const mementoReport = await getDiscordReportMemento(mergedState, data);
           reports.push(mementoReport);
         }
         if (reports.length) {
-          const missingReport = `${reports.join('\n')}`;
-          postDiscordEvo(missingReport);
+          const content = `${reports.map((r) => r.content).join('\n')}`;
+          const files = reports.reduce((acc, r) => [
+            ...acc,
+            ...(r.files || []),
+          ], []);
+          const embeds = reports.reduce((acc, r) => [
+            ...acc,
+            ...(r.embeds || []),
+          ], []);
+          const report = { content, files, embeds };
+          postDiscordEvo(report);
         }
       }
       return [ACTIONS.REFRESH_EVOLUTION_SUCCESS, payload];
@@ -108,7 +117,7 @@ export async function pockestRefresh(pockestState) {
         ?.find((m) => m.planId === pockestState?.planId);
       if (!targetMonster?.confirmed) {
         const report = getDiscordReportEvoFailure(pockestState, data);
-        postDiscordEvo(`${report}`);
+        postDiscordEvo(report);
       }
       return [ACTIONS.REFRESH_EVOLUTION_FAILURE, payload];
     }
@@ -253,10 +262,7 @@ export async function pockestMatch(pockestState, match) {
     };
     const isDisc = isMatchDiscovery(pockestState, result);
     if (isDisc) {
-      const report = `${getMatchReportString({
-        pockestState,
-        result,
-      })}`;
+      const report = getDiscordReportMatch(pockestState, data, payload?.args);
       postDiscordMatch(report);
     }
     return [ACTIONS.EVENT_EXCHANGE, payload];

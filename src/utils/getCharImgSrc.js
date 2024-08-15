@@ -1,4 +1,4 @@
-function getCharImgSrc(hash) {
+function getCharImgSrc(hash, frameId = 'win_1') {
   return new Promise((resolve, reject) => {
     if (!hash) {
       reject(new Error(`Invalid hash ${hash}`));
@@ -12,7 +12,7 @@ function getCharImgSrc(hash) {
         return;
       }
       const { frames } = await res.json();
-      const frameMeta = frames?.[`${hash}_win_1.png`];
+      const frameMeta = frames?.[`${hash}_${frameId}.png`];
       const canvas = document.createElement('canvas');
       canvas.width = frameMeta.frame.w;
       canvas.height = frameMeta.frame.h;

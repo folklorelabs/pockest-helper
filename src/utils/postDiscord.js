@@ -24,17 +24,49 @@ export function getDiscordReportStatus() {
   return lastDiscordSuccess >= lastDiscordAttempt;
 }
 
-export async function postDiscord(content, url, id) {
+const b64toBlob = (b64Data, contentType = '', sliceSize = 512) => {
+  const byteCharacters = atob(b64Data);
+  const byteArrays = [];
+
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+    const byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i += 1) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+
+  const blob = new Blob(byteArrays, { type: contentType });
+  return blob;
+};
+
+export async function postDiscord(id, url, data) {
   try {
     window.sessionStorage.setItem(DISCORD_ATTEMPT_TIMESTAMP_ID, Date.now());
     if (!url) throw new Error(`Missing ${id} env var`);
-    const response = await fetch(url, {
-      body: JSON.stringify({ content: `*[Pockest Helper v${import.meta.env.APP_VERSION}]*\n${content}` }),
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
+
+    const headers = new Headers();
+    const body = new FormData();
+    data?.files?.forEach((fileMeta, index) => {
+      const b64Data = fileMeta?.base64?.split('base64,')[1];
+      body.append(`file[${index + 1}]`, b64toBlob(b64Data), fileMeta.name);
     });
+    const payload = {};
+    if (data?.content) payload.content = `*[Pockest Helper v${import.meta.env.APP_VERSION}]*\n${data?.content}`;
+    if (data?.attachments) payload.attachments = data?.attachments;
+    if (data?.embeds) payload.embeds = data?.embeds;
+    body.append('payload_json', JSON.stringify(payload));
+    const requestOptions = {
+      method: 'POST',
+      headers,
+      body,
+      redirect: 'follow',
+    };
+    const response = await fetch(url, requestOptions);
     if (!response.ok) throw new Error(`API ${response.status} response (${id})`);
     window.sessionStorage.setItem(DISCORD_SUCCESS_TIMESTAMP_ID, Date.now());
   } catch (err) {
@@ -42,10 +74,14 @@ export async function postDiscord(content, url, id) {
   }
 }
 
-export async function postDiscordEvo(content) {
-  await postDiscord(content, import.meta.env.DISCORD_WEBHOOK_EVO, 'DISCORD_WEBHOOK_EVO');
+export async function postDiscordEvo(data) {
+  await postDiscord('DISCORD_WEBHOOK_EVO', import.meta.env.DISCORD_WEBHOOK_EVO, data);
 }
 
-export async function postDiscordMatch(content) {
-  await postDiscord(content, import.meta.env.DISCORD_WEBHOOK_MATCH, 'DISCORD_WEBHOOK_MATCH');
+export async function postDiscordMatch(data) {
+  await postDiscord('DISCORD_WEBHOOK_MATCH', import.meta.env.DISCORD_WEBHOOK_MATCH, data);
+}
+
+export async function postDiscordTest(data) {
+  await postDiscord('DISCORD_WEBHOOK_TEST', import.meta.env.DISCORD_WEBHOOK_TEST, data);
 }

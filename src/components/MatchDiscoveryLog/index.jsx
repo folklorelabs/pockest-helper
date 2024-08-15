@@ -17,23 +17,23 @@ function MatchDiscoveryLog({
   const {
     pockestState,
   } = usePockestContext();
-  const careLogData = React.useMemo(
+  const contentData = React.useMemo(
     () => {
       const d = pockestState?.log?.filter((entry) => ['exchange'].includes(entry.logType));
       return d.filter((entry) => entry.logType === 'exchange' && isMatchDiscovery(pockestState, entry));
     },
     [pockestState],
   );
-  const careLog = React.useMemo(() => careLogData.map((entry) => getMatchReportString({
+  const content = React.useMemo(() => contentData.map((entry) => getMatchReportString({
     pockestState,
     result: entry,
     isRelTime: true,
-  })).join('\n'), [careLogData, pockestState]);
+  })).join('\n'), [contentData, pockestState]);
   React.useEffect(() => {
     if (!textAreaEl?.current) return () => {};
     textAreaEl.current.scrollTop = textAreaEl.current.scrollHeight;
     return () => {};
-  }, [careLog]);
+  }, [content]);
   React.useEffect(() => {
     const interval = window.setInterval(() => {
       const newCooldown = getDiscordCooldown();
@@ -43,7 +43,7 @@ function MatchDiscoveryLog({
       window.clearInterval(interval);
     };
   }, []);
-  if (!careLogData?.length) return '';
+  if (!contentData?.length) return '';
   return (
     <div className="MatchDiscoveryLog">
       <header className="MatchDiscoveryLog-header">
@@ -51,7 +51,7 @@ function MatchDiscoveryLog({
           {title}
           {' '}
           (
-          {careLogData?.length || 0}
+          {contentData?.length || 0}
           )
         </p>
       </header>
@@ -59,7 +59,7 @@ function MatchDiscoveryLog({
         <textarea
           ref={textAreaEl}
           className="PockestTextArea MatchDiscoveryLog-textarea"
-          value={`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${careLog}`}
+          value={`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${content}`}
           readOnly
           rows={rows}
         />
@@ -70,7 +70,7 @@ function MatchDiscoveryLog({
             type="button"
             className="PockestLink MatchDiscoveryLog-copy"
             aria-label={`Copy ${title.toLowerCase()} to clipboard`}
-            onClick={() => navigator.clipboard.writeText(careLog)}
+            onClick={() => navigator.clipboard.writeText(content)}
           >
             📋 Copy
           </button>
@@ -81,7 +81,7 @@ function MatchDiscoveryLog({
               aria-label={`Clear ${title.toLowerCase()}`}
               onClick={async () => {
                 if (discordCooldown) return;
-                await postDiscordMatch(careLog);
+                await postDiscordMatch({ content });
               }}
               disabled={discordCooldown}
               title={discordCooldown ? 'Please wait 60 seconds before submitting again' : 'Manually submit a report in automated report failed'}

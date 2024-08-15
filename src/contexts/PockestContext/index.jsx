@@ -242,18 +242,19 @@ export function PockestProvider({
             return !matchingMonster?.confirmed;
           });
           if (missing.length) {
-            const missingStrs = missing.map((m) => {
-              const header = '\n🔎 **SIGHTING** 🔎';
-              const nameEnStr = `\nName (EN): **${m.name_en}**`;
-              const nameStr = `\nName: **${m.name}**`;
-              const hashStr = `\nHash: **${m?.hash}**`;
-              const statsTotal = m ? m.power + m.speed + m.technic : 0;
-              const statBreakdownStr = `**P** ${m?.power} + **S** ${m?.speed} + **T** ${m?.technic} = ${statsTotal}`;
-              const statsStr = `\nStats: ${statBreakdownStr}`;
-              return `${header}${nameEnStr}${nameStr}${hashStr}${statsStr}`;
-            });
-            const missingReport = `${missingStrs.join('\n')}`;
-            postDiscordEvo(missingReport);
+            const reports = missing.map((match) => pockestGetters
+              .getDiscordReportSighting(pockestState, data, { match }));
+            const content = `${reports.map((r) => r.content).join('\n')}`;
+            const files = reports.reduce((acc, r) => [
+              ...acc,
+              ...(r.files || []),
+            ], []);
+            const embeds = reports.reduce((acc, r) => [
+              ...acc,
+              ...(r.embeds || []),
+            ], []);
+            const report = { content, files, embeds };
+            postDiscordEvo(report);
           }
         }
         const bestMatch = await pockestGetters.getBestMatch(pockestState, exchangeList);

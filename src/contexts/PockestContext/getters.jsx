@@ -7,7 +7,8 @@ import { parsePlanId, LEGACY_PLAN_REGEX } from '../../utils/parsePlanId';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 import getFirstMatchTime from '../../utils/getFirstMatchTime';
-import leadingZero from '../../utils/leadingZero';
+import getCharImgSrc from '../../utils/getCharImgSrc';
+import toDataUrl from '../../utils/toDataUrl';
 
 export function getLogEntry(pockestState, data) {
   const mergedData = data ?? pockestState?.data;
@@ -417,75 +418,44 @@ export function isConfirmedMonster(state, data) {
   return matchingMonster?.confirmed;
 }
 
-export function getDiscordReportCSV(state, data, type) {
-  const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
-    && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
-  const newMementoData = encycloData?.memento_hash !== '???' ? encycloData : data?.monster;
-  const sheetId = (() => {
-    const typeId = type === 'char' ? '05' : '06';
-    const leafPlan = encycloData?.planId?.slice(0, -2);
-    const leafMonsters = state?.allMonsters
-      ?.filter((m) => m?.planId && m?.monster_id && m?.planId.includes(leafPlan));
-    const leafId = (leafMonsters && leafMonsters.length < 3) ? '' : leadingZero(leafMonsters
-      .sort((a, b) => b.monster_id - a.monster_id)
-      .findIndex((m) => m?.hash === data?.monster?.hash) + 1);
-    return `${leadingZero(encycloData?.eggId)}${typeId}${leafId || 'XX'}`;
-  })();
-  const numStats = type === 'char' ? ['power', 'speed', 'technic'].reduce((total, key) => {
-    const val = data?.monster?.[key];
-    if (val > 0) return total + 1;
-    return total;
-  }, 0) : null;
-  const csvArr = type === 'char' ? [
-    sheetId,
-    type,
-    encycloData?.hash,
-    `https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${encycloData?.hash}.png`,
-    ['power', 'speed', 'technic'].reduce((highestKey, key) => {
-      const highestVal = highestKey ? data?.monster?.[highestKey] : 0;
-      const val = data?.monster?.[key];
-      if (val > highestVal) return key;
-      return highestKey;
-    }, '').slice(0, 1).toUpperCase(), // highest stat
-    encycloData?.name,
-    encycloData?.name_en,
-    numStats === 1 ? 'O' : '',
-    numStats === 2 ? 'O' : '',
-    numStats === 3 ? 'O' : '',
-    `${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`, // statPlan
-    '', // lock
-    encycloData?.description,
-    encycloData?.description_en,
-  ] : [
-    sheetId,
-    'memento',
-    newMementoData?.memento_hash,
-    `https://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}_memento.png`,
-    4500,
-    newMementoData?.memento_name,
-    newMementoData?.memento_name_en,
-    '',
-    '',
-    '',
-    '',
-    '', // lock
-    encycloData?.memento_description,
-    encycloData?.memento_description_en,
-  ];
-  const csv = csvArr.map((item) => (item ? `"${item}"` : '')).map((item) => item?.replace(/\n/g, '\\n')).join(',');
-  return csv;
-}
-
-export function getDiscordReportEvoSuccess(state, data) {
+export async function getDiscordReportEvoSuccess(state, data) {
   const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
     && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
   const mementosOwned = getOwnedMementoMonsterNames(state);
-  const header = '\n⬆️ **EVOLUTION SUCCESS** ⬆️';
-  const nameEnStr = `\nName (EN): **${encycloData?.name_en}**`;
-  const nameStr = `\nName: **${encycloData?.name}**`;
-  const descStr = `\nDescription: **${encycloData?.description}**`;
-  const descEnStr = `\nDescription (EN): **${encycloData?.description_en}**`;
-  const hashStr = `\nHash: **${encycloData?.hash}**`;
+  const nameEnStr = `Name (EN): **${encycloData?.name_en}**`;
+  const nameStr = `Name: **${encycloData?.name}**`;
+  const descStr = `Description: **${encycloData?.description.replace(/\n/g, '')}**`;
+  const descEnStr = `Description (EN): **${encycloData?.description_en.replace(/\n/g, '')}**`;
+  const hashStr = `Hash: **${encycloData?.hash}**`;
+  const planIdStr = `${state?.planId}`;
+  const statPlanStr = `${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`;
+  const planStr = `Plan: **${planIdStr}** / **${statPlanStr}**`;
+  const statsTotal = data?.monster
+    ? data.monster.power + data.monster.speed + data.monster.technic : 0;
+  const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
+  const statsStr = `Stats: ${statBreakdownStr}`;
+  const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
+  const winB64 = await getCharImgSrc(data?.monster?.hash, 'win_1');
+  return {
+    files: [
+      { base64: winB64, name: `${data?.monster?.hash}.png` },
+    ],
+    embeds: [{
+      description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`,
+      color: 4961603,
+      author: {
+        name: 'EVOLUTION SUCCESS',
+        icon_url: `attachment://${data?.monster?.hash}.png`,
+      },
+      image: {
+        url: `attachment://${data?.monster?.hash}.png`,
+      },
+    }],
+  };
+}
+
+export function getDiscordReportEvoFailure(state, data) {
+  const mementosOwned = getOwnedMementoMonsterNames(state);
   const planIdStr = `${state?.planId}`;
   const statPlanStr = `${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`;
   const planStr = `\nPlan: **${planIdStr}** / **${statPlanStr}**`;
@@ -494,40 +464,84 @@ export function getDiscordReportEvoSuccess(state, data) {
   const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
   const statsStr = `\nStats: ${statBreakdownStr}`;
   const ownedMementosStr = `\nOwned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
-  const csv = getDiscordReportCSV(state, data, 'char');
-  const csvStr = `\nCSV: \`${csv}\``;
-  const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${planStr}${statsStr}${ownedMementosStr}${csvStr}`;
-  return report;
+  return {
+    embeds: [{
+      description: `${planStr}${statsStr}${ownedMementosStr}`,
+      color: 0,
+      author: {
+        name: '❌ EVOLUTION FAILURE',
+      },
+    }],
+  };
 }
 
-export function getDiscordReportEvoFailure(state, data) {
-  const mementosOwned = getOwnedMementoMonsterNames(state);
-  const header = '\n🤦‍♂️ **EVOLUTION FAILURE** 🤦‍♂️';
-  const planIdStr = `**${state?.planId}**`;
-  const statPlanStr = `**${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}**`;
-  const planStr = `\nPlan: ${planIdStr} / ${statPlanStr}`;
-  const statsTotal = data?.monster
-    ? data.monster.power + data.monster.speed + data.monster.technic : 0;
-  const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
-  const statsStr = `\nStats: ${statBreakdownStr}`;
-  const ownedMementosStr = `\nOwned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
-  const report = `${header}${planStr}${statsStr}${ownedMementosStr}`;
-  return report;
-}
-
-export function getDiscordReportMemento(state, data) {
+export async function getDiscordReportMemento(state, data) {
   const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
     && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
   const newMementoData = encycloData?.memento_hash !== '???' ? encycloData : data?.monster;
-  const header = '\n🏆 **MEMENTO** 🏆';
   const nameEnStr = `\nName (EN): **${newMementoData?.memento_name_en}**`;
   const nameStr = `\nName: **${newMementoData?.memento_name}**`;
-  const descEnStr = newMementoData?.memento_description_en ? `\nDescription (EN): **${newMementoData?.memento_description_en}**` : '';
-  const descStr = newMementoData?.memento_description ? `\nDescription: **${newMementoData?.memento_description}**` : '';
+  const descEnStr = `\nDescription (EN): **${newMementoData?.memento_description_en?.replace(/\n/g, '') || '???'}**`;
+  const descStr = `\nDescription: **${newMementoData?.memento_description?.replace(/\n/g, '') || '???'}**`;
   const hashStr = `\nHash: **${newMementoData?.memento_hash}**`;
   const fromStr = `\nFrom: **${newMementoData?.name_en}** (${newMementoData?.name})`;
-  const csv = getDiscordReportCSV(state, data, 'memento');
-  const csvStr = `\nCSV: \`${csv}\``;
-  const report = `${header}${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${fromStr}${csvStr}`;
-  return report;
+  const base64 = await toDataUrl(`https://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}_memento.png`);
+  return {
+    // content,
+    files: [{
+      base64,
+      name: `${newMementoData?.memento_hash}.png`,
+    }],
+    embeds: [{
+      description: `${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${fromStr}`,
+      color: 1399259,
+      author: {
+        name: 'MEMENTO',
+        icon_url: `attachment://${newMementoData?.memento_hash}.png`,
+      },
+      image: {
+        url: `attachment://${newMementoData?.memento_hash}.png`,
+      },
+    }],
+  };
+}
+
+export function getDiscordReportMatch(state, data, args) {
+  const isFever = data?.exchangeResult?.is_spmatch;
+  const header = isFever ? '🔥 FEVER MATCH' : '❌ NORMAL MATCH';
+  return {
+    embeds: [{
+      description: `${data?.monster?.name_en} vs ${args?.match?.name_en}`,
+      color: isFever ? 14177041 : 0,
+      author: {
+        name: header,
+      },
+    }],
+  };
+}
+
+export async function getDiscordReportSighting(state, data, args) {
+  const nameEnStr = `\nName (EN): **${args?.match?.name_en}**`;
+  const nameStr = `\nName: **${args?.match?.name}**`;
+  const hashStr = `\nHash: **${args?.match?.hash}**`;
+  const statsTotal = args?.match ? args.match.power + args.match.speed + args.match.technic : 0;
+  const statBreakdownStr = `**P** ${args?.match?.power || 0} + **S** ${args?.match?.speed || 0} + **T** ${args?.match?.technic || 0} = ${statsTotal}`;
+  const statsStr = `\nStats: ${statBreakdownStr}`;
+  const winB64 = await getCharImgSrc(args?.match?.hash, 'win_1');
+  return {
+    files: [
+      { base64: winB64, name: `${args?.match?.hash}.png` },
+    ],
+    embeds: [{
+      description: `${nameEnStr}${nameStr}${hashStr}${statsStr}`,
+      color: 4961603,
+      author: {
+        name: 'SIGHTING',
+        icon_url: `attachment://${args?.match?.hash}.png`,
+      },
+      image: {
+        url: `attachment://${args?.match?.hash}.png`,
+      },
+    }],
+  };
 }
