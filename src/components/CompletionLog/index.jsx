@@ -38,7 +38,7 @@ function CompletionLog({
   }, [targetStickerCount, now, curLiveDur]);
   const stickerString = React.useMemo(() => {
     const dateStr = isRelTime
-      ? parseDurationStr(stickerCompletion - now) : stickerCompletion.toLocaleString();
+      ? parseDurationStr(stickerCompletion - now) : (new Date(stickerCompletion))?.toLocaleString();
     const labelStr = `Stickers Only Completion (${targetStickerCount}/${totalCount} left)`;
     return `[${dateStr}] ${labelStr}`;
   }, [isRelTime, targetStickerCount, now, stickerCompletion, totalCount]);
@@ -53,7 +53,7 @@ function CompletionLog({
   }, [curLiveDur, targetMementoCount, now]);
   const mementoString = React.useMemo(() => {
     const dateStr = isRelTime
-      ? parseDurationStr(mementoCompletion - now) : mementoCompletion.toLocaleString();
+      ? parseDurationStr(mementoCompletion - now) : (new Date(mementoCompletion))?.toLocaleString();
     const labelStr = `Mementos Completion (${targetMementoCount}/${totalCount} left)`;
     return `[${dateStr}] ${labelStr}`;
   }, [isRelTime, targetMementoCount, now, mementoCompletion, totalCount]);
