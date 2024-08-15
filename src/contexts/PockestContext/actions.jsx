@@ -1,7 +1,6 @@
 import fetchAllMonsters from '../../utils/fetchAllMonsters';
 import fetchAllHashes from '../../utils/fetchAllHashes';
 import { postDiscordEvo, postDiscordMatch } from '../../utils/postDiscord';
-import isMatchDiscovery from '../../utils/isMatchDiscovery';
 import combineDiscordReports from '../../utils/combineDiscordReports';
 import {
   getAutoSettings,
@@ -13,6 +12,7 @@ import {
   isConfirmedMonster,
   getDiscordReportEvoFailure,
   getDiscordReportMatch,
+  isMatchDiscovery,
 } from './getters';
 import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
@@ -247,12 +247,7 @@ export async function pockestMatch(pockestState, match) {
     if (data?.exchangable === false) {
       throw new Error(`Buckler Response: ${data?.event || data?.message}`);
     }
-    const result = {
-      ...getLogEntry(pockestState, data),
-      ...data?.exchangeResult,
-      target_monster_name_en: match?.name_en,
-    };
-    const isDisc = isMatchDiscovery(pockestState, result);
+    const isDisc = isMatchDiscovery(pockestState, data?.exchangeResult);
     if (isDisc) {
       const report = getDiscordReportMatch(pockestState, data, payload?.args);
       postDiscordMatch(report);

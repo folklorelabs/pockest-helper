@@ -7,63 +7,63 @@ const matchData = {
   event: 'exchange',
   exchangeResult: {
     egg_get: false,
-    egg_hash: '0003-qYaoQCHI',
-    egg_id: 3,
-    egg_name: '黄水玉のタマゴ',
-    egg_name_en: 'Yellow Polka-dot Egg',
-    egg_point_per_after: 56.43,
-    egg_point_per_before: 45.93,
-    get_egg_point: 1050,
+    egg_hash: '0006-mjDwuAKH',
+    egg_id: 6,
+    egg_name: '橙色のタマゴ',
+    egg_name_en: 'Orange egg',
+    egg_point_per_after: 88.87,
+    egg_point_per_before: 83.76,
+    get_egg_point: 895,
     get_memento_point: 0,
-    is_spmatch: true,
+    is_spmatch: false,
     memento_get: false,
-    memento_hash: '4012-mogpqmds',
+    memento_hash: '4001-URBpSzfv',
     memento_point_per_after: 100,
     memento_point_per_before: 100,
-    target_monster_hash: '4016-BNlDPptw',
-    target_monster_id: 4016,
+    target_monster_hash: '4066-VELEcUcu',
+    target_monster_id: 4066,
   },
   monster: {
     age: 5,
-    exchange_time: 1701281504000,
+    exchange_time: 1723842545000,
     exchange_time_par: 0,
-    garbage: 0,
-    hash: '4012-UWJyGwgR',
-    live_time: 1700673213000,
-    live_time_d: 1700673213000,
-    max_memento_point: 4500,
+    garbage: 2,
+    hash: '4001-ffkNSQDX',
+    live_time: 1723180652000,
+    live_time_d: 1723180652000,
+    max_memento_point: 5000,
     memento_flg: 0,
-    memento_hash: '4012-mogpqmds',
-    memento_name: '猛牛グローブ',
-    memento_name_en: 'Raging Bull Glove',
-    memento_point: 5604,
-    name: 'バイソン',
-    name_en: 'Balrog',
-    power: 3038,
+    memento_hash: '4001-URBpSzfv',
+    memento_name: '殺意のグローブ',
+    memento_name_en: 'Murderous Gloves',
+    memento_point: 6863,
+    name: '殺意リュウ',
+    name_en: 'Evil Ryu',
+    power: 3665,
     speed: 0,
-    status: 2,
-    stomach: 6,
+    status: 1,
+    stomach: 3,
     technic: 0,
     training_is_fever: false,
-    training_time: 1701235613000,
-    training_time_par: 6,
+    training_time: 1723799343000,
+    training_time_par: 0,
   },
-  next_big_event_timer: 1701278013000,
-  next_small_event_timer: 1701199629000,
+  next_big_event_timer: 1723785452000,
+  next_small_event_timer: 1723756652000,
   stamp: false,
 };
 const matchArgs = {
   match: {
-    fighters_id: 'Darkkaz20',
-    hash: '4051-SBvNoTyb',
-    monster_id: 4051,
-    name: 'ヤン',
-    name_en: 'Yang',
-    power: 0,
-    short_id: 3167258607,
+    fighters_id: 'R. Mika',
+    hash: '4066-VELEcUcu',
+    monster_id: 4066,
+    name: 'ファルケ',
+    name_en: 'Falke',
+    power: 110,
+    short_id: 2009252746,
     slot: 1,
-    speed: 550,
-    technic: 0,
+    speed: 0,
+    technic: 700,
   },
 };
 const chunData = {
@@ -97,13 +97,13 @@ const chunData = {
 };
 
 export async function testDiscordMatch() {
-  const reports = [
-    pockestGetters.getDiscordReportMatch(pockestState, matchData, matchArgs),
-    await pockestGetters.getDiscordReportSighting(pockestState, matchData, matchArgs),
-  ];
-  const report = combineDiscordReports(reports);
-  await postDiscordTest(report);
-  return report;
+  const isDisc = pockestGetters.isMatchDiscovery(pockestState, matchData?.exchangeResult);
+  if (isDisc) {
+    const report = pockestGetters.getDiscordReportMatch(pockestState, matchData, matchArgs);
+    postDiscordTest(report);
+    return report;
+  }
+  return null;
 }
 
 export async function testDiscordEvo() {

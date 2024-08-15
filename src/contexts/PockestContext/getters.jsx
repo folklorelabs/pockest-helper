@@ -524,6 +524,17 @@ export async function getDiscordReportMemento(state, data) {
   };
 }
 
+export function isMatchDiscovery(pockestState, exchangeResult) {
+  const monster = pockestState?.allMonsters
+    .find((m) => m.monster_id === getMonsterIdFromHash(pockestState?.data?.monster?.hash));
+  const allMissing = [
+    ...(monster?.matchSusFever || []),
+    ...(monster?.matchUnknown || []),
+    ...(monster?.matchSusNormal || []),
+  ];
+  return allMissing.includes(exchangeResult?.target_monster_id);
+}
+
 export function getDiscordReportMatch(state, data, args) {
   const isFever = data?.exchangeResult?.is_spmatch;
   const header = isFever ? '🔥 FEVER MATCH' : '❌ NORMAL MATCH';

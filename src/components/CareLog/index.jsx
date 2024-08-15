@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   pockestActions,
+  pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import isMatchDiscovery from '../../utils/isMatchDiscovery';
 import getActionResultString from '../../utils/getActionResultString';
 import getMatchReportString from '../../utils/getMatchReportString';
 import './index.css';
@@ -29,7 +29,7 @@ function CareLog({
     () => {
       const d = log.filter((entry) => logTypes.includes(entry.logType));
       if (onlyDiscoveries) {
-        return d.filter((entry) => entry.logType === 'exchange' && isMatchDiscovery(pockestState, entry));
+        return d.filter((entry) => entry.logType === 'exchange' && pockestGetters.isMatchDiscovery(pockestState, entry));
       }
       return d;
     },

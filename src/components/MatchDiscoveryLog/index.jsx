@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   usePockestContext,
+  pockestGetters,
 } from '../../contexts/PockestContext';
-import isMatchDiscovery from '../../utils/isMatchDiscovery';
 import getMatchReportString from '../../utils/getMatchReportString';
 import { postDiscordMatch, getDiscordCooldown, getDiscordReportStatus } from '../../utils/postDiscord';
 import './index.css';
@@ -20,7 +20,7 @@ function MatchDiscoveryLog({
   const contentData = React.useMemo(
     () => {
       const d = pockestState?.log?.filter((entry) => ['exchange'].includes(entry.logType));
-      return d.filter((entry) => entry.logType === 'exchange' && isMatchDiscovery(pockestState, entry));
+      return d.filter((entry) => entry.logType === 'exchange' && pockestGetters.isMatchDiscovery(pockestState, entry));
     },
     [pockestState],
   );
