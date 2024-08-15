@@ -42,11 +42,12 @@ export function PockestProvider({
 }) {
   const [pockestState, pockestDispatch] = useReducer(REDUCER, initialState);
   const {
+    stat,
     cleanFrequency,
     feedFrequency,
     feedTarget,
   } = React.useMemo(
-    () => pockestGetters.getCurrentPlanStats(pockestState),
+    () => pockestGetters.getCareSettings(pockestState),
     [pockestState],
   );
   const {
@@ -145,7 +146,6 @@ export function PockestProvider({
         autoTrain,
         autoMatch,
         autoCure,
-        stat,
       } = pockestState;
       const now = new Date();
 
@@ -264,6 +264,7 @@ export function PockestProvider({
       window.clearInterval(interval);
     };
   }, [
+    stat,
     cleanFrequency,
     currentCleanWindow,
     currentFeedWindow,

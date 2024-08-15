@@ -1,9 +1,9 @@
+import { STAT_ABBR } from '../../config/stats';
 import MONSTER_AGE from '../../config/MONSTER_AGE';
 import getTimeIntervals from '../../utils/getTimeIntervals';
 import getTotalStats from '../../utils/getTotalStats';
-import getTargetMonsterPlan, { getCurrentTargetMonsterPlan } from '../../utils/getTargetMonsterPlan';
 import getDeathTimer from '../../utils/getDeathTimer';
-import { MONSTER_LIFESPAN } from '../../utils/getAgeTimer';
+import { parsePlanId, LEGACY_PLAN_REGEX } from '../../utils/parsePlanId';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 import getFirstMatchTime from '../../utils/getFirstMatchTime';
@@ -106,9 +106,100 @@ export function getCurrentMonsterLogs(state, logType) {
   });
 }
 
-export function getCurrentPlanStats(state) {
+export function getTargetMonsterPlanId(state) {
+  const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
+  const planId = (() => {
+    const isMonsterPlan = !!monster;
+    if (!isMonsterPlan) return state?.planId ?? '';
+    const id = monster?.planId ?? '';
+    if (typeof state?.planAge !== 'number') return id;
+    return LEGACY_PLAN_REGEX.test(id) ? `${id.substring(0, 1)}${state?.planAge}${id.substring(2)}`
+      : `${id.substring(0, id.length - 1)}${state?.planAge}`;
+  })();
+  return planId;
+}
+
+export function getTargetMonsterStatPlanId(state) {
+  const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
+  const statePlanId = getTargetMonsterPlanId(state);
+  const {
+    primaryStatLetter,
+  } = parsePlanId(statePlanId) ?? {};
+  const statPlanId = (() => {
+    if (monster?.statPlan) return monster.statPlan;
+    const fallbackStatPlanId = Array.from(new Array(6)).map(() => primaryStatLetter).join('');
+    if (monster) return fallbackStatPlanId;
+
+    // We are in new/unknown/manual mode
+    if (state?.statPlanId) return state?.statPlanId;
+    return fallbackStatPlanId;
+  })();
+  return statPlanId;
+}
+
+export function getTargetMonsterPlan(state) {
+  const statePlanId = getTargetMonsterPlanId(state);
+  const statPlanId = getTargetMonsterStatPlanId(state);
+  const {
+    planId,
+    planEgg,
+    planRoute,
+    primaryStat,
+    planAge,
+  } = parsePlanId(statePlanId) ?? {};
+  const statPlan = statPlanId.split('').map((statLetter) => STAT_ABBR[statLetter]);
+  return {
+    planId,
+    primaryStat,
+    statPlanId,
+    statPlan,
+    planEgg,
+    planAge,
+    planRoute,
+  };
+}
+
+export function getTargetMonsterStatPlan(state) {
+  const statPlanId = getTargetMonsterStatPlanId(state);
+  const statPlan = statPlanId.split('').map((statLetter) => STAT_ABBR[statLetter]);
+  return {
+    statPlanId,
+    statPlan,
+  };
+}
+
+export function getTargetMonsterCurrentRouteSpec(state) {
+  const targetPlan = getTargetMonsterPlan(state);
+  const curAge = state?.data?.monster?.age;
+  const currentRouteSpec = targetPlan?.planRoute
+    ?.find((r) => curAge >= r?.ageStart && curAge < r?.ageEnd);
+  return currentRouteSpec || {};
+}
+
+export function getTargetMonsterCurrentStat(state) {
+  const targetPlan = getTargetMonsterPlan(state);
+  const stat = (() => {
+    const curTrainings = state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
+    const numTrains = Math.max(state?.statLog?.length, curTrainings?.length);
+    return targetPlan?.statPlan?.[numTrains] || targetPlan?.primaryStat;
+  })();
+  return stat;
+}
+
+export function getCareSettings(state) {
   if (state?.autoPlan) {
-    return getCurrentTargetMonsterPlan(state);
+    const {
+      cleanFrequency,
+      feedFrequency,
+      feedTarget,
+    } = getTargetMonsterCurrentRouteSpec(state);
+    const stat = getTargetMonsterCurrentStat(state);
+    return {
+      stat,
+      cleanFrequency,
+      feedFrequency,
+      feedTarget,
+    };
   }
   return {
     stat: state?.stat,
@@ -141,9 +232,8 @@ export function getCurrentPlanSchedule(state) {
   const birth = state?.data?.monster?.live_time;
   if (!birth) return {};
   const neglectOffset = getPlanNeglectOffset(state);
-  const cleanSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
-    .reduce((fullSchedule, div) => {
-      const spec = targetPlan[div];
+  const cleanSchedule = state?.autoPlan ? targetPlan?.planRoute
+    ?.reduce((fullSchedule, spec, index) => {
       if (!spec) return fullSchedule;
       if (spec.startTime > neglectOffset) return fullSchedule;
       const start = birth + spec.startTime;
@@ -151,7 +241,7 @@ export function getCurrentPlanSchedule(state) {
       const schedule = getTimeIntervals(
         start,
         end,
-        state?.planAge === 5 && div === 'planDiv3' ? 6 : spec.cleanFrequency,
+        state?.planAge === 5 && index >= 2 ? 6 : spec.cleanFrequency,
         spec.cleanOffset,
       );
       return [
@@ -168,9 +258,8 @@ export function getCurrentPlanSchedule(state) {
     // remove unnecessary first clean
     cleanSchedule.shift();
   }
-  const feedSchedule = state?.autoPlan ? ['planDiv1', 'planDiv2', 'planDiv3']
-    .reduce((fullSchedule, div) => {
-      const spec = targetPlan[div];
+  const feedSchedule = state?.autoPlan ? targetPlan?.planRoute
+    ?.reduce((fullSchedule, spec) => {
       if (!spec) return fullSchedule;
       if (spec.startTime > neglectOffset) return fullSchedule;
       const start = birth + spec.startTime;
@@ -269,8 +358,32 @@ export function isMonsterMissing(state, data) {
   return data?.event === 'monster_not_found';
 }
 
-export function getAutoPlanSettings(state, data, settingsOverride = {}) {
-  const newSettings = {
+export function getAutoPlanSettings(state) {
+  const statPlanId = getTargetMonsterStatPlanId(state);
+  const targetPlan = getTargetMonsterPlan(state);
+  const targetPlanSpecs = getTargetMonsterCurrentRouteSpec(state);
+  const stat = getTargetMonsterCurrentStat(state);
+  return {
+    autoPlan: true,
+    autoClean: true,
+    autoFeed: true,
+    autoTrain: true,
+    autoMatch: true,
+    autoCure: true,
+    planId: targetPlan?.planId,
+    statPlanId,
+    planAge: targetPlan?.planAge,
+    stat,
+    cleanOffset: targetPlanSpecs?.cleanOffset,
+    feedOffset: targetPlanSpecs?.feedOffset,
+    cleanFrequency: targetPlanSpecs?.cleanFrequency,
+    feedFrequency: targetPlanSpecs?.feedFrequency,
+    feedTarget: targetPlanSpecs?.feedTarget,
+  };
+}
+
+export function getAutoSettings(state, data, settingsOverride = {}) {
+  let newSettings = {
     ...settingsOverride,
   };
   if (isMonsterDead(state, data)
@@ -284,26 +397,15 @@ export function getAutoPlanSettings(state, data, settingsOverride = {}) {
     newSettings.eggTimestamp = null;
   }
   if (newSettings.autoPlan ?? state.autoPlan) {
-    const targetMonsterPlan = getCurrentTargetMonsterPlan({
+    const autoPlanSettings = getAutoPlanSettings({
       ...state,
       ...newSettings,
       data,
     });
-    newSettings.autoPlan = true;
-    newSettings.autoClean = true;
-    newSettings.autoFeed = true;
-    newSettings.autoTrain = true;
-    newSettings.autoMatch = true;
-    newSettings.autoCure = true;
-    newSettings.planId = targetMonsterPlan?.planId;
-    newSettings.statPlanId = targetMonsterPlan?.statPlanId;
-    newSettings.planAge = targetMonsterPlan?.planAge;
-    newSettings.stat = targetMonsterPlan?.stat;
-    newSettings.cleanOffset = targetMonsterPlan?.cleanOffset;
-    newSettings.feedOffset = targetMonsterPlan?.feedOffset;
-    newSettings.cleanFrequency = targetMonsterPlan?.cleanFrequency;
-    newSettings.feedFrequency = targetMonsterPlan?.feedFrequency;
-    newSettings.feedTarget = targetMonsterPlan?.feedTarget;
+    newSettings = {
+      ...newSettings,
+      ...autoPlanSettings,
+    };
   }
   return newSettings;
 }

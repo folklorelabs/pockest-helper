@@ -4,7 +4,7 @@ import { postDiscordEvo, postDiscordMatch } from '../../utils/postDiscord';
 import isMatchDiscovery from '../../utils/isMatchDiscovery';
 import getMatchReportString from '../../utils/getMatchReportString';
 import {
-  getAutoPlanSettings,
+  getAutoSettings,
   fetchPockestStatus,
   getLogEntry,
   getOwnedMementoMonsterNames,
@@ -28,7 +28,7 @@ export function pockestSettings(settings) {
   return [ACTIONS.SETTINGS, settings];
 }
 export function pockestPlanSettings(pockestState, settingsOverride) {
-  const newSettings = getAutoPlanSettings(pockestState, null, settingsOverride);
+  const newSettings = getAutoSettings(pockestState, null, settingsOverride);
   return [ACTIONS.SETTINGS, newSettings];
 }
 
