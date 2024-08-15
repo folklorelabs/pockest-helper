@@ -8,8 +8,6 @@ import { parseDurationStr } from '../../utils/parseDuration';
 import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
 import './index.css';
 
-const TASK_GRACE_TIME = 1000 * 60 * 60;
-
 function PlanLog({
   title,
   rows,
@@ -28,11 +26,6 @@ function PlanLog({
     } = pockestGetters.getCurrentPlanSchedule(pockestState);
     const matchSchedule = pockestGetters.getMatchSchedule(pockestState);
     let data = [];
-    const isDone = (taskId, w, taskGrace) => {
-      const logs = getCurrentMonsterLogs(pockestState, taskId);
-      return logs.find((l) => l?.timestamp >= w.start
-        && l?.timestamp < (w.start + taskGrace));
-    };
     const stunOffset = pockestGetters.getPlanStunOffset(pockestState);
     if (typeof stunOffset === 'number') {
       const start = birth + pockestGetters.getPlanStunOffset(pockestState);
