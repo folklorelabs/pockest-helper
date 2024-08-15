@@ -505,7 +505,6 @@ export async function getDiscordReportMemento(state, data) {
   const fromStr = `\nFrom: **${newMementoData?.name_en}** (${newMementoData?.name})`;
   const base64 = await toDataUrl(`https://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}_memento.png`);
   return {
-    // content,
     files: [{
       base64,
       name: `${newMementoData?.memento_hash}.png`,

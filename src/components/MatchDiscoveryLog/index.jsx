@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import APP_NAME from '../../config/APP_NAME';
 import {
   usePockestContext,
   pockestGetters,
@@ -64,7 +65,7 @@ function MatchDiscoveryLog({
         <textarea
           ref={textAreaEl}
           className="PockestTextArea MatchDiscoveryLog-textarea"
-          value={`[Pockest Helper v${import.meta.env.APP_VERSION}]\n${content}`}
+          value={`${APP_NAME}\n${content}`}
           readOnly
           rows={rows}
         />

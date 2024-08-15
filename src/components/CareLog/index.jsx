@@ -8,6 +8,7 @@ import {
 import getActionResultString from '../../utils/getActionResultString';
 import getMatchReportString from '../../utils/getMatchReportString';
 import './index.css';
+import APP_NAME from '../../config/APP_NAME';
 
 function CareLog({
   title,
@@ -36,7 +37,7 @@ function CareLog({
     [log, onlyDiscoveries, logTypes, pockestState],
   );
   const careLog = React.useMemo(() => [
-    `[Pockest Helper v${import.meta.env.APP_VERSION}]`,
+    APP_NAME,
     ...careLogData.map((entry) => (onlyDiscoveries ? getMatchReportString : getActionResultString)({
       pockestState,
       result: entry,

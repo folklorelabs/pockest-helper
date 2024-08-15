@@ -7,6 +7,7 @@ import {
 import { parseDurationStr } from '../../utils/parseDuration';
 import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
 import './index.css';
+import APP_NAME from '../../config/APP_NAME';
 
 function PlanLog({
   title,
@@ -79,7 +80,7 @@ function PlanLog({
     return data;
   }, [pockestState]);
   const scheduleLog = React.useMemo(() => [
-    `[Pockest Helper v${import.meta.env.APP_VERSION}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
+    `${APP_NAME} Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
     ...schedule.map((d) => {
       const icon = (() => {
         if (d.completion) return '☑';

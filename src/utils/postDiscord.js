@@ -1,3 +1,4 @@
+import APP_NAME from '../config/APP_NAME';
 import logError from './logError';
 
 const DISCORD_ATTEMPT_TIMESTAMP_ID = 'PockestHelperTimeout-discordReportAttempt';
@@ -61,7 +62,6 @@ export async function postDiscord(id, url, report) {
         acc[batchIndex].files.push(report.files[index]);
         return acc;
       }, []);
-      console.log({ batchedReports });
       await Promise.all(batchedReports.map(async (r) => postDiscord(id, url, r)));
       return;
     }
@@ -73,7 +73,7 @@ export async function postDiscord(id, url, report) {
       body.append(`file[${index + 1}]`, b64toBlob(b64Data), fileMeta.name);
     });
     const payload = {};
-    if (report?.content) payload.content = `*[Pockest Helper v${import.meta.env.APP_VERSION}]*\n${report?.content}`;
+    payload.content = `*${APP_NAME}*${report?.content ? `\n${report?.content}` : ''}`;
     if (report?.attachments) payload.attachments = report?.attachments;
     if (report?.embeds) payload.embeds = report?.embeds;
     body.append('payload_json', JSON.stringify(payload));
