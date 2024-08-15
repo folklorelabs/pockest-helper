@@ -8,6 +8,8 @@ import { parseDurationStr } from '../../utils/parseDuration';
 import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
 import './index.css';
 
+const TASK_GRACE_TIME = 1000 * 60 * 60;
+
 function PlanLog({
   title,
   rows,
@@ -26,10 +28,10 @@ function PlanLog({
     } = pockestGetters.getCurrentPlanSchedule(pockestState);
     const matchSchedule = pockestGetters.getMatchSchedule(pockestState);
     let data = [];
-    const isDone = (type, scheduleEntry, grace = (1000 * 60 * 60)) => {
-      const logs = getCurrentMonsterLogs(pockestState, type);
-      return logs.find((l) => l?.timestamp >= scheduleEntry.start
-        && l?.timestamp < (scheduleEntry.start + grace));
+    const isDone = (taskId, w, taskGrace) => {
+      const logs = getCurrentMonsterLogs(pockestState, taskId);
+      return logs.find((l) => l?.timestamp >= w.start
+        && l?.timestamp < (w.start + taskGrace));
     };
     const stunOffset = pockestGetters.getPlanStunOffset(pockestState);
     if (typeof stunOffset === 'number') {
@@ -43,26 +45,40 @@ function PlanLog({
     data = [
       ...data,
       ...(cleanSchedule?.map((w) => ({
-        completion: isDone('cleaning', w),
+        logType: 'cleaning',
+        logGrace: 1000 * 60 * 60,
         label: 'Clean',
         ...w,
       })) ?? []),
       ...(feedSchedule?.map((w) => ({
-        completion: isDone('meal', w),
+        logType: 'meal',
+        logGrace: 1000 * 60 * 60,
         label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
         ...w,
       })) ?? []),
       ...(trainSchedule?.map((w) => ({
-        completion: isDone('training', w, 1000 * 60 * 60 * 12),
+        logType: 'training',
+        logGrace: 1000 * 60 * 60 * 12,
         label: `Train ${w.stat}`,
         ...w,
       })) ?? []),
       ...(matchSchedule?.map((w) => ({
-        completion: isDone('exchange', w, 1000 * 60 * 60 * 12),
+        logType: 'exchange',
+        logGrace: 1000 * 60 * 60 * 12,
         label: 'Match',
         ...w,
       })) ?? []),
-    ].sort((a, b) => a.start - b.start).map((d) => ({
+    ].map((w) => {
+      const completion = w.completion
+        ?? (
+          getCurrentMonsterLogs(pockestState, w.logType).find((l) => l?.timestamp >= w.start
+            && l?.timestamp < (w.start + w.logGrace))
+        );
+      return {
+        ...w,
+        completion,
+      };
+    }).sort((a, b) => a.start - b.start).map((d) => ({
       ...d,
       startOffsetLabel: parseDurationStr(d.start - birth),
       startLabel: (new Date(d.start)).toLocaleString(),
@@ -71,7 +87,14 @@ function PlanLog({
   }, [pockestState]);
   const scheduleLog = React.useMemo(() => [
     `[Pockest Helper v${import.meta.env.APP_VERSION}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
-    ...schedule.map((d) => `${d.completion ? '☑' : '☐'} [${!isRelTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`),
+    ...schedule.map((d) => {
+      const icon = (() => {
+        if (d.completion) return '☑';
+        if (Date.now() >= (d.start + d.logGrace)) return '⚠';
+        return '☐';
+      })();
+      return `${icon} [${!isRelTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`;
+    }),
   ].join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule]);
   React.useEffect(() => {
     if (!textAreaEl?.current) return () => {};
