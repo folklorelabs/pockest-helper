@@ -437,38 +437,26 @@ export async function getDiscordReportEvoSuccess(state, data) {
   const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
   const [
     winB64,
-    idleB64,
-    attackB64,
-    downB64,
   ] = await Promise.all([
     getCharImgSrc(data?.monster?.hash, 'win_1'),
-    getCharImgSrc(data?.monster?.hash, 'idle_1'),
-    getCharImgSrc(data?.monster?.hash, 'attack'),
-    getCharImgSrc(data?.monster?.hash, 'down'),
   ]);
   const embed = {
     description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`,
-    color: 4961603,
+    color: 377190,
     author: {
-      name: 'EVOLUTION SUCCESS',
-      icon_url: `attachment://${data?.monster?.hash}.png`,
+      name: '🍃 EVOLUTION SUCCESS',
+    },
+    thumbnail: {
+      url: `attachment://${data?.monster?.hash}.png`,
     },
     url: `https://folklorelabs.io/pockest-helper-data/v2/monsters.json?hash=${data?.monster?.hash}`, // hack for grouping files into embed
   };
   const files = [
     { base64: winB64, name: `${data?.monster?.hash}.png` },
-    { base64: idleB64, name: `${data?.monster?.hash}-idle.png` },
-    { base64: attackB64, name: `${data?.monster?.hash}-attack.png` },
-    { base64: downB64, name: `${data?.monster?.hash}-down.png` },
   ];
   return {
     files,
-    embeds: files.map((f) => ({
-      ...embed,
-      image: {
-        url: `attachment://${f.name}`,
-      },
-    })),
+    embeds: [embed],
   };
 }
 
@@ -485,9 +473,9 @@ export function getDiscordReportEvoFailure(state, data) {
   return {
     embeds: [{
       description: `${planStr}${statsStr}${ownedMementosStr}`,
-      color: 0,
+      color: 15348524, // 5177601,
       author: {
-        name: '❌ EVOLUTION FAILURE',
+        name: '🫠 EVOLUTION FAILURE',
       },
     }],
   };
@@ -511,12 +499,11 @@ export async function getDiscordReportMemento(state, data) {
     }],
     embeds: [{
       description: `${nameEnStr}${nameStr}${descEnStr}${descStr}${hashStr}${fromStr}`,
-      color: 1399259,
+      color: 15049006,
       author: {
-        name: 'MEMENTO',
-        icon_url: `attachment://${newMementoData?.memento_hash}.png`,
+        name: '🏆 MEMENTO',
       },
-      image: {
+      thumbnail: {
         url: `attachment://${newMementoData?.memento_hash}.png`,
       },
     }],
@@ -561,37 +548,25 @@ export async function getDiscordReportSighting(state, data, args) {
   const statsStr = `\nStats: ${statBreakdownStr}`;
   const [
     winB64,
-    idleB64,
-    attackB64,
-    downB64,
   ] = await Promise.all([
     getCharImgSrc(args?.match?.hash, 'win_1'),
-    getCharImgSrc(args?.match?.hash, 'idle_1'),
-    getCharImgSrc(args?.match?.hash, 'attack'),
-    getCharImgSrc(args?.match?.hash, 'down'),
   ]);
   const embed = {
     description: `${nameEnStr}${nameStr}${hashStr}${statsStr}`,
-    color: 4961603,
+    color: 501228,
     author: {
-      name: 'SIGHTING',
-      icon_url: `attachment://${args?.match?.hash}.png`,
+      name: '🔎 SIGHTING',
+    },
+    thumbnail: {
+      url: `attachment://${args?.match?.hash}.png`,
     },
     url: `https://folklorelabs.io/pockest-helper-data/v2/hashes.json?hash=${args?.match?.hash}`, // hack for grouping files into embed
   };
   const files = [
     { base64: winB64, name: `${args?.match?.hash}.png` },
-    { base64: idleB64, name: `${args?.match?.hash}-idle.png` },
-    { base64: attackB64, name: `${args?.match?.hash}-attack.png` },
-    { base64: downB64, name: `${args?.match?.hash}-down.png` },
   ];
   return {
     files,
-    embeds: files.map((f) => ({
-      ...embed,
-      image: {
-        url: `attachment://${f.name}`,
-      },
-    })),
+    embeds: [embed],
   };
 }
