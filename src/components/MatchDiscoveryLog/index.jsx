@@ -5,7 +5,12 @@ import {
   pockestGetters,
 } from '../../contexts/PockestContext';
 import getMatchReportString from '../../utils/getMatchReportString';
-import { postDiscordMatch, getDiscordCooldown, getDiscordReportStatus } from '../../utils/postDiscord';
+import {
+  postDiscordMatch,
+  getDiscordCooldown,
+  getDiscordReportStatus,
+} from '../../utils/postDiscord';
+import combineDiscordReports from '../../utils/combineDiscordReports';
 import './index.css';
 
 function MatchDiscoveryLog({
@@ -81,7 +86,14 @@ function MatchDiscoveryLog({
               aria-label={`Clear ${title.toLowerCase()}`}
               onClick={async () => {
                 if (discordCooldown) return;
-                await postDiscordMatch({ content });
+                const reports = contentData.map((matchEntry) => pockestGetters
+                  .getDiscordReportMatch(
+                    pockestState,
+                    matchEntry,
+                    matchEntry?.target_monster_name_en,
+                  ));
+                const report = combineDiscordReports(reports);
+                await postDiscordMatch(report);
               }}
               disabled={discordCooldown}
               title={discordCooldown ? 'Please wait 60 seconds before submitting again' : 'Manually submit a report in automated report failed'}

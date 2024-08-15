@@ -5,7 +5,6 @@ import combineDiscordReports from '../../utils/combineDiscordReports';
 import {
   getAutoSettings,
   fetchPockestStatus,
-  getLogEntry,
   getCurrentMonsterLogs,
   getDiscordReportEvoSuccess,
   getDiscordReportMemento,
@@ -249,7 +248,11 @@ export async function pockestMatch(pockestState, match) {
     }
     const isDisc = isMatchDiscovery(pockestState, data?.exchangeResult);
     if (isDisc) {
-      const report = getDiscordReportMatch(pockestState, data, payload?.args);
+      const report = getDiscordReportMatch(
+        pockestState,
+        data?.exchangeResult,
+        payload?.args?.match?.name_en,
+      );
       postDiscordMatch(report);
     }
     return [ACTIONS.EVENT_EXCHANGE, payload];

@@ -535,17 +535,21 @@ export function isMatchDiscovery(pockestState, exchangeResult) {
   return allMissing.includes(exchangeResult?.target_monster_id);
 }
 
-export function getDiscordReportMatch(state, data, args) {
-  const isFever = data?.exchangeResult?.is_spmatch;
+export function getDiscordReportMatch(state, exchangeResult, opponentName) {
+  const isFever = exchangeResult?.is_spmatch;
   const header = isFever ? '🔥 FEVER MATCH' : '❌ NORMAL MATCH';
+  const embed = {
+    description: `${state?.data?.monster?.name_en} vs ${opponentName}`,
+    color: isFever ? 14177041 : 0,
+    author: {
+      name: header,
+    },
+  };
+  if (exchangeResult?.timestamp) {
+    embed.timestamp = (new Date(exchangeResult?.timestamp)).toISOString();
+  }
   return {
-    embeds: [{
-      description: `${data?.monster?.name_en} vs ${args?.match?.name_en}`,
-      color: isFever ? 14177041 : 0,
-      author: {
-        name: header,
-      },
-    }],
+    embeds: [embed],
   };
 }
 

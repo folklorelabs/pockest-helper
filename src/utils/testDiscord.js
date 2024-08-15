@@ -99,7 +99,8 @@ const chunData = {
 export async function testDiscordMatch() {
   const isDisc = pockestGetters.isMatchDiscovery(pockestState, matchData?.exchangeResult);
   if (isDisc) {
-    const report = pockestGetters.getDiscordReportMatch(pockestState, matchData, matchArgs);
+    const report = pockestGetters
+      .getDiscordReportMatch(pockestState, matchData?.exchangeResult, matchArgs?.match?.name_en);
     postDiscordTest(report);
     return report;
   }
