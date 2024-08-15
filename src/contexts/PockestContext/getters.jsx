@@ -424,8 +424,8 @@ export async function getDiscordReportEvoSuccess(state, data) {
   const mementosOwned = getOwnedMementoMonsterNames(state);
   const nameEnStr = `Name (EN): **${encycloData?.name_en}**`;
   const nameStr = `Name: **${encycloData?.name}**`;
-  const descStr = `Description: **${encycloData?.description.replace(/\n/g, '')}**`;
-  const descEnStr = `Description (EN): **${encycloData?.description_en.replace(/\n/g, '')}**`;
+  const descStr = `Description: **${encycloData?.description.replace(/\n/g, ' ')}**`;
+  const descEnStr = `Description (EN): **${encycloData?.description_en.replace(/\n/g, ' ')}**`;
   const hashStr = `Hash: **${encycloData?.hash}**`;
   const planIdStr = `${state?.planId}`;
   const statPlanStr = `${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`;
@@ -435,22 +435,40 @@ export async function getDiscordReportEvoSuccess(state, data) {
   const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
   const statsStr = `Stats: ${statBreakdownStr}`;
   const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
-  const winB64 = await getCharImgSrc(data?.monster?.hash, 'win_1');
+  const [
+    winB64,
+    idleB64,
+    attackB64,
+    downB64,
+  ] = await Promise.all([
+    getCharImgSrc(data?.monster?.hash, 'win_1'),
+    getCharImgSrc(data?.monster?.hash, 'idle_1'),
+    getCharImgSrc(data?.monster?.hash, 'attack'),
+    getCharImgSrc(data?.monster?.hash, 'down'),
+  ]);
+  const embed = {
+    description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`,
+    color: 4961603,
+    author: {
+      name: 'EVOLUTION SUCCESS',
+      icon_url: `attachment://${data?.monster?.hash}.png`,
+    },
+    url: 'https://folklorelabs.io/pockest-helper-data/v2/monsters.json',
+  };
+  const files = [
+    { base64: winB64, name: `${data?.monster?.hash}.png` },
+    { base64: idleB64, name: `${data?.monster?.hash}-idle.png` },
+    { base64: attackB64, name: `${data?.monster?.hash}-attack.png` },
+    { base64: downB64, name: `${data?.monster?.hash}-down.png` },
+  ];
   return {
-    files: [
-      { base64: winB64, name: `${data?.monster?.hash}.png` },
-    ],
-    embeds: [{
-      description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`,
-      color: 4961603,
-      author: {
-        name: 'EVOLUTION SUCCESS',
-        icon_url: `attachment://${data?.monster?.hash}.png`,
-      },
+    files,
+    embeds: files.map((f) => ({
+      ...embed,
       image: {
-        url: `attachment://${data?.monster?.hash}.png`,
+        url: `attachment://${f.name}`,
       },
-    }],
+    })),
   };
 }
 
@@ -481,8 +499,8 @@ export async function getDiscordReportMemento(state, data) {
   const newMementoData = encycloData?.memento_hash !== '???' ? encycloData : data?.monster;
   const nameEnStr = `\nName (EN): **${newMementoData?.memento_name_en}**`;
   const nameStr = `\nName: **${newMementoData?.memento_name}**`;
-  const descEnStr = `\nDescription (EN): **${newMementoData?.memento_description_en?.replace(/\n/g, '') || '???'}**`;
-  const descStr = `\nDescription: **${newMementoData?.memento_description?.replace(/\n/g, '') || '???'}**`;
+  const descEnStr = `\nDescription (EN): **${newMementoData?.memento_description_en?.replace(/\n/g, ' ') || '???'}**`;
+  const descStr = `\nDescription: **${newMementoData?.memento_description?.replace(/\n/g, ' ') || '???'}**`;
   const hashStr = `\nHash: **${newMementoData?.memento_hash}**`;
   const fromStr = `\nFrom: **${newMementoData?.name_en}** (${newMementoData?.name})`;
   const base64 = await toDataUrl(`https://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}_memento.png`);
@@ -527,21 +545,39 @@ export async function getDiscordReportSighting(state, data, args) {
   const statsTotal = args?.match ? args.match.power + args.match.speed + args.match.technic : 0;
   const statBreakdownStr = `**P** ${args?.match?.power || 0} + **S** ${args?.match?.speed || 0} + **T** ${args?.match?.technic || 0} = ${statsTotal}`;
   const statsStr = `\nStats: ${statBreakdownStr}`;
-  const winB64 = await getCharImgSrc(args?.match?.hash, 'win_1');
+  const [
+    winB64,
+    idleB64,
+    attackB64,
+    downB64,
+  ] = await Promise.all([
+    getCharImgSrc(args?.match?.hash, 'win_1'),
+    getCharImgSrc(args?.match?.hash, 'idle_1'),
+    getCharImgSrc(args?.match?.hash, 'attack'),
+    getCharImgSrc(args?.match?.hash, 'down'),
+  ]);
+  const embed = {
+    description: `${nameEnStr}${nameStr}${hashStr}${statsStr}`,
+    color: 4961603,
+    author: {
+      name: 'SIGHTING',
+      icon_url: `attachment://${args?.match?.hash}.png`,
+    },
+    url: 'https://folklorelabs.io/pockest-helper-data/v2/hashes.json',
+  };
+  const files = [
+    { base64: winB64, name: `${args?.match?.hash}.png` },
+    { base64: idleB64, name: `${args?.match?.hash}-idle.png` },
+    { base64: attackB64, name: `${args?.match?.hash}-attack.png` },
+    { base64: downB64, name: `${args?.match?.hash}-down.png` },
+  ];
   return {
-    files: [
-      { base64: winB64, name: `${args?.match?.hash}.png` },
-    ],
-    embeds: [{
-      description: `${nameEnStr}${nameStr}${hashStr}${statsStr}`,
-      color: 4961603,
-      author: {
-        name: 'SIGHTING',
-        icon_url: `attachment://${args?.match?.hash}.png`,
-      },
+    files,
+    embeds: files.map((f) => ({
+      ...embed,
       image: {
-        url: `attachment://${args?.match?.hash}.png`,
+        url: `attachment://${f.name}`,
       },
-    }],
+    })),
   };
 }
