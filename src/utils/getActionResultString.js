@@ -43,11 +43,7 @@ export default function getActionResultString({ pockestState, result, isRelTime 
   })();
   const resultsStr = (() => {
     if (logType === 'age' || logType === 'evolution') {
-      const monsterBefore = {
-        ...result?.monsterBefore,
-        ...result?.evolutions?.[result.evolutions.length - 1],
-      };
-      return [`🍃${monsterBefore?.name_en}`, `P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`];
+      return [`P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`];
     }
     if (logType === 'cleaning') return [`💩${result?.garbageBefore || 0} → 0`];
     if (logType === 'meal') return [`❤️${(result?.stomach || 0) - 1} → ${result?.stomach || 0}`];
