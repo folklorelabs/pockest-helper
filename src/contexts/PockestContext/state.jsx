@@ -75,6 +75,8 @@ export function getStateFromSessionStorage() {
 }
 
 export function saveStateToSessionStorage(state) {
+  const stateToSave = JSON.parse(JSON.stringify(state || {}));
+  delete stateToSave?.loading; // can get perma-stuck if refresh during load event otherwise
   window.sessionStorage.setItem('PockestHelperState', JSON.stringify(state));
 }
 
