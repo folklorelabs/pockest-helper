@@ -37,7 +37,7 @@ export default function getActionResultString({ pockestState, result, isRelTime 
     if (logType === 'hatching') return 'hatched';
     if (logType === 'error') return `ERROR❗${result?.error}`;
     if (logType === 'death') return 'died 🪦';
-    if (logType === 'evolution_failure') return 'failed evo 🤦‍♂️';
+    if (logType === 'evolution_failure') return 'failed evo 🫠';
     if (logType === 'departure') return 'departed 🛫';
     return '';
   })();
@@ -47,7 +47,7 @@ export default function getActionResultString({ pockestState, result, isRelTime 
         ...result?.monsterBefore,
         ...result?.evolutions?.[result.evolutions.length - 1],
       };
-      return [`⬆️ ${monsterBefore?.name_en}`, `P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`];
+      return [`🍃 ${monsterBefore?.name_en}`, `P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`];
     }
     if (logType === 'cleaning') return [`💩${result?.garbageBefore || 0} → 0`];
     if (logType === 'meal') return [`❤️${(result?.stomach || 0) - 1} → ${result?.stomach || 0}`];
