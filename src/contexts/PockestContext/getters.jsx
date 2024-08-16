@@ -523,7 +523,7 @@ export function isMatchDiscovery(pockestState, exchangeResult) {
 
 export function getDiscordReportMatch(state, exchangeResult, opponentName) {
   const isFever = exchangeResult?.is_spmatch;
-  const header = isFever ? '🔥 FEVER MATCH' : '❌ NORMAL MATCH';
+  const header = isFever ? '🔥 FEVER MATCH' : '⚔️ NORMAL MATCH';
   const embed = {
     description: `**${state?.data?.monster?.name_en}** *vs* **${opponentName}**`,
     color: isFever ? 14177041 : 0,
