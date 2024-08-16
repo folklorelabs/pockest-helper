@@ -437,8 +437,10 @@ export async function getDiscordReportEvoSuccess(state, data) {
   const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
   const [
     winB64,
+    idleB64,
   ] = await Promise.all([
     getCharImgSrc(data?.monster?.hash, 'win_1'),
+    getCharImgSrc(data?.monster?.hash, 'idle_1'),
   ]);
   const embed = {
     description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`,
@@ -447,12 +449,16 @@ export async function getDiscordReportEvoSuccess(state, data) {
       name: '🍃 EVOLUTION SUCCESS',
     },
     thumbnail: {
-      url: `attachment://${data?.monster?.hash}.png`,
+      url: `attachment://${data?.monster?.hash}-win.png`,
+    },
+    image: {
+      url: `attachment://${data?.monster?.hash}-idle.png`,
     },
     url: `https://folklorelabs.io/pockest-helper-data/v2/monsters.json?hash=${data?.monster?.hash}`, // hack for grouping files into embed
   };
   const files = [
-    { base64: winB64, name: `${data?.monster?.hash}.png` },
+    { base64: winB64, name: `${data?.monster?.hash}-win.png` },
+    { base64: idleB64, name: `${data?.monster?.hash}-idle.png` },
   ];
   return {
     files,
@@ -548,8 +554,10 @@ export async function getDiscordReportSighting(state, data, args) {
   const statsStr = `\nStats: ${statBreakdownStr}`;
   const [
     winB64,
+    idleB64,
   ] = await Promise.all([
     getCharImgSrc(args?.match?.hash, 'win_1'),
+    getCharImgSrc(args?.match?.hash, 'idle_1'),
   ]);
   const embed = {
     description: `${nameEnStr}${nameStr}${hashStr}${statsStr}`,
@@ -558,12 +566,16 @@ export async function getDiscordReportSighting(state, data, args) {
       name: '🔎 SIGHTING',
     },
     thumbnail: {
-      url: `attachment://${args?.match?.hash}.png`,
+      url: `attachment://${args?.match?.hash}-win.png`,
+    },
+    image: {
+      url: `attachment://${args?.match?.hash}-idle.png`,
     },
     url: `https://folklorelabs.io/pockest-helper-data/v2/hashes.json?hash=${args?.match?.hash}`, // hack for grouping files into embed
   };
   const files = [
-    { base64: winB64, name: `${args?.match?.hash}.png` },
+    { base64: winB64, name: `${args?.match?.hash}-win.png` },
+    { base64: idleB64, name: `${args?.match?.hash}-idle.png` },
   ];
   return {
     files,
