@@ -6,7 +6,7 @@ const cache = new LocalStorageCache('PockestHelperSheetHashes');
 
 export default async function fetchAllHashes() {
   try {
-    const hashes = await fetchJsonArray('https://folklorelabs.io/pockest-helper-data/hashes.min.json');
+    const hashes = await fetchJsonArray('https://folklorelabs.io/pockest-helper-data/v2/hashes.min.json');
     cache.set(hashes);
     return hashes;
   } catch (err) {
