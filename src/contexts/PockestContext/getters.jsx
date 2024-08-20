@@ -437,7 +437,7 @@ export async function getDiscordReportEvoSuccess(state, data) {
   const statsStr = `Stats: ${statBreakdownStr}`;
   const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
   const charSprites = await fetchCharSprites(data?.monster?.hash);
-  const win1Sprite = charSprites?.find((sprite) => sprite?.fileName.includes('win_1'));
+  const idle1Sprite = charSprites?.find((sprite) => sprite?.fileName.includes('idle_1'));
   const embed = {
     description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`,
     color: 377190,
@@ -445,13 +445,13 @@ export async function getDiscordReportEvoSuccess(state, data) {
       name: '🍃 EVOLUTION SUCCESS',
     },
     thumbnail: {
-      url: `attachment://${win1Sprite.fileName}`,
+      url: `attachment://${idle1Sprite.fileName}`,
     },
     url: `https://folklorelabs.io/pockest-helper-data/v2/monsters.json?hash=${data?.monster?.hash}`, // hack for grouping files into embed
   };
   const files = [{
-    base64: win1Sprite.data,
-    name: `${win1Sprite.fileName}`,
+    base64: idle1Sprite.data,
+    name: `${idle1Sprite.fileName}`,
   }];
   return {
     files,
@@ -546,7 +546,7 @@ export async function getDiscordReportSighting(state, data, args) {
   const statBreakdownStr = `**P** ${args?.match?.power || 0} + **S** ${args?.match?.speed || 0} + **T** ${args?.match?.technic || 0} = ${statsTotal}`;
   const statsStr = `\nStats: ${statBreakdownStr}`;
   const charSprites = await fetchCharSprites(args?.match?.hash);
-  const win1Sprite = charSprites?.find((sprite) => sprite?.fileName.includes('win_1'));
+  const idle1Sprite = charSprites?.find((sprite) => sprite?.fileName.includes('idle_1'));
   const embed = {
     description: `${nameEnStr}${nameStr}${hashStr}${statsStr}`,
     color: 501228,
@@ -554,13 +554,13 @@ export async function getDiscordReportSighting(state, data, args) {
       name: '🔎 SIGHTING',
     },
     thumbnail: {
-      url: `attachment://${win1Sprite.fileName}`,
+      url: `attachment://${idle1Sprite.fileName}`,
     },
     url: `https://folklorelabs.io/pockest-helper-data/v2/hashes.json?hash=${args?.match?.hash}`, // hack for grouping files into embed
   };
   const files = [{
-    base64: win1Sprite.data,
-    name: `${win1Sprite.fileName}`,
+    base64: idle1Sprite.data,
+    name: `${idle1Sprite.fileName}`,
   }];
   return {
     files,
