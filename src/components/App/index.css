@@ -10,17 +10,18 @@
 }
 
 .AppMain {
-  /* 4px border + (2.2 + (1.2 * 2) + 1.5 header) */
-  height: calc(100vh - 4px - 6.1rem);
+  /* 4px border + (2.2rem + 1.4rem) + (2rem * 1.2) + (24px + 0.4rem) + ((0.8rem * 1.2) + 0.4rem) */
+  height: calc(100vh - 28px - 7.76rem);
   max-height: 970px;
   overflow-y: auto;
   padding: 0 1rem;
 }
 
 .AppMain--care,
+.AppMain--careSimple,
 .AppMain--eggPurchase {
-  /* 4px border + (2.2 + (1.2 * 2) + 1.5 header) + (2 + 2.7 footer) */
-  height: calc(100vh - 4px - 10.8rem);
+  /* 4px border + (2.2rem + 1.4rem) + (2rem * 1.2) + (24px + 0.4rem) + ((0.8rem * 1.2) + 0.4rem) + (2.7rem + 1rem + 1rem) */
+  height: calc(100vh - 28px - 12.46rem);
 }
 
 .AppMain--eggPurchase {
