@@ -1,0 +1,24 @@
+.SimplePlan {
+  margin-bottom: 2rem;
+}
+
+.SimplePlan-content {
+  position: relative;
+}
+
+.SimplePlan-day {
+  margin-bottom: 1.2em;
+}
+
+.SimplePlan-dayTitle {
+  font-family: 'Oswald';
+  font-size: 0.9em;
+}
+
+.SimplePlanEvent--missed {
+  color: #EA332C;
+}
+
+.SimplePlanEvent--completion {
+  opacity: 0.5;
+}
