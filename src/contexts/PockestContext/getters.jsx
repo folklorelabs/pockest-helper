@@ -470,20 +470,16 @@ export function getPlanLog(state) {
       label: 'Match',
       ...w,
     })) ?? []),
-  ].map((w) => {
-    const completion = w.completion
-        ?? (
-          getCurrentMonsterLogs(state, w.logType).find((l) => l?.timestamp >= w.start
-            && l?.timestamp < (w.start + w.logGrace))
-        );
-    return {
-      ...w,
-      completion,
-    };
-  }).sort((a, b) => a.start - b.start).map((d) => ({
-    ...d,
-    startOffset: d.start - birth,
-  }));
+  ].map((w) => ({
+    ...w,
+    startOffset: w.start - birth,
+    missed: Date.now() >= (w.start + w.logGrace),
+    completion: w.completion
+      ?? (
+        getCurrentMonsterLogs(state, w.logType).find((l) => l?.timestamp >= w.start
+          && l?.timestamp < (w.start + w.logGrace))
+      ),
+  })).sort((a, b) => a.start - b.start);
   return data;
 }
 
