@@ -1,44 +1,19 @@
-import LocalStorageCache from './LocalStorageCache';
-import logError from './logError';
-
-const BUCKLER_ENCYCLO_URL = 'https://www.streetfighter.com/6/buckler/api/minigame/encyclopedia/list';
-const SHEET_MONSTERS_URL = 'https://folklorelabs.io/pockest-helper-data/v2/monsters.min.json';
-
-const bucklerCache = new LocalStorageCache('PockestHelperBucklerEncyclopedia');
-const sheetCache = new LocalStorageCache('PockestHelperSheetMonsters');
+import fetchAllHashes from './fetchAllHashes';
+import fetchBucklerEncyclo from './fetchBucklerEncyclo';
+import fetchSheetMonsters from './fetchSheetMonsters';
 
 export default async function fetchAllMonsters() {
   const [
-    bucklerRes,
-    sheetRes,
+    bucklerData,
+    sheetMonsters,
+    hashes,
   ] = await Promise.all([
-    fetch(BUCKLER_ENCYCLO_URL),
-    fetch(SHEET_MONSTERS_URL),
+    fetchBucklerEncyclo(),
+    fetchSheetMonsters(),
+    fetchAllHashes(),
   ]);
 
-  // handle sheet data response
-  const sheetMonsters = sheetRes.ok ? await sheetRes.json() : sheetCache.get();
-  if (!sheetRes.ok) {
-    const err = new Error(`API ${sheetRes.status} response (${SHEET_MONSTERS_URL})`);
-    if (!sheetMonsters) throw err;
-    logError(err);
-  }
-  sheetCache.set(sheetMonsters);
-
-  // handle buckler data response
-  let bucklerData = bucklerRes.ok ? await bucklerRes.json() : bucklerCache.get();
-  if (!bucklerRes.ok) {
-    const err = new Error(`API ${bucklerRes.status} response (${BUCKLER_ENCYCLO_URL})`);
-    if (!bucklerData) throw err;
-    logError(err);
-  }
-  if (!bucklerData?.data) {
-    const err = new Error(`Buckler Response: ${bucklerData?.message}`);
-    bucklerData = bucklerCache.get();
-    if (!bucklerData) throw err;
-    logError(err);
-  }
-  bucklerCache.set(bucklerData);
+  const hashMonsters = hashes.filter((h) => h.type === 'char');
 
   // merge all buckler encyclopedia into a flat monsters object
   const bucklerMonsters = bucklerData?.data?.books.reduce((allMonsters, book) => {
@@ -72,10 +47,13 @@ export default async function fetchAllMonsters() {
       ...matchingBucklerMonsters[0],
       // TODO: combine/add any diffs found
     };
-    const swMonster = sheetMonsters?.find((m) => m.monster_id === monsterId);
+    const sheetMonster = sheetMonsters?.find((m) => m.monster_id === monsterId);
+    const hashMonster = hashMonsters?.find((h) => h.id.includes(monsterId));
     return {
       ...bucklerMonster,
-      ...swMonster,
+      ...sheetMonster,
+      hash: hashMonster?.id || sheetMonster.hash || bucklerMonster.hash,
+      name_en: hashMonster?.name_en || sheetMonster.name_en || bucklerMonster.name_en,
     };
   });
 
