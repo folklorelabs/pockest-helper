@@ -20,17 +20,6 @@ export function getLogEntry(pockestState, data) {
   };
 }
 
-export function isMonsterGone(pockestState) {
-  if (pockestState?.data?.event === 'hatching') return false;
-  if (['monster_not_found', 'departure', 'death'].includes(pockestState?.data?.event)) return true;
-  if (!pockestState?.error && !pockestState?.data?.monster) return true;
-  const now = (new Date()).getTime();
-  const isDead = now >= getDeathTimer(pockestState);
-  const birthTimestamp = pockestState?.eggTimestamp || pockestState?.data?.monster?.live_time;
-  const hasLeft = now >= (birthTimestamp + MONSTER_AGE[6]);
-  return isDead || hasLeft;
-}
-
 export async function fetchMatchList() {
   const url = 'https://www.streetfighter.com/6/buckler/api/minigame/exchange/list';
   const response = await fetch(url);
