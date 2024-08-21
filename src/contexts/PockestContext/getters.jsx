@@ -2,7 +2,7 @@ import { STAT_ABBR, STAT_ID_ABBR } from '../../config/stats';
 import MONSTER_AGE from '../../config/MONSTER_AGE';
 import getTimeIntervals from '../../utils/getTimeIntervals';
 import getTotalStats from '../../utils/getTotalStats';
-import getDeathTimer from '../../utils/getDeathTimer';
+import getDeathTimer, { STUN_DEATH_OFFSET } from '../../utils/getDeathTimer';
 import { parsePlanId, LEGACY_PLAN_REGEX } from '../../utils/parsePlanId';
 import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
@@ -411,6 +411,80 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
     };
   }
   return newSettings;
+}
+
+export function getPlanLog(state) {
+  const birth = state?.data?.monster?.live_time;
+  const {
+    cleanSchedule,
+    feedSchedule,
+    trainSchedule,
+  } = getCurrentPlanSchedule(state);
+  const matchSchedule = getMatchSchedule(state);
+  let data = [];
+  const stunOffset = getPlanStunOffset(state);
+  if (typeof stunOffset === 'number') {
+    const startStopCure = birth + getPlanStunOffset(state);
+    const startDeath = startStopCure + STUN_DEATH_OFFSET;
+    data.push({
+      start: startStopCure,
+      completion: Date.now() >= startStopCure,
+      label: 'Stop curing',
+    });
+    data.push({
+      start: startDeath,
+      completion: Date.now() >= startDeath,
+      label: 'Death',
+    });
+  } else {
+    const start = birth + MONSTER_AGE[6];
+    data.push({
+      start,
+      completion: Date.now() >= start,
+      label: 'Departure',
+    });
+  }
+  data = [
+    ...data,
+    ...(cleanSchedule?.map((w) => ({
+      logType: 'cleaning',
+      logGrace: 1000 * 60 * 60,
+      label: 'Clean',
+      ...w,
+    })) ?? []),
+    ...(feedSchedule?.map((w) => ({
+      logType: 'meal',
+      logGrace: 1000 * 60 * 60,
+      label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
+      ...w,
+    })) ?? []),
+    ...(trainSchedule?.map((w) => ({
+      logType: 'training',
+      logGrace: 1000 * 60 * 60 * 12,
+      label: `Train ${w.stat}`,
+      ...w,
+    })) ?? []),
+    ...(matchSchedule?.map((w) => ({
+      logType: 'exchange',
+      logGrace: 1000 * 60 * 60 * 12,
+      label: 'Match',
+      ...w,
+    })) ?? []),
+  ].map((w) => {
+    const completion = w.completion
+        ?? (
+          getCurrentMonsterLogs(state, w.logType).find((l) => l?.timestamp >= w.start
+            && l?.timestamp < (w.start + w.logGrace))
+        );
+    return {
+      ...w,
+      completion,
+    };
+  }).sort((a, b) => a.start - b.start).map((d) => ({
+    ...d,
+    startOffset: d.start - birth,
+  }));
+  return data;
 }
 
 export function isConfirmedMonster(state, data) {

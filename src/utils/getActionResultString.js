@@ -1,10 +1,11 @@
 import { STAT_ICON, STAT_ID } from '../config/stats';
 import { parseDurationStr } from './parseDuration';
+import prettyTimeStamp from './prettyTimestamp';
 
 export default function getActionResultString({ pockestState, result, isRelTime = false }) {
   const dateStr = (() => {
     if (!result?.timestamp) return 'UNAVAIL';
-    if (!isRelTime) return (new Date(result?.timestamp)).toLocaleString();
+    if (!isRelTime) return prettyTimeStamp(result?.timestamp);
     if (!pockestState?.data?.monster?.live_time) return parseDurationStr(0);
     const logIndex = pockestState?.log?.findIndex((l) => result?.timestamp
       && l.timestamp === result.timestamp);

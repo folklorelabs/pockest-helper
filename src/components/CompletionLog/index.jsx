@@ -4,6 +4,7 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { parseDurationStr } from '../../utils/parseDuration';
+import prettyTimestamp from '../../utils/prettyTimestamp';
 import useNow from '../../hooks/useNow';
 import './index.css';
 
@@ -38,7 +39,7 @@ function CompletionLog({
   }, [targetStickerCount, now, curLiveDur]);
   const stickerString = React.useMemo(() => {
     const dateStr = isRelTime
-      ? parseDurationStr(stickerCompletion - now) : (new Date(stickerCompletion))?.toLocaleString();
+      ? parseDurationStr(stickerCompletion - now) : prettyTimestamp(stickerCompletion);
     const labelStr = `Stickers Only Completion (${targetStickerCount}/${totalCount} left)`;
     return `[${dateStr}] ${labelStr}`;
   }, [isRelTime, targetStickerCount, now, stickerCompletion, totalCount]);
@@ -53,7 +54,7 @@ function CompletionLog({
   }, [curLiveDur, targetMementoCount, now]);
   const mementoString = React.useMemo(() => {
     const dateStr = isRelTime
-      ? parseDurationStr(mementoCompletion - now) : (new Date(mementoCompletion))?.toLocaleString();
+      ? parseDurationStr(mementoCompletion - now) : prettyTimestamp(mementoCompletion);
     const labelStr = `Mementos Completion (${targetMementoCount}/${totalCount} left)`;
     return `[${dateStr}] ${labelStr}`;
   }, [isRelTime, targetMementoCount, now, mementoCompletion, totalCount]);

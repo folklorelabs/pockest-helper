@@ -5,9 +5,9 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { parseDurationStr } from '../../utils/parseDuration';
-import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
-import './index.css';
 import APP_NAME from '../../config/APP_NAME';
+import prettyTimeStamp from '../../utils/prettyTimestamp';
+import './index.css';
 
 function PlanLog({
   title,
@@ -18,67 +18,7 @@ function PlanLog({
   const {
     pockestState,
   } = usePockestContext();
-  const schedule = React.useMemo(() => {
-    const birth = pockestState?.data?.monster?.live_time;
-    const {
-      cleanSchedule,
-      feedSchedule,
-      trainSchedule,
-    } = pockestGetters.getCurrentPlanSchedule(pockestState);
-    const matchSchedule = pockestGetters.getMatchSchedule(pockestState);
-    let data = [];
-    const stunOffset = pockestGetters.getPlanStunOffset(pockestState);
-    if (typeof stunOffset === 'number') {
-      const start = birth + pockestGetters.getPlanStunOffset(pockestState);
-      data.push({
-        start,
-        completion: Date.now() >= start,
-        label: 'Stop curing',
-      });
-    }
-    data = [
-      ...data,
-      ...(cleanSchedule?.map((w) => ({
-        logType: 'cleaning',
-        logGrace: 1000 * 60 * 60,
-        label: 'Clean',
-        ...w,
-      })) ?? []),
-      ...(feedSchedule?.map((w) => ({
-        logType: 'meal',
-        logGrace: 1000 * 60 * 60,
-        label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
-        ...w,
-      })) ?? []),
-      ...(trainSchedule?.map((w) => ({
-        logType: 'training',
-        logGrace: 1000 * 60 * 60 * 12,
-        label: `Train ${w.stat}`,
-        ...w,
-      })) ?? []),
-      ...(matchSchedule?.map((w) => ({
-        logType: 'exchange',
-        logGrace: 1000 * 60 * 60 * 12,
-        label: 'Match',
-        ...w,
-      })) ?? []),
-    ].map((w) => {
-      const completion = w.completion
-        ?? (
-          getCurrentMonsterLogs(pockestState, w.logType).find((l) => l?.timestamp >= w.start
-            && l?.timestamp < (w.start + w.logGrace))
-        );
-      return {
-        ...w,
-        completion,
-      };
-    }).sort((a, b) => a.start - b.start).map((d) => ({
-      ...d,
-      startOffsetLabel: parseDurationStr(d.start - birth),
-      startLabel: (new Date(d.start)).toLocaleString(),
-    }));
-    return data;
-  }, [pockestState]);
+  const schedule = React.useMemo(() => pockestGetters.getPlanLog(pockestState), [pockestState]);
   const scheduleLog = React.useMemo(() => [
     `[${APP_NAME}] Target ${pockestState?.planId} (Age ${pockestState?.planAge})`,
     ...schedule.map((d) => {
@@ -87,9 +27,9 @@ function PlanLog({
         if (Date.now() >= (d.start + d.logGrace)) return '⚠';
         return '☐';
       })();
-      return `${icon} [${!isRelTime ? d.startLabel : d.startOffsetLabel}] ${d.label}`;
+      return `${icon} [${!isRelTime ? prettyTimeStamp(d.start) : parseDurationStr(d.startOffset)}] ${d.label}`;
     }),
-  ].join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule]);
+  ].filter((l) => l).join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule, showAppNameLine]);
   React.useEffect(() => {
     if (!textAreaEl?.current) return () => {};
     const lineHeight = textAreaEl.current.scrollHeight / (schedule.length + 1);
@@ -100,7 +40,7 @@ function PlanLog({
     const fromTop = Math.max(0, lineHeight * (lastSuccessIndex - rows / 2 + 1));
     textAreaEl.current.scrollTop = fromTop;
     return () => {};
-  }, [rows, schedule, scheduleLog]);
+  }, [rows, schedule]);
   return (
     <div className="PlanLog">
       <header className="PlanLog-header">
