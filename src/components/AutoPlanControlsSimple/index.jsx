@@ -14,7 +14,7 @@ function AutoPlanControlsSimple() {
     <div className="AutoPlanControls AutoPlanControls--simple">
       <div className="PockestLine">
         <span className="PockestText">Target</span>
-        <TargetMonsterSelect />
+        <TargetMonsterSelect disabled={pockestState?.data?.monster?.live_time ? true : null} />
       </div>
       {pockestState?.monsterId !== -1 ? '' : (
         <>
@@ -64,7 +64,11 @@ function AutoPlanControlsSimple() {
                 </span>
               </a>
             </div>
-            <AutoPlanSettingInput settingName="planId" required />
+            <AutoPlanSettingInput
+              settingName="planId"
+              required
+              disabled={pockestState?.data?.monster?.live_time ? true : null}
+            />
           </div>
           <div className="PockestLine">
             <div className="PockestText">
@@ -109,13 +113,16 @@ function AutoPlanControlsSimple() {
                 </span>
               </a>
             </div>
-            <AutoPlanSettingInput settingName="statPlanId" />
+            <AutoPlanSettingInput
+              settingName="statPlanId"
+              disabled={pockestState?.data?.monster?.live_time ? true : null}
+            />
           </div>
         </>
       )}
       <div className="PockestLine">
         <span className="PockestText">Target Age</span>
-        <TargetAgeSelect />
+        <TargetAgeSelect disabled={pockestState?.data?.monster?.live_time ? true : null} />
       </div>
     </div>
   );

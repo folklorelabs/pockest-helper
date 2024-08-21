@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   usePockestContext,
   pockestActions,
@@ -14,7 +15,7 @@ const AGE_INTERVAL = {
   1: '1 (Do nothing)',
 };
 
-function TargetAgeSelect() {
+function TargetAgeSelect({ disabled }) {
   const {
     pockestState,
     pockestDispatch,
@@ -37,7 +38,7 @@ function TargetAgeSelect() {
         }));
       }}
       value={planAge}
-      disabled={!paused || !targetMonster}
+      disabled={disabled ?? (!paused || !targetMonster)}
     >
       {Object.keys(AGE_INTERVAL).map((k) => (
         <option key={k} value={k}>
@@ -47,5 +48,13 @@ function TargetAgeSelect() {
     </select>
   );
 }
+
+TargetAgeSelect.defaultProps = {
+  disabled: null,
+};
+
+TargetAgeSelect.propTypes = {
+  disabled: PropTypes.bool,
+};
 
 export default TargetAgeSelect;
