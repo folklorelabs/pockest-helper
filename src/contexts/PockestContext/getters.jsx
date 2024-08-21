@@ -448,7 +448,7 @@ export function getPlanLog(state) {
     ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= state?.planAge).map((age) => ({
       logType: 'evolution',
       logGrace: 1000 * 60 * 60,
-      label: `Evolve (Age ${age})`,
+      label: `Evolve (age ${age})`,
       start: birth + MONSTER_AGE[age],
     }))),
     ...(cleanSchedule?.map((w) => ({
@@ -460,7 +460,7 @@ export function getPlanLog(state) {
     ...(feedSchedule?.map((w) => ({
       logType: 'meal',
       logGrace: 1000 * 60 * 60,
-      label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
+      label: `Feed (${w.feedTarget} ♡)`,
       ...w,
     })) ?? []),
     ...(trainSchedule?.map((w) => ({
