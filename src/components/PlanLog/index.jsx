@@ -29,7 +29,7 @@ function PlanLog({
       })();
       return `${icon} [${!isRelTime ? prettyTimeStamp(d.start) : parseDurationStr(d.startOffset)}] ${d.label}`;
     }),
-  ].filter((l) => l).join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule, showAppNameLine]);
+  ].filter((l) => l).join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule]);
   React.useEffect(() => {
     if (!textAreaEl?.current) return () => {};
     const lineHeight = textAreaEl.current.scrollHeight / (schedule.length + 1);
