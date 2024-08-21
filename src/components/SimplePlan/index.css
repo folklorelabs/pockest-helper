@@ -1,0 +1,33 @@
+.SimplePlan {
+  margin-bottom: 2rem;
+}
+
+.SimplePlan-content {
+  position: relative;
+}
+
+.SimplePlan-day {
+  margin-bottom: 1.2em;
+}
+
+.SimplePlanDay {
+  font-family: 'Oswald';
+  margin-bottom: 0.4em;
+  color: rgba(204, 204, 204, 1);
+}
+
+.SimplePlanDay--completion {
+  color: rgba(204, 204, 204, 0.5);
+}
+
+.SimplePlanEvent--missed {
+  color: #EA332C;
+}
+
+.SimplePlanEvent--completion {
+  color: rgba(204, 204, 204, 0.5);
+}
+
+.SimplePlanEventTime.PockestToolTip .PockestToolTip-text {
+  color: #fff;
+}

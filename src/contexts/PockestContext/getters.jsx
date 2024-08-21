@@ -378,6 +378,9 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
   let newSettings = {
     ...settingsOverride,
   };
+  if (newSettings.simpleMode ?? state.simpleMode) {
+    newSettings.autoPlan = true;
+  }
   const isMonsterGone = isMonsterDead(state, data)
     || isMonsterDeparted(state, data)
     || isMonsterMissing(state, data);
@@ -403,6 +406,40 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
   return newSettings;
 }
 
+export function getPlanEvolutions(state) {
+  const {
+    planEgg,
+    planRouteId,
+    primaryStatLetter,
+    planAge,
+  } = parsePlanId(state.planId) ?? {};
+  const numEvolutions = Math.max(5, planAge);
+  const eggMonsters = state.allMonsters.filter((m) => m?.eggIds?.includes(planEgg));
+  const planEvolutions = Array.from(new Array(numEvolutions)).reduce((acc, _val, index) => {
+    const fromMon = acc[index];
+    const age = index + 1;
+    const matchingMonsters = eggMonsters.filter((m) => m.age === age
+        && (!fromMon || m.from.includes(fromMon.monster_id)));
+    const matchingIndex = (() => {
+      if (age === 3) {
+        return ['A', 'B', 'C'].indexOf(planRouteId.split('')[0]);
+      }
+      if (age === 4) {
+        return ['AL', 'AR', 'BL', 'BR', 'CL', 'CR'].indexOf(planRouteId);
+      }
+      if (age === 5) {
+        return matchingMonsters.findIndex((m) => (new RegExp(`^${planEgg}${planRouteId}${primaryStatLetter}\\d$`)).test(m.planId));
+      }
+      return 0;
+    })();
+    return {
+      ...acc,
+      [age]: matchingMonsters[matchingIndex],
+    };
+  }, {});
+  return planEvolutions;
+}
+
 export function getPlanLog(state) {
   const birth = state?.data?.monster?.live_time;
   const {
@@ -419,6 +456,7 @@ export function getPlanLog(state) {
     completion: true,
     label: 'Hatch',
   });
+  const planEvolutions = getPlanEvolutions(state);
   if (typeof stunOffset === 'number') {
     const startStopCure = birth + getPlanStunOffset(state);
     const startDeath = startStopCure + STUN_DEATH_OFFSET;
@@ -445,8 +483,9 @@ export function getPlanLog(state) {
     ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= state?.planAge).map((age) => ({
       logType: 'evolution',
       logGrace: 1000 * 60 * 60,
-      label: `Evolve (Age ${age})`,
+      label: `Evolve (${planEvolutions?.[age]?.name_en || '???'})`,
       start: birth + MONSTER_AGE[age],
+      completion: planEvolutions ? !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions?.[age]?.monster_id) : null,
     }))),
     ...(cleanSchedule?.map((w) => ({
       logType: 'cleaning',
@@ -457,7 +496,7 @@ export function getPlanLog(state) {
     ...(feedSchedule?.map((w) => ({
       logType: 'meal',
       logGrace: 1000 * 60 * 60,
-      label: `Feed (${Array.from(new Array(w.feedTarget)).map(() => '♥').join('')}${Array.from(new Array(6 - w.feedTarget)).map(() => '♡').join('')})`,
+      label: `Feed (${w.feedTarget} ♡)`,
       ...w,
     })) ?? []),
     ...(trainSchedule?.map((w) => ({
@@ -482,7 +521,7 @@ export function getPlanLog(state) {
       ...w,
       startOffset: w.start - birth,
       missed: !completion && Date.now() >= (w.start + w.logGrace),
-      completion,
+      completion: !!completion,
     };
   }).sort((a, b) => a.start - b.start);
   return data;

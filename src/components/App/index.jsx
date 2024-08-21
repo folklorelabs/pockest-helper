@@ -12,8 +12,10 @@ import AppMainError from './AppMain--error';
 import AppMainLoading from './AppMain--loading';
 import AppMainEggPurchase from './AppMain--eggPurchase';
 import AppMainCare from './AppMain--care';
+import AppMainCareSimple from './AppMain--careSimple';
 import AppUpdateAlert from '../AppUpdateAlert';
 import { IconChevronDown, IconChevronUp, IconLog } from '../icons';
+import SimpleModeToggle from '../SimpleModeToggle';
 import './index.css';
 
 function App() {
@@ -60,6 +62,7 @@ function App() {
 
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
+        <SimpleModeToggle />
         <AppUpdateAlert />
       </header>
       {(() => {
@@ -77,6 +80,9 @@ function App() {
         }
         if (pockestState?.initialized && !pockestState?.data?.monster) {
           return <AppMainEggPurchase />;
+        }
+        if (pockestState?.simpleMode) {
+          return <AppMainCareSimple />;
         }
         return <AppMainCare />;
       })()}

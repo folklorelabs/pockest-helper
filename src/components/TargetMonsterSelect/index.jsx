@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   pockestGetters,
   pockestActions,
@@ -6,7 +7,7 @@ import {
 } from '../../contexts/PockestContext';
 import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
 
-function TargetMonsterSelect() {
+function TargetMonsterSelect({ disabled }) {
   const {
     pockestState,
     pockestDispatch,
@@ -53,7 +54,7 @@ function TargetMonsterSelect() {
     return pockestState?.allMonsters
       ?.filter((m) => m.confirmed)
       ?.filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
-      ?.filter((m) => !pockestState?.eggId || m.eggId === pockestState?.eggId)
+      ?.filter((m) => !pockestState?.eggId || m?.eggIds?.includes(pockestState?.eggId))
       ?.sort((a, b) => {
         if (a.name_en < b.name_en) return -1;
         if (b.name_en < a.name_en) return 1;
@@ -84,7 +85,7 @@ function TargetMonsterSelect() {
         }));
       }}
       defaultValue={`${pockestState?.monsterId}`}
-      disabled={!pockestState?.autoPlan || !pockestState?.paused}
+      disabled={disabled ?? (!pockestState?.autoPlan || !pockestState?.paused)}
     >
       <option key="default" value="-1">
         [Custom Plan]
@@ -99,5 +100,13 @@ function TargetMonsterSelect() {
     </select>
   );
 }
+
+TargetMonsterSelect.defaultProps = {
+  disabled: null,
+};
+
+TargetMonsterSelect.propTypes = {
+  disabled: PropTypes.bool,
+};
 
 export default TargetMonsterSelect;

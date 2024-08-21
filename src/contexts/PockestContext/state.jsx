@@ -29,6 +29,7 @@ const INITIAL_STATE = {
   error: null,
   initialized: false,
   invalidSession: false,
+  simpleMode: true,
 };
 
 export function startStorageSession() {

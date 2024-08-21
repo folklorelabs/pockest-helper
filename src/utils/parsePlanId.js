@@ -13,12 +13,13 @@ export function parsePlanId(planId) {
   if (!planIdSplit) return null;
   const planEggString = isLegacy ? `${LEGACY_EGG_IDS.indexOf(planIdSplit[1])}` : planIdSplit[1];
   const primaryStatLetter = isLegacy ? planIdSplit[4] : planIdSplit[3];
-  const routeId = isLegacy ? planIdSplit[3] : planIdSplit[2];
+  const planRouteId = isLegacy ? planIdSplit[3] : planIdSplit[2];
   const planAgeString = isLegacy ? planIdSplit[2] : planIdSplit[4];
   return {
-    planId: `${planEggString}${routeId}${primaryStatLetter}${planAgeString}`,
+    planId: `${planEggString}${planRouteId}${primaryStatLetter}${planAgeString}`,
     planEgg: parseInt(planEggString, 10),
-    planRoute: ROUTES[routeId],
+    planRouteId,
+    planRoute: ROUTES[planRouteId],
     primaryStatLetter,
     primaryStat: `${STAT_ABBR[primaryStatLetter]}`,
     planAge: parseInt(planAgeString, 10),

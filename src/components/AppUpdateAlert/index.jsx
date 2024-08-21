@@ -1,6 +1,7 @@
 import React from 'react';
 import semverLt from 'semver/functions/lt';
 import fetchLatestRelease from '../../utils/fetchLatestRelease';
+import './index.css';
 
 function AppUpdateAlert() {
   const [remoteVersion, setRemoteVersion] = React.useState();

@@ -7,7 +7,7 @@ import {
 } from '../../contexts/PockestContext';
 import './index.css';
 
-function AutoPlanSettingInput({ settingName, required }) {
+function AutoPlanSettingInput({ settingName, required, disabled }) {
   const {
     pockestState,
     pockestDispatch,
@@ -47,7 +47,7 @@ function AutoPlanSettingInput({ settingName, required }) {
         className="PockestInput"
         onChange={onChange}
         value={targetMonster ? pockestState?.[settingName] : newValue}
-        disabled={!pockestState?.autoPlan || targetMonster || !pockestState?.paused}
+        disabled={disabled ?? (!pockestState?.autoPlan || targetMonster || !pockestState?.paused)}
         pattern={pattern}
         required={required}
       />
@@ -58,11 +58,13 @@ function AutoPlanSettingInput({ settingName, required }) {
 
 AutoPlanSettingInput.defaultProps = {
   required: false,
+  disabled: null,
 };
 
 AutoPlanSettingInput.propTypes = {
   settingName: PropTypes.string.isRequired,
   required: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 export default AutoPlanSettingInput;
