@@ -407,7 +407,8 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
 }
 
 export function getPlanEvolutions(state) {
-  const targetMonster = state.allMonsters.find((m) => m.monster_id === state.monsterId);
+  const targetMonster = state.allMonsters
+    .find((m) => m.planId && m.planId.includes(state.planId.slice(0, 4)));
   if (!targetMonster) return null;
   const {
     planRouteId,
@@ -470,9 +471,9 @@ export function getPlanLog(state) {
     ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= state?.planAge).map((age) => ({
       logType: 'evolution',
       logGrace: 1000 * 60 * 60,
-      label: `Evolve (${planEvolutions[age]?.name_en})`,
+      label: `Evolve (${planEvolutions[age]?.name_en || '???'})`,
       start: birth + MONSTER_AGE[age],
-      completion: !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions[age]?.monster_id),
+      completion: planEvolutions ? !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions[age]?.monster_id) : null,
     }))),
     ...(cleanSchedule?.map((w) => ({
       logType: 'cleaning',
