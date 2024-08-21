@@ -7,10 +7,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "release:rc": "npm version prerelease --preid=rc",
-    "release": "npm version patch",
-    "gs:upload": "gsutil -m rsync -r -c ./src/data gs://pockest-helper",
-    "gs:meta": "gsutil -m setmeta -r -h 'Content-Type:application/json' -h 'Cache-Control:public, max-age=300' gs://pockest-helper",
-    "gs": "npm run gs:upload && npm run gs:meta"
+    "release": "npm version patch"
   },
   "dependencies": {
     "@crxjs/vite-plugin": "^1.0.14",
