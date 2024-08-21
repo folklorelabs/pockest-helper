@@ -3,10 +3,9 @@ import cx from 'classnames';
 import {
   usePockestContext,
 } from '../../contexts/PockestContext';
-import TargetMonsterSelect from '../TargetMonsterSelect';
 import usePlanEgg from '../../hooks/usePlanEgg';
+import AutoPlanControlsSimple from '../AutoPlanControlsSimple';
 import './index.css';
-import AutoPlanSettingInput from '../AutoPlanSettingInput';
 
 function EggControls() {
   const {
@@ -19,18 +18,7 @@ function EggControls() {
   } = usePlanEgg(pockestState);
   return (
     <div className="EggControls">
-      <div className="PockestLine">
-        <span className="PockestText">Target</span>
-        <TargetMonsterSelect />
-      </div>
-      <div className="PockestLine">
-        <span className="PockestText">Plan</span>
-        <AutoPlanSettingInput settingName="planId" />
-      </div>
-      <div className="PockestLine">
-        <span className="PockestText">Stat Plan</span>
-        <AutoPlanSettingInput settingName="statPlanId" />
-      </div>
+      <AutoPlanControlsSimple />
       <div className="PockestLine">
         <span className="PockestText">Egg</span>
         <span className="PockestText PockestLine-value">{planEgg?.name_en ?? '--'}</span>
