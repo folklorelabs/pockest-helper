@@ -30,7 +30,9 @@ export default async function fetchAllMonsters() {
           ...(newAllMonsters[gm?.monster_id] || []),
           {
             ...gm,
-            eggId,
+            eggIds: [
+              eggId,
+            ],
           },
         ];
       });
@@ -43,10 +45,14 @@ export default async function fetchAllMonsters() {
   const allMonsters = Object.keys(bucklerMonsters).map((monsterIdStr) => {
     const monsterId = parseInt(monsterIdStr || '-1', 10);
     const matchingBucklerMonsters = bucklerMonsters[monsterId];
-    const bucklerMonster = {
-      ...matchingBucklerMonsters[0],
-      // TODO: combine/add any diffs found
-    };
+    const bucklerMonster = matchingBucklerMonsters.reduce((combinedMonster, m) => ({
+      ...combinedMonster,
+      ...m,
+      eggIds: [
+        ...(combinedMonster?.eggIds || []),
+        ...m.eggIds,
+      ],
+    }), {});
     const sheetMonster = sheetMonsters?.find((m) => m.monster_id === monsterId);
     const hashMonster = hashMonsters?.find((h) => h.id.includes(monsterId));
     return {

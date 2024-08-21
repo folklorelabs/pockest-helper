@@ -54,7 +54,7 @@ function TargetMonsterSelect({ disabled }) {
     return pockestState?.allMonsters
       ?.filter((m) => m.confirmed)
       ?.filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
-      ?.filter((m) => !pockestState?.eggId || m.eggId === pockestState?.eggId)
+      ?.filter((m) => !pockestState?.eggId || m?.eggIds?.includes(pockestState?.eggId))
       ?.sort((a, b) => {
         if (a.name_en < b.name_en) return -1;
         if (b.name_en < a.name_en) return 1;

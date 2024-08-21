@@ -407,24 +407,36 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
 }
 
 export function getPlanEvolutions(state) {
-  const targetMonster = state.allMonsters
-    .find((m) => m.planId && m.planId.includes(state.planId.slice(0, 4)));
-  if (!targetMonster) return null;
   const {
+    planEgg,
     planRouteId,
-  } = parsePlanId(targetMonster.planId) ?? {};
-  const age4From = planRouteId.split('')[1] === 'R' ? 0 : 1;
-  const planEvolutions = {
-    5: targetMonster,
-  };
-  for (let age = 5; age > 1; age -= 1) {
-    const mon = planEvolutions[age];
-    const fromIndex = age === 4 ? age4From : 0;
-    const fromAge = age - 1;
-    const fromId = mon.from[fromIndex];
-    const fromMon = state.allMonsters.find((m) => m.monster_id === fromId);
-    planEvolutions[fromAge] = fromMon;
-  }
+    primaryStatLetter,
+    planAge,
+  } = parsePlanId(state.planId) ?? {};
+  const numEvolutions = Math.max(5, planAge);
+  const eggMonsters = state.allMonsters.filter((m) => m?.eggIds?.includes(planEgg));
+  const planEvolutions = Array.from(new Array(numEvolutions)).reduce((acc, _val, index) => {
+    const fromMon = acc[index];
+    const age = index + 1;
+    const matchingMonsters = eggMonsters.filter((m) => m.age === age
+        && (!fromMon || m.from.includes(fromMon.monster_id)));
+    const matchingIndex = (() => {
+      if (age === 3) {
+        return ['A', 'B', 'C'].indexOf(planRouteId.split('')[0]);
+      }
+      if (age === 4) {
+        return ['AL', 'AR', 'BL', 'BR', 'CL', 'CR'].indexOf(planRouteId);
+      }
+      if (age === 5) {
+        return matchingMonsters.findIndex((m) => (new RegExp(`^${planEgg}${planRouteId}${primaryStatLetter}\\d$`)).test(m.planId));
+      }
+      return 0;
+    })();
+    return {
+      ...acc,
+      [age]: matchingMonsters[matchingIndex],
+    };
+  }, {});
   return planEvolutions;
 }
 
@@ -471,9 +483,9 @@ export function getPlanLog(state) {
     ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= state?.planAge).map((age) => ({
       logType: 'evolution',
       logGrace: 1000 * 60 * 60,
-      label: `Evolve (${planEvolutions[age]?.name_en || '???'})`,
+      label: `Evolve (${planEvolutions?.[age]?.name_en || '???'})`,
       start: birth + MONSTER_AGE[age],
-      completion: planEvolutions ? !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions[age]?.monster_id) : null,
+      completion: planEvolutions ? !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions?.[age]?.monster_id) : null,
     }))),
     ...(cleanSchedule?.map((w) => ({
       logType: 'cleaning',
