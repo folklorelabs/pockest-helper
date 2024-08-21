@@ -378,11 +378,12 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
   let newSettings = {
     ...settingsOverride,
   };
-  if (isMonsterDead(state, data)
+  const isMonsterGone = isMonsterDead(state, data)
     || isMonsterDeparted(state, data)
-    || isMonsterMissing(state, data)
-  ) {
-    newSettings.autoPlay = true;
+    || isMonsterMissing(state, data);
+  const shouldReset = isMonsterGone;
+  if (shouldReset) {
+    newSettings.autoPlan = true;
     newSettings.paused = true;
     newSettings.statLog = [];
     newSettings.eggId = null;
