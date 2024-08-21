@@ -12,9 +12,9 @@ import AppMainError from './AppMain--error';
 import AppMainLoading from './AppMain--loading';
 import AppMainEggPurchase from './AppMain--eggPurchase';
 import AppMainCare from './AppMain--care';
-import './index.css';
 import AppUpdateAlert from '../AppUpdateAlert';
 import { IconChevronDown, IconChevronUp, IconLog } from '../icons';
+import './index.css';
 
 function App() {
   const {
