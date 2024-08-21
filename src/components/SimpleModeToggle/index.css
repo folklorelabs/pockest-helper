@@ -1,0 +1,35 @@
+.SimpleModeToggle {
+  background: transparent;
+  border: 0;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  cursor: pointer;
+  position: relative;
+  margin-top: 0.5em;
+}
+
+.SimpleModeToggleText {
+  position: absolute;
+  white-space: nowrap;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-family: 'Oswald';
+  letter-spacing: 0.05em;
+  line-height: 1em;
+  font-weight: bold;
+  opacity: 0.5;
+}
+
+.SimpleModeToggleText--active {
+  color: #d5a613;
+  opacity: 1;
+}
+
+.SimpleModeToggleText:first-child {
+  right: 100%;
+}
+
+.SimpleModeToggleText:last-child {
+  left: 100%;
+}

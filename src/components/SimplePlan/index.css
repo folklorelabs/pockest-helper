@@ -10,9 +10,13 @@
   margin-bottom: 1.2em;
 }
 
-.SimplePlan-dayTitle {
+.SimplePlanDay {
   font-family: 'Oswald';
-  font-size: 0.9em;
+  margin-bottom: 0.4em;
+}
+
+.SimplePlanDay--completion {
+  opacity: 0.5;
 }
 
 .SimplePlanEvent--missed {

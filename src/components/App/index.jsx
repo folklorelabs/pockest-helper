@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import { pockestActions, usePockestContext } from '../../contexts/PockestContext';
+import { usePockestContext } from '../../contexts/PockestContext';
 import { useAppContext } from '../../contexts/AppContext';
 import LogPanel from '../LogPanel';
 import CareLog from '../CareLog';
@@ -15,12 +15,12 @@ import AppMainCare from './AppMain--care';
 import AppMainCareSimple from './AppMain--careSimple';
 import AppUpdateAlert from '../AppUpdateAlert';
 import { IconChevronDown, IconChevronUp, IconLog } from '../icons';
+import SimpleModeToggle from '../SimpleModeToggle';
 import './index.css';
 
 function App() {
   const {
     pockestState,
-    pockestDispatch,
   } = usePockestContext();
   const {
     showLog,
@@ -33,17 +33,6 @@ function App() {
     <div className={cx('App', { 'App--minimized': minimized })}>
       <div className="AppMinBtnLayout">
         <button
-          title={!pockestState.simpleMode ? 'Simple Mode' : 'Advanced Mode'}
-          aria-label={!pockestState.simpleMode ? 'Simple Mode' : 'Advanced Mode'}
-          className="AppMinBtn"
-          type="button"
-          onClick={() => pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
-            simpleMode: !pockestState.simpleMode,
-          }))}
-        >
-          <IconLog />
-        </button>
-        <button
           title={showLog ? 'Hide log' : 'Show log'}
           aria-label={showLog ? 'Hide log' : 'Show log'}
           className="AppMinBtn"
@@ -53,7 +42,7 @@ function App() {
             setMinimized(false);
           }}
         >
-          <IconLog />
+          <IconLog size={16} />
         </button>
         <button
           title={minimized ? 'Maximize' : 'Minimize'}
@@ -67,12 +56,13 @@ function App() {
             }
           }}
         >
-          {minimized ? <IconChevronUp /> : <IconChevronDown />}
+          {minimized ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
         </button>
       </div>
 
       <header className="App-header">
         <p className="App-title">Pockest Helper</p>
+        <SimpleModeToggle />
         <AppUpdateAlert />
       </header>
       {(() => {

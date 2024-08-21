@@ -70,7 +70,10 @@
 }
 
 #PockestHelperExtension .App-header {
-  margin: 2.2rem 0 1.5rem;
+  margin: 2.2rem 0 1.4rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 #PockestHelperExtension .App-title {
@@ -116,7 +119,6 @@
   font-weight: bold;
 }
 
-#PockestHelperExtension .AppUpdateAlert,
 #PockestHelperExtension .App-updateTextSecondary {
   font-size: 0.8em;
   margin-bottom: 1rem;
