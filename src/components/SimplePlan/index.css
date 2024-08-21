@@ -13,10 +13,11 @@
 .SimplePlanDay {
   font-family: 'Oswald';
   margin-bottom: 0.4em;
+  color: rgba(204, 204, 204, 1);
 }
 
 .SimplePlanDay--completion {
-  opacity: 0.5;
+  color: rgba(204, 204, 204, 0.5);
 }
 
 .SimplePlanEvent--missed {
@@ -24,5 +25,9 @@
 }
 
 .SimplePlanEvent--completion {
-  opacity: 0.5;
+  color: rgba(204, 204, 204, 0.5);
+}
+
+.SimplePlanEventTime.PockestToolTip .PockestToolTip-text {
+  color: #fff;
 }

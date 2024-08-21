@@ -371,6 +371,7 @@
   position: relative;
   display: inline-block;
   text-decoration: none;
+  cursor: help;
 }
 
 /* Tooltip text */
