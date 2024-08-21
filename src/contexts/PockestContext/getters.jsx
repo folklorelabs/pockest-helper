@@ -406,6 +406,27 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
   return newSettings;
 }
 
+export function getPlanEvolutions(state) {
+  const targetMonster = state.allMonsters.find((m) => m.monster_id === state.monsterId);
+  if (!targetMonster) return null;
+  const {
+    planRouteId,
+  } = parsePlanId(targetMonster.planId) ?? {};
+  const age4From = planRouteId.split('')[1] === 'R' ? 0 : 1;
+  const planEvolutions = {
+    5: targetMonster,
+  };
+  for (let age = 5; age > 1; age -= 1) {
+    const mon = planEvolutions[age];
+    const fromIndex = age === 4 ? age4From : 0;
+    const fromAge = age - 1;
+    const fromId = mon.from[fromIndex];
+    const fromMon = state.allMonsters.find((m) => m.monster_id === fromId);
+    planEvolutions[fromAge] = fromMon;
+  }
+  return planEvolutions;
+}
+
 export function getPlanLog(state) {
   const birth = state?.data?.monster?.live_time;
   const {
@@ -422,6 +443,7 @@ export function getPlanLog(state) {
     completion: true,
     label: 'Hatch',
   });
+  const planEvolutions = getPlanEvolutions(state);
   if (typeof stunOffset === 'number') {
     const startStopCure = birth + getPlanStunOffset(state);
     const startDeath = startStopCure + STUN_DEATH_OFFSET;
@@ -448,8 +470,9 @@ export function getPlanLog(state) {
     ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= state?.planAge).map((age) => ({
       logType: 'evolution',
       logGrace: 1000 * 60 * 60,
-      label: `Evolve (age ${age})`,
+      label: `Evolve (${planEvolutions[age]?.name_en})`,
       start: birth + MONSTER_AGE[age],
+      completion: !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions[age]?.monster_id),
     }))),
     ...(cleanSchedule?.map((w) => ({
       logType: 'cleaning',
