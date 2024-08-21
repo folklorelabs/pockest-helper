@@ -48,7 +48,16 @@ function SimplePlan({
       <div className="SimplePlan-content">
         {Object.keys(scheduleLinesGrouped).map((dateStr) => (
           <div key={dateStr} className="SimplePlan-day">
-            <h1 className="SimplePlan-dayTitle">{dateStr}</h1>
+            <h1
+              className={cx(
+                'SimplePlanDay',
+                {
+                  'SimplePlanDay--completion': !scheduleLinesGrouped[dateStr].find((d) => !d.completion && !d.missed),
+                },
+              )}
+            >
+              {dateStr}
+            </h1>
             {scheduleLinesGrouped[dateStr].map((d) => (
               <div
                 key={`${d.dateStr}_${d.label}_${d.timeStr}`}
