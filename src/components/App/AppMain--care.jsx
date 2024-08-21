@@ -7,6 +7,7 @@ import TrainControls from '../TrainControls';
 import CureControls from '../CureControls';
 import PauseBtn from '../PauseBtn';
 import AppMainTemplate from './AppMain';
+import StatusTimers from '../StatusTimers';
 
 function AppMain() {
   return (
@@ -15,6 +16,7 @@ function AppMain() {
       content={(
         <>
           <AutoPlanControls />
+          <StatusTimers />
           <hr />
           <CleanControls />
           <hr />
