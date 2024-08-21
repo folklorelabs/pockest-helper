@@ -436,6 +436,12 @@ export function getPlanLog(state) {
   }
   data = [
     ...data,
+    ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= state?.planAge).map((age) => ({
+      logType: 'evolution',
+      logGrace: 1000 * 60 * 60,
+      label: `Evolve (Age ${age})`,
+      start: birth + MONSTER_AGE[age],
+    }))),
     ...(cleanSchedule?.map((w) => ({
       logType: 'cleaning',
       logGrace: 1000 * 60 * 60,
