@@ -473,7 +473,7 @@ export function getPlanLog(state) {
       ...w,
       startOffset: w.start - birth,
       missed: !completion && Date.now() >= (w.start + w.logGrace),
-      completion,
+      completion: !!completion,
     };
   }).sort((a, b) => a.start - b.start);
   return data;
