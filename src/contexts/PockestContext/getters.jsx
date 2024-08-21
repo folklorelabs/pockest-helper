@@ -413,6 +413,12 @@ export function getPlanLog(state) {
   const matchSchedule = getMatchSchedule(state);
   let data = [];
   const stunOffset = getPlanStunOffset(state);
+  data.push({
+    logType: 'hatching',
+    start: birth,
+    completion: true,
+    label: 'Hatch',
+  });
   if (typeof stunOffset === 'number') {
     const startStopCure = birth + getPlanStunOffset(state);
     const startDeath = startStopCure + STUN_DEATH_OFFSET;
