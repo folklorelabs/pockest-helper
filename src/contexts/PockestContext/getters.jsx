@@ -378,6 +378,9 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
   let newSettings = {
     ...settingsOverride,
   };
+  if (newSettings.simpleMode ?? state.simpleMode) {
+    newSettings.autoPlan = true;
+  }
   const isMonsterGone = isMonsterDead(state, data)
     || isMonsterDeparted(state, data)
     || isMonsterMissing(state, data);

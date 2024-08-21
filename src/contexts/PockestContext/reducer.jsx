@@ -55,6 +55,7 @@ export default function REDUCER(state, [type, payload]) {
         stat: payload.stat ?? state?.stat,
         matchPriority: payload.matchPriority ?? state?.matchPriority,
         autoCure: payload.autoCure ?? state?.autoCure,
+        simpleMode: payload.simpleMode ?? state?.simpleMode,
       };
     case ACTIONS.PAUSE:
       return {
