@@ -1,0 +1,74 @@
+.StunSprite,
+.StunSprite-img {
+  display: block;
+}
+
+.StunSprite {
+  position: absolute;
+  transform-origin: bottom center;
+  bottom: 80%;
+  transition-property: transform;
+  transition-timing-function: linear;
+}
+
+.StunSprite--piyo-0 {
+  transform: translate(18px, -40%);
+  z-index: 1;
+}
+
+.StunSprite--piyo-30 {
+  transform: translate(6px, -20%);
+  z-index: 1;
+}
+
+.StunSprite--piyo-90 {
+  transform: translate(-6px, 0%);
+  z-index: 1;
+}
+
+.StunSprite--piyo-150 {
+  transform: translate(-18px, -20%);
+  z-index: 1;
+}
+
+.StunSprite--piyo-165 {
+  transform: translate(-20px, -40%);
+  z-index: 1;
+}
+
+.StunSprite--piyo-180 {
+  transform: translate(-18px, -60%);
+  z-index: -1;
+}
+
+.StunSprite--piyo-210 {
+  transform: translate(-6px, -80%);
+  z-index: -1;
+}
+
+.StunSprite--piyo-270 {
+  transform: translate(6px, -100%);
+  z-index: -1;
+}
+
+.StunSprite--piyo-330 {
+  transform: translate(18px, -80%);
+  z-index: -1;
+}
+
+.StunSprite--piyo-345 {
+  transform: translate(20px, -60%);
+  z-index: -1;
+}
+
+.StunSprite--piyo-360 {
+  transform: translate(18px, -40%);
+  z-index: 1;
+}
+
+.StunSprite-img {
+  position: absolute;
+  bottom: 0;
+  transform-origin: bottom left;
+  left: 50%;
+}
