@@ -416,7 +416,7 @@ export function getPlanEvolutions(state) {
     primaryStatLetter,
     planAge,
   } = parsePlanId(state.planId) ?? {};
-  const numEvolutions = Math.max(5, planAge);
+  const numEvolutions = Math.min(5, planAge);
   const eggMonsters = state.allMonsters.filter((m) => m?.eggIds?.includes(planEgg));
   const planEvolutions = Array.from(new Array(numEvolutions)).reduce((acc, _val, index) => {
     const fromMon = acc[index];
@@ -497,13 +497,14 @@ export function getPlanLog(state) {
   }
   data = [
     ...data,
-    ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= state?.planAge).map((age) => ({
-      logType: 'evolution',
-      logGrace: 1000 * 60 * 60,
-      label: `Evolve (${planEvolutions?.[age]?.name_en || '???'})`,
-      start: birth + MONSTER_AGE[age],
-      completion: planEvolutions ? !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions?.[age]?.monster_id) : null,
-    }))),
+    ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= Math.min(5, state?.planAge))
+      .map((age) => ({
+        logType: 'evolution',
+        logGrace: 1000 * 60 * 60,
+        label: `Evolve (${planEvolutions?.[age]?.name_en || '???'})`,
+        start: birth + MONSTER_AGE[age],
+        completion: planEvolutions ? !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions?.[age]?.monster_id) : null,
+      }))),
     ...(cleanSchedule?.map((w) => ({
       logType: 'cleaning',
       logGrace: 1000 * 60 * 60,
