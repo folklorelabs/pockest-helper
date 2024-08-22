@@ -11,7 +11,6 @@ import toDataUrl from '../../utils/toDataUrl';
 import fetchCharSprites from '../../utils/fetchCharSprites';
 import { GARBAGE_TIME } from '../../utils/getGarbageTimer';
 import { STOMACH_TIME } from '../../utils/getStomachTimer';
-import prettyTimeStamp from '../../utils/prettyTimestamp';
 import { STUN_OFFSET } from '../../utils/getStunTimer';
 
 export function getLogEntry(pockestState, data) {
