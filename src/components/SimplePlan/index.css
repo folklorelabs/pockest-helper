@@ -20,6 +20,10 @@
   color: rgba(204, 204, 204, 0.5);
 }
 
+.SimplePlanEvent {
+  font-size: 0.9em;
+}
+
 .SimplePlanEvent--missed {
   color: #EA332C;
 }
