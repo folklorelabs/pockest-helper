@@ -213,7 +213,7 @@ export function getPlanNeglectOffset(state) {
 export function getPlanStunOffset(state) {
   if (state?.planAge === 6) return null;
   const ageOffset = state?.planAge && state?.planAge > 1
-    ? Math.max(0, MONSTER_AGE[Math.max(2, state.planAge)] - (4 * 60 * 60 * 1000))
+    ? Math.max(0, MONSTER_AGE[Math.max(2, state.planAge)] - (5 * 60 * 60 * 1000))
     : 0;
   return ageOffset;
 }
