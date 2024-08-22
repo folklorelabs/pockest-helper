@@ -6,6 +6,7 @@ import LogPanel from '../LogPanel';
 import CareLog from '../CareLog';
 import MatchDiscoveryLog from '../MatchDiscoveryLog';
 import CharacterSprite from '../CharacterSprite';
+import StunSprite from '../StunSprite';
 import PlanLog from '../PlanLog';
 import CompletionLog from '../CompletionLog';
 import AppMainError from './AppMain--error';
@@ -28,6 +29,8 @@ function App() {
   } = useAppContext();
   const [minimized, setMinimized] = React.useState(false);
   const [lol, setLol] = React.useState(true);
+  const isStunned = pockestState?.data?.monster?.status === 2;
+  const isMonsterGone = !pockestState?.data || pockestState?.data?.event === 'monster_not_found';
 
   return (
     <div className={cx('App', { 'App--minimized': minimized })}>
@@ -88,12 +91,23 @@ function App() {
       })()}
       <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
         {lol ? (
-          <CharacterSprite
-            action={pockestState?.paused ? 'down' : 'idle'}
-            animated={!pockestState?.paused}
-            randomAnimations={pockestState?.paused ? null : ['idle', 'win', 'attack']}
-            randomAnimationWeights={[100, 10, 60]}
-          />
+          <>
+            <CharacterSprite
+              action={isMonsterGone ? 'down' : 'idle'}
+              animated={!pockestState?.paused}
+              randomAnimations={isMonsterGone ? null : [
+                'idle',
+                isStunned ? 'idle' : 'win',
+                isStunned ? 'idle' : 'attack',
+              ]}
+              randomAnimationWeights={[100, 10, 60]}
+            />
+            {isStunned ? (
+              <StunSprite
+                animated={!pockestState?.paused}
+              />
+            ) : ''}
+          </>
         ) : ''}
       </button>
       {(showLog && !minimized) ? (
