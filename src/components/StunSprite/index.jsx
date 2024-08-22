@@ -59,6 +59,7 @@ function StunSprite({
         const frame = stunSprite?.frames?.[frameId];
         return (
           <div
+            key={`StunSprite_${offsetIndex}`}
             className={`StunSprite StunSprite--${frameId?.split('.')[0]}`}
             style={{
               width: `${frame?.frame?.w}px`,
