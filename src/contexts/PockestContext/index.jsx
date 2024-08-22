@@ -18,7 +18,7 @@ import {
   setRefreshTimeout,
   REFRESH_TIMEOUT,
 } from './state';
-import REDUCER from './reducer';
+import REDUCER, { ACTIONS } from './reducer';
 
 import { STAT_ID } from '../../config/stats';
 import * as pockestActions from './actions';
@@ -129,6 +129,18 @@ export function PockestProvider({
       window.clearInterval(interval);
     };
   }, [pockestState, refreshStatus]);
+
+  // 5 min timeout for loading -- try recovering
+  React.useEffect(() => {
+    if (!pockestState?.loading) return () => {};
+    const timeout = window.setTimeout(() => {
+      refreshStatus();
+      pockestDispatch([ACTIONS.ERROR], 'App stuck loading for more than 5 minutes. Recovering.');
+    }, 300000);
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [pockestState?.loading, refreshStatus]);
 
   // Lifecycle loop
   React.useEffect(() => {
