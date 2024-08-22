@@ -9,6 +9,10 @@ import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 import getFirstMatchTime from '../../utils/getFirstMatchTime';
 import toDataUrl from '../../utils/toDataUrl';
 import fetchCharSprites from '../../utils/fetchCharSprites';
+import { GARBAGE_TIME } from '../../utils/getGarbageTimer';
+import { STOMACH_TIME } from '../../utils/getStomachTimer';
+import prettyTimeStamp from '../../utils/prettyTimestamp';
+import { STUN_OFFSET } from '../../utils/getStunTimer';
 
 export function getLogEntry(pockestState, data) {
   const mergedData = data ?? pockestState?.data;
@@ -459,22 +463,36 @@ export function getPlanLog(state) {
   const planEvolutions = getPlanEvolutions(state);
   if (typeof stunOffset === 'number') {
     const startStopCure = birth + getPlanStunOffset(state);
-    const startDeath = startStopCure + STUN_DEATH_OFFSET;
+    const lastClean = cleanSchedule[cleanSchedule.length - 1];
+    const lastCleanTime = lastClean?.start || birth;
+    const deathByPoop = lastCleanTime + (GARBAGE_TIME * 12);
+    const lastFeed = feedSchedule[feedSchedule.length - 1];
+    const lastFeedTime = lastFeed?.start || birth;
+    const birthHungerIndex = (lastFeedTime - birth) / STOMACH_TIME;
+    const birthStarvationIndex = birthHungerIndex + (lastFeed?.feedTarget || 0);
+    const deathByStarvation = birth + (STOMACH_TIME * birthStarvationIndex);
+    const stunTimer = Math.min(deathByPoop, deathByStarvation) + STUN_OFFSET;
+    const deathTimer = stunTimer + STUN_DEATH_OFFSET;
     data.push({
       start: startStopCure,
       completion: Date.now() >= startStopCure,
-      label: 'Stop curing',
+      label: 'Stop Curing',
     });
     data.push({
-      start: startDeath,
-      completion: Date.now() >= startDeath,
+      start: stunTimer,
+      completion: Date.now() >= stunTimer, // TODO: add to log?
+      label: 'Stun',
+    });
+    data.push({
+      start: deathTimer,
+      logType: 'death',
       label: 'Death',
     });
   } else {
     const start = birth + MONSTER_AGE[6];
     data.push({
       start,
-      completion: Date.now() >= start,
+      logType: 'departure',
       label: 'Departure',
     });
   }
