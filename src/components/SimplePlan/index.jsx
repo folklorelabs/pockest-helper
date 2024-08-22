@@ -75,7 +75,7 @@ function SimplePlan({
                   {' '}
                   {d.label}
                 </p>
-                <p className="SimplePlanEventTime PockestToolTip PockestToolTip--left">
+                <p className="SimplePlanEventTime PockestToolTip PockestToolTip--left PockestToolTip--bottom">
                   {d.timeStr}
                   <span className="PockestToolTip-text">
                     All times are aproximations.
