@@ -237,6 +237,8 @@ export default function REDUCER(state, [type, payload]) {
         allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
+        eggId: null,
+        eggTimestamp: null,
         log: [
           ...state.log,
           {
@@ -254,6 +256,8 @@ export default function REDUCER(state, [type, payload]) {
         allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
+        eggId: null,
+        eggTimestamp: null,
         log: [
           ...state.log,
           {
@@ -271,6 +275,8 @@ export default function REDUCER(state, [type, payload]) {
         allHashes: payload?.allHashes || state?.allHashes,
         loading: false,
         data: payload?.data,
+        eggId: null,
+        eggTimestamp: null,
         ...getAutoSettings(state, payload?.data),
       };
     case ACTIONS.INVALIDATE_SESSION:
