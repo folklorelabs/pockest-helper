@@ -416,7 +416,7 @@ export function getPlanEvolutions(state) {
     primaryStatLetter,
     planAge,
   } = parsePlanId(state.planId) ?? {};
-  const numEvolutions = Math.min(5, planAge);
+  const numEvolutions = Math.max(2, Math.min(5, planAge));
   const eggMonsters = state.allMonsters.filter((m) => m?.eggIds?.includes(planEgg));
   const planEvolutions = Array.from(new Array(numEvolutions)).reduce((acc, _val, index) => {
     const fromMon = acc[index];
@@ -498,7 +498,8 @@ export function getPlanLog(state) {
   }
   data = [
     ...data,
-    ...(Object.keys(MONSTER_AGE).filter((age) => age > 1 && age <= Math.min(5, state?.planAge))
+    ...(Object.keys(MONSTER_AGE)
+      .filter((age) => age > 1 && age <= Math.max(2, Math.min(5, state?.planAge)))
       .map((age) => ({
         logType: 'evolution',
         logGrace: 1000 * 60 * 60,
