@@ -33,7 +33,7 @@ function App() {
   const isMonsterGone = !pockestState?.data || pockestState?.data?.event === 'monster_not_found';
 
   return (
-    <div className={cx('App', { 'App--minimized': minimized })}>
+    <div className={cx('App', { 'App--minimized': minimized, 'App--showLog': showLog })}>
       <div className="AppMinBtnLayout">
         <button
           title={showLog ? 'Hide log' : 'Show log'}

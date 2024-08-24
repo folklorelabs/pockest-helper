@@ -28,6 +28,10 @@
   max-height: 170px;
 }
 
+.App--showLog .AppMain {
+  max-height: none;
+}
+
 #PockestHelperExtension .AppMain::-webkit-scrollbar {
   width: 2px;
 }
