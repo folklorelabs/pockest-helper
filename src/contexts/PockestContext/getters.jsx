@@ -445,6 +445,7 @@ export function getPlanEvolutions(state) {
 
 export function getPlanLog(state) {
   const birth = state?.data?.monster?.live_time;
+  if (!birth) return [];
   const {
     cleanSchedule,
     feedSchedule,
