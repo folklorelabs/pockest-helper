@@ -10,6 +10,7 @@
   left: calc(50% - 5px);
   transition-property: transform;
   transition-timing-function: linear;
+  will-change: contents;
 }
 
 .StunSprite--piyo-0 {
