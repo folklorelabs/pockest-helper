@@ -16,7 +16,7 @@ function AutoPlanControlsSimple() {
         <span className="PockestText">Target</span>
         <TargetMonsterSelect disabled={pockestState?.data?.monster?.live_time ? true : null} />
       </div>
-      {pockestState?.monsterId !== -1 ? '' : (
+      {pockestState?.simpleMode && pockestState?.monsterId !== -1 ? '' : (
         <>
           <div className="PockestLine">
             <div className="PockestText">
