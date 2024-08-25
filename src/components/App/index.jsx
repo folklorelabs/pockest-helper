@@ -18,6 +18,7 @@ import AppUpdateAlert from '../AppUpdateAlert';
 import { IconChevronDown, IconChevronUp, IconLog } from '../icons';
 import SimpleModeToggle from '../SimpleModeToggle';
 import './index.css';
+import AppErrorAlert from '../AppErrorAlert';
 
 function App() {
   const {
@@ -33,7 +34,12 @@ function App() {
   const isMonsterGone = !pockestState?.data || pockestState?.data?.event === 'monster_not_found';
 
   return (
-    <div className={cx('App', { 'App--minimized': minimized, 'App--showLog': showLog })}>
+    <div className={cx('App', {
+      'App--minimized': minimized,
+      'App--showLog': showLog,
+      'App--error': pockestState?.error,
+    })}
+    >
       <div className="AppMinBtnLayout">
         <button
           title={showLog ? 'Hide log' : 'Show log'}
@@ -67,12 +73,13 @@ function App() {
         <p className="App-title">Pockest Helper</p>
         <SimpleModeToggle />
         <AppUpdateAlert />
+        <AppErrorAlert />
       </header>
       {(() => {
         if (pockestState?.invalidSession) {
           return <AppMainError msg="Your session appears to be invalid. Did you open Pockest Helper in another tab?" />;
         }
-        if (pockestState?.error?.includes('403') && pockestState?.error?.includes('buckler')) {
+        if (!pockestState?.initialized && pockestState?.error?.includes('403') && pockestState?.error?.includes('buckler')) {
           return <AppMainError msg="Please ensure you are logged into Buckler (403 Auth Error)" />;
         }
         if (!pockestState?.initialized && pockestState?.error) {

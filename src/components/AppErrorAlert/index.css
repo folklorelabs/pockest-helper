@@ -1,0 +1,15 @@
+.AppErrorAlert {
+  font-size: 0.8rem;
+  line-height: 1.2;
+  margin-top: 0.4rem;
+  text-align: center;
+  background: rgba(255, 0, 0, 0.5);
+  padding: 1em 0.5em;
+  width: 100%;
+}
+
+.AppErrorAlert-message {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-height: 1.92rem;
+}
