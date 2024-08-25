@@ -252,7 +252,7 @@ export function PockestProvider({
           const missing = exchangeList.filter((m) => {
             const matchingMonster = pockestState?.allMonsters
               .find((m2) => m2?.monster_id === m?.monster_id);
-            return !matchingMonster?.confirmed;
+            return matchingMonster?.age >= 5 && !matchingMonster?.confirmed;
           });
           if (missing.length) {
             const reportReqs = missing.map((match) => pockestGetters
