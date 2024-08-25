@@ -6,7 +6,7 @@
 .StunSprite {
   position: absolute;
   transform-origin: bottom center;
-  bottom: 10px;
+  bottom: 60%;
   left: calc(50% - 5px);
   transition-property: transform;
   transition-timing-function: linear;
