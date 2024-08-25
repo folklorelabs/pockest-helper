@@ -6,10 +6,20 @@
   background: rgba(255, 0, 0, 0.5);
   padding: 1em 0.5em;
   width: 100%;
+  color: inherit;
+  border: 0;
+  box-shadow: none;
+  font-family: "Noto Sans", sans-serif;
+  cursor: pointer;
+}
+
+.App--showLog .AppErrorAlert {
+  cursor: default;
 }
 
 .AppErrorAlert-message {
   text-overflow: ellipsis;
   overflow: hidden;
   max-height: 1.92rem;
+  text-wrap: pretty;
 }
