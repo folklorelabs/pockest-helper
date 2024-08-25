@@ -34,7 +34,7 @@ function StunSprite({
     })();
   }, []);
   React.useEffect(() => {
-    if (!stunSprite || loading) return () => {};
+    if (!stunSprite?.animations?.piyo || loading) return () => {};
     let timeout;
     let tempIndex = 0;
     const setFrame = () => {
@@ -53,7 +53,7 @@ function StunSprite({
   return (
     <>
       {Array.from(new Array(5)).map((val, index) => index * 2).map((offsetIndex) => {
-        if (!stunSprite || loading) return '';
+        if (!stunSprite?.animations?.piyo?.length || loading) return '';
         const spriteIndex = (curIndex + offsetIndex) % stunSprite.animations.piyo.length;
         const frameId = stunSprite?.animations?.piyo?.[spriteIndex];
         const frame = stunSprite?.frames?.[frameId];

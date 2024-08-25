@@ -28,6 +28,8 @@ import log from '../../utils/log';
 import getMatchTimer from '../../utils/getMatchTimer';
 import { postDiscordEvo } from '../../utils/postDiscord';
 import combineDiscordReports from '../../utils/combineDiscordReports';
+import prettyTimeStamp from '../../utils/prettyTimestamp';
+import getAgeTimer from '../../utils/getAgeTimer';
 
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
@@ -141,6 +143,23 @@ export function PockestProvider({
       window.clearTimeout(timeout);
     };
   }, [pockestState?.loading, refreshStatus]);
+
+  React.useEffect(() => {
+    const now = new Date();
+    const isStunned = pockestState?.data?.monster?.status === 2;
+    const stunOffset = pockestGetters.getPlanStunOffset(pockestState);
+    const shouldLetDie = pockestState?.data?.monster?.live_time && typeof stunOffset === 'number'
+      ? pockestState.data.monster.live_time + stunOffset <= now : false;
+    log({
+      isStunned,
+      shouldLetDie,
+      stunOffset,
+      agePretty: prettyTimeStamp(getAgeTimer(pockestState)),
+      stunPretty: pockestState?.data?.monster?.live_time
+        ? prettyTimeStamp(pockestState.data.monster.live_time + stunOffset) : 0,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pockestState?.data?.monster?.status]);
 
   // Lifecycle loop
   React.useEffect(() => {
