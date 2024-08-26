@@ -428,7 +428,7 @@ export function getPlanEvolutions(state) {
         return ['A', 'B', 'C'].indexOf(planRouteId.split('')[0]);
       }
       if (age === 4) {
-        return ['AL', 'AR', 'BL', 'BR', 'CL', 'CR'].indexOf(planRouteId);
+        return ['L', 'R'].indexOf(planRouteId.split('')[1]);
       }
       if (age === 5) {
         return matchingMonsters.findIndex((m) => (new RegExp(`^${planEgg}${planRouteId}${primaryStatLetter}\\d$`)).test(m.planId));
