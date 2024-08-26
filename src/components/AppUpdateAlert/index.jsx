@@ -1,24 +1,12 @@
 import React from 'react';
-import semverLt from 'semver/functions/lt';
-import fetchLatestRelease from '../../utils/fetchLatestRelease';
+import { useAppContext } from '../../contexts/AppContext';
 import './index.css';
 
 function AppUpdateAlert() {
-  const [remoteVersion, setRemoteVersion] = React.useState();
-  React.useEffect(() => {
-    (async () => {
-      const latestRelease = await fetchLatestRelease();
-      setRemoteVersion(latestRelease?.tag_name);
-    })();
-  }, []);
-  const isOutdated = React.useMemo(() => {
-    const curVersion = import.meta.env.APP_VERSION;
-    if (!remoteVersion || !curVersion) return false;
-    return semverLt(
-      curVersion,
-      remoteVersion,
-    );
-  }, [remoteVersion]);
+  const {
+    remoteVersion,
+    isOutdated,
+  } = useAppContext();
   if (!isOutdated) return '';
   return (
     <p className="AppUpdateAlert">

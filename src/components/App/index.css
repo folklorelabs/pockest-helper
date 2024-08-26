@@ -9,19 +9,33 @@
   border-top: 4px solid #d5a613;
 }
 
+.App {
+  --App-headerBorderOffset: 4px;
+  --App-headerPaddingOffset: 3.6rem;
+  --App-titleOffset: 2.4rem;
+  --App-footerOffset: 4.43rem;
+  --App-modeToggleOffset: calc(24px + 0.4rem);
+  --App-updateOffset: 0rem;
+  --App-errorOffset: 0rem;
+}
+
+.App--hasUpdate {
+  --App-updateOffset: 1.36rem;
+}
+
+.App--hasError {
+  --App-errorOffset: 3.92rem;
+}
+
 .AppMain {
-  /* 4px border + (2.2rem + 1.4rem) + (2rem * 1.2) + (24px + 0.4rem) + ((0.8rem * 1.2) + 0.4rem) + (3.92rem error) */
-  height: calc(100vh - 28px - 11.68rem);
+  height: calc(100vh - var(--App-headerBorderOffset) - var(--App-headerPaddingOffset) - var(--App-titleOffset) - var(--App-modeToggleOffset) - var(--App-updateOffset) - var(--App-errorOffset));
   max-height: 970px;
   overflow-y: auto;
   padding: 0 1rem;
 }
 
-.AppMain--care,
-.AppMain--careSimple,
-.AppMain--eggPurchase {
-  /* 4px border + (2.2rem + 1.4rem) + (2rem * 1.2) + (24px + 0.4rem) + ((0.8rem * 1.2) + 0.4rem) + (2.7rem + 1rem + 1rem) + (3.92rem error) */
-  height: calc(100vh - 28px - 16.38rem);
+.AppMain--withFooter {
+  height: calc(100vh - var(--App-headerBorderOffset) - var(--App-headerPaddingOffset) - var(--App-titleOffset) - var(--App-modeToggleOffset) - var(--App-updateOffset) - var(--App-errorOffset) - var(--App-footerOffset));
 }
 
 .AppMain--eggPurchase {

@@ -9,7 +9,15 @@ function AppMain({
 }) {
   return (
     <>
-      <div className={cx('AppMain', className)}>
+      <div
+        className={cx(
+          'AppMain',
+          {
+            'AppMain--withFooter': !!footer,
+          },
+          className,
+        )}
+      >
         {content}
       </div>
       {footer ? (

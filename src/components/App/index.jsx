@@ -27,6 +27,7 @@ function App() {
   const {
     showLog,
     setShowLog,
+    isOutdated,
   } = useAppContext();
   const [minimized, setMinimized] = React.useState(false);
   const [lol, setLol] = React.useState(true);
@@ -37,7 +38,8 @@ function App() {
     <div className={cx('App', {
       'App--minimized': minimized,
       'App--showLog': showLog,
-      'App--error': pockestState?.error,
+      'App--hasError': pockestState?.error,
+      'App--hasUpdate': isOutdated,
     })}
     >
       <div className="AppMinBtnLayout">
