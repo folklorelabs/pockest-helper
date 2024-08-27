@@ -34,17 +34,21 @@ function EggControls() {
               <>
                 You do not have enough
                 {' '}
-                <em>buckler points</em>
+                <em>Buckler points</em>
                 .
                 {' '}
               </>
             ) : ''}
-            Your current balance is
+            Your current Buckler point balance is
             {' '}
-            <em>{userBucklerPointBalance ?? '--'}</em>
+            <em>{userBucklerPointBalance ?? 0}</em>
             .
           </span>
-          {planEgg?.unlock ? 0 : planEgg?.buckler_point ?? '--'}
+          {planEgg?.unlock ? 0 : (planEgg?.buckler_point ?? 0)}
+          {' '}
+          /
+          {' '}
+          {userBucklerPointBalance ?? 0}
         </span>
       </div>
     </div>
