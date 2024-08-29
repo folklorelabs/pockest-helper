@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   allMonsters: [],
   allHashes: [],
   paused: true,
-  monsterId: -1,
+  monsterId: 4000, // default set to ryu
   eggTimestamp: null,
   eggId: null,
   planId: '',
