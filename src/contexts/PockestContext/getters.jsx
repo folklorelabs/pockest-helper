@@ -298,7 +298,7 @@ export function getCurrentPlanSchedule(state) {
 export function getMatchSchedule(state) {
   const birth = state?.data?.monster?.live_time;
   if (!birth) return [];
-  const targetDeath = MONSTER_AGE[Math.max(2, state?.planAge)];
+  const targetDeath = MONSTER_AGE[Math.max(2, state?.planAge || 6)];
   const firstMatchTime = state?.planAge < 4 ? birth : getFirstMatchTime(state);
   const numMatches = Math.max(0, Math.ceil((birth + targetDeath - firstMatchTime) / daysToMs(1)));
   const schedule = Array.from(new Array(numMatches)).map((v, i) => ({
