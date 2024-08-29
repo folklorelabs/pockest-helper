@@ -14,6 +14,7 @@ import AppMainLoading from './AppMain--loading';
 import AppMainEggPurchase from './AppMain--eggPurchase';
 import AppMainCare from './AppMain--care';
 import AppMainCareSimple from './AppMain--careSimple';
+import AppMainCareSimpleError from './AppMain--careSimpleError';
 import AppUpdateAlert from '../AppUpdateAlert';
 import { IconChevronDown, IconChevronUp, IconLog } from '../icons';
 import SimpleModeToggle from '../SimpleModeToggle';
@@ -92,6 +93,9 @@ function App() {
         }
         if (pockestState?.initialized && !pockestState?.data?.monster) {
           return <AppMainEggPurchase />;
+        }
+        if (pockestState?.simpleMode && !pockestState?.eggId) {
+          return <AppMainCareSimpleError />;
         }
         if (pockestState?.simpleMode) {
           return <AppMainCareSimple />;

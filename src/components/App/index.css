@@ -117,20 +117,21 @@
 }
 
 #PockestHelperExtension .App-updateTitle {
-  font-size: 1.5em;
+  font-size: 1.2em;
   margin-bottom: 0.25rem;
   text-align: center;
 }
 
 #PockestHelperExtension .App-updateTitle--error {
-  color: red;
+  color: #cc0000;
   font-weight: bold;
 }
 
 #PockestHelperExtension .App-updateText {
-  font-size: 1em;
+  font-size: 1rem;
   margin-bottom: 1rem;
   text-align: center;
+  text-wrap: pretty;
 }
 
 #PockestHelperExtension .App-updateText--error {
@@ -142,6 +143,7 @@
   font-size: 0.8em;
   margin-bottom: 1rem;
   text-align: center;
+  text-wrap: pretty;
 }
 
 #PockestHelperExtension .App-sprite {
