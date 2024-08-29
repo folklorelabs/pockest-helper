@@ -410,12 +410,13 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
 }
 
 export function getPlanEvolutions(state) {
+  if (!state?.planId) return {};
   const {
     planEgg,
     planRouteId,
     primaryStatLetter,
     planAge,
-  } = parsePlanId(state.planId) ?? {};
+  } = parsePlanId(state.planId);
   const numEvolutions = Math.max(2, Math.min(5, planAge));
   const eggMonsters = state.allMonsters.filter((m) => m?.eggIds?.includes(planEgg));
   const planEvolutions = Array.from(new Array(numEvolutions)).reduce((acc, _val, index) => {
