@@ -53,13 +53,13 @@ export default async function fetchAllMonsters() {
         ...m.eggIds,
       ],
     }), {});
-    const sheetMonster = sheetMonsters?.find((m) => m.monster_id === monsterId);
-    const hashMonster = hashMonsters?.find((h) => h.id.includes(monsterId));
+    const sheetMonster = sheetMonsters?.find((m) => m?.monster_id === monsterId);
+    const hashMonster = hashMonsters?.find((h) => h?.id?.includes(monsterId));
     return {
       ...bucklerMonster,
       ...sheetMonster,
-      hash: hashMonster?.id || sheetMonster.hash || bucklerMonster.hash,
-      name_en: hashMonster?.name_en || sheetMonster.name_en || bucklerMonster.name_en,
+      hash: hashMonster?.id || sheetMonster?.hash || bucklerMonster?.hash,
+      name_en: hashMonster?.name_en || sheetMonster?.name_en || bucklerMonster?.name_en,
     };
   });
 
