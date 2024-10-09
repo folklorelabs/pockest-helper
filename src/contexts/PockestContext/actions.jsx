@@ -99,7 +99,7 @@ export async function pockestRefresh(pockestState) {
     const isEvoFailureEvent = (() => {
       if (data.monster.age >= 5) return false; // successful evolution already
       if (Date.now() <= data.monster.live_time + daysToMs(3)) return false; // not evo time yet
-      if (pockestState.evolutionFailed || getCurrentMonsterLogs(pockestState, 'evolution_failure')) return false; // logged already
+      if (pockestState.evolutionFailed || getCurrentMonsterLogs(pockestState, 'evolution_failure')?.length) return false; // logged already
       return true;
     })();
     if (isEvoFailureEvent) {
