@@ -82,7 +82,7 @@ export function PockestProvider({
     ) return;
     const bucklerLiveTimestamp = pockestState?.data?.monster?.live_time;
     const stateLiveTimestamp = pockestState?.eggTimestamp;
-    if (!stateLiveTimestamp || stateLiveTimestamp !== bucklerLiveTimestamp) {
+    if (stateLiveTimestamp && stateLiveTimestamp !== bucklerLiveTimestamp) {
       log('Detected hatch sync', `bucklerLiveTimestamp (${bucklerLiveTimestamp}) !== stateLiveTimestamp (${stateLiveTimestamp})`, pockestState);
       pockestDispatch(pockestActions.pockestErrorHatchSync('Pockest Helper detected a Monster that it did not hatch. Please refrain from manually hatching monsters as this will reduce the effectiveness of Pockest Helper.'));
     }
