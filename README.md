@@ -57,4 +57,4 @@ If you have an old Android mobile device laying around, you could also try insta
 
 ### The extension/addon is broken for me! What can I do?
 
-Sorry about that! Feel free to join the [Pockest Guide Discord](https://discord.gg/492bdzBDu) if you have any questions or feedback. There is a dedicated `#pockest-helper` channel for assistance and/or reporting bugs. Also please keep in mind that testing some features/fixes may take collaboration and/or multiple days because verifying/debugging the issue often requires re-creating specific evolution conditions which takes time.
+Sorry about that! Feel free to join the [Pockest Guide Discord](https://discord.gg/3m6x9mGCRe) if you have any questions or feedback. There is a dedicated `#pockest-helper` channel for assistance and/or reporting bugs. Also please keep in mind that testing some features/fixes may take collaboration and/or multiple days because verifying/debugging the issue often requires re-creating specific evolution conditions which takes time.
