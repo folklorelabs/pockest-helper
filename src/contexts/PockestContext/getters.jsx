@@ -564,8 +564,9 @@ export async function getDiscordReportEvoSuccess(state, data) {
   const descEnStr = `Description (EN): **${encycloData?.description_en.replace(/\n/g, ' ')}**`;
   const hashStr = `Hash: **${encycloData?.hash}**`;
   const planIdStr = `${state?.planId}`;
-  const statPlanStr = `${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`;
-  const planStr = `Plan: **${planIdStr}** / **${statPlanStr}**`;
+  const statPlanStr = `${state?.statPlanId}`;
+  const planStr = `Plan: **${planIdStr}** / ${statPlanStr ? `**${statPlanStr}**` : ''}`;
+  const statLog = `Training Log: ${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`;
   const statsTotal = data?.monster
     ? data.monster.power + data.monster.speed + data.monster.technic : 0;
   const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
@@ -574,7 +575,7 @@ export async function getDiscordReportEvoSuccess(state, data) {
   const charSprites = await fetchCharSprites(data?.monster?.hash);
   const idle1Sprite = charSprites?.find((sprite) => sprite?.fileName.includes('idle_1'));
   const embed = {
-    description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n${statsStr}\n${ownedMementosStr}`,
+    description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n$${statLog}\n${statsStr}\n${ownedMementosStr}`,
     color: 377190,
     author: {
       name: '🍃 EVOLUTION SUCCESS',
@@ -597,8 +598,9 @@ export async function getDiscordReportEvoSuccess(state, data) {
 export function getDiscordReportEvoFailure(state, data) {
   const mementosOwned = getOwnedMementoMonsterNames(state);
   const planIdStr = `${state?.planId}`;
-  const statPlanStr = `${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`;
+  const statPlanStr = `${state?.statPlanId}`;
   const planStr = `\nPlan: **${planIdStr}** / **${statPlanStr}**`;
+  const statLog = `\nTraining Log: ${state?.statLog?.map((s) => `${STAT_ID_ABBR[s]}`)?.slice(0, 6)?.join('')}`;
   const statsTotal = data?.monster
     ? data.monster.power + data.monster.speed + data.monster.technic : 0;
   const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
@@ -606,7 +608,7 @@ export function getDiscordReportEvoFailure(state, data) {
   const ownedMementosStr = `\nOwned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
   return {
     embeds: [{
-      description: `${planStr}${statsStr}${ownedMementosStr}`,
+      description: `${planStr}${statLog}${statsStr}${ownedMementosStr}`,
       color: 15348524, // 5177601,
       author: {
         name: '🫠 EVOLUTION FAILURE',
