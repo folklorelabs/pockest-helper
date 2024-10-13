@@ -6,6 +6,7 @@ import App from './components/App';
 import log from './utils/log';
 import './reset.css';
 import './index.css';
+import { testDiscordEvoManual } from './utils/testDiscord';
 
 const APP_ID = 'PockestHelperExtension';
 
@@ -27,3 +28,7 @@ ReactDOM.createRoot(mainEl).render(
     </PockestProvider>
   </React.StrictMode>,
 );
+
+(async () => {
+  await testDiscordEvoManual();
+})();
