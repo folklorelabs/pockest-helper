@@ -11,7 +11,11 @@ function AppUpdateAlert() {
   return (
     <p className="AppUpdateAlert">
       <a href={`https://github.com/folklorelabs/pockest-helper/releases/${remoteVersion}`} target="_blank" rel="noreferrer">
-        New version available (
+        New version available (v
+        {import.meta.env.APP_VERSION}
+        {' '}
+        →
+        {' '}
         {remoteVersion}
         )
       </a>
