@@ -213,7 +213,7 @@ export function PockestProvider({
         && (monster && monster?.garbage > 0) && !isStunned
         && !shouldNeglect;
       const inCleanWindow = (!autoPlan && cleanFrequency === 2)
-        || (now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
+        || (currentCleanWindow && now.getTime() >= currentCleanWindow?.start && now.getTime() <= currentCleanWindow?.end);
       if (attemptToClean && inCleanWindow) {
         log('CLEAN');
         pockestDispatch(pockestActions.pockestLoading());
@@ -226,7 +226,7 @@ export function PockestProvider({
         && (monster && monster?.stomach < feedTarget) && !isStunned
         && !shouldNeglect;
       const inFeedWindow = (!autoPlan && feedFrequency === 4)
-        || (now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
+        || (currentFeedWindow && now.getTime() >= currentFeedWindow?.start && now.getTime() <= currentFeedWindow?.end);
       if (attemptToFeed && inFeedWindow) {
         log('FEED');
         pockestDispatch(pockestActions.pockestLoading());

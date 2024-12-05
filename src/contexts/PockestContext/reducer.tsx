@@ -20,22 +20,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
     case ACTION_TYPES.SETTINGS:
       return {
         ...state,
-        monsterId: payload.monsterId ?? state?.monsterId,
-        planId: payload.planId ?? state?.planId,
-        statPlanId: payload.statPlanId ?? state?.statPlanId,
-        planAge: payload.planAge ?? state?.planAge,
-        autoPlan: payload.autoPlan ?? state?.autoPlan,
-        autoFeed: payload.autoFeed ?? state?.autoFeed,
-        autoClean: payload.autoClean ?? state?.autoClean,
-        autoTrain: payload.autoTrain ?? state?.autoTrain,
-        autoMatch: payload.autoMatch ?? state?.autoMatch,
-        cleanFrequency: payload.cleanFrequency ?? state?.cleanFrequency,
-        feedFrequency: payload.feedFrequency ?? state?.feedFrequency,
-        feedTarget: payload.feedTarget ?? state?.feedTarget,
-        stat: payload.stat ?? state?.stat,
-        matchPriority: payload.matchPriority ?? state?.matchPriority,
-        autoCure: payload.autoCure ?? state?.autoCure,
-        simpleMode: payload.simpleMode ?? state?.simpleMode,
+        ...getAutoSettings(state, null, payload),
       };
     case ACTION_TYPES.PAUSE:
       return {

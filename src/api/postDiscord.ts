@@ -19,7 +19,7 @@ export type DiscordEmbed = {
 
 export type DiscordFile = {
   name: string;
-  base64: string | ArrayBuffer | null;
+  base64: string | ArrayBuffer | null | undefined;
 }
 
 export type DiscordAttachment = {
@@ -97,7 +97,7 @@ export async function postDiscord(id: string, url: string, report: Report) {
     const headers = new Headers();
     const body = new FormData();
     report?.files?.forEach((fileMeta, index) => {
-      const b64Data = fileMeta?.base64?.split('base64,')[1];
+      const b64Data = `${fileMeta?.base64}`.split('base64,')[1];
       body.append(`file[${index + 1}]`, b64toBlob(b64Data), fileMeta.name);
     });
     const payload = {} as Report;

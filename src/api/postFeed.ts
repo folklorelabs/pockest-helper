@@ -1,6 +1,7 @@
-import BucklerStatusData from "../types/BucklerStatusData";
+import { z } from "zod";
+import { mealStatusSchema } from "../schemas/statusSchema";
 
-export default async function postFeed():Promise<BucklerStatusData> {
+export default async function postFeed():Promise<z.infer<typeof mealStatusSchema>> {
   const url = 'https://www.streetfighter.com/6/buckler/api/minigame/serving';
   const response = await fetch(url, {
     body: '{"type":1}',

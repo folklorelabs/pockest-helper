@@ -1,6 +1,7 @@
-import BucklerStatusData from "../types/BucklerStatusData";
+import { z } from "zod";
+import { cureStatusSchema } from "../schemas/statusSchema";
 
-export default async function postCure():Promise<BucklerStatusData> {
+export default async function postCure():Promise<z.infer<typeof cureStatusSchema>> {
   const url = 'https://www.streetfighter.com/6/buckler/api/minigame/cure';
   const response = await fetch(url, {
     body: '{"type":1}',

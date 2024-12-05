@@ -3,7 +3,6 @@ import fetchAllHashes from '../../api/fetchAllHashes';
 import { postDiscordEvo, postDiscordMatch } from '../../api/postDiscord';
 import combineDiscordReports from '../../utils/combineDiscordReports';
 import {
-  getAutoSettings,
   getCurrentMonsterLogs,
   getDiscordReportEvoSuccess,
   getDiscordReportMemento,
@@ -17,7 +16,6 @@ import { getRefreshTimeout, REFRESH_TIMEOUT, setRefreshTimeout } from './state';
 import Settings from './types/Settings';
 import ACTION_TYPES from './constants/ACTION_TYPES';
 import PockestState from './types/PockestState';
-import StatusRefreshPayload from './types/StatusRefreshPayload';
 import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
 import postClean from '../../api/postClean';
 import postTrain from '../../api/postTrain';
@@ -26,28 +24,31 @@ import postHatch from '../../api/postHatch';
 import postCure from '../../api/postCure';
 import postFeed from '../../api/postFeed';
 import fetchStatus from '../../api/fetchStatus';
+import Action from './types/Action';
+import statusRefreshPayloadSchema from './schemas/statusRefreshPayloadSchema';
+import { deathStatusSchema, departureStatusSchema, evolutionFailStatusSchema, evolutionSchema, evolutionStatusSchema, notFoundStatusSchema } from '../../schemas/statusSchema';
+import { z } from 'zod';
 
-export function pockestLoading() {
+export function pockestLoading(): Action {
   return [ACTION_TYPES.LOADING];
 }
-export function pockestPause(paused: boolean) {
+export function pockestPause(paused: boolean): Action {
   return [ACTION_TYPES.PAUSE, {
     paused,
   }];
 }
-export function pockestSettings(settings: Settings) {
+export function pockestSettings(settings: Settings): Action {
   return [ACTION_TYPES.SETTINGS, settings];
 }
-export function pockestPlanSettings(pockestState: PockestState, settingsOverride: Settings) {
-  const newSettings = getAutoSettings(pockestState, null, settingsOverride);
-  return [ACTION_TYPES.SETTINGS, newSettings];
+export function pockestPlanSettings(settingsOverride: Settings): Action {
+  return [ACTION_TYPES.SETTINGS, settingsOverride];
 }
 
-export async function pockestRefresh(pockestState: PockestState) {
+export async function pockestRefresh(pockestState: PockestState): Promise<Action> {
   try {
     // get buckler data and create payload obj
     const data = await fetchStatus();
-    const payload: StatusRefreshPayload = { data };
+    let payloadData: object = { data };
 
     const isEvolution = data?.event === 'evolution' || (data?.monster && pockestState?.data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash);
 
@@ -68,9 +69,13 @@ export async function pockestRefresh(pockestState: PockestState) {
         fetchAllMonsters(),
         fetchAllHashes(),
       ]);
-      payload.allMonsters = allMonsters;
-      payload.allHashes = allHashes;
+      if (allMonsters) payloadData = { ...payloadData, allMonsters };
+      if (allHashes) payloadData = { ...payloadData, allHashes };
     }
+
+    const payloadParsed = statusRefreshPayloadSchema.safeParse(payloadData);
+    if (!payloadParsed.success) throw payloadParsed.error;
+    const payload = payloadParsed.data;
 
     // figure out what sort of action to call
     const mergedState = {
@@ -79,15 +84,22 @@ export async function pockestRefresh(pockestState: PockestState) {
       allHashes: payload?.allHashes || pockestState?.allHashes || [],
     };
     const shouldDiscordReport = !isConfirmedMonster(mergedState, data);
-    if (data?.event === 'death') return [ACTION_TYPES.REFRESH_DEATH, payload];
+    if (data?.event === 'death') {
+      const deathPayload: z.infer<typeof deathStatusSchema> = data; // hacky way to get around zod type
+      return [ACTION_TYPES.REFRESH_DEATH, { ...payloadData, data: deathPayload }];
+    }
     if (data?.event === 'departure') {
       if (shouldDiscordReport) {
         const report = await getDiscordReportMemento(mergedState, data);
         postDiscordEvo(report);
       }
-      return [ACTION_TYPES.REFRESH_DEPARTURE, payload];
+      const departurePayload: z.infer<typeof departureStatusSchema> = data; // hacky way to get around zod type
+      return [ACTION_TYPES.REFRESH_DEPARTURE, { ...payloadData, data: departurePayload }];
     }
-    if (data?.event === 'monster_not_found') return [ACTION_TYPES.REFRESH_MONSTER_NOT_FOUND, payload];
+    if (data?.event === 'monster_not_found') {
+      const notFoundPayload: z.infer<typeof notFoundStatusSchema> = data; // hacky way to get around zod type
+      return [ACTION_TYPES.REFRESH_MONSTER_NOT_FOUND, { ...payloadData, data: notFoundPayload }];
+    }
     if (isEvolution) {
       // send any useful info to discord
       if (data?.monster?.age >= 5 && shouldDiscordReport) {
@@ -105,7 +117,12 @@ export async function pockestRefresh(pockestState: PockestState) {
           postDiscordEvo(report);
         }
       }
-      return [ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS, payload];
+      const evoPayload: z.infer<typeof evolutionStatusSchema> = {
+        ...data,
+        event: "evolution",
+        evolutions: (data as { evolutions?: z.infer<typeof evolutionSchema>[] }).evolutions || [],
+      }; // super hacky way to get around zod type
+      return [ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS, { ...payloadData, data: evoPayload }];
     }
     const isEvoFailureEvent = (() => {
       if (data.monster.age >= 5) return false; // successful evolution already
@@ -121,14 +138,19 @@ export async function pockestRefresh(pockestState: PockestState) {
         const report = getDiscordReportEvoFailure(pockestState, data);
         postDiscordEvo(report);
       }
-      return [ACTION_TYPES.REFRESH_EVOLUTION_FAILURE, payload];
+      const evoFailPayload: z.infer<typeof evolutionFailStatusSchema> = {
+        ...data,
+        event: "evolution_failure",
+        evolutions: (data as { evolutions?: z.infer<typeof evolutionSchema>[] }).evolutions || [],
+      }; // super hacky way to get around zod type
+      return [ACTION_TYPES.REFRESH_EVOLUTION_FAILURE, { ...payloadData, data: evoFailPayload }];
     }
     return [ACTION_TYPES.REFRESH_STATUS, payload];
   } catch (error) {
     return [ACTION_TYPES.ERROR, `[pockestRefresh] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestFeed() {
+export async function pockestFeed(): Promise<Action> {
   try {
     const data = await postFeed();
     const payload = {
@@ -139,7 +161,7 @@ export async function pockestFeed() {
     return [ACTION_TYPES.ERROR, `[pockestFeed] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestCure() {
+export async function pockestCure(): Promise<Action> {
   try {
     const data = await postCure();
     const payload = {
@@ -150,7 +172,7 @@ export async function pockestCure() {
     return [ACTION_TYPES.ERROR, `[pockestCure] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestClean() {
+export async function pockestClean(): Promise<Action> {
   try {
     const data = await postClean();
     const payload = {
@@ -161,7 +183,7 @@ export async function pockestClean() {
     return [ACTION_TYPES.ERROR, `[pockestClean] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestTrain(type: number) {
+export async function pockestTrain(type: number): Promise<Action> {
   try {
     const data = await postTrain(type);
     const payload = {
@@ -176,7 +198,7 @@ export async function pockestTrain(type: number) {
     return [ACTION_TYPES.ERROR, `[pockestTrain] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestMatch(pockestState: PockestState, match: BucklerPotentialMatch) {
+export async function pockestMatch(pockestState: PockestState, match: BucklerPotentialMatch): Promise<Action> {
   try {
     const data = await postMatch(match);
     const payload = {
@@ -200,7 +222,7 @@ export async function pockestMatch(pockestState: PockestState, match: BucklerPot
     return [ACTION_TYPES.ERROR, `[pockestMatch] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestSelectEgg(id: number) {
+export async function pockestSelectEgg(id: number): Promise<Action> {
   try {
     const data = await postHatch(id);
     const payload = {
@@ -212,7 +234,7 @@ export async function pockestSelectEgg(id: number) {
     return [ACTION_TYPES.ERROR, `[pockestSelectEgg] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export function pockestClearLog(pockestState: PockestState, logTypes: string[]) {
+export function pockestClearLog(pockestState: PockestState, logTypes: string[]): Action {
   if (!Array.isArray(logTypes)) {
     return [ACTION_TYPES.ERROR, `[pockestClearLog] logTypes ${logTypes} needs to be an array`];
   }
@@ -222,9 +244,9 @@ export function pockestClearLog(pockestState: PockestState, logTypes: string[]) 
       || entry.timestamp >= pockestState?.data?.monster?.live_time);
   return [ACTION_TYPES.SET_LOG, newLog];
 }
-export function pockestInvalidateSession() {
+export function pockestInvalidateSession(): Action {
   return [ACTION_TYPES.INVALIDATE_SESSION];
 }
-export function pockestErrorHatchSync(errMsg: string) {
+export function pockestErrorHatchSync(errMsg: string): Action {
   return [ACTION_TYPES.ERROR_HATCH_SYNC, errMsg];
 }

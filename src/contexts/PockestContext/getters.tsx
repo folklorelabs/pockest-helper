@@ -1,6 +1,6 @@
 import { STAT_ABBR, STAT_ID_ABBR } from '../../constants/stats';
 import MONSTER_AGE from '../../constants/MONSTER_AGE';
-import getTimeIntervals from '../../utils/getTimeIntervals';
+import getTimeIntervals, { TimeInterval } from '../../utils/getTimeIntervals';
 import getTotalStats from '../../utils/getTotalStats';
 import getDeathTimer, { STUN_DEATH_OFFSET } from '../../utils/getDeathTimer';
 import { parsePlanId, LEGACY_PLAN_REGEX } from '../../utils/parsePlanId';
@@ -17,14 +17,13 @@ import BucklerStatusData from '../../types/BucklerStatusData';
 import Settings from './types/Settings';
 import BucklerMatchResults from '../../types/BucklerMatchResults';
 import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
-import { parse } from 'path';
 
 export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData) {
   const mergedData = data ?? pockestState?.data;
   return {
     logType: mergedData?.event,
     timestamp: new Date().getTime(),
-    monsterId: getMonsterIdFromHash(mergedData?.monster?.hash),
+    monsterId: mergedData?.monster?.hash ? getMonsterIdFromHash(mergedData?.monster?.hash) : -1,
     monsterBirth: mergedData?.monster?.live_time,
   };
 }
@@ -237,58 +236,62 @@ export function getCurrentPlanSchedule(state: PockestState) {
   const birth = state?.data?.monster?.live_time;
   if (!birth) return {};
   const neglectOffset = getPlanNeglectOffset(state);
-  const cleanSchedule = state?.autoPlan ? targetPlan?.planRoute
-    ?.reduce((fullSchedule, spec, index) => {
-      if (!spec) return fullSchedule;
-      if (spec.startTime > neglectOffset) return fullSchedule;
-      const start = birth + spec.startTime;
-      const end = spec.endTime > neglectOffset ? birth + neglectOffset : birth + spec.endTime;
-      const schedule = getTimeIntervals(
-        start,
-        end,
-        state?.planAge === 5 && index >= 2 ? 6 : spec.cleanFrequency,
-        spec.cleanOffset,
-      );
-      return [
-        ...fullSchedule,
-        ...schedule,
-      ];
-    }, []) : getTimeIntervals(
-      birth,
-      birth + 7 * 24 * 60 * 60 * 1000,
-      state?.cleanFrequency,
-      0,
-    );
+  const cleanSchedule = (state?.autoPlan && targetPlan?.planRoute) ? targetPlan.planRoute.reduce((fullSchedule, spec, index) => {
+    if (!spec) return fullSchedule;
+    if (spec.startTime > neglectOffset) return fullSchedule;
+    const start = birth + spec.startTime;
+    const end = spec.endTime > neglectOffset ? birth + neglectOffset : birth + spec.endTime;
+    const schedule = getTimeIntervals(
+      start,
+      end,
+      state?.planAge === 5 && index >= 2 ? 6 : spec.cleanFrequency,
+      spec.cleanOffset,
+    ) || [];
+    return [
+      ...fullSchedule,
+      ...schedule,
+    ];
+  }, [] as TimeInterval[]) : getTimeIntervals(
+    birth,
+    birth + 7 * 24 * 60 * 60 * 1000,
+    state?.cleanFrequency,
+    0,
+  );
   if (cleanSchedule?.[0]?.start === birth) {
     // remove unnecessary first clean
     cleanSchedule.shift();
   }
-  const feedSchedule = state?.autoPlan ? targetPlan?.planRoute
-    ?.reduce((fullSchedule, spec) => {
-      if (!spec) return fullSchedule;
-      if (spec.startTime > neglectOffset) return fullSchedule;
-      const start = birth + spec.startTime;
-      const end = spec.endTime > neglectOffset ? birth + neglectOffset : birth + spec.endTime;
-      const schedule = getTimeIntervals(
-        start,
-        end,
-        spec.feedFrequency,
-        spec.feedOffset,
-      ).map((s) => ({
-        ...s,
-        feedTarget: spec.feedTarget,
-      }));
-      return [
-        ...fullSchedule,
-        ...schedule,
-      ];
-    }, []) : getTimeIntervals(
-      birth,
-      birth + 7 * 24 * 60 * 60 * 1000,
-      state?.feedFrequency,
-      0,
-    );
-  const trainSchedule = (Array.from(new Array(14))).reduce((fullSchedule, _unused, index) => {
+  interface FeedInterval extends TimeInterval {
+    feedTarget?: number;
+  }
+  const feedSchedule: FeedInterval[] = (state?.autoPlan && targetPlan?.planRoute) ? targetPlan.planRoute.reduce((fullSchedule, spec) => {
+    if (!spec) return fullSchedule;
+    if (spec.startTime > neglectOffset) return fullSchedule;
+    const start = birth + spec.startTime;
+    const end = spec.endTime > neglectOffset ? birth + neglectOffset : birth + spec.endTime;
+    const schedule = (getTimeIntervals(
+      start,
+      end,
+      spec.feedFrequency,
+      spec.feedOffset,
+    ) || []).map((s) => ({
+      ...s,
+      feedTarget: spec.feedTarget,
+    }));
+    return [
+      ...fullSchedule,
+      ...schedule,
+    ];
+  }, [] as FeedInterval[]) : (getTimeIntervals(
+    birth,
+    birth + 7 * 24 * 60 * 60 * 1000,
+    state?.feedFrequency,
+    0,
+  ) || []);
+  interface TrainInterval extends TimeInterval {
+    stat?: number;
+  }
+  const trainSchedule: TrainInterval[] = (Array.from(new Array(14))).reduce((fullSchedule, _unused, index) => {
     const startOffset = (12 * 60 * 60 * 1000) * index;
     if (startOffset > neglectOffset) return fullSchedule;
     return [
@@ -310,9 +313,9 @@ export function getMatchSchedule(state: PockestState) {
   const birth = state?.data?.monster?.live_time;
   if (!birth) return [];
   const targetDeath = MONSTER_AGE[Math.max(2, state?.planAge || 6)];
-  const firstMatchTime = state?.planAge < 4 ? birth : getFirstMatchTime(state);
+  const firstMatchTime = (state?.planAge < 4 ? birth : getFirstMatchTime(state)) ?? birth;
   const numMatches = Math.max(0, Math.ceil((birth + targetDeath - firstMatchTime) / daysToMs(1)));
-  const schedule = Array.from(new Array(numMatches)).map((v, i) => ({
+  const schedule = Array.from(new Array(numMatches)).map((_v, i) => ({
     start: firstMatchTime + (i * daysToMs(1)),
   }));
   return schedule;
@@ -320,7 +323,7 @@ export function getMatchSchedule(state: PockestState) {
 
 export function getCurrentPlanScheduleWindows(state: PockestState) {
   const { cleanSchedule, feedSchedule } = getCurrentPlanSchedule(state);
-  const now = new Date();
+  const now = Date.now();
   const nextCleanWindow = cleanSchedule && cleanSchedule?.find((scheduleWindow) => now < scheduleWindow.start);
   const currentCleanWindow = cleanSchedule && cleanSchedule?.find(
     (scheduleWindow) => now >= scheduleWindow.start && now <= scheduleWindow.end,
@@ -345,7 +348,7 @@ export function isMonsterDead(state: PockestState, data?: BucklerStatusData | nu
     ...state,
     data: data || state?.data,
   });
-  return now >= deathTimestamp;
+  return deathTimestamp ? now >= deathTimestamp : false;
 }
 
 export function isMonsterDeparted(state: PockestState, data?: BucklerStatusData | null) {
@@ -359,7 +362,7 @@ export function isMonsterDeparted(state: PockestState, data?: BucklerStatusData 
   return birthTimestamp && now >= (birthTimestamp + daysToMs(7));
 }
 
-export function isMonsterMissing(state: PockestState, data?: BucklerStatusData | null) {
+export function isMonsterMissing(_state: PockestState, data?: BucklerStatusData | null) {
   if (data?.event === 'hatching') return false;
   return data?.event === 'monster_not_found';
 }
@@ -468,7 +471,14 @@ export function getPlanLog(state: PockestState) {
     trainSchedule,
   } = planSchedule;
   const matchSchedule = getMatchSchedule(state);
-  let data = [];
+  type PlanLogEntry = {
+    start: number,
+    completion?: boolean,
+    label: string,
+    logType?: string,
+    logGrace?: number,
+  };
+  let data: PlanLogEntry[] = [];
   const stunOffset = getPlanStunOffset(state);
   data.push({
     logType: 'hatching',
@@ -478,7 +488,8 @@ export function getPlanLog(state: PockestState) {
   });
   const planEvolutions = getPlanEvolutions(state);
   if (typeof stunOffset === 'number') {
-    const startStopCure = birth + getPlanStunOffset(state);
+    const planStunOffset = getPlanStunOffset(state) || 0;
+    const startStopCure = birth + planStunOffset;
     const lastClean = cleanSchedule && cleanSchedule[cleanSchedule.length - 1];
     const lastCleanTime = lastClean?.start || birth;
     const deathByPoop = lastCleanTime + (GARBAGE_TIME * 12);
@@ -515,6 +526,7 @@ export function getPlanLog(state: PockestState) {
   data = [
     ...data,
     ...(Object.keys(MONSTER_AGE)
+      .map((key) => parseInt(key, 10))
       .filter((age) => age > 1 && age <= Math.max(2, Math.min(5, state?.planAge)))
       .map((age) => ({
         logType: 'evolution',
@@ -547,16 +559,16 @@ export function getPlanLog(state: PockestState) {
       label: 'Match',
       ...w,
     })) ?? []),
-  ].map((w) => {
+  ].map((w: PlanLogEntry) => {
     const completion = w.completion
-      ?? (
-        getCurrentMonsterLogs(state, w.logType).find((l) => l?.timestamp >= w.start
-          && l?.timestamp < (w.start + w.logGrace))
+      ?? !!(
+        getCurrentMonsterLogs(state, w.logType || '').find((l) => l?.timestamp >= w.start
+          && l?.timestamp < (w.start + (w.logGrace || 0)))
       );
     return {
       ...w,
       startOffset: w.start - birth,
-      missed: !completion && Date.now() >= (w.start + w.logGrace),
+      missed: !completion && Date.now() >= (w.start + (w.logGrace || 0)),
       completion: !!completion,
     };
   }).sort((a, b) => a.start - b.start);
@@ -597,13 +609,13 @@ export async function getDiscordReportEvoSuccess(state: PockestState, data: Buck
       name: '🍃 EVOLUTION SUCCESS',
     },
     thumbnail: {
-      url: `attachment://${idle1Sprite.fileName}`,
+      url: `attachment://${idle1Sprite?.fileName}`,
     },
     url: `https://folklorelabs.io/pockest-helper-data/v2/monsters.json?hash=${data?.monster?.hash}`, // hack for grouping files into embed
   };
   const files = [{
-    base64: idle1Sprite.data,
-    name: `${idle1Sprite.fileName}`,
+    base64: idle1Sprite?.data,
+    name: `${idle1Sprite?.fileName}`,
   }];
   return {
     files,
@@ -637,11 +649,11 @@ export function getDiscordReportEvoFailure(state: PockestState, data: BucklerSta
 export async function getDiscordReportMemento(state: PockestState, data: BucklerStatusData) {
   const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
     && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
-  const newMementoData = encycloData?.memento_hash !== '???' ? encycloData : data?.monster;
+  const newMementoData = encycloData?.memento_hash && encycloData?.memento_hash !== '???' ? encycloData : data?.monster;
   const nameEnStr = `\nName (EN): **${newMementoData?.memento_name_en}**`;
   const nameStr = `\nName: **${newMementoData?.memento_name}**`;
-  const descEnStr = `\nDescription (EN): **${newMementoData?.memento_description_en?.replace(/\n/g, ' ') || '???'}**`;
-  const descStr = `\nDescription: **${newMementoData?.memento_description?.replace(/\n/g, ' ') || '???'}**`;
+  const descEnStr = `\nDescription (EN): **${encycloData?.memento_description_en?.replace(/\n/g, ' ') || '???'}**`;
+  const descStr = `\nDescription: **${encycloData?.memento_description?.replace(/\n/g, ' ') || '???'}**`;
   const hashStr = `\nHash: **${newMementoData?.memento_hash}**`;
   const fromStr = `\nFrom: **${newMementoData?.name_en}** (${newMementoData?.name})`;
   const base64 = await toDataUrl(`https://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}_memento.png`);
@@ -665,7 +677,7 @@ export async function getDiscordReportMemento(state: PockestState, data: Buckler
 
 export function isMatchDiscovery(pockestState: PockestState, exchangeResult: BucklerMatchResults) {
   const monster = pockestState?.allMonsters
-    .find((m) => m.monster_id === getMonsterIdFromHash(pockestState?.data?.monster?.hash));
+    .find((m) => pockestState?.data?.monster?.hash && m.monster_id === getMonsterIdFromHash(pockestState?.data?.monster?.hash));
   const allMissing = [
     ...(monster?.matchSusFever || []),
     ...(monster?.matchUnknown || []),
@@ -689,7 +701,7 @@ export function getDiscordReportMatch(state: PockestState, exchangeResult: Buckl
   };
 }
 
-export async function getDiscordReportSighting(state: PockestState, data: BucklerStatusData, matchResults: BucklerPotentialMatch) {
+export async function getDiscordReportSighting(_state: PockestState, _data: BucklerStatusData, matchResults: BucklerPotentialMatch) {
   const nameEnStr = `\nName (EN): **${matchResults?.name_en}**`;
   const nameStr = `\nName: **${matchResults?.name}**`;
   const hashStr = `\nHash: **${matchResults?.hash}**`;
@@ -705,13 +717,13 @@ export async function getDiscordReportSighting(state: PockestState, data: Buckle
       name: '🔎 SIGHTING',
     },
     thumbnail: {
-      url: `attachment://${idle1Sprite.fileName}`,
+      url: `attachment://${idle1Sprite?.fileName}`,
     },
-    url: `https://folklorelabs.io/pockest-helper-data/v2/hashes.json?hash=${args?.match?.hash}`, // hack for grouping files into embed
+    url: `https://folklorelabs.io/pockest-helper-data/v2/hashes.json?hash=${matchResults?.hash}`, // hack for grouping files into embed
   };
   const files = [{
-    base64: idle1Sprite.data,
-    name: `${idle1Sprite.fileName}`,
+    base64: idle1Sprite?.data,
+    name: `${idle1Sprite?.fileName}`,
   }];
   return {
     files,

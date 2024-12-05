@@ -1,6 +1,7 @@
-import BucklerStatusData from "../types/BucklerStatusData";
+import { z } from "zod";
+import { hatchingStatusSchema } from "../schemas/statusSchema";
 
-export default async function postHatch(eggId:number):Promise<BucklerStatusData> {
+export default async function postHatch(eggId:number):Promise<z.infer<typeof hatchingStatusSchema>> {
   if (eggId < 1) throw new Error(`Invalid param: id needs to be > 0, received ${eggId}`);
   const url = 'https://www.streetfighter.com/6/buckler/api/minigame/eggs';
   const response = await fetch(url, {

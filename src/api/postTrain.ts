@@ -1,6 +1,7 @@
-import BucklerStatusData from "../types/BucklerStatusData";
+import { z } from "zod";
+import { trainingStatusSchema } from "../schemas/statusSchema";
 
-export default async function postTrain(matchType:number):Promise<BucklerStatusData> {
+export default async function postTrain(matchType:number):Promise<z.infer<typeof trainingStatusSchema>> {
   if (matchType < 1 || matchType > 3) {
     throw new Error(`Invalid param: type needs to be 1, 2, or 3. Received ${matchType}.`);
   }

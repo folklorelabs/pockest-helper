@@ -1,6 +1,7 @@
-import BucklerStatusData from "../types/BucklerStatusData";
+import { z } from "zod";
+import { cleaningStatusSchema } from "../schemas/statusSchema";
 
-export default async function postClean():Promise<BucklerStatusData> {
+export default async function postClean():Promise<z.infer<typeof cleaningStatusSchema>> {
   const url = 'https://www.streetfighter.com/6/buckler/api/minigame/cleaning';
   const response = await fetch(url, {
     body: '{"type":1}',

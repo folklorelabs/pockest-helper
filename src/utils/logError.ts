@@ -1,11 +1,5 @@
  
-interface LogError {
-  (...args: unknown[]): void;
-}
-
-const logError: LogError = (...args) => {
+export default function logError(...args: unknown[]) {
   // const now = new Date();
   console.error(...args);
-};
-
-export default logError;
+}

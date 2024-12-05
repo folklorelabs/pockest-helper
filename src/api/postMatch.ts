@@ -1,7 +1,8 @@
+import { z } from "zod";
 import BucklerPotentialMatch from "../types/BucklerPotentialMatch";
-import BucklerStatusData from "../types/BucklerStatusData";
+import { exchangeStatusSchema } from "../schemas/statusSchema";
 
-export default async function postMatch(match:BucklerPotentialMatch):Promise<BucklerStatusData> {
+export default async function postMatch(match:BucklerPotentialMatch):Promise<z.infer<typeof exchangeStatusSchema>> {
   if (match?.slot < 1) {
     throw new Error(`Invalid param: slot needs to be > 1, receive ${match}`);
   }

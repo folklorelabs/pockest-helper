@@ -5,7 +5,7 @@ import settingsSchema from "./settingsSchema";
 import statusPayloadSchema from "./statusPayloadSchema";
 import statusRefreshPayloadSchema from "./statusRefreshPayloadSchema";
 import potentialMatchSchema from "../../../schemas/potentialMatchSchema";
-import { cleaningStatusSchema, cureStatusSchema, deathStatusSchema, departureStatusSchema, evolutionStatusSchema, exchangeStatusSchema, hatchingStatusSchema, mealStatusSchema, notFoundStatusSchema, trainingStatusSchema } from "../../../schemas/statusSchema";
+import { cleaningStatusSchema, cureStatusSchema, deathStatusSchema, departureStatusSchema, evolutionFailStatusSchema, evolutionStatusSchema, exchangeStatusSchema, hatchingStatusSchema, mealStatusSchema, notFoundStatusSchema, trainingStatusSchema } from "../../../schemas/statusSchema";
 
 
 const actionSchema = z.union([
@@ -35,7 +35,7 @@ const actionSchema = z.union([
     data: evolutionStatusSchema,
   })]),
   z.tuple([z.literal(ACTION_TYPES.REFRESH_EVOLUTION_FAILURE), statusRefreshPayloadSchema.extend({
-    data: evolutionStatusSchema,
+    data: evolutionFailStatusSchema,
   })]),
   z.tuple([z.literal(ACTION_TYPES.REFRESH_DEATH), statusRefreshPayloadSchema.extend({
     data: deathStatusSchema,
