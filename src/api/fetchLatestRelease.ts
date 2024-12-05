@@ -7,7 +7,7 @@ const cache = new LocalStorageCache('PockestHelperReleases');
 
 const resSchema = z.array(githubReleaseSchema);
 
-export default async function fetchLatestReleases() {
+export default async function fetchLatestReleases(): Promise<z.infer<typeof githubReleaseSchema>> {
   try {
     const curVersion = import.meta.env.VITE_APP_VERSION;
     const response = await fetch('https://api.github.com/repos/folklorelabs/pockest-helper/releases');

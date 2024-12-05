@@ -1,9 +1,11 @@
 import React from 'react';
 import { pockestGetters } from '../contexts/PockestContext';
 import fetchAllEggs from '../api/fetchAllEggs';
+import PockestState from '../contexts/PockestContext/types/PockestState';
+import BucklerEggData from '../types/BucklerEggsData';
 
-function usePlanEgg(pockestState) {
-  const [eggData, setEggData] = React.useState();
+function usePlanEgg(pockestState: PockestState) {
+  const [eggData, setEggData] = React.useState<BucklerEggData>();
   React.useEffect(() => {
     (async () => {
       const res = await fetchAllEggs();
@@ -24,8 +26,8 @@ function usePlanEgg(pockestState) {
     return {
       planEgg,
       planEggCost,
-      planEggAffordable: planEggCost <= eggData?.user_buckler_point,
-      userBucklerPointBalance: eggData?.user_buckler_point,
+      planEggAffordable: eggData && typeof planEggCost === 'number' && planEggCost <= eggData?.user_buckler_point,
+      userBucklerPointBalance: eggData?.user_buckler_point || 0,
     };
   }, [eggData, planEgg]);
   return returnVal;
