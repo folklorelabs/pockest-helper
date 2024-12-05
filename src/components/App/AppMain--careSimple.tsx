@@ -1,4 +1,3 @@
-import React from 'react';
 import PauseBtn from '../PauseBtn';
 import AppMainTemplate from './AppMain';
 import SimplePlan from '../SimplePlan';
@@ -12,7 +11,7 @@ function AppMain() {
         <>
           <AutoPlanControlsSimple />
           <hr />
-          <SimplePlan title="Preset Plan" rows={45} />
+          <SimplePlan rows={45} />
         </>
       )}
       footer={(

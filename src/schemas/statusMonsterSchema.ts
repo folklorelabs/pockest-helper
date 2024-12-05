@@ -22,7 +22,7 @@ const bucklerDataMonsterSchema = z.object({
   power: z.number().nonnegative(),
   speed: z.number().nonnegative(),
   status: flagSchema,
-  stomach: z.number().gte(1).lte(6),
+  stomach: z.number().gte(0).lte(6),
   technic: z.number().nonnegative(),
   training_is_fever: z.boolean(),
   training_time: timestampSchema,

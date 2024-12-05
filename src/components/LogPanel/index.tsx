@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import {
   AppContext,
 } from '../../contexts/AppContext';
 import './index.css';
 
-function LogPanel({ children }) {
+interface LogPanelProps {
+  children: ReactNode;
+}
+
+function LogPanel({ children }: LogPanelProps) {
   const {
     setShowLog,
     logStyle,
@@ -16,7 +19,7 @@ function LogPanel({ children }) {
       <button
         className="LogPanel-close"
         type="button"
-        onClick={() => setShowLog(false)}
+        onClick={() => setShowLog && setShowLog(false)}
       >
         «
       </button>
@@ -24,12 +27,5 @@ function LogPanel({ children }) {
     </div>
   );
 }
-
-LogPanel.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]).isRequired,
-};
 
 export default LogPanel;

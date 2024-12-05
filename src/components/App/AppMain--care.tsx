@@ -1,4 +1,3 @@
-import React from 'react';
 import AutoPlanControls from '../AutoPlanControls';
 import CleanControls from '../CleanControls';
 import FeedControls from '../FeedControls';

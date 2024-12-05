@@ -1,4 +1,3 @@
-import React from 'react';
 import AppMainTemplate from './AppMain';
 
 function AppMain() {

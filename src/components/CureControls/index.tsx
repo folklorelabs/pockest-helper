@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   usePockestContext,
   pockestActions,
@@ -25,7 +24,7 @@ function CureControls() {
             id="PockestHelper_AutoCure"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({ autoCure: e.target.checked }))}
+            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({ autoCure: e.target.checked }))}
             checked={autoCure}
             disabled={!paused || autoPlan}
           />

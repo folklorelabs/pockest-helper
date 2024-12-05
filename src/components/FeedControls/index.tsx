@@ -12,7 +12,7 @@ import getAgeTimer from '../../utils/getAgeTimer';
 import './index.css';
 
 // CONSTS
-const FEED_INTERVAL = {
+const FEED_INTERVAL: Record<number, string> = {
   4: 'Every 4h',
   12: 'Every 12h',
   24: 'Every 24h',
@@ -35,6 +35,7 @@ function FeedControls() {
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const stomachTimer = React.useMemo(() => {
     const timer = getStomachTimer(pockestState);
+    if (typeof timer !== 'number' || typeof ageTimer !== 'number' || typeof pockestState?.data?.monster?.age !== 'number') return null;
     return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
 
@@ -54,7 +55,7 @@ function FeedControls() {
             id="PockestHelper_AutoFeed"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({
+            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
               autoFeed: e.target.checked,
             }))}
             checked={autoFeed}
@@ -80,17 +81,15 @@ function FeedControls() {
         <span className="PockestText">Meal Frequency</span>
         <select
           className="PockestSelect"
-          onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({
-              feedFrequency: parseInt(e.target.value, 10),
-            }));
-          }}
+          onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
+            feedFrequency: parseInt(e.target.value, 10),
+          }))}
           value={feedFrequency}
           disabled={!paused || autoPlan}
         >
           {Object.keys(FEED_INTERVAL).map((k) => (
             <option key={k} value={k}>
-              {FEED_INTERVAL[k]}
+              {FEED_INTERVAL[parseInt(k, 10)]}
             </option>
           ))}
         </select>
@@ -99,11 +98,9 @@ function FeedControls() {
         <span className="PockestText">Meal Target</span>
         <select
           className="PockestSelect"
-          onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({
-              feedTarget: parseInt(e.target.value, 10),
-            }));
-          }}
+          onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
+            feedTarget: parseInt(e.target.value, 10),
+          }))}
           value={feedTarget}
           disabled={!paused || autoPlan}
         >

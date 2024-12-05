@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   pockestActions,
   usePockestContext,
@@ -17,8 +16,8 @@ function BuyEggBtn() {
       type="button"
       onClick={async () => {
         if (!planEgg?.id || pockestState?.loading) return;
-        pockestDispatch(pockestActions.pockestLoading());
-        pockestDispatch(await pockestActions.pockestSelectEgg(planEgg.id));
+        if (pockestDispatch) pockestDispatch(pockestActions.pockestLoading());
+        if (pockestDispatch) pockestDispatch(await pockestActions.pockestSelectEgg(planEgg.id));
       }}
       disabled={!planEgg?.id || pockestState?.loading || !planEggAffordable}
     >

@@ -25,6 +25,7 @@ function MatchControls() {
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const nextMatchTimer = React.useMemo(() => {
     const timer = getMatchTimer(pockestState);
+    if (typeof timer !== 'number' || typeof ageTimer !== 'number' || typeof pockestState?.data?.monster?.age !== 'number') return null;
     return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
   return (
@@ -35,7 +36,7 @@ function MatchControls() {
             id="PockestHelper_AutoMatch"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({
+            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
               autoMatch: e.target.checked,
             }))}
             checked={autoMatch}
@@ -50,11 +51,9 @@ function MatchControls() {
         </span>
         <select
           className="PockestSelect"
-          onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({
-              matchPriority: parseInt(e.target.value, 10),
-            }));
-          }}
+          onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
+            matchPriority: parseInt(e.target.value, 10),
+          }))}
           value={matchPriority || ''}
           disabled={!paused}
         >
@@ -78,7 +77,7 @@ function MatchControls() {
         title="Matches"
         logTypes={['exchange']}
       />
-    </div>
+    </div >
   );
 }
 

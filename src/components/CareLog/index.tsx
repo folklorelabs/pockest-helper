@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   pockestActions,
   pockestGetters,
@@ -10,15 +9,23 @@ import getMatchReportString from '../../utils/getMatchReportString';
 import APP_NAME from '../../constants/APP_NAME';
 import './index.css';
 
-function CareLog({
-  title,
-  logTypes,
-  rows,
-  allowClear,
-  onlyDiscoveries,
-}) {
+interface CareLogProps {
+  title?: string;
+  logTypes?: string[];
+  rows?: number;
+  allowClear?: boolean;
+  onlyDiscoveries?: boolean;
+}
+
+const CareLog: React.FC<CareLogProps> = ({
+  title = 'Log',
+  logTypes = ['cleaning', 'meal', 'training', 'exchange', 'age', 'evolution', 'departure', 'death', 'hatching', 'cure', 'error', 'evolution_failure'],
+  rows = 12,
+  allowClear = true,
+  onlyDiscoveries = false,
+}) => {
   const [isRelTime, setIsRelTime] = React.useState(false);
-  const textAreaEl = React.useRef();
+  const textAreaEl = React.useRef<HTMLTextAreaElement>(null);
   const {
     pockestState,
     pockestDispatch,
@@ -99,7 +106,7 @@ function CareLog({
               onClick={() => {
                 const confirm = window.confirm(`Are you sure you want to permanently delete your old ${title.toLowerCase()} entries? This will include all entries before your last egg hatch.`);
                 if (!confirm) return;
-                pockestDispatch(pockestActions.pockestClearLog(pockestState, logTypes));
+                if (pockestDispatch) pockestDispatch(pockestActions.pockestClearLog(pockestState, logTypes));
               }}
             >
               ❌ Clean
@@ -110,21 +117,5 @@ function CareLog({
     </div>
   );
 }
-
-CareLog.defaultProps = {
-  title: 'Log',
-  logTypes: ['cleaning', 'meal', 'training', 'exchange', 'age', 'evolution', 'departure', 'death', 'hatching', 'cure', 'error', 'evolution_failure'],
-  rows: 12,
-  allowClear: true,
-  onlyDiscoveries: false,
-};
-
-CareLog.propTypes = {
-  title: PropTypes.string,
-  logTypes: PropTypes.arrayOf(PropTypes.string),
-  rows: PropTypes.number,
-  allowClear: PropTypes.bool,
-  onlyDiscoveries: PropTypes.bool,
-};
 
 export default CareLog;

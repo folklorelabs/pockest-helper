@@ -1,4 +1,3 @@
-import React from 'react';
 import BuyEggBtn from '../BuyEggBtn';
 import EggControls from '../EggControls';
 import AppMainTemplate from './AppMain';

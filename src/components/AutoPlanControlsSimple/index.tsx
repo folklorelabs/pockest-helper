@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   usePockestContext,
 } from '../../contexts/PockestContext';
@@ -122,7 +121,7 @@ function AutoPlanControlsSimple() {
       )}
       <div className="PockestLine">
         <span className="PockestText">Target Age</span>
-        <TargetAgeSelect disabled={pockestState?.data?.monster?.live_time ? true : null} />
+        <TargetAgeSelect disabled={pockestState?.data?.monster?.live_time ? true : false} />
       </div>
     </div>
   );

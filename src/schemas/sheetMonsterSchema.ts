@@ -12,7 +12,7 @@ const sheetMonsterSchema = z.object({
   matchSusFever: z.array(z.number()).optional(),
   matchSusNormal: z.array(z.number()).optional(),
   matchUnknown: z.array(z.number()).optional(),
-  confirmed: z.boolean().optional(),
+  confirmed: z.number().optional(),
 });
 
 export default sheetMonsterSchema;

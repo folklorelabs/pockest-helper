@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   usePockestContext,
   pockestActions,
@@ -25,7 +24,7 @@ function AutoPlanControls() {
             id="PockestHelper_AutoPlan"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
+            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestPlanSettings({
               autoPlan: e.target.checked,
             }))}
             checked={autoPlan}

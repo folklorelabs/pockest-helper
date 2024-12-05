@@ -15,7 +15,7 @@ function AppErrorAlert() {
     <button
       className="AppErrorAlert"
       type="button"
-      onClick={() => setShowLog(true)}
+      onClick={() => setShowLog && setShowLog(true)}
     >
       <p className="AppErrorAlert-message">
         {pockestState?.error?.includes('403') && pockestState?.error?.includes('buckler') ? '403 Auth Error: Please ensure you are logged in' : pockestState?.error}

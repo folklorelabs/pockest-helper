@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   usePockestContext,
 } from '../../contexts/PockestContext';
@@ -10,12 +9,17 @@ import './index.css';
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 
-function CompletionLog({
-  title,
-  rows,
-}) {
+interface CompletionLogProps {
+  title?: string;
+  rows?: number;
+}
+
+const CompletionLog: React.FC<CompletionLogProps> = ({
+  title = 'Completion Stats',
+  rows = 4,
+}) => {
   const [isRelTime, setIsRelTime] = React.useState(false);
-  const textAreaEl = React.useRef();
+  const textAreaEl = React.useRef<HTMLTextAreaElement>(null);
   const now = useNow();
   const {
     pockestState,
@@ -111,15 +115,5 @@ function CompletionLog({
     </div>
   );
 }
-
-CompletionLog.defaultProps = {
-  title: 'Completion Stats',
-  rows: 4,
-};
-
-CompletionLog.propTypes = {
-  title: PropTypes.string,
-  rows: PropTypes.number,
-};
 
 export default CompletionLog;

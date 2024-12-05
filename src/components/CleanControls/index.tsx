@@ -12,7 +12,7 @@ import getAgeTimer from '../../utils/getAgeTimer';
 import './index.css';
 
 // CONSTS
-const CLEAN_INTERVAL = {
+const CLEAN_INTERVAL: Record<number, string> = {
   2: 'Every 2h',
   4: 'Every 4h',
   12: 'Every 12h',
@@ -36,6 +36,7 @@ function CleanControls() {
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const garbageTimer = React.useMemo(() => {
     const timer = getGarbageTimer(pockestState);
+    if (typeof timer !== 'number' || typeof ageTimer !== 'number' || typeof pockestState?.data?.monster?.age !== 'number') return null;
     return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
 
@@ -54,7 +55,7 @@ function CleanControls() {
             id="PockestHelper_AutoClean"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({
+            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
               autoClean: e.target.checked,
             }))}
             checked={autoClean}
@@ -85,17 +86,15 @@ function CleanControls() {
         <span className="PockestText">Clean Frequency</span>
         <select
           className="PockestSelect"
-          onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({
-              cleanFrequency: parseInt(e.target.value, 10),
-            }));
-          }}
+          onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
+            cleanFrequency: parseInt(e.target.value, 10),
+          }))}
           value={cleanFrequency}
           disabled={!paused || autoPlan}
         >
           {Object.keys(CLEAN_INTERVAL).map((k) => (
             <option key={k} value={k}>
-              {CLEAN_INTERVAL[k]}
+              {CLEAN_INTERVAL[parseInt(k, 10)]}
             </option>
           ))}
         </select>

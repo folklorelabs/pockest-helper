@@ -31,7 +31,7 @@ const PlanLog: React.FC<PlanLogProps> = ({
         if (Date.now() >= (d.start + (d.logGrace || 0))) return '⚠';
         return '☐';
       })();
-      return `${icon} [${!isRelTime ? prettyTimeStamp(d.start) : d.startOffset && parseDurationStr(d.startOffset)}] ${d.label}`;
+      return `${icon} [${!isRelTime ? prettyTimeStamp(d.start) : parseDurationStr(d.startOffset || 0)}] ${d.label}`;
     }),
   ].filter((l) => l).join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule]);
   React.useEffect(() => {

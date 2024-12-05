@@ -50,7 +50,9 @@ function App() {
           className="AppMinBtn"
           type="button"
           onClick={() => {
-            setShowLog(!showLog);
+            if (setShowLog) {
+              setShowLog(!showLog);
+            }
             setMinimized(false);
           }}
         >
@@ -64,7 +66,9 @@ function App() {
           onClick={() => {
             setMinimized(!minimized);
             if (!minimized) {
-              setShowLog(false);
+              if (setShowLog) {
+                setShowLog(false);
+              }
             }
           }}
         >
@@ -102,7 +106,7 @@ function App() {
         }
         return <AppMainCare />;
       })()}
-      <button type="button" tabIndex="-1" className="App-sprite" onClick={() => setLol(!lol)}>
+      <button type="button" tabIndex={-1} className="App-sprite" onClick={() => setLol(!lol)}>
         {lol ? (
           <>
             <CharacterSprite

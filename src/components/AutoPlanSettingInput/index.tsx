@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
 import React from 'react';
-import PropTypes from 'prop-types';
 import { STAT_ABBR } from '../../constants/stats';
 import {
   pockestActions,
@@ -7,7 +8,13 @@ import {
 } from '../../contexts/PockestContext';
 import './index.css';
 
-function AutoPlanSettingInput({ settingName, required, disabled }) {
+interface AutoPlanSettingInputProps {
+  settingName: string;
+  required?: boolean;
+  disabled?: boolean | null;
+}
+
+function AutoPlanSettingInput({ settingName, required = false, disabled = null }: AutoPlanSettingInputProps) {
   const {
     pockestState,
     pockestDispatch,
@@ -23,15 +30,15 @@ function AutoPlanSettingInput({ settingName, required, disabled }) {
       setNewValue(pockestState?.[settingName]);
     }
   }, [pockestState, settingName, targetMonster]);
-  const onChange = React.useCallback((e) => {
-    const inputStr = e?.target?.value;
+  const onChange = React.useCallback((e: React.FormEvent<HTMLInputElement>) => {
+    const inputStr = e?.currentTarget?.value;
     setNewValue(inputStr);
-    const invalidInput = e?.target?.validity?.patternMismatch;
+    const invalidInput = e?.currentTarget?.validity?.patternMismatch;
     if (invalidInput) return;
-    pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
+    if (pockestDispatch) pockestDispatch(pockestActions.pockestPlanSettings({
       [settingName]: inputStr,
     }));
-  }, [pockestDispatch, pockestState, settingName]);
+  }, [pockestDispatch, settingName]);
   const pattern = React.useMemo(() => {
     const validStats = Object.keys(STAT_ABBR).join('');
     if (settingName === 'planId') {
@@ -47,7 +54,7 @@ function AutoPlanSettingInput({ settingName, required, disabled }) {
         className="PockestInput"
         onChange={onChange}
         value={targetMonster ? pockestState?.[settingName] : newValue}
-        disabled={disabled ?? (!pockestState?.autoPlan || targetMonster || !pockestState?.paused)}
+        disabled={disabled ?? (!pockestState?.autoPlan || !!targetMonster || !pockestState?.paused)}
         pattern={pattern}
         required={required}
       />
@@ -55,16 +62,5 @@ function AutoPlanSettingInput({ settingName, required, disabled }) {
     </div>
   );
 }
-
-AutoPlanSettingInput.defaultProps = {
-  required: false,
-  disabled: null,
-};
-
-AutoPlanSettingInput.propTypes = {
-  settingName: PropTypes.string.isRequired,
-  required: PropTypes.bool,
-  disabled: PropTypes.bool,
-};
 
 export default AutoPlanSettingInput;
