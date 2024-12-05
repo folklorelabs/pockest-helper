@@ -1,6 +1,6 @@
 import leadingZero from './leadingZero';
 
-export function parseDuration(ms) {
+export function parseDuration(ms: number) {
   const s = ms / 1000;
   const m = s / 60;
   const h = m / 60;
@@ -14,7 +14,7 @@ export function parseDuration(ms) {
   };
 }
 
-export function parseDurationStr(t) {
+export function parseDurationStr(t: number) {
   const dur = parseDuration(t);
   const s = leadingZero(Math.floor(Math.max(dur.s, 0) % 60));
   const m = leadingZero(Math.floor(Math.max(dur.m, 0) % 60));

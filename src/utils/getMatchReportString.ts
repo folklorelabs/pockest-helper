@@ -1,4 +1,8 @@
-export default function getMatchReportString({ pockestState, result }) {
+import LogEntry from "../contexts/PockestContext/types/LogEntry";
+import PockestState from "../contexts/PockestContext/types/PockestState";
+
+export default function getMatchReportString({ pockestState, result }: { pockestState: PockestState; result: LogEntry; }) {
+  if (result?.logType !== 'exchange') return `Error parsing match report (received logType: ${result?.logType})`;
   const monster = pockestState?.allMonsters.find((m) => m.monster_id === result?.monsterId);
   if (!monster) return `Error parsing ${result?.logType} log`;
   const b = pockestState?.allMonsters.find((m) => m.monster_id === result?.target_monster_id);

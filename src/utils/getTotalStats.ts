@@ -1,5 +1,3 @@
-import { STAT_ID } from '../constants/stats';
-
-export default function getTotalStats(monster) {
-  return Object.keys(STAT_ID).reduce((total, k) => total + (monster?.[STAT_ID[k]] || 0), 0);
+export default function getTotalStats(monster?: { technic: number; speed: number; power: number; } | null): number {
+  return monster ? monster.technic + monster.speed + monster.power : 0;
 }

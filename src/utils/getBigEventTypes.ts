@@ -1,6 +1,7 @@
 import getAgeTimer from './getAgeTimer';
 import getStomachTimer, { STOMACH_TIME } from './getStomachTimer';
 import getGarbageTimer, { GARBAGE_TIME } from './getGarbageTimer';
+import PockestState from '../contexts/PockestContext/types/PockestState';
 
 export const BIG_EVENTS = {
   AGE: 'AGE',
@@ -14,25 +15,25 @@ export const BIG_EVENTS = {
 export const STUN_OFFSET = (1 * 60 * 60 * 1000);
 export const DEATH_OFFSET = (7 * 60 * 60 * 1000);
 
-export function getPoopFullTimer(pockestState) {
+export function getPoopFullTimer(pockestState: PockestState) {
   const garbageTimer = getGarbageTimer(pockestState);
   if (!garbageTimer) return null;
   const garbage = pockestState?.data?.monster?.garbage;
-  const garbageLeftFromSmall = Math.max(0, 12 - garbage - 1);
+  const garbageLeftFromSmall = garbage ? Math.max(0, 12 - garbage - 1) : 0;
   const poopTimerDiff = garbageLeftFromSmall * GARBAGE_TIME;
   return garbageTimer + poopTimerDiff;
 }
 
-export function getStomachEmptyTimer(pockestState) {
+export function getStomachEmptyTimer(pockestState: PockestState) {
   const stomachTimer = getStomachTimer(pockestState);
   if (!stomachTimer) return null;
   const stomach = pockestState?.data?.monster?.stomach;
-  const stomachFullCount = Math.max(0, stomach - 1);
+  const stomachFullCount = stomach ? Math.max(0, stomach - 1) : 0;
   const stomachFullTimerDiff = stomachFullCount * STOMACH_TIME;
   return stomachTimer + stomachFullTimerDiff;
 }
 
-export function getBigEventTypes(pockestState) {
+export function getBigEventTypes(pockestState: PockestState) {
   const returnVal = [];
   const bigTimer = pockestState?.data?.next_big_event_timer;
   const ageTimer = getAgeTimer(pockestState);

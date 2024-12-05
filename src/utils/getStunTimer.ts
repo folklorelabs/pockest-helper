@@ -1,3 +1,4 @@
+import PockestState from '../contexts/PockestContext/types/PockestState';
 import getAgeTimer from './getAgeTimer';
 import getGarbageFullTimer from './getGarbageFullTimer';
 import getStomachEmptyTimer from './getStomachEmptyTimer';
@@ -13,13 +14,16 @@ export const BIG_EVENTS = {
 };
 export const STUN_OFFSET = (1 * 60 * 60 * 1000);
 
-export default function getStunTimer(pockestState) {
+export default function getStunTimer(pockestState: PockestState) {
   const bigTimer = pockestState?.data?.next_big_event_timer;
   const ageTimer = getAgeTimer(pockestState);
   if (bigTimer !== ageTimer) return bigTimer;
   const garbageFullTimer = getGarbageFullTimer(pockestState);
   const stomachEmptyTimer = getStomachEmptyTimer(pockestState);
-  const stunTimer = Math.min(garbageFullTimer, stomachEmptyTimer) + STUN_OFFSET;
+  if (!garbageFullTimer && !stomachEmptyTimer) return null;
+  const validGarbageFullTimer = garbageFullTimer ?? Infinity;
+  const validStomachEmptyTimer = stomachEmptyTimer ?? Infinity;
+  const stunTimer = Math.min(validGarbageFullTimer, validStomachEmptyTimer) + STUN_OFFSET;
   const isStunned = pockestState?.data?.monster?.status === 2;
   const now = (new Date()).getTime();
   if (isStunned && stunTimer > now) return now;

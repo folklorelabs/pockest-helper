@@ -1,8 +1,9 @@
 import MONSTER_AGE from '../constants/MONSTER_AGE';
+import PockestState from '../contexts/PockestContext/types/PockestState';
 
 const OPTIMAL_MATCH_TIME = MONSTER_AGE[4]; // start matching at age 4
 
-export default function getFirstMatchTime(pockestState) {
+export default function getFirstMatchTime(pockestState: PockestState) {
   const monster = pockestState?.data?.monster;
   if (!monster) return null;
   if (!pockestState?.autoPlan) return 0;

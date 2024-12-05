@@ -8,7 +8,7 @@ import daysToMs from '../../utils/daysToMs';
 import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
 import getFirstMatchTime from '../../utils/getFirstMatchTime';
 import toDataUrl from '../../utils/toDataUrl';
-import fetchCharSprites from '../../utils/fetchCharSprites';
+import fetchCharSprites from '../../api/fetchCharSprites';
 import { GARBAGE_TIME } from '../../utils/getGarbageTimer';
 import { STOMACH_TIME } from '../../utils/getStomachTimer';
 import { STUN_OFFSET } from '../../utils/getStunTimer';

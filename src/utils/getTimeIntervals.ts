@@ -1,7 +1,12 @@
-export default function getTimeIntervals(startTimestamp, endTimestamp, interval, offset) {
+type TimeInterval = {
+  start: number;
+  end: number;
+}
+
+export default function getTimeIntervals(startTimestamp: number, endTimestamp: number, interval: number, offset: number) {
   if (!startTimestamp || !endTimestamp || !interval) return null;
   if (startTimestamp > endTimestamp) return null;
-  let returnVal = [];
+  let returnVal: TimeInterval[] = [];
   const intervalInMs = interval * 60 * 60 * 1000;
   let tempTimestamp = startTimestamp;
   if (offset) tempTimestamp += offset * 60 * 60 * 1000;

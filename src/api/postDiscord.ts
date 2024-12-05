@@ -19,7 +19,7 @@ export type DiscordEmbed = {
 
 export type DiscordFile = {
   name: string;
-  base64: string;
+  base64: string | ArrayBuffer | null;
 }
 
 export type DiscordAttachment = {

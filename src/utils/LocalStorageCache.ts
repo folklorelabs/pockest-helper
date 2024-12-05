@@ -1,9 +1,11 @@
 export default class LocalStorageCache {
-  constructor(id) {
+  id: string;
+  
+  constructor(id: string) {
     this.id = id;
   }
 
-  set(data) {
+  set(data: unknown) {
     window.localStorage.setItem(this.id, JSON.stringify(data));
   }
 

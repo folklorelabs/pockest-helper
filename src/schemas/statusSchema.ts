@@ -6,7 +6,6 @@ import statusMonsterSchema from "./statusMonsterSchema";
 
 export const baseStatusSchema = z.object({
   event: z.literal(''),
-  timestamp: timestampSchema,
   monster: statusMonsterSchema,
   next_big_event_timer: timestampSchema,
   next_small_event_timer: timestampSchema,

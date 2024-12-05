@@ -23,7 +23,11 @@ const logEntrySchema = z.discriminatedUnion('logType', [
   logEntryBaseSchema.extend({
     logType: z.literal('hatching'),
     eggType: z.number(),
-
+  }),
+  logEntryBaseSchema.extend({
+    logType: z.literal('cure'),
+    result: z.number(),
+    type: z.number(),
   }),
   logEntryBaseSchema.extend({
     logType: z.literal('meal'),
@@ -55,6 +59,8 @@ const logEntrySchema = z.discriminatedUnion('logType', [
     target_monster_id: z.number(),
     target_monster_name_en: z.string(),
     target_monster_name: z.string(),
+    get_memento_point: z.number(),
+    get_egg_point: z.number(),
   }),
   logEntryBaseSchema.extend({
     logType: z.literal('evolution'),

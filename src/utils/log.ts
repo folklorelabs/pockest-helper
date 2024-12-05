@@ -1,5 +1,11 @@
-/* eslint-disable no-console */
-export default function log(...args) {
+ 
+interface LogFunction {
+  (...args: unknown[]): void;
+}
+
+const log: LogFunction = (...args) => {
   const now = new Date();
   console.log(`[${now.toLocaleString()}]`, ...args);
-}
+};
+
+export default log;
