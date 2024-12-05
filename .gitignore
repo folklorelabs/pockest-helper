@@ -1,9 +1,3 @@
-# Project specific
-examples
-src/data
-.env
-.key*
-
 # Logs
 logs
 *.log
@@ -17,8 +11,6 @@ node_modules
 dist
 dist-ssr
 *.local
-artifacts
-temp
 
 # Editor directories and files
 .vscode/*
@@ -30,3 +22,9 @@ temp
 *.njsproj
 *.sln
 *.sw?
+
+
+# Custom
+.env
+artifacts
+examples

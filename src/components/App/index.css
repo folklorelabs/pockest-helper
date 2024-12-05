@@ -31,6 +31,7 @@
   height: calc(100vh - var(--App-headerBorderOffset) - var(--App-headerPaddingOffset) - var(--App-titleOffset) - var(--App-modeToggleOffset) - var(--App-updateOffset) - var(--App-errorOffset));
   max-height: 970px;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 0 1rem;
 }
 
