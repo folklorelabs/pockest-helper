@@ -1,4 +1,4 @@
-async function toDataUrl(url) {
+async function toDataUrl(url:string) {
   return fetch(url)
     .then((response) => response.blob())
     .then((blob) => new Promise((resolve, reject) => {

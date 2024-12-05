@@ -25,6 +25,6 @@ dist-ssr
 
 
 # Custom
-.env
 artifacts
 examples
+.env
