@@ -98,7 +98,7 @@ export function getOwnedMementoMonsterNames(state: PockestState) {
     ?.find((m) => m.monster_id === id)?.name_en);
 }
 
-export function getCurrentMonsterLogs(state: PockestState, logType: string) {
+export function getCurrentMonsterLogs(state: PockestState, logType?: string) {
   return state?.log.filter((entry) => {
     if (!state?.data?.monster) return false;
     if (logType && entry?.logType !== logType) return false;
@@ -473,7 +473,9 @@ export function getPlanLog(state: PockestState) {
   const matchSchedule = getMatchSchedule(state);
   type PlanLogEntry = {
     start: number,
+    startOffset?: number,
     completion?: boolean,
+    missed?: boolean,
     label: string,
     logType?: string,
     logGrace?: number,
@@ -675,7 +677,7 @@ export async function getDiscordReportMemento(state: PockestState, data: Buckler
   };
 }
 
-export function isMatchDiscovery(pockestState: PockestState, exchangeResult: BucklerMatchResults) {
+export function isMatchDiscovery(pockestState: PockestState, exchangeResult: Partial<BucklerMatchResults>) {
   const monster = pockestState?.allMonsters
     .find((m) => pockestState?.data?.monster?.hash && m.monster_id === getMonsterIdFromHash(pockestState?.data?.monster?.hash));
   const allMissing = [
@@ -683,10 +685,10 @@ export function isMatchDiscovery(pockestState: PockestState, exchangeResult: Buc
     ...(monster?.matchUnknown || []),
     ...(monster?.matchSusNormal || []),
   ];
-  return allMissing.includes(exchangeResult?.target_monster_id);
+  return typeof exchangeResult?.target_monster_id === 'number' && allMissing.includes(exchangeResult?.target_monster_id);
 }
 
-export function getDiscordReportMatch(state: PockestState, exchangeResult: BucklerMatchResults, opponentName: string) {
+export function getDiscordReportMatch(state: PockestState, exchangeResult: Partial<BucklerMatchResults>, opponentName: string) {
   const isFever = exchangeResult?.is_spmatch;
   const header = isFever ? '🔥 FEVER MATCH' : '⚔️ NORMAL MATCH';
   const embed = {

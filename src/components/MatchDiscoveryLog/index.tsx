@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { z } from 'zod';
 import APP_NAME from '../../constants/APP_NAME';
 import {
   usePockestContext,
@@ -12,28 +12,33 @@ import {
   getDiscordReportStatus,
 } from '../../api/postDiscord';
 import combineDiscordReports from '../../utils/combineDiscordReports';
+import { exchangeLogEntrySchema } from '../../contexts/PockestContext/schemas/logEntrySchema';
 import './index.css';
 
-function MatchDiscoveryLog({
-  title,
-  rows,
-}) {
+interface MatchDiscoveryLogProps {
+  title?: string;
+  rows?: number;
+}
+
+const MatchDiscoveryLog: React.FC<MatchDiscoveryLogProps> = ({
+  title = 'Log',
+  rows = 12,
+}) => {
   const [discordCooldown, setDiscordCooldown] = React.useState(getDiscordCooldown() || 0);
-  const textAreaEl = React.useRef();
+  const textAreaEl = React.useRef<HTMLTextAreaElement>(null);
   const {
     pockestState,
   } = usePockestContext();
   const contentData = React.useMemo(
     () => {
-      const d = pockestState?.log?.filter((entry) => ['exchange'].includes(entry.logType));
-      return d.filter((entry) => entry.logType === 'exchange' && pockestGetters.isMatchDiscovery(pockestState, entry));
+      const d = pockestState?.log?.filter((entry) => entry.logType === 'exchange');
+      return d.filter((entry) => entry.logType === 'exchange' && pockestGetters.isMatchDiscovery(pockestState, entry as z.infer<typeof exchangeLogEntrySchema>));
     },
     [pockestState],
   );
   const content = React.useMemo(() => contentData.map((entry) => getMatchReportString({
     pockestState,
     result: entry,
-    isRelTime: true,
   })).join('\n'), [contentData, pockestState]);
   React.useEffect(() => {
     if (!textAreaEl?.current) return () => { };
@@ -43,7 +48,7 @@ function MatchDiscoveryLog({
   React.useEffect(() => {
     const interval = window.setInterval(() => {
       const newCooldown = getDiscordCooldown();
-      setDiscordCooldown(newCooldown);
+      if (typeof newCooldown === 'number') setDiscordCooldown(newCooldown);
     }, 500);
     return () => {
       window.clearInterval(interval);
@@ -96,7 +101,7 @@ function MatchDiscoveryLog({
                 const report = combineDiscordReports(reports);
                 await postDiscordMatch(report);
               }}
-              disabled={discordCooldown}
+              disabled={!!discordCooldown}
               title={discordCooldown ? 'Please wait 60 seconds before submitting again' : 'Manually submit a report in automated report failed'}
             >
               💬 Discord Report
@@ -107,16 +112,6 @@ function MatchDiscoveryLog({
       </div>
     </div>
   );
-}
-
-MatchDiscoveryLog.defaultProps = {
-  title: 'Log',
-  rows: 12,
-};
-
-MatchDiscoveryLog.propTypes = {
-  title: PropTypes.string,
-  rows: PropTypes.number,
 };
 
 export default MatchDiscoveryLog;

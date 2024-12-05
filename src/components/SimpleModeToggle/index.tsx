@@ -1,4 +1,3 @@
-import React from 'react';
 import cx from 'classnames';
 import { pockestActions, usePockestContext } from '../../contexts/PockestContext';
 import './index.css';
@@ -15,7 +14,7 @@ function SimpleModeToggle() {
       title={!pockestState.simpleMode ? 'Switch to Simple Mode' : 'Switch to Advanced Mode'}
       aria-label={!pockestState.simpleMode ? 'Switch to Simple Mode' : 'Switch to Advanced Mode'}
       type="button"
-      onClick={() => pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
+      onClick={() => pockestDispatch && pockestDispatch(pockestActions.pockestPlanSettings({
         simpleMode: !pockestState.simpleMode,
       }))}
     >

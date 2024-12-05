@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   pockestGetters,
   usePockestContext,
@@ -9,12 +8,17 @@ import APP_NAME from '../../constants/APP_NAME';
 import prettyTimeStamp from '../../utils/prettyTimestamp';
 import './index.css';
 
-function PlanLog({
-  title,
-  rows,
-}) {
+interface PlanLogProps {
+  title?: string;
+  rows?: number;
+}
+
+const PlanLog: React.FC<PlanLogProps> = ({
+  title = 'Log',
+  rows = 12,
+}) => {
   const [isRelTime, setIsRelTime] = React.useState(false);
-  const textAreaEl = React.useRef();
+  const textAreaEl = React.useRef<HTMLTextAreaElement | null>(null);
   const {
     pockestState,
   } = usePockestContext();
@@ -24,10 +28,10 @@ function PlanLog({
     ...schedule.map((d) => {
       const icon = (() => {
         if (d.completion) return '☑';
-        if (Date.now() >= (d.start + d.logGrace)) return '⚠';
+        if (Date.now() >= (d.start + (d.logGrace || 0))) return '⚠';
         return '☐';
       })();
-      return `${icon} [${!isRelTime ? prettyTimeStamp(d.start) : parseDurationStr(d.startOffset)}] ${d.label}`;
+      return `${icon} [${!isRelTime ? prettyTimeStamp(d.start) : d.startOffset && parseDurationStr(d.startOffset)}] ${d.label}`;
     }),
   ].filter((l) => l).join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule]);
   React.useEffect(() => {
@@ -85,16 +89,6 @@ function PlanLog({
       </div>
     </div>
   );
-}
-
-PlanLog.defaultProps = {
-  title: 'Log',
-  rows: 12,
-};
-
-PlanLog.propTypes = {
-  title: PropTypes.string,
-  rows: PropTypes.number,
 };
 
 export default PlanLog;

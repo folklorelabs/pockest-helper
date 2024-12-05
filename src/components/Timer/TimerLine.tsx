@@ -1,7 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
-function TimerLine({ label, value }) {
+type TimerLineProps = {
+  label: string | React.ReactNode;
+  value: string;
+};
+
+function TimerLine({ label, value }: TimerLineProps) {
   return (
     <p className="TimerLine">
       <span className="TimerLine-label">{label}</span>
@@ -9,13 +13,5 @@ function TimerLine({ label, value }) {
     </p>
   );
 }
-
-TimerLine.propTypes = {
-  label: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.node,
-  ]).isRequired,
-  value: PropTypes.string.isRequired,
-};
 
 export default TimerLine;

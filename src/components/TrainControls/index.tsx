@@ -17,6 +17,7 @@ function TrainControls() {
   const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
   const trainingTimer = React.useMemo(() => {
     const timer = pockestState?.data?.monster?.training_time;
+    if (typeof timer !== 'number' || typeof ageTimer !== 'number' || typeof pockestState?.data?.monster?.age !== 'number') return null;
     return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
 
@@ -35,7 +36,7 @@ function TrainControls() {
             id="PockestHelper_AutoTrain"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch(pockestActions.pockestSettings({ autoTrain: e.target.checked }))}
+            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({ autoTrain: e.target.checked }))}
             checked={autoTrain}
             disabled={!paused || autoPlan}
           />
@@ -47,7 +48,7 @@ function TrainControls() {
               {STAT_ID[k].slice(0, 1)}
             </span>
             <span className="PockestStat-value">
-              {typeof data?.monster?.[STAT_ID[k]] === 'number' ? data?.monster?.[STAT_ID[k]] : '--'}
+              {typeof data?.monster?.[STAT_ID[k] as keyof typeof data.monster] === 'number' ? data?.monster?.[STAT_ID[k] as keyof typeof data.monster] : '--'}
             </span>
           </span>
         ))}
@@ -57,9 +58,7 @@ function TrainControls() {
         <select
           className="PockestSelect"
           value={stat}
-          onChange={(e) => {
-            pockestDispatch(pockestActions.pockestSettings({ stat: parseInt(e.target.value, 10) }));
-          }}
+          onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({ stat: parseInt(e.target.value, 10) }))}
           disabled={!paused || autoPlan}
         >
           {Object.keys(STAT_ID).map((s) => (

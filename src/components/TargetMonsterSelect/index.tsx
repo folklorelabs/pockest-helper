@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   pockestGetters,
   pockestActions,
@@ -7,7 +6,11 @@ import {
 } from '../../contexts/PockestContext';
 import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
 
-function TargetMonsterSelect({ disabled }) {
+interface TargetMonsterSelectProps {
+  disabled?: boolean | null;
+}
+
+const TargetMonsterSelect: React.FC<TargetMonsterSelectProps> = ({ disabled }) => {
   const {
     pockestState,
     pockestDispatch,
@@ -27,17 +30,18 @@ function TargetMonsterSelect({ disabled }) {
           const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
           const hasRequiredMems = !m?.requiredMemento
             || acquiredMementos.includes(m.requiredMemento);
-          return mAge >= 5 && hasRequiredMems;
+          return mAge && mAge >= 5 && hasRequiredMems;
         })
         .sort((a, b) => {
-          if (a.name_en < b.name_en) return -1;
-          if (b.name_en < a.name_en) return 1;
+          if (!a.name_en && !b.name_en) return 0;
+          if (!a.name_en || a.name_en < (b.name_en ?? '')) return -1;
+          if (!b.name_en || b.name_en < a.name_en) return 1;
           return 0;
         });
     }
     const allAvailIds = pockestState?.allMonsters
       ?.filter((m) => {
-        const isOlder = m?.age > monster?.age;
+        const isOlder = typeof monster?.age === 'number' && m?.age > monster.age;
         const hasRequiredMems = !m?.requiredMemento
           || acquiredMementos.includes(m.requiredMemento);
         return isOlder && hasRequiredMems;
@@ -49,15 +53,16 @@ function TargetMonsterSelect({ disabled }) {
         return [
           ...all,
           m.monster_id,
-        ];
-      }, [curMonsterId]);
+        ].filter((id) => typeof id === 'number');
+      }, [curMonsterId] as number[]);
     return pockestState?.allMonsters
       ?.filter((m) => m.confirmed)
-      ?.filter((m) => m?.age >= 5 && allAvailIds.includes(m?.monster_id))
+      ?.filter((m) => m?.age >= 5 && m?.monster_id && allAvailIds.includes(m?.monster_id))
       ?.filter((m) => !pockestState?.eggId || m?.eggIds?.includes(pockestState?.eggId))
       ?.sort((a, b) => {
-        if (a.name_en < b.name_en) return -1;
-        if (b.name_en < a.name_en) return 1;
+        if (!a.name_en && !b.name_en) return 0;
+        if (!a.name_en || a.name_en < (b.name_en ?? '')) return -1;
+        if (!b.name_en || b.name_en < a.name_en) return 1;
         return 0;
       });
   }, [acquiredMementos, pockestState]);
@@ -72,7 +77,7 @@ function TargetMonsterSelect({ disabled }) {
       onChange={(e) => {
         const shouldConfirm = pockestState?.data?.monster?.live_time
           && curMonsterNonHatchLogs.length;
-        // eslint-disable-next-line no-alert
+
         const shouldAbort = shouldConfirm && !window.confirm('Are you sure you want to change the target monster? Doing so at this time may result in unexpected results such as death or failure to evolve.');
         if (shouldAbort) {
           e.target.value = `${pockestState?.monsterId}`;
@@ -80,7 +85,7 @@ function TargetMonsterSelect({ disabled }) {
           return;
         }
         const monsterId = e.target.value ? parseInt(e.target.value, 10) : -1;
-        pockestDispatch(pockestActions.pockestPlanSettings(pockestState, {
+        if (pockestDispatch) pockestDispatch(pockestActions.pockestPlanSettings({
           monsterId,
         }));
       }}
@@ -99,14 +104,6 @@ function TargetMonsterSelect({ disabled }) {
       ))}
     </select>
   );
-}
-
-TargetMonsterSelect.defaultProps = {
-  disabled: null,
-};
-
-TargetMonsterSelect.propTypes = {
-  disabled: PropTypes.bool,
 };
 
 export default TargetMonsterSelect;

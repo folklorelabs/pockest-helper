@@ -15,7 +15,7 @@ export function AppProvider({
 }: AppProviderProps) {
   const [showLog, setShowLog] = React.useState(APP_CONTEXT_INITIAL_STATE.showLog);
   const [winWidth, setWinWidth] = React.useState(window.innerWidth);
-  const [remoteVersion, setRemoteVersion] = React.useState();
+  const [remoteVersion, setRemoteVersion] = React.useState<string>();
   const logStyle = React.useMemo((): 'default' | 'compact' => (winWidth >= 768 ? 'default' : 'compact'), [winWidth]);
 
   React.useEffect(() => {

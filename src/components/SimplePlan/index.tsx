@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import cx from 'classnames';
 
 import {
@@ -8,10 +7,14 @@ import {
 } from '../../contexts/PockestContext';
 import './index.css';
 
-function SimplePlan({
-  rows,
-}) {
-  const textAreaEl = React.useRef();
+interface SimplePlanProps {
+  rows?: number;
+}
+
+const SimplePlan: React.FC<SimplePlanProps> = ({
+  rows = 12,
+}) => {
+  const textAreaEl = React.useRef<HTMLDivElement>(null);
   const {
     pockestState,
   } = usePockestContext();
@@ -25,7 +28,7 @@ function SimplePlan({
     dateStr: (new Date(d.start)).toLocaleString([], { year: 'numeric', month: 'numeric', day: 'numeric' }),
     timeStr: (new Date(d.start)).toLocaleString([], { hour: 'numeric', minute: 'numeric' }),
   })), [pockestState]);
-  const scheduleLinesGrouped = React.useMemo(() => schedule.reduce((groups, d) => ({
+  const scheduleLinesGrouped: Record<string, typeof schedule[0][]> = React.useMemo(() => schedule.reduce((groups: Record<string, typeof schedule[0][]>, d) => ({
     ...groups,
     [d.dateStr]: [
       ...(groups[d.dateStr] || []),
@@ -33,7 +36,7 @@ function SimplePlan({
     ],
   }), {}), [schedule]);
   React.useEffect(() => {
-    if (!textAreaEl?.current) return () => {};
+    if (!textAreaEl?.current) return () => { };
     const lineHeight = textAreaEl.current.scrollHeight / (schedule.length + 1);
     const lastSuccessIndex = schedule?.reduce(
       (latestIndex, item, itemIndex) => (item?.completion ? itemIndex : latestIndex),
@@ -41,7 +44,7 @@ function SimplePlan({
     );
     const fromTop = Math.max(0, lineHeight * (lastSuccessIndex - rows / 2 + 1));
     textAreaEl.current.scrollTop = fromTop;
-    return () => {};
+    return () => { };
   }, [rows, schedule]);
   return (
     <div className="SimplePlan">
@@ -90,14 +93,6 @@ function SimplePlan({
       </div>
     </div>
   );
-}
-
-SimplePlan.defaultProps = {
-  rows: 12,
-};
-
-SimplePlan.propTypes = {
-  rows: PropTypes.number,
 };
 
 export default SimplePlan;

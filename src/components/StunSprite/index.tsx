@@ -1,16 +1,36 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './index.css';
+
+interface StunSpriteProps {
+  animated?: boolean;
+}
 
 const ANIMATION_DURATION = 2500;
 const DOT_META_SRC = 'https://www.streetfighter.com/6/buckler/assets/minigame/img/dot_asset.json';
 const DOT_IMG_SRC = 'https://www.streetfighter.com/6/buckler/assets/minigame/img/dot_asset.png';
 
+type DotMeta = {
+  animations: {
+    piyo: string[];
+  };
+  frames: {
+    [key: string]: {
+      frame: {
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+      };
+      rotated: boolean;
+    };
+  };
+}
+
 function StunSprite({
-  animated,
-}) {
-  const imgEl = React.useRef();
-  const [stunSprite, setStunSprite] = React.useState({});
+  animated = true,
+}: StunSpriteProps) {
+  const imgEl = React.useRef<HTMLDivElement | null>(null);
+  const [stunSprite, setStunSprite] = React.useState<DotMeta | null>(null);
   const [curIndex, setCurIndex] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
@@ -34,8 +54,8 @@ function StunSprite({
     })();
   }, []);
   React.useEffect(() => {
-    if (!stunSprite?.animations?.piyo || loading) return () => {};
-    let timeout;
+    if (!stunSprite?.animations?.piyo || loading) return () => { };
+    let timeout: number;
     let tempIndex = 0;
     const setFrame = () => {
       const frameIds = stunSprite?.animations?.piyo;
@@ -52,9 +72,9 @@ function StunSprite({
   if (loading) return '';
   return (
     <>
-      {Array.from(new Array(5)).map((val, index) => index * 2).map((offsetIndex) => {
+      {Array.from(new Array(5)).map((_val, index) => index * 2).map((offsetIndex) => {
         if (!stunSprite?.animations?.piyo?.length || loading) return '';
-        const spriteIndex = (curIndex + offsetIndex) % stunSprite.animations.piyo.length;
+        const spriteIndex = (curIndex + offsetIndex) % stunSprite?.animations.piyo.length;
         const frameId = stunSprite?.animations?.piyo?.[spriteIndex];
         const frame = stunSprite?.frames?.[frameId];
         return (
@@ -64,7 +84,7 @@ function StunSprite({
             style={{
               width: `${frame?.frame?.w}px`,
               height: `${frame?.frame?.h}px`,
-              transitionDuration: `${animated ? ANIMATION_DURATION / stunSprite.animations.piyo.length : 0}ms`,
+              transitionDuration: `${animated ? ANIMATION_DURATION / stunSprite?.animations.piyo.length : 0}ms`,
             }}
           >
             <div
@@ -84,13 +104,5 @@ function StunSprite({
     </>
   );
 }
-
-StunSprite.defaultProps = {
-  animated: true,
-};
-
-StunSprite.propTypes = {
-  animated: PropTypes.bool,
-};
 
 export default StunSprite;
