@@ -172,10 +172,10 @@ export function getTargetMonsterCurrentRouteSpec(state: PockestState) {
   const targetPlan = getTargetMonsterPlan(state);
   if (!targetPlan) return null;
   const curAge = state?.data?.monster?.age;
-  if (!curAge) return null;
+  if (typeof curAge !== 'number') return null;
   const currentRouteSpec = targetPlan?.planRoute
     ?.find((r) => curAge >= r?.ageStart && curAge < r?.ageEnd);
-  return currentRouteSpec || null;
+  return currentRouteSpec;
 }
 
 export function getTargetMonsterCurrentStat(state: PockestState) {
@@ -602,7 +602,7 @@ export async function getDiscordReportEvoSuccess(state: PockestState, data: Buck
   const statBreakdownStr = `**P** ${data?.monster?.power} + **S** ${data?.monster?.speed} + **T** ${data?.monster?.technic} = ${statsTotal}`;
   const statsStr = `Stats: ${statBreakdownStr}`;
   const ownedMementosStr = `Owned Mementos: ${mementosOwned.map((mem) => `**${mem}**`).join(', ') || '**None**'}`;
-  const charSprites = await fetchCharSprites(data?.monster?.hash);
+  const charSprites = data?.monster?.hash ? await fetchCharSprites(data?.monster?.hash) : [];
   const idle1Sprite = charSprites?.find((sprite) => sprite?.fileName.includes('idle_1'));
   const embed = {
     description: `${nameEnStr}\n${nameStr}\n${descEnStr}\n${descStr}\n${hashStr}\n${planStr}\n${statLog}\n${statsStr}\n${ownedMementosStr}`,

@@ -108,7 +108,7 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
     }
     if (isEvolution) {
       // send any useful info to discord
-      if (data?.monster?.age >= 5 && shouldDiscordReport) {
+      if (data?.monster?.age && data?.monster?.age >= 5 && shouldDiscordReport) {
         const reports = [];
         const evoReport = await getDiscordReportEvoSuccess(mergedState, data);
         reports.push(evoReport);
@@ -131,8 +131,8 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
       return [ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS, { ...payloadRaw, data: evoPayload }];
     }
     const isEvoFailureEvent = (() => {
-      if (data.monster.age >= 5) return false; // successful evolution already
-      if (Date.now() <= data.monster.live_time + daysToMs(3)) return false; // not evo time yet
+      if (data?.monster?.age && data.monster.age >= 5) return false; // successful evolution already
+      if (typeof data?.monster?.live_time === 'number' && Date.now() <= data.monster.live_time + daysToMs(3)) return false; // not evo time yet
       if (pockestState.evolutionFailed || getCurrentMonsterLogs(pockestState, 'evolution_failure')?.length) return false; // logged already
       return true;
     })();

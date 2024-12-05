@@ -20,7 +20,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
     case ACTION_TYPES.SETTINGS:
       return {
         ...state,
-        ...getAutoSettings(state, null, payload),
+        ...getAutoSettings(state, state.data, payload),
       };
     case ACTION_TYPES.PAUSE:
       return {
@@ -56,7 +56,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
             ...getLogEntry(state, payload?.data),
             logType: 'hatching',
             eggType: payload?.args?.id,
-            timestamp: payload?.data?.monster?.live_time,
+            timestamp: payload?.data?.monster?.live_time || Date.now(),
           },
         ],
         ...getAutoSettings(state, payload?.data),
@@ -89,7 +89,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
             ...getLogEntry(state, payload?.data),
             logType: 'meal',
             ...payload?.data?.serving,
-            stomach: payload?.data?.monster?.stomach,
+            stomach: payload?.data?.monster?.stomach || 0,
           },
         ],
         ...getAutoSettings(state, payload?.data),
@@ -159,9 +159,9 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
           {
             ...getLogEntry(state, payload?.data),
             logType: 'evolution',
-            power: payload?.data?.monster?.power,
-            speed: payload?.data?.monster?.speed,
-            technic: payload?.data?.monster?.technic,
+            power: payload?.data?.monster?.power ?? 0,
+            speed: payload?.data?.monster?.speed ?? 0,
+            technic: payload?.data?.monster?.technic ?? 0,
             evolutions: payload?.data?.evolutions || [
               {
                 hash: state?.data?.monster?.hash,
@@ -193,9 +193,9 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
             ...getLogEntry(state, payload?.data),
             logType: 'evolution_failure',
             planId: state?.planId,
-            power: payload?.data?.monster?.power,
-            speed: payload?.data?.monster?.speed,
-            technic: payload?.data?.monster?.technic,
+            power: payload?.data?.monster?.power ?? 0,
+            speed: payload?.data?.monster?.speed ?? 0,
+            technic: payload?.data?.monster?.technic ?? 0,
             mementosOwned: getOwnedMementoMonsterIds(state),
             evolutions: [
               {
