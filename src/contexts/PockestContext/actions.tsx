@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import fetchAllMonsters from '../../api/fetchAllMonsters';
 import fetchAllHashes from '../../api/fetchAllHashes';
 import { postDiscordEvo, postDiscordMatch } from '../../api/postDiscord';
@@ -27,7 +28,6 @@ import fetchStatus from '../../api/fetchStatus';
 import Action from './types/Action';
 import statusRefreshPayloadSchema from './schemas/statusRefreshPayloadSchema';
 import { deathStatusSchema, departureStatusSchema, evolutionFailStatusSchema, evolutionSchema, evolutionStatusSchema, notFoundStatusSchema } from '../../schemas/statusSchema';
-import { z } from 'zod';
 
 export function pockestLoading(): Action {
   return [ACTION_TYPES.LOADING];
