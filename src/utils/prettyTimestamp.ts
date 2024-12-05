@@ -1,5 +1,4 @@
 export default function prettyTimeStamp(time: number) {
-  console.log({time});
   return (new Date(time)).toLocaleString([], {
     year: 'numeric',
     month: 'numeric',
