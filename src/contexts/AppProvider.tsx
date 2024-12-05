@@ -1,23 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import semverLt from 'semver/functions/lt';
 import debounce from '../utils/debounce';
 import fetchLatestReleases from '../utils/fetchLatestRelease';
 
-// STATE
-const INITIAL_STATE = {
-  showLog: false,
-};
+import { AppContext, APP_CONTEXT_INITIAL_STATE } from './AppContext';
 
-const AppContext = React.createContext(INITIAL_STATE);
+// TYPES
+interface AppProviderProps {
+  children: React.ReactNode;
+}
 
 export function AppProvider({
   children,
-}) {
-  const [showLog, setShowLog] = React.useState(INITIAL_STATE.showLog);
+}: AppProviderProps) {
+  const [showLog, setShowLog] = React.useState(APP_CONTEXT_INITIAL_STATE.showLog);
   const [winWidth, setWinWidth] = React.useState(window.innerWidth);
   const [remoteVersion, setRemoteVersion] = React.useState();
-  const logStyle = React.useMemo(() => (winWidth >= 768 ? 'default' : 'compact'), [winWidth]);
+  const logStyle = React.useMemo((): 'default' | 'compact' => (winWidth >= 768 ? 'default' : 'compact'), [winWidth]);
 
   React.useEffect(() => {
     const resizeHandler = debounce(() => setWinWidth(window.innerWidth));
@@ -35,7 +34,7 @@ export function AppProvider({
   }, []);
 
   const isOutdated = React.useMemo(() => {
-    const curVersion = import.meta.env.APP_VERSION;
+    const curVersion = import.meta.env.VITE_APP_VERSION;
     if (!remoteVersion || !curVersion) return false;
     return semverLt(
       curVersion,
@@ -57,14 +56,4 @@ export function AppProvider({
       {children}
     </AppContext.Provider>
   );
-}
-AppProvider.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]).isRequired,
-};
-
-export function useAppContext() {
-  return React.useContext(AppContext);
 }

@@ -4,14 +4,14 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import {
-  useAppContext,
+  AppContext,
 } from '../../contexts/AppContext';
 
 function LogCountLine({ title, logTypes }) {
   const {
     pockestState,
   } = usePockestContext();
-  const { setShowLog } = useAppContext();
+  const { setShowLog } = React.useContext(AppContext);
   const {
     log,
   } = pockestState;

@@ -10,9 +10,9 @@ export default defineConfig({
     crx({ manifest }),
   ],
   define: {
-    'import.meta.env.APP_VERSION': JSON.stringify(process.env.npm_package_version),
-    'import.meta.env.DISCORD_WEBHOOK_MATCH': JSON.stringify(process.env.DISCORD_WEBHOOK_MATCH),
-    'import.meta.env.DISCORD_WEBHOOK_EVO': JSON.stringify(process.env.DISCORD_WEBHOOK_EVO),
-    'import.meta.env.DISCORD_WEBHOOK_TEST': JSON.stringify(process.env.DISCORD_WEBHOOK_TEST),
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify(process.env.npm_package_version),
+    'import.meta.env.VITE_DISCORD_WEBHOOK_MATCH': JSON.stringify(process.env.VITE_DISCORD_WEBHOOK_MATCH),
+    'import.meta.env.VITE_DISCORD_WEBHOOK_EVO': JSON.stringify(process.env.VITE_DISCORD_WEBHOOK_EVO),
+    'import.meta.env.VITE_DISCORD_WEBHOOK_TEST': JSON.stringify(process.env.VITE_DISCORD_WEBHOOK_TEST),
   },
 });

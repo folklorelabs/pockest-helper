@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useReducer,
-  useMemo,
-  useEffect,
-  useContext,
-} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -33,7 +27,7 @@ startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
 const initialState = initialStateFromStorage || getStateFromLocalStorage();
 
-const PockestContext = createContext({
+const PockestContext = React.createContext({
   pockestState: initialState,
   pockestDispatch: () => { },
 });
@@ -41,7 +35,7 @@ const PockestContext = createContext({
 export function PockestProvider({
   children,
 }) {
-  const [pockestState, pockestDispatch] = useReducer(REDUCER, initialState);
+  const [pockestState, pockestDispatch] = React.useReducer(REDUCER, initialState);
   const {
     stat,
     cleanFrequency,
@@ -60,7 +54,7 @@ export function PockestProvider({
   );
 
   // invalidate session if need be
-  useEffect(() => {
+  React.useEffect(() => {
     if (!pockestState?.initialized || pockestState?.invalidSession) return;
     if (!validateStorageSession()) {
       // session invalid, we opened a new tab or something. invalidate the session in state.
@@ -74,7 +68,7 @@ export function PockestProvider({
   }, [pockestState]);
 
   // detect hatch sync issues
-  useEffect(() => {
+  React.useEffect(() => {
     if (pockestState?.invalidSession // we're in bad state; don't update anything
       || !pockestState?.initialized // we're in bad state; don't update anything
       || pockestState?.error || pockestState?.loading // already recovering elsewhere
@@ -100,7 +94,7 @@ export function PockestProvider({
     if (pockestState?.error
       || pockestState?.loading
       || pockestState?.invalidSession
-    ) return () => {};
+    ) return () => { };
     const interval = window.setInterval(async () => {
       const now = Date.now();
       const nextStatus = getRefreshTimeout(REFRESH_TIMEOUT.STATUS);
@@ -116,7 +110,7 @@ export function PockestProvider({
     if (!pockestState?.error
       || pockestState?.loading
       || pockestState?.invalidSession
-    ) return () => {};
+    ) return () => { };
     const interval = window.setInterval(async () => {
       const now = Date.now();
       const nextInit = getRefreshTimeout(REFRESH_TIMEOUT.ERROR);
@@ -132,7 +126,7 @@ export function PockestProvider({
 
   // 5 min timeout for loading -- try recovering
   React.useEffect(() => {
-    if (!pockestState?.loading) return () => {};
+    if (!pockestState?.loading) return () => { };
     const timeout = window.setTimeout(() => {
       refreshStatus();
       pockestDispatch([ACTIONS.ERROR], 'App stuck loading for more than 5 minutes. Recovering.');
@@ -149,7 +143,7 @@ export function PockestProvider({
       || pockestState?.paused
       || pockestState?.error
       || pockestState?.invalidSession
-    ) return () => {};
+    ) return () => { };
     const interval = window.setInterval(async () => {
       const {
         data,
@@ -282,7 +276,7 @@ export function PockestProvider({
   ]);
 
   // wrap value in memo so we only re-render when necessary
-  const providerValue = useMemo(() => ({
+  const providerValue = React.useMemo(() => ({
     pockestState,
     pockestDispatch,
   }), [pockestState]);
@@ -303,5 +297,5 @@ PockestProvider.propTypes = {
 export * as pockestActions from './actions';
 export * as pockestGetters from './getters';
 export function usePockestContext() {
-  return useContext(PockestContext);
+  return React.useContext(PockestContext);
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePockestContext } from '../../contexts/PockestContext';
 import './index.css';
-import { useAppContext } from '../../contexts/AppContext';
+import { AppContext } from '../../contexts/AppContext';
 
 function AppErrorAlert() {
   const {
@@ -9,7 +9,7 @@ function AppErrorAlert() {
   } = usePockestContext();
   const {
     setShowLog,
-  } = useAppContext();
+  } = React.useContext(AppContext);
   if (!pockestState?.error) return '';
   return (
     <button

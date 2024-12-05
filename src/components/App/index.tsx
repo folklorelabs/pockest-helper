@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 import { usePockestContext } from '../../contexts/PockestContext';
-import { useAppContext } from '../../contexts/AppContext';
+import { AppContext } from '../../contexts/AppContext';
 import LogPanel from '../LogPanel';
 import CareLog from '../CareLog';
 import MatchDiscoveryLog from '../MatchDiscoveryLog';
@@ -29,7 +29,7 @@ function App() {
     showLog,
     setShowLog,
     isOutdated,
-  } = useAppContext();
+  } = React.useContext(AppContext);
   const [minimized, setMinimized] = React.useState(false);
   const [lol, setLol] = React.useState(true);
   const isStunned = pockestState?.data?.monster?.status === 2;

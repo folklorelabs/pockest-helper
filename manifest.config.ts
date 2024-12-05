@@ -16,7 +16,7 @@ export default defineManifest(() => ({
         'https://www.streetfighter.com/6/buckler/*minigame*',
       ],
       js: [
-        'src/index.jsx',
+        'src/index.tsx',
       ],
     },
   ],

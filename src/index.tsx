@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { PockestProvider } from './contexts/PockestContext';
-import { AppProvider } from './contexts/AppContext';
+import { AppProvider } from './contexts/AppProvider';
 import App from './components/App';
 import log from './utils/log';
 import './reset.css';
@@ -11,13 +11,15 @@ const APP_ID = 'PockestHelperExtension';
 
 const appContainer = document.querySelector('body');
 let mainEl = document.getElementById(APP_ID);
-if (mainEl) {
+if (mainEl && appContainer) {
   log('Existing Pockest Helper instance found. Removing the element.');
   appContainer.removeChild(mainEl);
 }
 mainEl = document.createElement('div');
 mainEl.id = APP_ID;
-appContainer.appendChild(mainEl);
+if (appContainer) {
+  appContainer.appendChild(mainEl);
+}
 ReactDOM.createRoot(mainEl).render(
   <React.StrictMode>
     <PockestProvider>

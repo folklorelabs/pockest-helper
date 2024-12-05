@@ -101,13 +101,13 @@ export async function postDiscord(id, url, report) {
 }
 
 export async function postDiscordEvo(report) {
-  await postDiscord('DISCORD_WEBHOOK_EVO', import.meta.env.DISCORD_WEBHOOK_EVO, report);
+  await postDiscord('VITE_DISCORD_WEBHOOK_EVO', import.meta.env.VITE_DISCORD_WEBHOOK_EVO, report);
 }
 
 export async function postDiscordMatch(report) {
-  await postDiscord('DISCORD_WEBHOOK_MATCH', import.meta.env.DISCORD_WEBHOOK_MATCH, report);
+  await postDiscord('VITE_DISCORD_WEBHOOK_MATCH', import.meta.env.VITE_DISCORD_WEBHOOK_MATCH, report);
 }
 
 export async function postDiscordTest(report) {
-  await postDiscord('DISCORD_WEBHOOK_TEST', import.meta.env.DISCORD_WEBHOOK_TEST, report);
+  await postDiscord('VITE_DISCORD_WEBHOOK_TEST', import.meta.env.VITE_DISCORD_WEBHOOK_TEST, report);
 }

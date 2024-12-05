@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useAppContext } from '../../contexts/AppContext';
+import { AppContext } from '../../contexts/AppContext';
 import AppMainTemplate from './AppMain';
 
-function AppMain({ msg }) {
+function AppMain({ msg }: { msg: string }) {
   const {
     setShowLog,
-  } = useAppContext();
+  } = React.useContext(AppContext);
   return (
     <AppMainTemplate
       content={(
@@ -21,7 +21,9 @@ function AppMain({ msg }) {
             <button
               className="PockestLink"
               type="button"
-              onClick={() => setShowLog(true)}
+              onClick={() => {
+                if (typeof setShowLog === 'function') setShowLog(true)
+              }}
             >
               Care Log
             </button>
