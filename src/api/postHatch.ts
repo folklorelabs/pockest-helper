@@ -1,4 +1,4 @@
-import BucklerStatusData from "../types/BucklerData";
+import BucklerStatusData from "../types/BucklerStatusData";
 
 export default async function postHatch(eggId:number):Promise<BucklerStatusData> {
   if (eggId < 1) throw new Error(`Invalid param: id needs to be > 0, received ${eggId}`);
@@ -12,12 +12,12 @@ export default async function postHatch(eggId:number):Promise<BucklerStatusData>
   });
   if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const resJson = await response.json();
+  if (resJson?.data?.event !== 'hatching') {
+    throw new Error(`Buckler Response: ${resJson?.data?.event}`);
+  }
   const data = {
-    event: resJson.event,
+    event: 'hatching',
     ...resJson.data,
   };
-  if (data?.event !== 'hatching') {
-    throw new Error(`Buckler Response: ${data?.event || data?.message}`);
-  }
   return data;
 }

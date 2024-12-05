@@ -1,4 +1,4 @@
-import { STAT_ICON, STAT_ID } from '../config/stats';
+import { STAT_ICON, STAT_ID } from '../constants/stats';
 import { parseDurationStr } from './parseDuration';
 import prettyTimeStamp from './prettyTimestamp';
 

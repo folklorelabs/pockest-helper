@@ -1,43 +1,23 @@
+import PockestState from './types/PockestState';
 import log from '../../utils/log';
+import ACTION_TYPES from './constants/ACTION_TYPES';
 import {
   getAutoSettings,
   getLogEntry,
   getOwnedMementoMonsterIds,
 } from './getters';
+import Action from './types/Action';
 
-export const ACTIONS = {
-  INIT: 'POCKEST_INIT',
-  INVALIDATE_SESSION: 'POCKEST_INVALIDATE_SESSION',
-  EVENT_HATCHING: 'POCKEST_EVENT_HATCHING',
-  EVENT_CLEANING: 'POCKEST_EVENT_CLEANING',
-  EVENT_TRAINING: 'POCKEST_EVENT_TRAINING',
-  EVENT_MEAL: 'POCKEST_EVENT_MEAL',
-  EVENT_EXCHANGE: 'POCKEST_EVENT_EXCHANGE',
-  EVENT_CURE: 'POCKEST_EVENT_CURE',
-  REFRESH_STATUS: 'POCKEST_REFRESH_STATUS',
-  REFRESH_EVOLUTION_SUCCESS: 'POCKEST_REFRESH_EVOLUTION_SUCCESS',
-  REFRESH_EVOLUTION_FAILURE: 'POCKEST_REFRESH_EVOLUTION_FAILURE',
-  REFRESH_DEATH: 'POCKEST_REFRESH_DEATH',
-  REFRESH_DEPARTURE: 'POCKEST_REFRESH_DEPARTURE',
-  REFRESH_MONSTER_NOT_FOUND: 'POCKEST_REFRESH_MONSTER_NOT_FOUND',
-  LOADING: 'POCKEST_LOADING',
-  PAUSE: 'POCKEST_PAUSE',
-  ERROR: 'POCKEST_ERROR',
-  ERROR_HATCH_SYNC: 'POCKEST_ERROR_HATCH_SYNC',
-  SETTINGS: 'POCKEST_SETTINGS',
-  SET_LOG: 'POCKEST_SET_LOG',
-};
-
-export default function REDUCER(state, [type, payload]) {
+export default function REDUCER(state: PockestState, [type, payload]: Action) {
   log('STATE CHANGE', { state, type, payload });
   switch (type) {
-    case ACTIONS.LOADING:
+    case ACTION_TYPES.LOADING:
       return {
         ...state,
         loading: true,
         error: null,
       };
-    case ACTIONS.SETTINGS:
+    case ACTION_TYPES.SETTINGS:
       return {
         ...state,
         monsterId: payload.monsterId ?? state?.monsterId,
@@ -57,12 +37,12 @@ export default function REDUCER(state, [type, payload]) {
         autoCure: payload.autoCure ?? state?.autoCure,
         simpleMode: payload.simpleMode ?? state?.simpleMode,
       };
-    case ACTIONS.PAUSE:
+    case ACTION_TYPES.PAUSE:
       return {
         ...state,
         paused: payload.paused ?? state?.paused,
       };
-    case ACTIONS.REFRESH_STATUS:
+    case ACTION_TYPES.REFRESH_STATUS:
       return {
         ...state,
         initialized: true,
@@ -72,12 +52,12 @@ export default function REDUCER(state, [type, payload]) {
         data: payload?.data,
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.SET_LOG:
+    case ACTION_TYPES.SET_LOG:
       return {
         ...state,
         log: payload,
       };
-    case ACTIONS.EVENT_HATCHING:
+    case ACTION_TYPES.EVENT_HATCHING:
       return {
         ...state,
         loading: false,
@@ -95,7 +75,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.EVENT_CLEANING:
+    case ACTION_TYPES.EVENT_CLEANING:
       return {
         ...state,
         loading: false,
@@ -111,7 +91,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.EVENT_MEAL:
+    case ACTION_TYPES.EVENT_MEAL:
       return {
         ...state,
         loading: false,
@@ -126,7 +106,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.EVENT_CURE:
+    case ACTION_TYPES.EVENT_CURE:
       return {
         ...state,
         loading: false,
@@ -140,7 +120,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.EVENT_EXCHANGE:
+    case ACTION_TYPES.EVENT_EXCHANGE:
       return {
         ...state,
         loading: false,
@@ -155,7 +135,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.EVENT_TRAINING:
+    case ACTION_TYPES.EVENT_TRAINING:
       return {
         ...state,
         loading: false,
@@ -173,7 +153,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_EVOLUTION_SUCCESS:
+    case ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS:
       return {
         ...state,
         initialized: true,
@@ -205,7 +185,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_EVOLUTION_FAILURE:
+    case ACTION_TYPES.REFRESH_EVOLUTION_FAILURE:
       return {
         ...state,
         initialized: true,
@@ -229,7 +209,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_DEATH:
+    case ACTION_TYPES.REFRESH_DEATH:
       return {
         ...state,
         initialized: true,
@@ -248,7 +228,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_DEPARTURE:
+    case ACTION_TYPES.REFRESH_DEPARTURE:
       return {
         ...state,
         initialized: true,
@@ -267,7 +247,7 @@ export default function REDUCER(state, [type, payload]) {
         ],
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.REFRESH_MONSTER_NOT_FOUND:
+    case ACTION_TYPES.REFRESH_MONSTER_NOT_FOUND:
       return {
         ...state,
         initialized: true,
@@ -279,13 +259,13 @@ export default function REDUCER(state, [type, payload]) {
         eggTimestamp: null,
         ...getAutoSettings(state, payload?.data),
       };
-    case ACTIONS.INVALIDATE_SESSION:
+    case ACTION_TYPES.INVALIDATE_SESSION:
       return {
         ...state,
         paused: true,
         invalidSession: true,
       };
-    case ACTIONS.ERROR:
+    case ACTION_TYPES.ERROR:
       return {
         ...state,
         loading: false,
@@ -299,14 +279,14 @@ export default function REDUCER(state, [type, payload]) {
           },
         ],
       };
-    case ACTIONS.ERROR_HATCH_SYNC:
+    case ACTION_TYPES.ERROR_HATCH_SYNC:
       return {
         ...state,
         error: payload,
         eggId: null,
         eggTimestamp: state?.data?.monster?.live_time,
         evolutionFailed: false,
-        statLog: state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training').map((e) => e.type) ?? [],
+        statLog: state?.log?.filter((entry) => state?.data?.monster?.live_time && entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training').map((e) => e.type) ?? [],
         log: [
           ...state.log,
           {

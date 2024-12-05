@@ -1,6 +1,6 @@
 import React from 'react';
 import { pockestGetters } from '../contexts/PockestContext';
-import fetchAllEggs from '../utils/fetchAllEggs';
+import fetchAllEggs from '../api/fetchAllEggs';
 
 function usePlanEgg(pockestState) {
   const [eggData, setEggData] = React.useState();

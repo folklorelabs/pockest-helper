@@ -1,6 +1,6 @@
 import { pockestGetters } from '../contexts/PockestContext';
 import combineDiscordReports from './combineDiscordReports';
-import { postDiscordTest } from './postDiscord';
+import { postDiscordTest } from '../api/postDiscord';
 
 const pockestState = JSON.parse(window.sessionStorage.PockestHelperState);
 const matchData = {

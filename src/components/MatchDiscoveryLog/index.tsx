@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import APP_NAME from '../../config/APP_NAME';
+import APP_NAME from '../../constants/APP_NAME';
 import {
   usePockestContext,
   pockestGetters,
@@ -10,7 +10,7 @@ import {
   postDiscordMatch,
   getDiscordCooldown,
   getDiscordReportStatus,
-} from '../../utils/postDiscord';
+} from '../../api/postDiscord';
 import combineDiscordReports from '../../utils/combineDiscordReports';
 import './index.css';
 
@@ -36,9 +36,9 @@ function MatchDiscoveryLog({
     isRelTime: true,
   })).join('\n'), [contentData, pockestState]);
   React.useEffect(() => {
-    if (!textAreaEl?.current) return () => {};
+    if (!textAreaEl?.current) return () => { };
     textAreaEl.current.scrollTop = textAreaEl.current.scrollHeight;
-    return () => {};
+    return () => { };
   }, [content]);
   React.useEffect(() => {
     const interval = window.setInterval(() => {

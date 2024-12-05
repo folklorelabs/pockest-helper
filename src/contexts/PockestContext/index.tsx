@@ -1,5 +1,4 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { ReactNode } from 'react';
 
 import {
   startStorageSession,
@@ -12,29 +11,40 @@ import {
   setRefreshTimeout,
   REFRESH_TIMEOUT,
 } from './state';
-import REDUCER, { ACTIONS } from './reducer';
+import REDUCER from './reducer';
 
-import { STAT_ID } from '../../config/stats';
+import { STAT_ID } from '../../constants/stats';
 import * as pockestActions from './actions';
 import * as pockestGetters from './getters';
 
 import log from '../../utils/log';
 import getMatchTimer from '../../utils/getMatchTimer';
-import { postDiscordEvo } from '../../utils/postDiscord';
+import { postDiscordEvo } from '../../api/postDiscord';
 import combineDiscordReports from '../../utils/combineDiscordReports';
+import fetchMatchList from '../../api/fetchMatchList';
+import Action from './types/Action';
+import PockestState from './types/PockestState';
 
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
 const initialState = initialStateFromStorage || getStateFromLocalStorage();
 
+interface PockestContextInitialState {
+  pockestState: PockestState;
+  pockestDispatch: React.Dispatch<Action> | null;
+}
 const PockestContext = React.createContext({
   pockestState: initialState,
-  pockestDispatch: () => { },
-});
+  pockestDispatch: null,
+} as PockestContextInitialState);
+
+type PockestProviderProps = {
+  children: ReactNode;
+};
 
 export function PockestProvider({
   children,
-}) {
+}: PockestProviderProps) {
   const [pockestState, pockestDispatch] = React.useReducer(REDUCER, initialState);
   const {
     stat,
@@ -129,7 +139,7 @@ export function PockestProvider({
     if (!pockestState?.loading) return () => { };
     const timeout = window.setTimeout(() => {
       refreshStatus();
-      pockestDispatch([ACTIONS.ERROR], 'App stuck loading for more than 5 minutes. Recovering.');
+      pockestDispatch([ACTION_TYPES.ERROR], 'App stuck loading for more than 5 minutes. Recovering.');
     }, 300000);
     return () => {
       window.clearTimeout(timeout);
@@ -240,7 +250,7 @@ export function PockestProvider({
       const nextMatchTime = getMatchTimer(pockestState);
       if (attemptToMatch && nextMatchTime && now.getTime() >= nextMatchTime) {
         pockestDispatch(pockestActions.pockestLoading());
-        const { exchangeList } = await pockestGetters.fetchMatchList();
+        const { exchangeList } = await fetchMatchList();
         if (monster?.age >= 5) {
           // Report missing hashes, names, and stat vals to discord when found on opponents
           const missing = exchangeList.filter((m) => {
@@ -287,12 +297,6 @@ export function PockestProvider({
     </PockestContext.Provider>
   );
 }
-PockestProvider.propTypes = {
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]).isRequired,
-};
 
 export * as pockestActions from './actions';
 export * as pockestGetters from './getters';

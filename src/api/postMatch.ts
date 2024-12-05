@@ -1,5 +1,5 @@
 import BucklerPotentialMatch from "../types/BucklerPotentialMatch";
-import BucklerStatusData from "../types/BucklerData";
+import BucklerStatusData from "../types/BucklerStatusData";
 
 export default async function postMatch(match:BucklerPotentialMatch):Promise<BucklerStatusData> {
   if (match?.slot < 1) {
@@ -15,12 +15,12 @@ export default async function postMatch(match:BucklerPotentialMatch):Promise<Buc
   });
   if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const resJson = await response.json();
+  if (resJson?.data?.event !== 'exchange') {
+    throw new Error(`Buckler Response: ${resJson?.data?.event}`);
+  }
   const data = {
-    event: resJson.event,
+    event: 'exchange',
     ...resJson.data,
   };
-  if (data?.event !== 'exchange') {
-    throw new Error(`Buckler Response: ${data?.event || data?.message}`);
-  }
   return data;
 }

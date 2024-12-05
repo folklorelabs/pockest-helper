@@ -5,12 +5,13 @@ import flagSchema from './flagSchema';
 import statusMonsterSchema from "./statusMonsterSchema";
 
 export const baseStatusSchema = z.object({
-  event: z.string(),
+  event: z.literal(''),
   timestamp: timestampSchema,
   monster: statusMonsterSchema,
   next_big_event_timer: timestampSchema,
   next_small_event_timer: timestampSchema,
   stamp: z.boolean().optional(),
+  message: z.string().optional(),
 });
 
 export const trainingStatusSchema = baseStatusSchema.extend({
@@ -22,26 +23,29 @@ export const trainingStatusSchema = baseStatusSchema.extend({
   }),
 });
 
+export const exchangeResultsSchema = z.object({
+  egg_get: z.boolean(),
+  egg_hash: z.string(),
+  egg_id: z.number(),
+  egg_name: z.string(),
+  egg_name_en: z.string(),
+  egg_point_per_after: z.number(),
+  egg_point_per_before: z.number(),
+  get_egg_point: z.number(),
+  get_memento_point: z.number(),
+  is_spmatch: z.boolean(),
+  memento_get: z.boolean(),
+  memento_hash: z.string(),
+  memento_point_per_after: z.number(),
+  memento_point_per_before: z.number(),
+  target_monster_hash: z.string(),
+  target_monster_id: z.number(),
+});
+
 export const exchangeStatusSchema = baseStatusSchema.extend({
   event: z.literal('exchange'),
-  exchangeResult: z.object({
-    egg_get: z.boolean(),
-    egg_hash: z.string(),
-    egg_id: z.number(),
-    egg_name: z.string(),
-    egg_name_en: z.string(),
-    egg_point_per_after: z.number(),
-    egg_point_per_before: z.number(),
-    get_egg_point: z.number(),
-    get_memento_point: z.number(),
-    is_spmatch: z.boolean(),
-    memento_get: z.boolean(),
-    memento_hash: z.string(),
-    memento_point_per_after: z.number(),
-    memento_point_per_before: z.number(),
-    target_monster_hash: z.string(),
-    target_monster_id: z.number(),
-  }),
+  exchangable: z.boolean().optional(),
+  exchangeResult: exchangeResultsSchema,
 });
 
 export const hatchingStatusSchema = baseStatusSchema.extend({
@@ -72,7 +76,7 @@ export const mealStatusSchema = baseStatusSchema.extend({
   }),
 });
 
-const evolutionSchema = z.object({
+export const evolutionSchema = z.object({
   hash: z.string(),
   id: z.number(),
   name: z.string(),
@@ -103,7 +107,7 @@ export const notFoundStatusSchema = baseStatusSchema.extend({
   event: z.literal('monster_not_found'),
 });
 
-const statusSchema = z.union([
+const statusSchema = z.discriminatedUnion('event', [
   baseStatusSchema,
   trainingStatusSchema,
   exchangeStatusSchema,

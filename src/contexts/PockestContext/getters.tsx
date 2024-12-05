@@ -1,5 +1,5 @@
-import { STAT_ABBR, STAT_ID_ABBR } from '../../config/stats';
-import MONSTER_AGE from '../../config/MONSTER_AGE';
+import { STAT_ABBR, STAT_ID_ABBR } from '../../constants/stats';
+import MONSTER_AGE from '../../constants/MONSTER_AGE';
 import getTimeIntervals from '../../utils/getTimeIntervals';
 import getTotalStats from '../../utils/getTotalStats';
 import getDeathTimer, { STUN_DEATH_OFFSET } from '../../utils/getDeathTimer';
@@ -12,8 +12,14 @@ import fetchCharSprites from '../../utils/fetchCharSprites';
 import { GARBAGE_TIME } from '../../utils/getGarbageTimer';
 import { STOMACH_TIME } from '../../utils/getStomachTimer';
 import { STUN_OFFSET } from '../../utils/getStunTimer';
+import PockestState from './types/PockestState';
+import BucklerStatusData from '../../types/BucklerStatusData';
+import Settings from './types/Settings';
+import BucklerMatchResults from '../../types/BucklerMatchResults';
+import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
+import { parse } from 'path';
 
-export function getLogEntry(pockestState, data) {
+export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData) {
   const mergedData = data ?? pockestState?.data;
   return {
     logType: mergedData?.event,
@@ -43,13 +49,13 @@ export async function fetchPockestStatus() {
   return data;
 }
 
-export function getMonsterId(state) {
+export function getMonsterId(state: PockestState) {
   const hashId = state?.data?.monster?.hash;
   if (!hashId) return null;
   return parseInt(hashId.slice(0, 4), 10);
 }
 
-export async function getBestMatch(state, exchangeList) {
+export async function getBestMatch(state: PockestState, exchangeList: BucklerPotentialMatch[]) {
   const monsterId = getMonsterId(state);
   const monster = state?.allMonsters?.find((m) => m.monster_id === monsterId);
   const sortedMatches = exchangeList?.map((a) => {
@@ -80,19 +86,19 @@ export async function getBestMatch(state, exchangeList) {
   return sortedMatches?.[0];
 }
 
-export function getOwnedMementoMonsterIds(state) {
+export function getOwnedMementoMonsterIds(state: PockestState) {
   return state?.allMonsters
     ?.filter((m) => m?.memento_flg)
     .map((m) => m?.monster_id) ?? [];
 }
 
-export function getOwnedMementoMonsterNames(state) {
+export function getOwnedMementoMonsterNames(state: PockestState) {
   const mementosOwned = getOwnedMementoMonsterIds(state);
   return mementosOwned.map((id) => state.allMonsters
     ?.find((m) => m.monster_id === id)?.name_en);
 }
 
-export function getCurrentMonsterLogs(state, logType) {
+export function getCurrentMonsterLogs(state: PockestState, logType: string) {
   return state?.log.filter((entry) => {
     if (!state?.data?.monster) return false;
     if (logType && entry?.logType !== logType) return false;
@@ -100,7 +106,7 @@ export function getCurrentMonsterLogs(state, logType) {
   });
 }
 
-export function getTargetMonsterPlanId(state) {
+export function getTargetMonsterPlanId(state: PockestState) {
   const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
   const planId = (() => {
     const isMonsterPlan = !!monster;
@@ -113,7 +119,7 @@ export function getTargetMonsterPlanId(state) {
   return planId;
 }
 
-export function getTargetMonsterStatPlanId(state) {
+export function getTargetMonsterStatPlanId(state: PockestState) {
   const monster = state?.allMonsters?.find((m) => m.monster_id === state?.monsterId);
   const statePlanId = getTargetMonsterPlanId(state);
   const {
@@ -131,7 +137,7 @@ export function getTargetMonsterStatPlanId(state) {
   return statPlanId;
 }
 
-export function getTargetMonsterPlan(state) {
+export function getTargetMonsterPlan(state: PockestState) {
   const statePlanId = getTargetMonsterPlanId(state);
   const statPlanId = getTargetMonsterStatPlanId(state);
   const {
@@ -153,7 +159,7 @@ export function getTargetMonsterPlan(state) {
   };
 }
 
-export function getTargetMonsterStatPlan(state) {
+export function getTargetMonsterStatPlan(state: PockestState) {
   const statPlanId = getTargetMonsterStatPlanId(state);
   const statPlan = statPlanId.split('').map((statLetter) => STAT_ABBR[statLetter]);
   return {
@@ -162,32 +168,36 @@ export function getTargetMonsterStatPlan(state) {
   };
 }
 
-export function getTargetMonsterCurrentRouteSpec(state) {
+export function getTargetMonsterCurrentRouteSpec(state: PockestState) {
   const targetPlan = getTargetMonsterPlan(state);
+  if (!targetPlan) return null;
   const curAge = state?.data?.monster?.age;
+  if (!curAge) return null;
   const currentRouteSpec = targetPlan?.planRoute
     ?.find((r) => curAge >= r?.ageStart && curAge < r?.ageEnd);
-  return currentRouteSpec || {};
+  return currentRouteSpec || null;
 }
 
-export function getTargetMonsterCurrentStat(state) {
+export function getTargetMonsterCurrentStat(state: PockestState) {
   const targetPlan = getTargetMonsterPlan(state);
   const stat = (() => {
-    const curTrainings = state?.log?.filter((entry) => entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
+    const curTrainings = state?.log?.filter((entry) => state?.data?.monster?.live_time && entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
     const numTrains = Math.max(state?.statLog?.length, curTrainings?.length);
     return targetPlan?.statPlan?.[numTrains] || targetPlan?.primaryStat;
   })();
-  return stat;
+  return stat ? parseInt(stat, 10) : state?.stat;
 }
 
-export function getCareSettings(state) {
+export function getCareSettings(state: PockestState) {
   if (state?.autoPlan) {
+    const stat = getTargetMonsterCurrentStat(state);
+    const routeSpec = getTargetMonsterCurrentRouteSpec(state);
+    if (!routeSpec) return { stat };
     const {
       cleanFrequency,
       feedFrequency,
       feedTarget,
-    } = getTargetMonsterCurrentRouteSpec(state);
-    const stat = getTargetMonsterCurrentStat(state);
+    } = routeSpec;
     return {
       stat,
       cleanFrequency,
@@ -203,7 +213,7 @@ export function getCareSettings(state) {
   };
 }
 
-export function getPlanNeglectOffset(state) {
+export function getPlanNeglectOffset(state: PockestState) {
   let ageOffset = state?.planAge && state?.planAge > 1
     ? MONSTER_AGE[Math.max(2, state.planAge)] : 0;
   if (state.planAge === 5) {
@@ -213,7 +223,7 @@ export function getPlanNeglectOffset(state) {
   return ageOffset;
 }
 
-export function getPlanStunOffset(state) {
+export function getPlanStunOffset(state: PockestState) {
   if (state?.planAge === 6) return null;
   const ageOffset = state?.planAge && state?.planAge > 1
     ? Math.max(0, MONSTER_AGE[Math.max(2, state.planAge)] - (5 * 60 * 60 * 1000))
@@ -221,7 +231,7 @@ export function getPlanStunOffset(state) {
   return ageOffset;
 }
 
-export function getCurrentPlanSchedule(state) {
+export function getCurrentPlanSchedule(state: PockestState) {
   const targetPlan = getTargetMonsterPlan(state);
   const birth = state?.data?.monster?.live_time;
   if (!birth) return {};
@@ -243,11 +253,11 @@ export function getCurrentPlanSchedule(state) {
         ...schedule,
       ];
     }, []) : getTimeIntervals(
-    birth,
-    birth + 7 * 24 * 60 * 60 * 1000,
-    state?.cleanFrequency,
-    0,
-  );
+      birth,
+      birth + 7 * 24 * 60 * 60 * 1000,
+      state?.cleanFrequency,
+      0,
+    );
   if (cleanSchedule?.[0]?.start === birth) {
     // remove unnecessary first clean
     cleanSchedule.shift();
@@ -272,11 +282,11 @@ export function getCurrentPlanSchedule(state) {
         ...schedule,
       ];
     }, []) : getTimeIntervals(
-    birth,
-    birth + 7 * 24 * 60 * 60 * 1000,
-    state?.feedFrequency,
-    0,
-  );
+      birth,
+      birth + 7 * 24 * 60 * 60 * 1000,
+      state?.feedFrequency,
+      0,
+    );
   const trainSchedule = (Array.from(new Array(14))).reduce((fullSchedule, _unused, index) => {
     const startOffset = (12 * 60 * 60 * 1000) * index;
     if (startOffset > neglectOffset) return fullSchedule;
@@ -295,7 +305,7 @@ export function getCurrentPlanSchedule(state) {
   };
 }
 
-export function getMatchSchedule(state) {
+export function getMatchSchedule(state: PockestState) {
   const birth = state?.data?.monster?.live_time;
   if (!birth) return [];
   const targetDeath = MONSTER_AGE[Math.max(2, state?.planAge || 6)];
@@ -307,15 +317,15 @@ export function getMatchSchedule(state) {
   return schedule;
 }
 
-export function getCurrentPlanScheduleWindows(state) {
+export function getCurrentPlanScheduleWindows(state: PockestState) {
   const { cleanSchedule, feedSchedule } = getCurrentPlanSchedule(state);
   const now = new Date();
-  const nextCleanWindow = cleanSchedule?.find((scheduleWindow) => now < scheduleWindow.start);
-  const currentCleanWindow = cleanSchedule?.find(
+  const nextCleanWindow = cleanSchedule && cleanSchedule?.find((scheduleWindow) => now < scheduleWindow.start);
+  const currentCleanWindow = cleanSchedule && cleanSchedule?.find(
     (scheduleWindow) => now >= scheduleWindow.start && now <= scheduleWindow.end,
   );
-  const nextFeedWindow = feedSchedule?.find((scheduleWindow) => now < scheduleWindow.start);
-  const currentFeedWindow = feedSchedule?.find(
+  const nextFeedWindow = feedSchedule && feedSchedule?.find((scheduleWindow) => now < scheduleWindow.start);
+  const currentFeedWindow = feedSchedule && feedSchedule?.find(
     (scheduleWindow) => now >= scheduleWindow.start && now <= scheduleWindow.end,
   );
   return {
@@ -326,7 +336,7 @@ export function getCurrentPlanScheduleWindows(state) {
   };
 }
 
-export function isMonsterDead(state, data) {
+export function isMonsterDead(state: PockestState, data?: BucklerStatusData | null) {
   if (data?.event === 'hatching') return false;
   if (data?.event === 'death') return true;
   const now = Date.now();
@@ -337,7 +347,7 @@ export function isMonsterDead(state, data) {
   return now >= deathTimestamp;
 }
 
-export function isMonsterDeparted(state, data) {
+export function isMonsterDeparted(state: PockestState, data?: BucklerStatusData | null) {
   if (data?.event === 'hatching') return false;
   if (data?.event === 'departure') return true;
   const monster = data?.monster || state?.data?.monster;
@@ -345,15 +355,15 @@ export function isMonsterDeparted(state, data) {
   const birthTimestamp = state?.eggTimestamp === monster?.live_time
     ? state?.eggTimestamp
     : monster?.live_time;
-  return now >= (birthTimestamp + daysToMs(7));
+  return birthTimestamp && now >= (birthTimestamp + daysToMs(7));
 }
 
-export function isMonsterMissing(state, data) {
+export function isMonsterMissing(state: PockestState, data?: BucklerStatusData | null) {
   if (data?.event === 'hatching') return false;
   return data?.event === 'monster_not_found';
 }
 
-export function getAutoPlanSettings(state) {
+export function getAutoPlanSettings(state: PockestState) {
   const statPlanId = getTargetMonsterStatPlanId(state);
   const targetPlan = getTargetMonsterPlan(state);
   const targetPlanSpecs = getTargetMonsterCurrentRouteSpec(state);
@@ -377,8 +387,8 @@ export function getAutoPlanSettings(state) {
   };
 }
 
-export function getAutoSettings(state, data, settingsOverride = {}) {
-  let newSettings = {
+export function getAutoSettings(state: PockestState, data?: BucklerStatusData | null, settingsOverride: Settings = {}) {
+  let newSettings: Partial<PockestState> = {
     ...settingsOverride,
   };
   if (newSettings.simpleMode ?? state.simpleMode) {
@@ -409,21 +419,23 @@ export function getAutoSettings(state, data, settingsOverride = {}) {
   return newSettings;
 }
 
-export function getPlanEvolutions(state) {
+export function getPlanEvolutions(state: PockestState) {
   if (!state?.planId) return {};
+  const parsedPlanId = parsePlanId(state.planId);
+  if (!parsedPlanId) return {};
   const {
     planEgg,
     planRouteId,
     primaryStatLetter,
     planAge,
-  } = parsePlanId(state.planId);
+  } = parsedPlanId;
   const numEvolutions = Math.max(2, Math.min(5, planAge));
   const eggMonsters = state.allMonsters.filter((m) => m?.eggIds?.includes(planEgg));
   const planEvolutions = Array.from(new Array(numEvolutions)).reduce((acc, _val, index) => {
     const fromMon = acc[index];
     const age = index + 1;
     const matchingMonsters = eggMonsters.filter((m) => m.age === age
-        && (!fromMon || m.from.includes(fromMon.monster_id)));
+      && (!fromMon || m.from.includes(fromMon.monster_id)));
     const matchingIndex = (() => {
       if (age === 3) {
         return ['A', 'B', 'C'].indexOf(planRouteId.split('')[0]);
@@ -432,7 +444,7 @@ export function getPlanEvolutions(state) {
         return ['L', 'R'].indexOf(planRouteId.split('')[1]);
       }
       if (age === 5) {
-        return matchingMonsters.findIndex((m) => (new RegExp(`^${planEgg}${planRouteId}${primaryStatLetter}\\d$`)).test(m.planId));
+        return matchingMonsters.findIndex((m) => m.planId && (new RegExp(`^${planEgg}${planRouteId}${primaryStatLetter}\\d$`)).test(m.planId));
       }
       return 0;
     })();
@@ -444,14 +456,16 @@ export function getPlanEvolutions(state) {
   return planEvolutions;
 }
 
-export function getPlanLog(state) {
+export function getPlanLog(state: PockestState) {
   const birth = state?.data?.monster?.live_time;
   if (!birth) return [];
+  const planSchedule = getCurrentPlanSchedule(state);
+  if (!planSchedule) return [];
   const {
     cleanSchedule,
     feedSchedule,
     trainSchedule,
-  } = getCurrentPlanSchedule(state);
+  } = planSchedule;
   const matchSchedule = getMatchSchedule(state);
   let data = [];
   const stunOffset = getPlanStunOffset(state);
@@ -464,10 +478,10 @@ export function getPlanLog(state) {
   const planEvolutions = getPlanEvolutions(state);
   if (typeof stunOffset === 'number') {
     const startStopCure = birth + getPlanStunOffset(state);
-    const lastClean = cleanSchedule[cleanSchedule.length - 1];
+    const lastClean = cleanSchedule && cleanSchedule[cleanSchedule.length - 1];
     const lastCleanTime = lastClean?.start || birth;
     const deathByPoop = lastCleanTime + (GARBAGE_TIME * 12);
-    const lastFeed = feedSchedule[feedSchedule.length - 1];
+    const lastFeed = feedSchedule && feedSchedule[feedSchedule.length - 1];
     const lastFeedTime = lastFeed?.start || birth;
     const birthHungerIndex = (lastFeedTime - birth) / STOMACH_TIME;
     const birthStarvationIndex = birthHungerIndex + (lastFeed?.feedTarget || 0);
@@ -548,13 +562,13 @@ export function getPlanLog(state) {
   return data;
 }
 
-export function isConfirmedMonster(state, data) {
+export function isConfirmedMonster(state: PockestState, data: BucklerStatusData) {
   const matchingMonster = state.allMonsters.find((m) => data?.monster?.hash
     && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
   return matchingMonster?.confirmed;
 }
 
-export async function getDiscordReportEvoSuccess(state, data) {
+export async function getDiscordReportEvoSuccess(state: PockestState, data: BucklerStatusData) {
   const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
     && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
   const mementosOwned = getOwnedMementoMonsterNames(state);
@@ -596,7 +610,7 @@ export async function getDiscordReportEvoSuccess(state, data) {
   };
 }
 
-export function getDiscordReportEvoFailure(state, data) {
+export function getDiscordReportEvoFailure(state: PockestState, data: BucklerStatusData) {
   const mementosOwned = getOwnedMementoMonsterNames(state);
   const planIdStr = `${state?.planId}`;
   const statPlanStr = `${state?.statPlanId}`;
@@ -619,7 +633,7 @@ export function getDiscordReportEvoFailure(state, data) {
   };
 }
 
-export async function getDiscordReportMemento(state, data) {
+export async function getDiscordReportMemento(state: PockestState, data: BucklerStatusData) {
   const encycloData = state?.allMonsters?.find((m) => data?.monster?.hash
     && m.monster_id === getMonsterIdFromHash(data?.monster?.hash));
   const newMementoData = encycloData?.memento_hash !== '???' ? encycloData : data?.monster;
@@ -648,7 +662,7 @@ export async function getDiscordReportMemento(state, data) {
   };
 }
 
-export function isMatchDiscovery(pockestState, exchangeResult) {
+export function isMatchDiscovery(pockestState: PockestState, exchangeResult: BucklerMatchResults) {
   const monster = pockestState?.allMonsters
     .find((m) => m.monster_id === getMonsterIdFromHash(pockestState?.data?.monster?.hash));
   const allMissing = [
@@ -659,7 +673,7 @@ export function isMatchDiscovery(pockestState, exchangeResult) {
   return allMissing.includes(exchangeResult?.target_monster_id);
 }
 
-export function getDiscordReportMatch(state, exchangeResult, opponentName) {
+export function getDiscordReportMatch(state: PockestState, exchangeResult: BucklerMatchResults, opponentName: string) {
   const isFever = exchangeResult?.is_spmatch;
   const header = isFever ? '🔥 FEVER MATCH' : '⚔️ NORMAL MATCH';
   const embed = {
@@ -669,22 +683,19 @@ export function getDiscordReportMatch(state, exchangeResult, opponentName) {
       name: header,
     },
   };
-  if (exchangeResult?.timestamp) {
-    embed.timestamp = (new Date(exchangeResult?.timestamp)).toISOString();
-  }
   return {
     embeds: [embed],
   };
 }
 
-export async function getDiscordReportSighting(state, data, args) {
-  const nameEnStr = `\nName (EN): **${args?.match?.name_en}**`;
-  const nameStr = `\nName: **${args?.match?.name}**`;
-  const hashStr = `\nHash: **${args?.match?.hash}**`;
-  const statsTotal = args?.match ? args.match.power + args.match.speed + args.match.technic : 0;
-  const statBreakdownStr = `**P** ${args?.match?.power || 0} + **S** ${args?.match?.speed || 0} + **T** ${args?.match?.technic || 0} = ${statsTotal}`;
+export async function getDiscordReportSighting(state: PockestState, data: BucklerStatusData, matchResults: BucklerPotentialMatch) {
+  const nameEnStr = `\nName (EN): **${matchResults?.name_en}**`;
+  const nameStr = `\nName: **${matchResults?.name}**`;
+  const hashStr = `\nHash: **${matchResults?.hash}**`;
+  const statsTotal = matchResults ? matchResults.power + matchResults.speed + matchResults.technic : 0;
+  const statBreakdownStr = `**P** ${matchResults?.power || 0} + **S** ${matchResults?.speed || 0} + **T** ${matchResults?.technic || 0} = ${statsTotal}`;
   const statsStr = `\nStats: ${statBreakdownStr}`;
-  const charSprites = await fetchCharSprites(args?.match?.hash);
+  const charSprites = await fetchCharSprites(matchResults?.hash);
   const idle1Sprite = charSprites?.find((sprite) => sprite?.fileName.includes('idle_1'));
   const embed = {
     description: `${nameEnStr}${nameStr}${hashStr}${statsStr}`,

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { usePockestContext } from '../../contexts/PockestContext';
-import fetchCharAssets from '../../utils/fetchCharAssets';
+import fetchCharAssets from '../../api/fetchCharAsset';
 import getWeightedRandom from '../../utils/getWeightedRandom';
 import './index.css';
 
@@ -34,7 +34,7 @@ function CharacterSprite({
     })();
   }, [pockestState]);
   React.useEffect(() => {
-    if (!characterSprite || loading) return () => {};
+    if (!characterSprite || loading) return () => { };
     let timeout;
     let curIndex = 0;
     let curAction = action;

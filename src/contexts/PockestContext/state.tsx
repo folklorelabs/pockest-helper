@@ -1,20 +1,23 @@
+import PockestState from './types/PockestState';
 import getRandomMinutes from '../../utils/getRandomMinutes';
 import log from '../../utils/log';
 
-const INITIAL_STATE = {
-  data: {},
+const INITIAL_STATE: PockestState = {
+  data: null,
   allMonsters: [],
   allHashes: [],
   paused: true,
   monsterId: 4000, // default set to ryu
   eggTimestamp: null,
   eggId: null,
+  evolutionFailed: false,
   planId: '',
   statPlanId: '',
   statLog: [],
   planAge: 6,
   autoPlan: true,
   autoFeed: true,
+  autoMatch: true,
   cleanFrequency: 2,
   cleanTimestamp: null,
   feedFrequency: 4,
@@ -54,7 +57,7 @@ export function getStateFromLocalStorage() {
   };
 }
 
-export function saveStateToLocalStorage(state) {
+export function saveStateToLocalStorage(state: PockestState) {
   const stateToSave = JSON.parse(JSON.stringify(state || {}));
   delete stateToSave?.data;
   delete stateToSave?.initialized;
@@ -75,30 +78,29 @@ export function getStateFromSessionStorage() {
   return !stateFromStorage?.invalidSession ? stateFromStorage : null;
 }
 
-export function saveStateToSessionStorage(state) {
+export function saveStateToSessionStorage(state: PockestState) {
   const stateToSave = JSON.parse(JSON.stringify(state || {}));
   delete stateToSave?.loading; // can get perma-stuck if refresh during load event otherwise
   window.sessionStorage.setItem('PockestHelperState', JSON.stringify(stateToSave));
 }
 
-export const REFRESH_TIMEOUT = {
-  ERROR: 'PockestHelperTimeout-error',
-  STATUS: 'PockestHelperTimeout-statusData',
-  SHEET: 'PockestHelperTimeout-sheetData',
+export enum REFRESH_TIMEOUT {
+  ERROR = 'PockestHelperTimeout-error',
+  STATUS = 'PockestHelperTimeout-statusData',
+  SHEET = 'PockestHelperTimeout-sheetData',
 };
 
 // remove on load to kick start
-Object.keys(REFRESH_TIMEOUT)
-  .forEach((key) => window.sessionStorage.removeItem(REFRESH_TIMEOUT[key]));
+Object.values(REFRESH_TIMEOUT).forEach((id) => window.sessionStorage.removeItem(id));
 
-export function setRefreshTimeout(id, staticMin, dynamicMin) {
+export function setRefreshTimeout(id: string, staticMin: number, dynamicMin: number) {
   const timeout = Date.now() + getRandomMinutes(staticMin, dynamicMin);
   log(`NEXT REFRESH (${id}) @ ${(new Date(timeout)).toLocaleString()}`);
-  window.sessionStorage.setItem(id, timeout);
+  window.sessionStorage.setItem(id, `${timeout}`);
   return timeout;
 }
 
-export function getRefreshTimeout(id) {
+export function getRefreshTimeout(id: string) {
   const timeoutStr = window.sessionStorage.getItem(id);
   const timeout = timeoutStr && parseInt(timeoutStr, 10);
   return timeout;

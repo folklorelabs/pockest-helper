@@ -7,7 +7,7 @@ import {
 } from '../../contexts/PockestContext';
 import getActionResultString from '../../utils/getActionResultString';
 import getMatchReportString from '../../utils/getMatchReportString';
-import APP_NAME from '../../config/APP_NAME';
+import APP_NAME from '../../constants/APP_NAME';
 import './index.css';
 
 function CareLog({
@@ -45,9 +45,9 @@ function CareLog({
     })),
   ], [careLogData, isRelTime, onlyDiscoveries, pockestState]);
   React.useEffect(() => {
-    if (!textAreaEl?.current) return () => {};
+    if (!textAreaEl?.current) return () => { };
     textAreaEl.current.scrollTop = textAreaEl.current.scrollHeight;
-    return () => {};
+    return () => { };
   }, [careLog]);
   return (
     <div className="CareLog">

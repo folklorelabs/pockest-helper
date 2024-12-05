@@ -1,11 +1,12 @@
-import { STAT_ABBR } from '../config/stats';
-import LEGACY_EGG_IDS from '../config/LEGACY_EGG_IDS';
-import ROUTES from '../config/ROUTES';
+import { STAT_ABBR } from '../constants/stats';
+import LEGACY_EGG_IDS from '../constants/LEGACY_EGG_IDS';
+import ROUTES from '../constants/ROUTES';
+import PlanId from '../types/PlanId';
 
 export const LEGACY_PLAN_REGEX = /^([W|G|Y|B|R|L])([1-6])([A|B|C][L|R])([T|S|P])$/;
 export const PLAN_REGEX = /^(\d*)([A|B|C][L|R])([T|S|P])([1-6])$/;
 
-export function parsePlanId(planId) {
+export function parsePlanId(planId: PlanId) {
   if (!planId) return null;
   const isLegacy = LEGACY_PLAN_REGEX.test(planId);
   const planIdSplit = isLegacy ? LEGACY_PLAN_REGEX.exec(planId)
@@ -19,9 +20,9 @@ export function parsePlanId(planId) {
     planId: `${planEggString}${planRouteId}${primaryStatLetter}${planAgeString}`,
     planEgg: parseInt(planEggString, 10),
     planRouteId,
-    planRoute: ROUTES[planRouteId],
+    planRoute: ROUTES[planRouteId as keyof typeof ROUTES],
     primaryStatLetter,
-    primaryStat: `${STAT_ABBR[primaryStatLetter]}`,
+    primaryStat: `${STAT_ABBR[primaryStatLetter as keyof typeof STAT_ABBR]}`,
     planAge: parseInt(planAgeString, 10),
   };
 }

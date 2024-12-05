@@ -1,10 +1,9 @@
-import fetchAllMonsters from '../../utils/fetchAllMonsters';
-import fetchAllHashes from '../../utils/fetchAllHashes';
-import { postDiscordEvo, postDiscordMatch } from '../../utils/postDiscord';
+import fetchAllMonsters from '../../api/fetchAllMonsters';
+import fetchAllHashes from '../../api/fetchAllHashes';
+import { postDiscordEvo, postDiscordMatch } from '../../api/postDiscord';
 import combineDiscordReports from '../../utils/combineDiscordReports';
 import {
   getAutoSettings,
-  fetchPockestStatus,
   getCurrentMonsterLogs,
   getDiscordReportEvoSuccess,
   getDiscordReportMemento,
@@ -13,31 +12,42 @@ import {
   getDiscordReportMatch,
   isMatchDiscovery,
 } from './getters';
-import { ACTIONS } from './reducer';
 import daysToMs from '../../utils/daysToMs';
 import { getRefreshTimeout, REFRESH_TIMEOUT, setRefreshTimeout } from './state';
+import Settings from './types/Settings';
+import ACTION_TYPES from './constants/ACTION_TYPES';
+import PockestState from './types/PockestState';
+import StatusRefreshPayload from './types/StatusRefreshPayload';
+import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
+import postClean from '../../api/postClean';
+import postTrain from '../../api/postTrain';
+import postMatch from '../../api/postMatch';
+import postHatch from '../../api/postHatch';
+import postCure from '../../api/postCure';
+import postFeed from '../../api/postFeed';
+import fetchStatus from '../../api/fetchStatus';
 
 export function pockestLoading() {
-  return [ACTIONS.LOADING];
+  return [ACTION_TYPES.LOADING];
 }
-export function pockestPause(paused) {
-  return [ACTIONS.PAUSE, {
+export function pockestPause(paused: boolean) {
+  return [ACTION_TYPES.PAUSE, {
     paused,
   }];
 }
-export function pockestSettings(settings) {
-  return [ACTIONS.SETTINGS, settings];
+export function pockestSettings(settings: Settings) {
+  return [ACTION_TYPES.SETTINGS, settings];
 }
-export function pockestPlanSettings(pockestState, settingsOverride) {
+export function pockestPlanSettings(pockestState: PockestState, settingsOverride: Settings) {
   const newSettings = getAutoSettings(pockestState, null, settingsOverride);
-  return [ACTIONS.SETTINGS, newSettings];
+  return [ACTION_TYPES.SETTINGS, newSettings];
 }
 
-export async function pockestRefresh(pockestState) {
+export async function pockestRefresh(pockestState: PockestState) {
   try {
     // get buckler data and create payload obj
-    const data = await fetchPockestStatus();
-    const payload = { data };
+    const data = await fetchStatus();
+    const payload: StatusRefreshPayload = { data };
 
     const isEvolution = data?.event === 'evolution' || (data?.monster && pockestState?.data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash);
 
@@ -47,6 +57,7 @@ export async function pockestRefresh(pockestState) {
     if (
       !pockestState?.allMonsters || !pockestState?.allHashes // missing data
       || isEvolution // if evolution then we can expect new encylopedia data
+      || !nextSheetTimestamp // hasn't run yet
       || now >= nextSheetTimestamp // stale data
     ) {
       setRefreshTimeout(REFRESH_TIMEOUT.SHEET, 20, 10);
@@ -68,15 +79,15 @@ export async function pockestRefresh(pockestState) {
       allHashes: payload?.allHashes || pockestState?.allHashes || [],
     };
     const shouldDiscordReport = !isConfirmedMonster(mergedState, data);
-    if (data?.event === 'death') return [ACTIONS.REFRESH_DEATH, payload];
+    if (data?.event === 'death') return [ACTION_TYPES.REFRESH_DEATH, payload];
     if (data?.event === 'departure') {
       if (shouldDiscordReport) {
         const report = await getDiscordReportMemento(mergedState, data);
         postDiscordEvo(report);
       }
-      return [ACTIONS.REFRESH_DEPARTURE, payload];
+      return [ACTION_TYPES.REFRESH_DEPARTURE, payload];
     }
-    if (data?.event === 'monster_not_found') return [ACTIONS.REFRESH_MONSTER_NOT_FOUND, payload];
+    if (data?.event === 'monster_not_found') return [ACTION_TYPES.REFRESH_MONSTER_NOT_FOUND, payload];
     if (isEvolution) {
       // send any useful info to discord
       if (data?.monster?.age >= 5 && shouldDiscordReport) {
@@ -94,7 +105,7 @@ export async function pockestRefresh(pockestState) {
           postDiscordEvo(report);
         }
       }
-      return [ACTIONS.REFRESH_EVOLUTION_SUCCESS, payload];
+      return [ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS, payload];
     }
     const isEvoFailureEvent = (() => {
       if (data.monster.age >= 5) return false; // successful evolution already
@@ -110,141 +121,70 @@ export async function pockestRefresh(pockestState) {
         const report = getDiscordReportEvoFailure(pockestState, data);
         postDiscordEvo(report);
       }
-      return [ACTIONS.REFRESH_EVOLUTION_FAILURE, payload];
+      return [ACTION_TYPES.REFRESH_EVOLUTION_FAILURE, payload];
     }
-    return [ACTIONS.REFRESH_STATUS, payload];
+    return [ACTION_TYPES.REFRESH_STATUS, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestRefresh] ${error?.message}`];
+    return [ACTION_TYPES.ERROR, `[pockestRefresh] ${error instanceof Error ? error?.message : error}`];
   }
 }
 export async function pockestFeed() {
   try {
-    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/serving';
-    const response = await fetch(url, {
-      body: '{"type":1}',
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-    const resJson = await response.json();
-    const data = {
-      event: resJson.event,
-      ...resJson.data,
-    };
+    const data = await postFeed();
     const payload = {
       data,
     };
-    return [ACTIONS.EVENT_MEAL, payload];
+    return [ACTION_TYPES.EVENT_MEAL, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestFeed] ${error?.message}`];
+    return [ACTION_TYPES.ERROR, `[pockestFeed] ${error instanceof Error ? error?.message : error}`];
   }
 }
 export async function pockestCure() {
   try {
-    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/cure';
-    const response = await fetch(url, {
-      body: '{"type":1}',
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-    const resJson = await response.json();
-    const data = {
-      event: resJson.event,
-      ...resJson.data,
-    };
+    const data = await postCure();
     const payload = {
       data,
     };
-    return [ACTIONS.EVENT_CURE, payload];
+    return [ACTION_TYPES.EVENT_CURE, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestCure] ${error?.message}`];
+    return [ACTION_TYPES.ERROR, `[pockestCure] ${error instanceof Error ? error?.message : error}`];
   }
 }
 export async function pockestClean() {
   try {
-    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/cleaning';
-    const response = await fetch(url, {
-      body: '{"type":1}',
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-    const resJson = await response.json();
-    const data = {
-      event: resJson.event,
-      ...resJson.data,
-    };
+    const data = await postClean();
     const payload = {
       data,
     };
-    return [ACTIONS.EVENT_CLEANING, payload];
+    return [ACTION_TYPES.EVENT_CLEANING, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestClean] ${error?.message}`];
+    return [ACTION_TYPES.ERROR, `[pockestClean] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestTrain(type) {
+export async function pockestTrain(type: number) {
   try {
-    if (type < 1 || type > 3) {
-      throw new Error(`Invalid param: type needs to be 1, 2, or 3. Received ${type}.`);
-    }
-    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/training';
-    const response = await fetch(url, {
-      body: `{"type":${type}}`,
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-    const resJson = await response.json();
-    const data = {
-      event: resJson.event,
-      ...resJson.data,
-    };
+    const data = await postTrain(type);
     const payload = {
       data,
       args: { type },
     };
     if (data?.event !== 'training') {
-      throw new Error(`Buckler Response: ${data?.event || data?.message}`);
+      throw new Error(`Buckler Response: ${data?.event}`);
     }
-    return [ACTIONS.EVENT_TRAINING, payload];
+    return [ACTION_TYPES.EVENT_TRAINING, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestTrain] ${error?.message}`];
+    return [ACTION_TYPES.ERROR, `[pockestTrain] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestMatch(pockestState, match) {
+export async function pockestMatch(pockestState: PockestState, match: BucklerPotentialMatch) {
   try {
-    if (match?.slot < 1) {
-      throw new Error(`Invalid param: slot needs to be > 1, receive ${match}`);
-    }
-    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/exchange/start';
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({ slot: match?.slot }),
-    });
-    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-    const resJson = await response.json();
-    const data = {
-      event: resJson.event,
-      ...resJson.data,
-    };
+    const data = await postMatch(match);
     const payload = {
       data,
       args: { match },
     };
     if (data?.exchangable === false) {
-      throw new Error(`Buckler Response: ${data?.event || data?.message}`);
+      throw new Error(`Buckler Response: ${data?.event}`);
     }
     const isDisc = isMatchDiscovery(pockestState, data?.exchangeResult);
     if (isDisc) {
@@ -255,49 +195,36 @@ export async function pockestMatch(pockestState, match) {
       );
       postDiscordMatch(report);
     }
-    return [ACTIONS.EVENT_EXCHANGE, payload];
+    return [ACTION_TYPES.EVENT_EXCHANGE, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestMatch] ${error?.message}`];
+    return [ACTION_TYPES.ERROR, `[pockestMatch] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestSelectEgg(id) {
+export async function pockestSelectEgg(id: number) {
   try {
-    if (id < 1) throw new Error(`Invalid param: id needs to be > 0, received ${id}`);
-    const url = 'https://www.streetfighter.com/6/buckler/api/minigame/eggs';
-    const response = await fetch(url, {
-      body: `{"id":${id}}`,
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-      },
-    });
-    if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-    const resJson = await response.json();
-    const data = {
-      event: resJson.event,
-      ...resJson.data,
-    };
+    const data = await postHatch(id);
     const payload = {
       data,
       args: { id },
     };
-    return [ACTIONS.EVENT_HATCHING, payload];
+    return [ACTION_TYPES.EVENT_HATCHING, payload];
   } catch (error) {
-    return [ACTIONS.ERROR, `[pockestSelectEgg] ${error?.message}`];
+    return [ACTION_TYPES.ERROR, `[pockestSelectEgg] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export function pockestClearLog(pockestState, logTypes) {
+export function pockestClearLog(pockestState: PockestState, logTypes: string[]) {
   if (!Array.isArray(logTypes)) {
-    return [ACTIONS.ERROR, `[pockestClearLog] logTypes ${logTypes} needs to be an array`];
+    return [ACTION_TYPES.ERROR, `[pockestClearLog] logTypes ${logTypes} needs to be an array`];
   }
   const newLog = pockestState?.log
     ?.filter((entry) => !logTypes.includes(entry.logType)
-    || entry.timestamp >= pockestState?.data?.monster?.live_time);
-  return [ACTIONS.SET_LOG, newLog];
+      || !pockestState?.data?.monster?.live_time
+      || entry.timestamp >= pockestState?.data?.monster?.live_time);
+  return [ACTION_TYPES.SET_LOG, newLog];
 }
 export function pockestInvalidateSession() {
-  return [ACTIONS.INVALIDATE_SESSION];
+  return [ACTION_TYPES.INVALIDATE_SESSION];
 }
-export function pockestErrorHatchSync(errMsg) {
-  return [ACTIONS.ERROR_HATCH_SYNC, errMsg];
+export function pockestErrorHatchSync(errMsg: string) {
+  return [ACTION_TYPES.ERROR_HATCH_SYNC, errMsg];
 }

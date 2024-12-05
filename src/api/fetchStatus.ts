@@ -1,4 +1,4 @@
-import BucklerStatusData from "../types/BucklerData";
+import BucklerStatusData from "../types/BucklerStatusData";
 
 export default async function fetchStatus():Promise<BucklerStatusData> {
   const url = 'https://www.streetfighter.com/6/buckler/api/minigame/status';

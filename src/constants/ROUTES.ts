@@ -1,16 +1,12 @@
 import MONSTER_AGE from './MONSTER_AGE';
 
-const ROUTE_DEFAULT = {
-  cleanFrequency: 2,
-  feedFrequency: 4,
-  cleanOffset: 0,
-  feedOffset: 0,
-  feedTarget: 6,
-};
-
-function getDefaultRoute(ageStart:number, ageEnd:number) {
+function getDefaultRoute(ageStart: number, ageEnd: number) {
   return {
-    ...ROUTE_DEFAULT,
+    cleanFrequency: 2,
+    feedFrequency: 4,
+    cleanOffset: 0,
+    feedOffset: 0,
+    feedTarget: 6,
     ageStart,
     ageEnd,
     startTime: MONSTER_AGE[ageStart],
@@ -101,7 +97,5 @@ const ROUTES = {
     },
   ],
 };
-
-export type RouteId = keyof typeof ROUTES;
 
 export default ROUTES;

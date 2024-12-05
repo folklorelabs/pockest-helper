@@ -1,4 +1,4 @@
-import MONSTER_AGE from '../config/MONSTER_AGE';
+import MONSTER_AGE from '../constants/MONSTER_AGE';
 
 export default function getAgeTimer(pockestState) {
   if (!pockestState?.data?.monster?.live_time || !pockestState?.data?.monster?.age) return null;

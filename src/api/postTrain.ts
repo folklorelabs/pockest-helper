@@ -1,4 +1,4 @@
-import BucklerStatusData from "../types/BucklerData";
+import BucklerStatusData from "../types/BucklerStatusData";
 
 export default async function postTrain(matchType:number):Promise<BucklerStatusData> {
   if (matchType < 1 || matchType > 3) {
@@ -14,12 +14,12 @@ export default async function postTrain(matchType:number):Promise<BucklerStatusD
   });
   if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const resJson = await response.json();
+  if (resJson?.data?.event !== 'training') {
+    throw new Error(`Buckler Response: ${resJson?.data?.event}`);
+  }
   const data = {
-    event: resJson.event,
+    event: 'training',
     ...resJson.data,
   };
-  if (data?.event !== 'training') {
-    throw new Error(`Buckler Response: ${data?.event || data?.message}`);
-  }
   return data;
 }

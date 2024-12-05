@@ -1,9 +1,9 @@
 import React from 'react';
 import semverLt from 'semver/functions/lt';
 import debounce from '../utils/debounce';
-import fetchLatestReleases from '../utils/fetchLatestRelease';
+import fetchLatestReleases from '../api/fetchLatestRelease';
 
-import { AppContext, APP_CONTEXT_INITIAL_STATE } from './AppContext';
+import { AppContext, APP_CONTEXT_INITIAL_STATE } from '../contexts/AppContext';
 
 // TYPES
 interface AppProviderProps {

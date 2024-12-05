@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { STAT_ABBR } from '../../config/stats';
+import { STAT_ABBR } from '../../constants/stats';
 import {
   pockestActions,
   usePockestContext,

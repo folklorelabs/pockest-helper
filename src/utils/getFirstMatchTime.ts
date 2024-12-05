@@ -1,4 +1,4 @@
-import MONSTER_AGE from '../config/MONSTER_AGE';
+import MONSTER_AGE from '../constants/MONSTER_AGE';
 
 const OPTIMAL_MATCH_TIME = MONSTER_AGE[4]; // start matching at age 4
 

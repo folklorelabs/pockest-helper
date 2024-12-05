@@ -1,4 +1,4 @@
-import BucklerStatusData from "../types/BucklerData";
+import BucklerStatusData from "../types/BucklerStatusData";
 
 export default async function postFeed():Promise<BucklerStatusData> {
   const url = 'https://www.streetfighter.com/6/buckler/api/minigame/serving';
@@ -11,12 +11,12 @@ export default async function postFeed():Promise<BucklerStatusData> {
   });
   if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
   const resJson = await response.json();
+  if (resJson?.data?.event !== 'meal') {
+    throw new Error(`Buckler Response: ${resJson?.data?.event}`);
+  }
   const data = {
-    event: resJson.event,
+    event: 'meal',
     ...resJson.data,
   };
-  if (data?.event !== 'meal') {
-    throw new Error(`Buckler Response: ${data?.event || data?.message}`);
-  }
   return data;
 }

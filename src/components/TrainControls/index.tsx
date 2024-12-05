@@ -3,7 +3,7 @@ import {
   pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import { STAT_ID } from '../../config/stats';
+import { STAT_ID } from '../../constants/stats';
 import Timer from '../Timer';
 import LogCountLine from '../LogCountLine';
 import getAgeTimer from '../../utils/getAgeTimer';

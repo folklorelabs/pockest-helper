@@ -1,4 +1,4 @@
-const MONSTER_AGE:Record<number, number> = {
+const MONSTER_AGE: Record<number, number> = {
   1: 0,
   2: 1 * 60 * 60 * 1000, // 1 hour
   3: 12 * 60 * 60 * 1000, // 12 hour

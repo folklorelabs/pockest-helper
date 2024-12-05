@@ -5,7 +5,7 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { parseDurationStr } from '../../utils/parseDuration';
-import APP_NAME from '../../config/APP_NAME';
+import APP_NAME from '../../constants/APP_NAME';
 import prettyTimeStamp from '../../utils/prettyTimestamp';
 import './index.css';
 
@@ -31,7 +31,7 @@ function PlanLog({
     }),
   ].filter((l) => l).join('\n'), [isRelTime, pockestState?.planAge, pockestState?.planId, schedule]);
   React.useEffect(() => {
-    if (!textAreaEl?.current) return () => {};
+    if (!textAreaEl?.current) return () => { };
     const lineHeight = textAreaEl.current.scrollHeight / (schedule.length + 1);
     const lastSuccessIndex = schedule?.reduce(
       (latestIndex, item, itemIndex) => (item?.completion ? itemIndex : latestIndex),
@@ -39,7 +39,7 @@ function PlanLog({
     );
     const fromTop = Math.max(0, lineHeight * (lastSuccessIndex - rows / 2 + 1));
     textAreaEl.current.scrollTop = fromTop;
-    return () => {};
+    return () => { };
   }, [rows, schedule]);
   return (
     <div className="PlanLog">
