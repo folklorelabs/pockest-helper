@@ -47,7 +47,7 @@ export function validateStorageSession() {
   return sessionIdSession === sessionIdLocal;
 }
 
-export function getStateFromLocalStorage() {
+export function getStateFromLocalStorage(): PockestState {
   const stateFromStorage = window.localStorage.getItem('PockestHelper');
   const logFromStorage = window.localStorage.getItem('PockestHelperLog');
   return {
@@ -72,7 +72,7 @@ export function saveStateToLocalStorage(state: PockestState) {
   window.localStorage.setItem('PockestHelperLog', JSON.stringify(state?.log));
 }
 
-export function getStateFromSessionStorage() {
+export function getStateFromSessionStorage(): PockestState {
   const stateStrFromStorage = window.sessionStorage.getItem('PockestHelperState');
   const stateFromStorage = stateStrFromStorage && JSON.parse(stateStrFromStorage);
   return !stateFromStorage?.invalidSession ? stateFromStorage : null;
@@ -103,5 +103,5 @@ export function setRefreshTimeout(id: string, staticMin: number, dynamicMin: num
 export function getRefreshTimeout(id: string) {
   const timeoutStr = window.sessionStorage.getItem(id);
   const timeout = timeoutStr && parseInt(timeoutStr, 10);
-  return timeout;
+  return timeout || 0;
 }

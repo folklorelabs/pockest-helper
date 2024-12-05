@@ -89,7 +89,8 @@ export async function getBestMatch(state: PockestState, exchangeList: BucklerPot
 export function getOwnedMementoMonsterIds(state: PockestState) {
   return state?.allMonsters
     ?.filter((m) => m?.memento_flg)
-    .map((m) => m?.monster_id) ?? [];
+    .map((m) => m?.monster_id)
+    .filter((m) => typeof m === 'number') ?? [];
 }
 
 export function getOwnedMementoMonsterNames(state: PockestState) {

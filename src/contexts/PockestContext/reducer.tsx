@@ -8,7 +8,7 @@ import {
 } from './getters';
 import Action from './types/Action';
 
-export default function REDUCER(state: PockestState, [type, payload]: Action) {
+export default function REDUCER(state: PockestState, [type, payload]: Action): PockestState {
   log('STATE CHANGE', { state, type, payload });
   switch (type) {
     case ACTION_TYPES.LOADING:
@@ -69,6 +69,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
+            logType: 'hatching',
             eggType: payload?.args?.id,
             timestamp: payload?.data?.monster?.live_time,
           },
@@ -80,13 +81,14 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
         ...state,
         loading: false,
         data: payload?.data,
-        cleanTimestamp: payload?.data?.result?.timestamp,
+        cleanTimestamp: new Date().getTime(),
         log: [
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
+            logType: 'cleaning',
             ...payload?.data?.cleaning,
-            garbageBefore: state?.data?.monster?.garbage,
+            garbageBefore: state?.data?.monster?.garbage ?? 0,
           },
         ],
         ...getAutoSettings(state, payload?.data),
@@ -100,6 +102,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
+            logType: 'meal',
             ...payload?.data?.serving,
             stomach: payload?.data?.monster?.stomach,
           },
@@ -115,6 +118,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
+            logType: 'cure',
             ...payload?.data?.cure,
           },
         ],
@@ -129,7 +133,9 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
+            logType: 'exchange',
             ...payload?.data?.exchangeResult,
+            target_monster_name: payload?.args?.match?.name,
             target_monster_name_en: payload?.args?.match?.name_en,
           },
         ],
@@ -148,7 +154,9 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
+            logType: 'training',
             ...payload?.data?.training,
+            is_ferver: payload?.data?.training?.is_fever,
           },
         ],
         ...getAutoSettings(state, payload?.data),
@@ -198,7 +206,6 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
-            ...getLogEntry(state, payload?.data),
             logType: 'evolution_failure',
             planId: state?.planId,
             power: payload?.data?.monster?.power,
@@ -223,6 +230,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
+            logType: 'death',
             evolutions: payload?.data?.evolutions,
           },
         ],
@@ -242,6 +250,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
           ...state.log,
           {
             ...getLogEntry(state, payload?.data),
+            logType: 'departure',
             memento: payload?.data?.memento,
           },
         ],
@@ -286,7 +295,11 @@ export default function REDUCER(state: PockestState, [type, payload]: Action) {
         eggId: null,
         eggTimestamp: state?.data?.monster?.live_time,
         evolutionFailed: false,
-        statLog: state?.log?.filter((entry) => state?.data?.monster?.live_time && entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training').map((e) => e.type) ?? [],
+        statLog: state?.log
+          ?.filter((entry) => state?.data?.monster?.live_time && entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training')
+          .map((e) => e.logType === 'training' && e.type)
+          .filter((s) => typeof s === 'number')
+          ?? [],
         log: [
           ...state.log,
           {

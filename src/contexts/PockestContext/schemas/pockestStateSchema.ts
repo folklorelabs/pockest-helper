@@ -17,7 +17,7 @@ const pockestStateSchema = z.object({
   evolutionFailed: z.boolean().optional(),
   planId: planIdSchema,
   statPlanId: statPlanIdSchema,
-  statLog: z.array(z.union([z.literal('P'), z.literal('S'), z.literal('T')])),
+  statLog: z.array(z.number().max(3).min(1)),
   planAge: z.number().max(6).min(1),
   autoPlan: z.boolean(),
   autoFeed: z.boolean(),

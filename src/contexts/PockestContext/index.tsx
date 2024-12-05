@@ -11,7 +11,6 @@ import {
   setRefreshTimeout,
   REFRESH_TIMEOUT,
 } from './state';
-import REDUCER from './reducer';
 
 import { STAT_ID } from '../../constants/stats';
 import * as pockestActions from './actions';
@@ -24,6 +23,8 @@ import combineDiscordReports from '../../utils/combineDiscordReports';
 import fetchMatchList from '../../api/fetchMatchList';
 import Action from './types/Action';
 import PockestState from './types/PockestState';
+import REDUCER from './reducer';
+import ACTION_TYPES from './constants/ACTION_TYPES';
 
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
@@ -139,7 +140,7 @@ export function PockestProvider({
     if (!pockestState?.loading) return () => { };
     const timeout = window.setTimeout(() => {
       refreshStatus();
-      pockestDispatch([ACTION_TYPES.ERROR], 'App stuck loading for more than 5 minutes. Recovering.');
+      pockestDispatch([ACTION_TYPES.ERROR, 'App stuck loading for more than 5 minutes. Recovering.']);
     }, 300000);
     return () => {
       window.clearTimeout(timeout);
@@ -179,10 +180,10 @@ export function PockestProvider({
       } = data;
       const isStunned = monster?.status === 2;
       const shouldNeglect = monster?.live_time
-        ? monster.live_time + pockestGetters.getPlanNeglectOffset(pockestState) <= now : false;
+        ? monster.live_time + pockestGetters.getPlanNeglectOffset(pockestState) <= now.getTime() : false;
       const stunOffset = pockestGetters.getPlanStunOffset(pockestState);
       const shouldLetDie = monster?.live_time && typeof stunOffset === 'number'
-        ? monster.live_time + stunOffset <= now : false;
+        ? monster.live_time + stunOffset <= now.getTime() : false;
 
       // Small event refresh
       if (data?.next_small_event_timer && now.getTime() > data?.next_small_event_timer) {
@@ -256,11 +257,11 @@ export function PockestProvider({
           const missing = exchangeList.filter((m) => {
             const matchingMonster = pockestState?.allMonsters
               .find((m2) => m2?.monster_id === m?.monster_id);
-            return matchingMonster?.age >= 5 && !matchingMonster?.confirmed;
+            return matchingMonster && matchingMonster?.age >= 5 && !matchingMonster?.confirmed;
           });
           if (missing.length) {
             const reportReqs = missing.map((match) => pockestGetters
-              .getDiscordReportSighting(pockestState, data, { match }));
+              .getDiscordReportSighting(pockestState, data, match));
             const reports = await Promise.all(reportReqs);
             const report = combineDiscordReports(reports);
             postDiscordEvo(report);
