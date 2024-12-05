@@ -45,8 +45,8 @@ function CharacterSprite({
     let curIndex = 0;
     let curAction: ActionType = action;
     const setFrame = () => {
-      const frameKey = Object.keys(characterSprite).find((s): s is keyof BucklerCharAsset => s.includes(curAction));
-      const frames: BucklerCharFrame[] = frameKey ? (characterSprite[frameKey] as unknown as BucklerCharFrame[]) : [];
+      const frameKeys = Object.keys(characterSprite.frames).filter((s): s is keyof BucklerCharAsset => s.includes(curAction));
+      const frames = frameKeys.map((key) => (characterSprite.frames[key] as unknown as BucklerCharFrame));
       setCurFrame(frames[curIndex]);
       curIndex = curIndex < (frames.length - 1) ? curIndex + 1 : 0;
       const endOfAnim = curIndex === frames.length - 1;
@@ -75,7 +75,7 @@ function CharacterSprite({
       setCurFrame(frames[0]);
       setLoading(false);
     };
-    preLoadEl.src = characterSprite?.meta?.image;
+    preLoadEl.src = `https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${characterSprite?.meta?.image}`;
   }, [action, characterSprite]);
   if (loading) return '';
   return (
@@ -94,7 +94,7 @@ function CharacterSprite({
           width: `${curFrame?.rotated ? curFrame?.frame?.h : curFrame?.frame?.w}px`,
           height: `${curFrame?.rotated ? curFrame?.frame?.w : curFrame?.frame?.h}px`,
           transform: `translateX(${curFrame?.rotated ? `${curFrame?.frame?.w}px` : '0'}) rotate(${curFrame?.rotated ? '-90deg' : '0deg'})`,
-          backgroundImage: characterSprite?.meta?.image && !loading ? `url(${characterSprite?.meta?.image})` : 'none',
+          backgroundImage: characterSprite?.meta?.image && !loading ? `url('https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${characterSprite?.meta?.image}')` : 'none',
           backgroundPosition: `-${curFrame?.frame?.x}px -${curFrame?.frame?.y}px`,
         }}
       />
