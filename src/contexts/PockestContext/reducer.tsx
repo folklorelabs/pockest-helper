@@ -197,6 +197,18 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
             speed: payload?.data?.monster?.speed,
             technic: payload?.data?.monster?.technic,
             mementosOwned: getOwnedMementoMonsterIds(state),
+            evolutions: [
+              {
+                hash: state?.data?.monster?.hash,
+                name: state?.data?.monster?.name,
+                name_en: state?.data?.monster?.name_en,
+              },
+              {
+                hash: payload?.data?.monster?.hash,
+                name: payload?.data?.monster?.name,
+                name_en: payload?.data?.monster?.name_en,
+              },
+            ],
           },
         ],
         ...getAutoSettings(state, payload?.data),

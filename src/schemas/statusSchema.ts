@@ -87,11 +87,6 @@ export const evolutionStatusSchema = baseStatusSchema.extend({
   evolutions: z.array(evolutionSchema),
 });
 
-export const evolutionFailStatusSchema = baseStatusSchema.extend({
-  event: z.literal('evolution_failure'),
-  evolutions: z.array(evolutionSchema),
-});
-
 export const deathStatusSchema = baseStatusSchema.extend({
   event: z.literal('death'),
   evolutions: z.array(evolutionSchema),

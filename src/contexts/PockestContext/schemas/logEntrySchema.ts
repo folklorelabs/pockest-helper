@@ -9,10 +9,10 @@ const logEntryBaseSchema = z.object({
 });
 
 const evolutionEntrySchema = z.object({
-  hash: z.string(),
-  id: z.number(),
-  name: z.string(),
-  name_en: z.string(),
+  hash: z.string().optional(),
+  id: z.number().optional(),
+  name: z.string().optional(),
+  name_en: z.string().optional(),
 });
 
 const logEntrySchema = z.discriminatedUnion('logType', [
@@ -71,6 +71,7 @@ const logEntrySchema = z.discriminatedUnion('logType', [
   }),
   logEntryBaseSchema.extend({
     logType: z.literal('evolution_failure'),
+    evolutions: z.array(evolutionEntrySchema),
     planId: planIdSchema,
     power: z.number(),
     speed: z.number(),

@@ -27,7 +27,13 @@ import postFeed from '../../api/postFeed';
 import fetchStatus from '../../api/fetchStatus';
 import Action from './types/Action';
 import statusRefreshPayloadSchema from './schemas/statusRefreshPayloadSchema';
-import { deathStatusSchema, departureStatusSchema, evolutionFailStatusSchema, evolutionSchema, evolutionStatusSchema, notFoundStatusSchema } from '../../schemas/statusSchema';
+import {
+  deathStatusSchema,
+  departureStatusSchema,
+  evolutionSchema,
+  evolutionStatusSchema,
+  notFoundStatusSchema,
+} from '../../schemas/statusSchema';
 
 export function pockestLoading(): Action {
   return [ACTION_TYPES.LOADING];
@@ -48,7 +54,7 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
   try {
     // get buckler data and create payload obj
     const data = await fetchStatus();
-    let payloadData: object = { data };
+    let payloadRaw: object = { data };
 
     const isEvolution = data?.event === 'evolution' || (data?.monster && pockestState?.data?.monster && pockestState?.data?.monster?.hash !== data?.monster?.hash);
 
@@ -69,11 +75,11 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
         fetchAllMonsters(),
         fetchAllHashes(),
       ]);
-      if (allMonsters) payloadData = { ...payloadData, allMonsters };
-      if (allHashes) payloadData = { ...payloadData, allHashes };
+      if (allMonsters) payloadRaw = { ...payloadRaw, allMonsters };
+      if (allHashes) payloadRaw = { ...payloadRaw, allHashes };
     }
 
-    const payloadParsed = statusRefreshPayloadSchema.safeParse(payloadData);
+    const payloadParsed = statusRefreshPayloadSchema.safeParse(payloadRaw);
     if (!payloadParsed.success) throw payloadParsed.error;
     const payload = payloadParsed.data;
 
@@ -86,7 +92,7 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
     const shouldDiscordReport = !isConfirmedMonster(mergedState, data);
     if (data?.event === 'death') {
       const deathPayload: z.infer<typeof deathStatusSchema> = data; // hacky way to get around zod type
-      return [ACTION_TYPES.REFRESH_DEATH, { ...payloadData, data: deathPayload }];
+      return [ACTION_TYPES.REFRESH_DEATH, { ...payloadRaw, data: deathPayload }];
     }
     if (data?.event === 'departure') {
       if (shouldDiscordReport) {
@@ -94,11 +100,11 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
         postDiscordEvo(report);
       }
       const departurePayload: z.infer<typeof departureStatusSchema> = data; // hacky way to get around zod type
-      return [ACTION_TYPES.REFRESH_DEPARTURE, { ...payloadData, data: departurePayload }];
+      return [ACTION_TYPES.REFRESH_DEPARTURE, { ...payloadRaw, data: departurePayload }];
     }
     if (data?.event === 'monster_not_found') {
       const notFoundPayload: z.infer<typeof notFoundStatusSchema> = data; // hacky way to get around zod type
-      return [ACTION_TYPES.REFRESH_MONSTER_NOT_FOUND, { ...payloadData, data: notFoundPayload }];
+      return [ACTION_TYPES.REFRESH_MONSTER_NOT_FOUND, { ...payloadRaw, data: notFoundPayload }];
     }
     if (isEvolution) {
       // send any useful info to discord
@@ -122,7 +128,7 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
         event: "evolution",
         evolutions: (data as { evolutions?: z.infer<typeof evolutionSchema>[] }).evolutions || [],
       }; // super hacky way to get around zod type
-      return [ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS, { ...payloadData, data: evoPayload }];
+      return [ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS, { ...payloadRaw, data: evoPayload }];
     }
     const isEvoFailureEvent = (() => {
       if (data.monster.age >= 5) return false; // successful evolution already
@@ -138,12 +144,7 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
         const report = getDiscordReportEvoFailure(pockestState, data);
         postDiscordEvo(report);
       }
-      const evoFailPayload: z.infer<typeof evolutionFailStatusSchema> = {
-        ...data,
-        event: "evolution_failure",
-        evolutions: (data as { evolutions?: z.infer<typeof evolutionSchema>[] }).evolutions || [],
-      }; // super hacky way to get around zod type
-      return [ACTION_TYPES.REFRESH_EVOLUTION_FAILURE, { ...payloadData, data: evoFailPayload }];
+      return [ACTION_TYPES.REFRESH_EVOLUTION_FAILURE, payload];
     }
     return [ACTION_TYPES.REFRESH_STATUS, payload];
   } catch (error) {
