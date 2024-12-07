@@ -35,7 +35,7 @@ export function getMonsterId(state: PockestState) {
 }
 
 export function getQueueLabels(state: PockestState) {
-  return state?.queue?.map((q) => {
+  return state?.planQueue?.map((q) => {
     const monster = state.allMonsters.find((m) => q.monsterId && m.monster_id === q.monsterId);
     const label = monster?.name_en || `${q.planId}${q.statPlanId ? `-${q.statPlanId}` : ''}`;
     return label;
@@ -386,10 +386,19 @@ export function getAutoSettings(state: PockestState, data?: BucklerStatusData | 
   if (newSettings.simpleMode ?? state.simpleMode) {
     newSettings.autoPlan = true;
   }
+  const planQueue = newSettings.planQueue ?? state.planQueue;
+  const isAutoQueue = planQueue?.length && (newSettings.autoQueue ?? state.autoQueue);
+  if (isAutoQueue) {
+    newSettings.autoPlan = true;
+    newSettings.monsterId = planQueue[0].monsterId;
+    newSettings.planId = planQueue[0].planId;
+    newSettings.statPlanId = planQueue[0].statPlanId;
+    newSettings.planAge = planQueue[0].planAge;
+  }
   const isMonsterGone = isMonsterDead(state, data)
     || isMonsterDeparted(state, data)
     || isMonsterMissing(state, data);
-  const shouldReset = isMonsterGone;
+  const shouldReset = isMonsterGone && !isAutoQueue;
   if (shouldReset) {
     newSettings.autoPlan = true;
     newSettings.paused = true;

@@ -2,7 +2,7 @@ import {
   usePockestContext,
   pockestActions,
 } from '../../contexts/PockestContext';
-import Queue from '../Queue';
+import QueueNextLine from '../QueueNextLine';
 import './index.css';
 
 function QueueControls() {
@@ -26,17 +26,12 @@ function QueueControls() {
               autoQueue: e.target.checked,
             }))}
             checked={autoQueue}
-            disabled={!paused}
+            disabled={!paused || (pockestState?.simpleMode && !!pockestState?.data?.monster?.live_time)}
           />
           <span className="PockestCheck-text">Queue</span>
         </label>
       </div>
-      <div className="PockestLine">
-        <span className="PockestText">Queued Next</span>
-        <span className="PockestText PockestLine-value">
-          <Queue />
-        </span>
-      </div>
+      <QueueNextLine />
     </div>
   );
 }

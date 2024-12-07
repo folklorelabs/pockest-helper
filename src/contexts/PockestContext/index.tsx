@@ -147,6 +147,25 @@ export function PockestProvider({
     };
   }, [pockestState?.loading, refreshStatus]);
 
+  // Queue manager
+  React.useEffect(() => {
+    if (!pockestState?.initialized
+      || pockestState?.loading
+      || pockestState?.paused
+      || pockestState?.error
+      || pockestState?.invalidSession
+    ) return () => { };
+    if (!pockestState?.autoQueue || !pockestState?.planQueue?.length) return;
+    const curQueueItem = pockestState?.planQueue[0];
+    const curQueueItemMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === curQueueItem?.monsterId);
+    const completedQueueItem = (curQueueItemMonster?.unlock && curQueueItem?.planAge === 5)
+      || (curQueueItemMonster?.memento_flg && curQueueItem?.planAge === 6);
+    if (completedQueueItem) {
+      // remove this item from queue
+      pockestDispatch(pockestActions.pockestSettings({ planQueue: pockestState?.planQueue.slice(1) }));
+    }
+  }, [pockestState]);
+
   // Lifecycle loop
   React.useEffect(() => {
     if (!pockestState?.initialized
