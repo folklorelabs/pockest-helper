@@ -14,7 +14,7 @@ function QueueNextLine() {
     pockestState,
     // pockestDispatch,
   } = usePockestContext();
-  const queueLabels = React.useMemo(() => pockestGetters.getQueueLabels(pockestState), [pockestState]);
+  const queueItemLabel = React.useMemo(() => pockestGetters.getPlanQueueItemLabel(pockestState, pockestState?.planQueue?.[0]), [pockestState]);
   return (
     <div className="PockestLine">
       <span className="PockestText">Queued Next</span>
@@ -24,7 +24,7 @@ function QueueNextLine() {
           disabled={!pockestState.autoQueue || (pockestState?.simpleMode && !!pockestState?.data?.monster?.live_time)}
           onClick={() => setShowLog && setShowLog(true)}
         >
-          {queueLabels?.[0] || 'None'}
+          {queueItemLabel || 'None'}
         </button>
       </span>
     </div>

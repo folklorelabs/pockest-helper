@@ -17,6 +17,7 @@ import BucklerStatusData from '../../types/BucklerStatusData';
 import Settings from './types/Settings';
 import BucklerMatchResults from '../../types/BucklerMatchResults';
 import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
+import PlanQueueItem from './types/PlanQueueItem';
 
 export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData) {
   const mergedData = data ?? pockestState?.data;
@@ -34,12 +35,11 @@ export function getMonsterId(state: PockestState) {
   return parseInt(hashId.slice(0, 4), 10);
 }
 
-export function getQueueLabels(state: PockestState) {
-  return state?.planQueue?.map((q) => {
-    const monster = state.allMonsters.find((m) => q.monsterId && m.monster_id === q.monsterId);
-    const label = monster?.name_en || `${q.planId}${q.statPlanId ? `-${q.statPlanId}` : ''}`;
-    return label;
-  });
+export function getPlanQueueItemLabel(state: PockestState, planQueueItem?: PlanQueueItem | null) {
+  if (!planQueueItem) return '';
+  const monster = state.allMonsters.find((m) => planQueueItem.monsterId && m.monster_id === planQueueItem.monsterId);
+  const label = monster?.name_en || `${planQueueItem.planId}${planQueueItem.statPlanId ? `-${planQueueItem.statPlanId}` : ''}`;
+  return label;
 }
 
 export async function getBestMatch(state: PockestState, exchangeList: BucklerPotentialMatch[]) {
