@@ -21,20 +21,20 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
   } = usePockestContext();
   const [editMode, setEditMode] = React.useState(false);
   const planQueueItem = pockestState?.planQueue?.[queueIndex];
-  const activeItem = React.useMemo(
-    () => pockestState?.autoQueue && !pockestState?.paused && queueIndex === 0,
-    [pockestState?.autoQueue, pockestState?.paused, queueIndex],
+  const editableStartIndex = React.useMemo(
+    () => pockestState?.autoQueue && !pockestState?.paused ? 1 : 0,
+    [pockestState?.autoQueue, pockestState?.paused],
   );
   React.useEffect(() => {
-    if (activeItem) setEditMode(false);
-  }, [activeItem]);
+    if (queueIndex <= editableStartIndex) setEditMode(false);
+  }, [editableStartIndex, queueIndex]);
   return (
     <div className="QueueItemControls">
       <button
         type="button"
         className="PockestLink QueueItemControls-moveUp"
         aria-label={`Move Plan Queue Item Up`}
-        disabled={activeItem || queueIndex <= 0}
+        disabled={queueIndex <= editableStartIndex}
         onClick={() => {
           if (!pockestDispatch) return;
           const planQueue: PlanQueueItem[] = [
@@ -53,7 +53,7 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
         type="button"
         className="PockestLink QueueItemControls-moveDown"
         aria-label={`Move Plan Queue Item Down`}
-        disabled={activeItem || queueIndex >= pockestState?.planQueue?.length - 1}
+        disabled={queueIndex < editableStartIndex || queueIndex >= pockestState?.planQueue?.length - 1}
         onClick={() => {
           if (!pockestDispatch) return;
           const planQueue: PlanQueueItem[] = [
@@ -125,7 +125,7 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
             className="PockestLink QueueItemControls-edit"
             aria-label={`Edit Plan Queue Item`}
             onClick={() => setEditMode(true)}
-            disabled={activeItem}
+            disabled={queueIndex < editableStartIndex}
           >
             ✏️
           </button>
@@ -145,7 +145,7 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
             planQueue,
           }));
         }}
-        disabled={activeItem}
+        disabled={queueIndex < editableStartIndex}
       >
         ❌
       </button>
