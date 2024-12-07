@@ -34,8 +34,8 @@ jobs:
 
       - name: Release vars
         run: |
-          echo "XPI_FILE=$(node ./scripts/xpiExtension.js)" >> $GITHUB_ENV
-          echo "ZIP_FILE=$(node ./scripts/zipExtension.js)" >> $GITHUB_ENV
+          echo "XPI_FILE=$(node ./scripts/xpiExtension.cjs)" >> $GITHUB_ENV
+          echo "ZIP_FILE=$(node ./scripts/zipExtension.cjs)" >> $GITHUB_ENV
           echo "IS_RC=$(node -pe "/rc.*$/.test(require('./package.json').version)")" >> $GITHUB_ENV
 
       - name: Release
@@ -62,7 +62,7 @@ jobs:
         run: npm ci
 
       - name: Generate updateManfiest.json
-        run: node ./scripts/genUpdateManifest.js
+        run: node ./scripts/genUpdateManifest.cjs
 
       - name: Git config
         uses: ./.github/actions/git-config
