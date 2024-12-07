@@ -34,9 +34,9 @@ function QueueList() {
             const planAge = 5;
             const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState, planAge)
               .filter((m) => affordableMonsterIds.includes(m.monster_id))
-              .filter((m) => !pockestState.planQueue.map((qm) => qm.monsterId).includes(m.monster_id));
+              .filter((m) => !pockestState.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id));
             const planQueue = [
-              ...pockestState.planQueue,
+              ...(pockestState.planQueue || []),
               {
                 planAge,
                 monsterId: targetableMonsters[0]?.monster_id || -1,

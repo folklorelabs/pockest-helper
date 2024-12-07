@@ -17,10 +17,11 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled, queue
     pockestDispatch,
   } = usePockestContext();
   const planQueueItem = pockestState?.planQueue?.[queueIndex];
-  const targetableMonsters = React.useMemo(() => pockestGetters.getTargetableMonsters(pockestState).filter((m) => {
-    const completed = (planQueueItem?.planAge === 5 && m.unlock) || (planQueueItem?.planAge === 6 && m.memento_flg);
-    return !completed;
-  }), [planQueueItem?.planAge, pockestState]);
+  const targetableMonsters = React.useMemo(
+    () => pockestGetters.getTargetableMonsters(pockestState, planQueueItem?.planAge)
+      .filter((m) => (planQueueItem.monsterId && planQueueItem.monsterId === m.monster_id) || !pockestState?.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id)),
+    [planQueueItem.monsterId, planQueueItem?.planAge, pockestState],
+  );
   if (!targetableMonsters?.length) return '';
   return (
     <select
