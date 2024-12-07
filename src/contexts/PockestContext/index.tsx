@@ -151,11 +151,10 @@ export function PockestProvider({
   React.useEffect(() => {
     if (!pockestState?.initialized
       || pockestState?.loading
-      || pockestState?.paused
       || pockestState?.error
       || pockestState?.invalidSession
-    ) return () => { };
-    if (!pockestState?.autoQueue || !pockestState?.planQueue?.length) return;
+    ) return;
+    if (!pockestState?.planQueue?.length) return;
     const curQueueItem = pockestState?.planQueue[0];
     const curQueueItemMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === curQueueItem?.monsterId);
     const completedQueueItem = (curQueueItemMonster?.unlock && curQueueItem?.planAge === 5)
