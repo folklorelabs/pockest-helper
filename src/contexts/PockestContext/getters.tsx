@@ -38,8 +38,8 @@ export function getMonsterId(state: PockestState) {
 export function getPlanQueueItemLabel(state: PockestState, planQueueItem?: PlanQueueItem | null) {
   if (!planQueueItem) return '';
   const monster = state.allMonsters.find((m) => planQueueItem.monsterId && m.monster_id === planQueueItem.monsterId);
-  const label = monster?.name_en || `${planQueueItem.planId}${planQueueItem.statPlanId ? `-${planQueueItem.statPlanId}` : ''}`;
-  return label;
+  const name = monster?.name_en || `${planQueueItem.planId}${planQueueItem.statPlanId ? `-${planQueueItem.statPlanId}` : ''}`;
+  return `${name} (${planQueueItem.planAge})`;
 }
 
 export async function getBestMatch(state: PockestState, exchangeList: BucklerPotentialMatch[]) {
