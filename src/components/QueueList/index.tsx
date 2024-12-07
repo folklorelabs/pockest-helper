@@ -5,8 +5,8 @@ import {
   pockestGetters,
   pockestActions,
 } from '../../contexts/PockestContext';
-import './index.css';
 import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import './index.css';
 
 function QueueList() {
   const {
