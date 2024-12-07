@@ -39,7 +39,7 @@ export function getPlanQueueItemLabel(state: PockestState, planQueueItem?: PlanQ
   if (!planQueueItem) return '';
   const monster = state.allMonsters.find((m) => planQueueItem.monsterId && m.monster_id === planQueueItem.monsterId);
   const name = monster?.name_en || `${planQueueItem.planId}${planQueueItem.statPlanId ? `-${planQueueItem.statPlanId}` : ''}`;
-  return `${name} (${planQueueItem.planAge})`;
+  return `${name} (Age ${planQueueItem.planAge})`;
 }
 
 export async function getBestMatch(state: PockestState, exchangeList: BucklerPotentialMatch[]) {
