@@ -7,6 +7,8 @@ import {
 } from '../../contexts/PockestContext';
 import './index.css';
 import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import QueueAgeSelect from '../QueueAgeSelect';
+import { STAT_ABBR } from '../../constants/stats';
 
 interface QueueItemControlsProps {
   queueIndex: number;
@@ -18,7 +20,7 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
     pockestDispatch,
   } = usePockestContext();
   const [editMode, setEditMode] = React.useState(false);
-  const planQueueItem = pockestState?.planQueue?.[queueIndex];
+  const planQueueItem = pockestState?.planQueue?.[queueIndex];;
   return (
     <div className="QueueItemControls">
       <button
@@ -60,7 +62,54 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
         ⬇️
       </button>
       {editMode ? (
-        <QueueMonsterSelect queueIndex={queueIndex} />
+        <>
+          <QueueMonsterSelect queueIndex={queueIndex} />
+          {planQueueItem?.monsterId === -1 && (
+            <>
+              <input
+                className="PockestInput"
+                onChange={(e) => {
+                  if (!pockestDispatch) return;
+                  const planQueue: PlanQueueItem[] = [
+                    ...pockestState.planQueue.slice(0, queueIndex),
+                    {
+                      ...planQueueItem,
+                      planId: e.target.value,
+                    },
+                    ...pockestState.planQueue.slice(queueIndex + 1),
+                  ];
+                  pockestDispatch(pockestActions.pockestPlanSettings({
+                    planQueue,
+                  }));
+                }}
+                value={planQueueItem?.planId}
+                pattern={`^[\\d*][ABC][LR][${Object.keys(STAT_ABBR).join('')}][1-6]$`}
+                required={true}
+              />
+              <input
+                className="PockestInput"
+                onChange={(e) => {
+                  if (!pockestDispatch) return;
+                  const planQueue: PlanQueueItem[] = [
+                    ...pockestState.planQueue.slice(0, queueIndex),
+                    {
+                      ...planQueueItem,
+                      statPlanId: e.target.value,
+                    },
+                    ...pockestState.planQueue.slice(queueIndex + 1),
+                  ];
+                  pockestDispatch(pockestActions.pockestPlanSettings({
+                    planQueue,
+                  }));
+                }}
+                value={planQueueItem?.statPlanId}
+                pattern={`^([${Object.keys(STAT_ABBR).join('')}]{0,14})$`}
+                required={false}
+              />
+            </>
+          )}
+          <QueueAgeSelect queueIndex={queueIndex} />
+        </>
       ) : (
         <span>
           {pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}
