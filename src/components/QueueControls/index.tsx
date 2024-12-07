@@ -31,7 +31,8 @@ function QueueControls() {
           <span className="PockestCheck-text">Queue</span>
         </label>
       </div>
-      <QueueNextLine />
+      <QueueNextLine label="Current" queueIndex={0} />
+      <QueueNextLine label="Next" queueIndex={1} />
     </div>
   );
 }

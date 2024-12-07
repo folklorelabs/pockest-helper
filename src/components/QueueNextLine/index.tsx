@@ -6,7 +6,11 @@ import {
 import { AppContext } from '../../contexts/AppContext';
 import './index.css';
 
-function QueueNextLine() {
+interface QueueNextLineProps {
+  label?: string;
+  queueIndex?: number;
+}
+function QueueNextLine({ label = 'Next', queueIndex = 0 }: QueueNextLineProps) {
   const {
     setShowLog,
   } = React.useContext(AppContext);
@@ -14,10 +18,10 @@ function QueueNextLine() {
     pockestState,
     // pockestDispatch,
   } = usePockestContext();
-  const queueItemLabel = React.useMemo(() => pockestGetters.getPlanQueueItemLabel(pockestState, pockestState?.planQueue?.[0]), [pockestState]);
+  const queueItemLabel = React.useMemo(() => pockestGetters.getPlanQueueItemLabel(pockestState, pockestState?.planQueue?.[queueIndex]), [pockestState, queueIndex]);
   return (
     <div className="PockestLine">
-      <span className="PockestText">Queued Next</span>
+      <span className="PockestText">{label}</span>
       <span className="PockestText PockestLine-value">
         <button
           className="QueueBtn PockestLink"
