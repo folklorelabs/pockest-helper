@@ -6,7 +6,6 @@ import AutoPlanSettingInput from '../AutoPlanSettingInput';
 import TargetAgeSelect from '../TargetAgeSelect';
 import AutoPlanControlsPlanLabel from '../AutoPlanControls/AutoPlanControls-planLabel';
 import AutoPlanControlsStatPlanLabel from '../AutoPlanControls/AutoPlanControls-statPlanLabel';
-import './index.css';
 
 function AutoPlanControlsSimple() {
   const {
