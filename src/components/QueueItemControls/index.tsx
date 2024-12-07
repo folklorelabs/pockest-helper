@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 import QueueMonsterSelect from '../QueueMonsterSelect';
 import {
   pockestActions,
@@ -25,6 +26,13 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
     () => pockestState?.autoQueue && !pockestState?.paused ? 1 : 0,
     [pockestState?.autoQueue, pockestState?.paused],
   );
+  const canAffordEgg = React.useMemo(() => {
+    const monsterEgg = pockestGetters.getMonsterEgg(pockestState, planQueueItem?.monsterId);
+    if (monsterEgg && (monsterEgg.unlock || (monsterEgg?.buckler_point && monsterEgg?.buckler_point <= (pockestState?.bucklerBalance || 0)))) return true;
+    const planIdEgg = pockestGetters.getPlanIdEgg(pockestState, planQueueItem?.planId);
+    if (planIdEgg && (planIdEgg.unlock || (planIdEgg?.buckler_point && planIdEgg?.buckler_point <= (pockestState?.bucklerBalance || 0)))) return true;
+    return false;
+  }, [pockestState, planQueueItem?.monsterId, planQueueItem?.planId]);
   React.useEffect(() => {
     if (queueIndex <= editableStartIndex) setEditMode(false);
   }, [editableStartIndex, queueIndex]);
@@ -119,7 +127,14 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
         </>
       ) : (
         <span>
-          {pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}
+          <span
+            className={classNames('QueueItemControlsLabel', {
+              'QueueItemControlsLabel--cantAfford': !canAffordEgg,
+            })}
+          >
+            {pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}
+            {!canAffordEgg && ('💰')}
+          </span>
           <button
             type="button"
             className="PockestLink QueueItemControls-edit"

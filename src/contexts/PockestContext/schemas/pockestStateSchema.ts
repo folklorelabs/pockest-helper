@@ -18,7 +18,7 @@ const pockestStateSchema = z.object({
   allMonsters: z.array(monsterSchema),
   allHashes: z.array(sheetHashSchema),
   allEggs: z.array(eggSchema),
-  bucklerBalance: z.number().nullable().optional(),
+  bucklerBalance: z.number(),
   paused: z.boolean(),
   eggTimestamp: z.number().nullable().optional(),
   eggId: z.number().nullable().optional(),

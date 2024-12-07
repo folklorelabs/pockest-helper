@@ -42,16 +42,16 @@ export function getPlanQueueItemLabel(state: PockestState, planQueueItem?: PlanQ
   return `${name} (Age ${planQueueItem.planAge})`;
 }
 
-export function getTargetableMonsters(state: PockestState) {
+export function getTargetableMonsters(state: PockestState, targetAge?: number | null) {
   const acquiredMementos = getOwnedMementoMonsterIds(state);
   return state?.allMonsters
-    ?.filter((m) => m.confirmed)
     ?.filter((m) => {
-      const mAgeStr = m?.planId?.slice(-1);
-      const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
-      const hasRequiredMems = !m?.requiredMemento
-        || acquiredMementos.includes(m.requiredMemento);
-      return mAge && mAge >= 5 && hasRequiredMems;
+      if (!m.confirmed) return false;
+      if (m?.requiredMemento && !acquiredMementos.includes(m.requiredMemento)) return false;
+      if (m.age < 5) return false;
+      if (targetAge === 5 && m.unlock) return false;
+      if (targetAge === 6 && m.memento_flg) return false;
+      return true;
     })
     .sort((a, b) => {
       if (!a.name_en && !b.name_en) return 0;
@@ -61,8 +61,8 @@ export function getTargetableMonsters(state: PockestState) {
     });
 }
 
-export function getCurrentTargetableMonsters(state: PockestState) {
-  const targetableMonsters = getTargetableMonsters(state);
+export function getCurrentTargetableMonsters(state: PockestState, targetAge: number = 6) {
+  const targetableMonsters = getTargetableMonsters(state, targetAge);
   const monster = state?.data?.monster;
   const curMonsterId = getMonsterId(state);
   if (!curMonsterId) {
@@ -85,6 +85,29 @@ export function getCurrentTargetableMonsters(state: PockestState) {
   return targetableMonsters
     ?.filter((m) => m?.monster_id && allAvailIds.includes(m?.monster_id))
     ?.filter((m) => !state?.eggId || m?.eggIds?.includes(state?.eggId));
+}
+
+export function getMonsterEgg(state: PockestState, monsterId?: number | null) {
+  const monster = state?.allMonsters?.find((m) => m.monster_id === monsterId);
+  if (!monster) return null;
+  return state?.allEggs?.find((e) => monster.eggIds?.includes(e.id));
+}
+
+export function getPlanIdEgg(state: PockestState, planId?: string | null) {
+  if (!planId) return null;
+  const parsedPlanId = parsePlanId(planId);
+  if (!parsedPlanId) return null;
+  const { planEgg } = parsedPlanId;
+  return state?.allEggs?.find((e) => e.id === planEgg)
+}
+
+export function getAffordableMonsters(state: PockestState) {
+  return state?.allMonsters?.filter((m) => {
+    if (m.age < 5) return false;
+    const monsterEgg = getMonsterEgg(state, m.monster_id);
+    const eggPrice = monsterEgg?.buckler_point || Infinity;
+    return eggPrice <= state.bucklerBalance;
+  });
 }
 
 export async function getBestMatch(state: PockestState, exchangeList: BucklerPotentialMatch[]) {

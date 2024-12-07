@@ -46,13 +46,17 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled, queue
       <option key="custom" value="-1">
         [Custom Plan]
       </option>
-      {targetableMonsters.map((monster) => (
-        <option key={monster?.monster_id} value={monster?.monster_id}>
-          {monster?.name_en || monster?.monster_id}
-          {monster?.unlock ? ' ✓' : ''}
-          {monster?.memento_flg ? ' ✓' : ''}
-        </option>
-      ))}
+      {targetableMonsters.map((monster) => {
+        const targetEgg = pockestGetters.getMonsterEgg(pockestState, monster?.monster_id);
+        return (
+          <option key={monster?.monster_id} value={monster?.monster_id}>
+            {monster?.name_en || monster?.monster_id}
+            {targetEgg && !targetEgg.unlock && targetEgg?.buckler_point > (pockestState.bucklerBalance || 0) ? ' 💰' : ''}
+            {monster?.unlock ? ' ✓' : ''}
+            {monster?.memento_flg ? ' ✓' : ''}
+          </option>
+        );
+      })}
     </select>
   );
 };

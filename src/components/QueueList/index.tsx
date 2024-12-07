@@ -1,5 +1,6 @@
 // import React from 'react';
 
+import React from 'react';
 import {
   pockestActions,
   pockestGetters,
@@ -13,6 +14,7 @@ function QueueList() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const affordableMonsterIds = React.useMemo(() => pockestGetters.getAffordableMonsters(pockestState).map((m) => m.monster_id), [pockestState]);
   return (
     <div className="QueueList">
       <div className="QueueList-main">
@@ -29,12 +31,14 @@ function QueueList() {
           aria-label={`Add Plan Queue`}
           onClick={() => {
             if (!pockestDispatch) return;
-            const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState)
+            const planAge = 5;
+            const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState, planAge)
+              .filter((m) => affordableMonsterIds.includes(m.monster_id))
               .filter((m) => !pockestState.planQueue.map((qm) => qm.monsterId).includes(m.monster_id));
             const planQueue = [
               ...pockestState.planQueue,
               {
-                planAge: 5,
+                planAge,
                 monsterId: targetableMonsters[0]?.monster_id || -1,
                 planId: '',
                 statPlanId: '',
