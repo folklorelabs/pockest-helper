@@ -20,14 +20,21 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
     pockestDispatch,
   } = usePockestContext();
   const [editMode, setEditMode] = React.useState(false);
-  const planQueueItem = pockestState?.planQueue?.[queueIndex];;
+  const planQueueItem = pockestState?.planQueue?.[queueIndex];
+  const activeItem = React.useMemo(
+    () => pockestState?.autoQueue && !pockestState?.paused && queueIndex === 0,
+    [pockestState?.autoQueue, pockestState?.paused, queueIndex],
+  );
+  React.useEffect(() => {
+    if (activeItem) setEditMode(false);
+  }, [activeItem]);
   return (
     <div className="QueueItemControls">
       <button
         type="button"
         className="PockestLink QueueItemControls-moveUp"
         aria-label={`Move Plan Queue Item Up`}
-        disabled={queueIndex === 0}
+        disabled={activeItem || queueIndex <= 0}
         onClick={() => {
           if (!pockestDispatch) return;
           const planQueue: PlanQueueItem[] = [
@@ -46,7 +53,7 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
         type="button"
         className="PockestLink QueueItemControls-moveDown"
         aria-label={`Move Plan Queue Item Down`}
-        disabled={queueIndex >= pockestState?.planQueue?.length - 1}
+        disabled={activeItem || queueIndex >= pockestState?.planQueue?.length - 1}
         onClick={() => {
           if (!pockestDispatch) return;
           const planQueue: PlanQueueItem[] = [
@@ -118,6 +125,7 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
             className="PockestLink QueueItemControls-edit"
             aria-label={`Edit Plan Queue Item`}
             onClick={() => setEditMode(true)}
+            disabled={activeItem}
           >
             ✏️
           </button>
@@ -137,6 +145,7 @@ function QueueItemControls({ queueIndex }: QueueItemControlsProps) {
             planQueue,
           }));
         }}
+        disabled={activeItem}
       >
         ❌
       </button>
