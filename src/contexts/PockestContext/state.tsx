@@ -11,6 +11,8 @@ const INITIAL_STATE: PockestState = {
   data: null,
   allMonsters: [],
   allHashes: [],
+  allEggs: [],
+  bucklerBalance: 0,
   paused: true,
   eggTimestamp: null,
   eggId: null,

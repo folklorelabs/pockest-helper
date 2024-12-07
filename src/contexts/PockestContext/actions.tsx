@@ -34,6 +34,7 @@ import {
   evolutionStatusSchema,
   notFoundStatusSchema,
 } from '../../schemas/statusSchema';
+import fetchAllEggs from '../../api/fetchAllEggs';
 
 export function pockestLoading(): Action {
   return [ACTION_TYPES.LOADING];
@@ -71,12 +72,16 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
       const [
         allMonsters,
         allHashes,
+        eggList,
       ] = await Promise.all([
         fetchAllMonsters(),
         fetchAllHashes(),
+        fetchAllEggs(),
       ]);
       if (allMonsters) payloadRaw = { ...payloadRaw, allMonsters };
       if (allHashes) payloadRaw = { ...payloadRaw, allHashes };
+      if (eggList?.eggs) payloadRaw = { ...payloadRaw, allEggs: eggList.eggs };
+      if (typeof eggList?.user_buckler_point === 'number') payloadRaw = { ...payloadRaw, bucklerBalance: eggList.user_buckler_point };
     }
 
     const payloadParsed = statusRefreshPayloadSchema.safeParse(payloadRaw);
