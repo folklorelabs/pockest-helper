@@ -42,6 +42,51 @@ export function getPlanQueueItemLabel(state: PockestState, planQueueItem?: PlanQ
   return `${name} (Age ${planQueueItem.planAge})`;
 }
 
+export function getTargetableMonsters(state: PockestState) {
+  const acquiredMementos = getOwnedMementoMonsterIds(state);
+  return state?.allMonsters
+    ?.filter((m) => m.confirmed)
+    ?.filter((m) => {
+      const mAgeStr = m?.planId?.slice(-1);
+      const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
+      const hasRequiredMems = !m?.requiredMemento
+        || acquiredMementos.includes(m.requiredMemento);
+      return mAge && mAge >= 5 && hasRequiredMems;
+    })
+    .sort((a, b) => {
+      if (!a.name_en && !b.name_en) return 0;
+      if (!a.name_en || a.name_en < (b.name_en ?? '')) return -1;
+      if (!b.name_en || b.name_en < a.name_en) return 1;
+      return 0;
+    });
+}
+
+export function getCurrentTargetableMonsters(state: PockestState) {
+  const targetableMonsters = getTargetableMonsters(state);
+  const monster = state?.data?.monster;
+  const curMonsterId = getMonsterId(state);
+  if (!curMonsterId) {
+    return getTargetableMonsters(state);
+  }
+  const allAvailIds = state?.allMonsters
+    ?.filter((m) => {
+      const isOlder = typeof monster?.age === 'number' && m?.age > monster.age;
+      return isOlder;
+    })
+    .reduce((all, m) => {
+      // only return decendants of current monster
+      const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
+      if (!match) return all;
+      return [
+        ...all,
+        m.monster_id,
+      ].filter((id) => typeof id === 'number');
+    }, [curMonsterId] as number[]);
+  return targetableMonsters
+    ?.filter((m) => m?.monster_id && allAvailIds.includes(m?.monster_id))
+    ?.filter((m) => !state?.eggId || m?.eggIds?.includes(state?.eggId));
+}
+
 export async function getBestMatch(state: PockestState, exchangeList: BucklerPotentialMatch[]) {
   const monsterId = getMonsterId(state);
   const monster = state?.allMonsters?.find((m) => m.monster_id === monsterId);

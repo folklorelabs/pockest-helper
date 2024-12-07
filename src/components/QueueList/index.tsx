@@ -1,11 +1,11 @@
-import React from 'react';
+// import React from 'react';
 
 import {
-  usePockestContext,
-  pockestGetters,
   pockestActions,
+  pockestGetters,
+  usePockestContext,
 } from '../../contexts/PockestContext';
-import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import QueueItemControls from '../QueueItemControls';
 import './index.css';
 
 function QueueList() {
@@ -13,12 +13,11 @@ function QueueList() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const [planQueue, setPlanQueue] = React.useState<PlanQueueItem[]>(pockestState.planQueue);
   return (
     <div className="QueueList">
       <div className="QueueList-main">
-        {planQueue?.length ? planQueue?.map((item) => (
-          <p>{pockestGetters.getPlanQueueItemLabel(pockestState, item)}</p>
+        {pockestState?.planQueue?.length ? pockestState?.planQueue?.map((planQueueItem, index) => (
+          <QueueItemControls key={`${pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}`} queueIndex={index} />
         )) : 'Nothing queued'}
       </div>
       <div
@@ -26,22 +25,28 @@ function QueueList() {
       >
         <button
           type="button"
-          className="PockestLink QueueList-save"
-          aria-label={`Save Plan Queue`}
-          onClick={() => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({ planQueue }))}
+          className="PockestLink QueueList-add"
+          aria-label={`Add Plan Queue`}
+          onClick={() => {
+            if (!pockestDispatch) return;
+            const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState)
+              .filter((m) => !pockestState.planQueue.map((qm) => qm.monsterId).includes(m.monster_id));
+            const planQueue = [
+              ...pockestState.planQueue,
+              {
+                planAge: 5,
+                monsterId: targetableMonsters[0]?.monster_id || -1,
+                planId: '',
+                statPlanId: '',
+              },
+            ];
+            pockestDispatch(pockestActions.pockestSettings({ planQueue }));
+          }}
         >
-          💾 Save
-        </button>
-        <button
-          type="button"
-          className="PockestLink QueueList-reset"
-          aria-label={`Reset Plan Queue`}
-          onClick={() => setPlanQueue(pockestState.planQueue)}
-        >
-          ❌ Reset
+          ➕ Add
         </button>
       </div>
-    </div>
+    </div >
   );
 }
 
