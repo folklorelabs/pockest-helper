@@ -1,6 +1,6 @@
 import React from 'react';
 import { usePockestContext } from '../../contexts/PockestContext';
-import fetchCharAssets from '../../api/fetchCharAsset';
+import fetchCharAssets from '../../api/fetchCharAssets';
 import getWeightedRandom from '../../utils/getWeightedRandom';
 import BucklerCharAsset from '../../types/BucklerCharAsset';
 import BucklerCharFrame from '../../types/BucklerCharFrame';
@@ -8,7 +8,6 @@ import './index.css';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ACTIONS = ['idle', 'attack', 'win', 'down'] as const;
-
 type ActionType = typeof ACTIONS[number];
 
 interface CharacterSpriteProps {
@@ -29,24 +28,23 @@ function CharacterSprite({
     pockestState,
   } = usePockestContext();
   const [characterSprite, setCharacterSprite] = React.useState<BucklerCharAsset | null>(null);
-  const [curFrame, setCurFrame] = React.useState<BucklerCharFrame | null>(null);
+  const [curFrame, setCurFrame] = React.useState<BucklerCharFrame>();
   const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
     (async () => {
       const hash = pockestState?.data?.monster?.hash;
       if (!hash) return;
       const newSprite = await fetchCharAssets(hash);
-      setCharacterSprite(newSprite || null);
+      setCharacterSprite(newSprite);
     })();
   }, [pockestState]);
   React.useEffect(() => {
     if (!characterSprite || loading) return () => { };
     let timeout: number;
     let curIndex = 0;
-    let curAction: ActionType = action;
+    let curAction = action;
     const setFrame = () => {
-      const frameKeys = Object.keys(characterSprite.frames).filter((s): s is keyof BucklerCharAsset => s.includes(curAction));
-      const frames = frameKeys.map((key) => (characterSprite.frames[key] as unknown as BucklerCharFrame));
+      const frames = characterSprite?.[curAction];
       setCurFrame(frames[curIndex]);
       curIndex = curIndex < (frames.length - 1) ? curIndex + 1 : 0;
       const endOfAnim = curIndex === frames.length - 1;
@@ -66,16 +64,15 @@ function CharacterSprite({
     };
   }, [action, animated, characterSprite, loading, randomAnimationWeights, randomAnimations]);
   React.useEffect(() => {
-    if (!characterSprite?.meta?.image) return;
-    const frameKey = Object.keys(characterSprite).find((s): s is keyof BucklerCharAsset => s.includes(action));
-    const frames: BucklerCharFrame[] = frameKey ? (characterSprite[frameKey] as unknown as BucklerCharFrame[]) : [];
+    if (!characterSprite?.image) return;
+    const frames = characterSprite?.[action];
     setLoading(true);
     const preLoadEl = new Image();
     preLoadEl.onload = () => {
       setCurFrame(frames[0]);
       setLoading(false);
     };
-    preLoadEl.src = `https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${characterSprite?.meta?.image}`;
+    preLoadEl.src = characterSprite?.image;
   }, [action, characterSprite]);
   if (loading) return '';
   return (
@@ -94,7 +91,7 @@ function CharacterSprite({
           width: `${curFrame?.rotated ? curFrame?.frame?.h : curFrame?.frame?.w}px`,
           height: `${curFrame?.rotated ? curFrame?.frame?.w : curFrame?.frame?.h}px`,
           transform: `translateX(${curFrame?.rotated ? `${curFrame?.frame?.w}px` : '0'}) rotate(${curFrame?.rotated ? '-90deg' : '0deg'})`,
-          backgroundImage: characterSprite?.meta?.image && !loading ? `url('https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${characterSprite?.meta?.image}')` : 'none',
+          backgroundImage: characterSprite?.image && !loading ? `url(${characterSprite?.image})` : 'none',
           backgroundPosition: `-${curFrame?.frame?.x}px -${curFrame?.frame?.y}px`,
         }}
       />

@@ -1,8 +1,6 @@
 import BucklerCharFrame from "../types/BucklerCharFrame";
-import CharSprite from "../types/CharSprite";
-import fetchCharAsset from "./fetchCharAsset";
 
-function getFrameImgSrc(hash:string, frameMeta: BucklerCharFrame): Promise<string> {
+function getFrameImgSrc(hash:string, frameMeta:BucklerCharFrame) {
   return new Promise((resolve) => {
     const canvas = document.createElement('canvas');
     const { rotated } = frameMeta;
@@ -17,13 +15,13 @@ function getFrameImgSrc(hash:string, frameMeta: BucklerCharFrame): Promise<strin
         x: frameMeta.frame.x,
         y: frameMeta.frame.y,
         w: rotated ? frameMeta.frame.h : frameMeta.frame.w,
-        h: rotated ? frameMeta.frame.w :frameMeta.frame.h,
+        h: rotated ? frameMeta.frame.w : frameMeta.frame.h,
       };
       const destMeta = {
-        x: rotated ? -frameMeta.frame.h :0,
+        x: rotated ? -frameMeta.frame.h : 0,
         y: 0,
         w: rotated ? frameMeta.frame.h : frameMeta.frame.w,
-        h: rotated ? frameMeta.frame.w :frameMeta.frame.h,
+        h: rotated ? frameMeta.frame.w : frameMeta.frame.h,
       };
       ctx.drawImage(
         img,
@@ -43,21 +41,24 @@ function getFrameImgSrc(hash:string, frameMeta: BucklerCharFrame): Promise<strin
   });
 }
 
-async function fetchCharSprites(hash:string):Promise<CharSprite[]> {
-    if (!hash) {
-      throw new Error(`Invalid hash ${hash}`);
-    }
-    const charAsset = await fetchCharAsset(hash);
-    const { frames } = charAsset;
-    const frameKeys = Object.keys(frames);
-    const frameReses = frameKeys.map(async (key) => getFrameImgSrc(hash, frames[key]));
-    const imgSrcs = await Promise.all(frameReses);
-    return imgSrcs.map((data, i) => ({
-      fileName: frameKeys[i],
-      data,
-      w: frames[frameKeys[i]]?.frame?.w,
-      h: frames[frameKeys[i]]?.frame?.h,
-    }));
+async function fetchCharSprites(hash:string) {
+  if (!hash) {
+    throw new Error(`Invalid hash ${hash}`);
+  }
+  const url = `https://www.streetfighter.com/6/buckler/assets/minigame/img/char/${hash}.json`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Network error ${res.status} (${url})`);
+  }
+  const { frames } = await res.json();
+  const frameKeys = Object.keys(frames);
+  const frameReses = frameKeys.map(async (key) => getFrameImgSrc(hash, frames[key]));
+  const imgSrcs = await Promise.all(frameReses);
+  return imgSrcs.map((data, i) => ({
+    ...frames[frameKeys[i]],
+    fileName: frameKeys[i],
+    data,
+  }));
 }
 
 export default fetchCharSprites;

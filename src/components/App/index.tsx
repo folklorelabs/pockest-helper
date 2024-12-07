@@ -20,6 +20,7 @@ import { IconChevronDown, IconChevronUp, IconLog } from '../icons';
 import SimpleModeToggle from '../SimpleModeToggle';
 import './index.css';
 import AppErrorAlert from '../AppErrorAlert';
+import QueueLogEditor from '../QueueLogEditor';
 
 function App() {
   const {
@@ -130,6 +131,7 @@ function App() {
       {(showLog && !minimized) ? (
         <LogPanel>
           <CareLog title="Care Log" rows={22} />
+          <QueueLogEditor />
           <MatchDiscoveryLog title="Newly Discovered Fever Matches" rows={3} />
           {pockestState?.autoPlan ? (<PlanLog title="Preset Plan" rows={10} />) : ''}
           <CompletionLog />

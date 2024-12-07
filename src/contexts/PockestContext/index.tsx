@@ -25,6 +25,7 @@ import Action from './types/Action';
 import PockestState from './types/PockestState';
 import REDUCER from './reducer';
 import ACTION_TYPES from './constants/ACTION_TYPES';
+import parsePlanId from '../../utils/parsePlanId';
 
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
@@ -147,6 +148,24 @@ export function PockestProvider({
     };
   }, [pockestState?.loading, refreshStatus]);
 
+  // Queue manager
+  React.useEffect(() => {
+    if (!pockestState?.initialized
+      || pockestState?.loading
+      || pockestState?.error
+      || pockestState?.invalidSession
+    ) return;
+    if (!pockestState?.planQueue?.length) return;
+    const curQueueItem = pockestState?.planQueue[0];
+    const curQueueItemMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === curQueueItem?.monsterId);
+    const completedQueueItem = (curQueueItemMonster?.unlock && curQueueItem?.planAge === 5)
+      || (curQueueItemMonster?.memento_flg && curQueueItem?.planAge === 6);
+    if (completedQueueItem) {
+      // remove this item from queue
+      pockestDispatch(pockestActions.pockestSettings({ planQueue: pockestState?.planQueue.slice(1) }));
+    }
+  }, [pockestState]);
+
   // Lifecycle loop
   React.useEffect(() => {
     if (!pockestState?.initialized
@@ -164,8 +183,40 @@ export function PockestProvider({
         autoTrain,
         autoMatch,
         autoCure,
+        autoQueue,
       } = pockestState;
       const now = new Date();
+
+      // Pause if autoQueueing and planQueue is empty
+      if (autoQueue && !pockestState?.planQueue?.length) {
+        pockestDispatch(pockestActions.pockestPause(true));
+      }
+
+      // Buy egg if autoQueueing and no existing monster!
+      if (autoQueue && !pockestState?.data?.monster) {
+        const nextQueueItem = pockestState?.planQueue[0];
+        const parsedPlanId = parsePlanId(nextQueueItem?.planId);
+        if (typeof parsedPlanId?.planEgg !== 'number') {
+          pockestDispatch(pockestActions.pockestPause(true));
+          pockestDispatch([ACTION_TYPES.ERROR, `Unable to identify the correct egg to purchase in planId (${nextQueueItem?.planId}). Stopping queue.`]);
+          return;
+        }
+        const eggToPurchase = pockestState?.allEggs?.find((e) => e?.id === parsedPlanId?.planEgg);
+        if (!eggToPurchase) {
+          pockestDispatch([ACTION_TYPES.ERROR, 'Unable to retreive necessary egg info to queue the next monster.']);
+          return;
+        }
+        const eggPrice = eggToPurchase?.buckler_point || Infinity;
+        const canAfford = eggToPurchase?.unlock || (pockestState?.bucklerBalance && pockestState?.bucklerBalance >= eggPrice);
+        if (!canAfford) {
+          pockestDispatch(pockestActions.pockestPause(true));
+          pockestDispatch([ACTION_TYPES.ERROR, 'Cannot afford egg. Stopping queue.']);
+          return;
+        }
+        pockestDispatch(pockestActions.pockestLoading());
+        pockestDispatch(await pockestActions.pockestSelectEgg(eggToPurchase.id));
+        return;
+      }
 
       // No data! Let's refresh to get things moving.
       // If there is a good reason for no data then refreshing will trigger error or pause.

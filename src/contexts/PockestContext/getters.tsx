@@ -17,6 +17,7 @@ import BucklerStatusData from '../../types/BucklerStatusData';
 import Settings from './types/Settings';
 import BucklerMatchResults from '../../types/BucklerMatchResults';
 import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
+import PlanQueueItem from './types/PlanQueueItem';
 
 export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData) {
   const mergedData = data ?? pockestState?.data;
@@ -28,30 +29,85 @@ export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData
   };
 }
 
-export async function fetchMatchList() {
-  const url = 'https://www.streetfighter.com/6/buckler/api/minigame/exchange/list';
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-  const { data } = await response.json();
-  return data;
-}
-
-export async function fetchPockestStatus() {
-  const url = 'https://www.streetfighter.com/6/buckler/api/minigame/status';
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-  const resJson = await response.json();
-  const data = {
-    event: resJson?.event || resJson?.message || resJson?.data?.message,
-    ...resJson?.data,
-  };
-  return data;
-}
-
 export function getMonsterId(state: PockestState) {
   const hashId = state?.data?.monster?.hash;
   if (!hashId) return null;
   return parseInt(hashId.slice(0, 4), 10);
+}
+
+export function getPlanQueueItemLabel(state: PockestState, planQueueItem?: PlanQueueItem | null) {
+  if (!planQueueItem) return '';
+  const monster = state.allMonsters.find((m) => planQueueItem.monsterId && m.monster_id === planQueueItem.monsterId);
+  const name = monster?.name_en || `${planQueueItem.planId}${planQueueItem.statPlanId ? `-${planQueueItem.statPlanId}` : ''}`;
+  return `${name} (Age ${planQueueItem.planAge})`;
+}
+
+export function getTargetableMonsters(state: PockestState, targetAge?: number | null) {
+  const acquiredMementos = getOwnedMementoMonsterIds(state);
+  return state?.allMonsters
+    ?.filter((m) => {
+      if (!m.confirmed) return false;
+      if (m?.requiredMemento && !acquiredMementos.includes(m.requiredMemento)) return false;
+      if (m.age < 5) return false;
+      if (targetAge === 5 && m.unlock) return false;
+      if (targetAge === 6 && m.memento_flg) return false;
+      return true;
+    })
+    .sort((a, b) => {
+      if (!a.name_en && !b.name_en) return 0;
+      if (!a.name_en || a.name_en < (b.name_en ?? '')) return -1;
+      if (!b.name_en || b.name_en < a.name_en) return 1;
+      return 0;
+    });
+}
+
+export function getCurrentTargetableMonsters(state: PockestState, targetAge: number = 6) {
+  const targetableMonsters = getTargetableMonsters(state, targetAge);
+  const monster = state?.data?.monster;
+  const curMonsterId = getMonsterId(state);
+  if (!curMonsterId) {
+    return getTargetableMonsters(state);
+  }
+  const allAvailIds = state?.allMonsters
+    ?.filter((m) => {
+      const isOlder = typeof monster?.age === 'number' && m?.age > monster.age;
+      return isOlder;
+    })
+    .reduce((all, m) => {
+      // only return decendants of current monster
+      const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
+      if (!match) return all;
+      return [
+        ...all,
+        m.monster_id,
+      ].filter((id) => typeof id === 'number');
+    }, [curMonsterId] as number[]);
+  return targetableMonsters
+    ?.filter((m) => m?.monster_id && allAvailIds.includes(m?.monster_id))
+    ?.filter((m) => !state?.eggId || m?.eggIds?.includes(state?.eggId));
+}
+
+export function getMonsterEgg(state: PockestState, monsterId?: number | null) {
+  const monster = state?.allMonsters?.find((m) => m.monster_id === monsterId);
+  if (!monster) return null;
+  return state?.allEggs?.find((e) => monster.eggIds?.includes(e.id));
+}
+
+export function getPlanIdEgg(state: PockestState, planId?: string | null) {
+  if (!planId) return null;
+  const parsedPlanId = parsePlanId(planId);
+  if (!parsedPlanId) return null;
+  const { planEgg } = parsedPlanId;
+  return state?.allEggs?.find((e) => e.id === planEgg)
+}
+
+export function getAffordableMonsters(state: PockestState) {
+  return state?.allMonsters?.filter((m) => {
+    if (m.age < 5) return false;
+    const monsterEgg = getMonsterEgg(state, m.monster_id);
+    const eggPrice = monsterEgg?.buckler_point || Infinity;
+    return eggPrice <= state.bucklerBalance;
+  });
 }
 
 export async function getBestMatch(state: PockestState, exchangeList: BucklerPotentialMatch[]) {
@@ -398,10 +454,19 @@ export function getAutoSettings(state: PockestState, data?: BucklerStatusData | 
   if (newSettings.simpleMode ?? state.simpleMode) {
     newSettings.autoPlan = true;
   }
+  const planQueue = newSettings.planQueue ?? state.planQueue;
+  const isAutoQueue = planQueue?.length && (newSettings.autoQueue ?? state.autoQueue);
+  if (isAutoQueue) {
+    newSettings.autoPlan = true;
+    newSettings.monsterId = planQueue[0].monsterId;
+    newSettings.planId = planQueue[0].planId;
+    newSettings.statPlanId = planQueue[0].statPlanId;
+    newSettings.planAge = planQueue[0].planAge;
+  }
   const isMonsterGone = isMonsterDead(state, data)
     || isMonsterDeparted(state, data)
     || isMonsterMissing(state, data);
-  const shouldReset = isMonsterGone;
+  const shouldReset = isMonsterGone && !isAutoQueue;
   if (shouldReset) {
     newSettings.autoPlan = true;
     newSettings.paused = true;

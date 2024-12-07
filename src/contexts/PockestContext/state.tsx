@@ -3,19 +3,23 @@ import getRandomMinutes from '../../utils/getRandomMinutes';
 import log from '../../utils/log';
 
 const INITIAL_STATE: PockestState = {
+  monsterId: 4000, // default set to ryu
+  planId: '',
+  statPlanId: '',
+  planAge: 6,
+  planQueue: [],
   data: null,
   allMonsters: [],
   allHashes: [],
+  allEggs: [],
+  bucklerBalance: 0,
   paused: true,
-  monsterId: 4000, // default set to ryu
   eggTimestamp: null,
   eggId: null,
   evolutionFailed: false,
-  planId: '',
-  statPlanId: '',
   statLog: [],
-  planAge: 6,
   autoPlan: true,
+  autoQueue: false,
   autoFeed: true,
   autoMatch: true,
   cleanFrequency: 2,

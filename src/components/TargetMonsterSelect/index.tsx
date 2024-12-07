@@ -15,62 +15,12 @@ const TargetMonsterSelect: React.FC<TargetMonsterSelectProps> = ({ disabled }) =
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const acquiredMementos = React.useMemo(
-    () => pockestGetters.getOwnedMementoMonsterIds(pockestState),
-    [pockestState],
-  );
-  const availableMonsters = React.useMemo(() => {
-    const monster = pockestState?.data?.monster;
-    const curMonsterId = pockestGetters.getMonsterId(pockestState);
-    if (!curMonsterId) {
-      return pockestState?.allMonsters
-        ?.filter((m) => m.confirmed)
-        ?.filter((m) => {
-          const mAgeStr = m?.planId?.slice(-1);
-          const mAge = mAgeStr ? parseInt(mAgeStr, 10) : null;
-          const hasRequiredMems = !m?.requiredMemento
-            || acquiredMementos.includes(m.requiredMemento);
-          return mAge && mAge >= 5 && hasRequiredMems;
-        })
-        .sort((a, b) => {
-          if (!a.name_en && !b.name_en) return 0;
-          if (!a.name_en || a.name_en < (b.name_en ?? '')) return -1;
-          if (!b.name_en || b.name_en < a.name_en) return 1;
-          return 0;
-        });
-    }
-    const allAvailIds = pockestState?.allMonsters
-      ?.filter((m) => {
-        const isOlder = typeof monster?.age === 'number' && m?.age > monster.age;
-        const hasRequiredMems = !m?.requiredMemento
-          || acquiredMementos.includes(m.requiredMemento);
-        return isOlder && hasRequiredMems;
-      })
-      .reduce((all, m) => {
-        // only return decendants of current monster
-        const match = m.from.find((pid) => pid === curMonsterId || all.includes(pid));
-        if (!match) return all;
-        return [
-          ...all,
-          m.monster_id,
-        ].filter((id) => typeof id === 'number');
-      }, [curMonsterId] as number[]);
-    return pockestState?.allMonsters
-      ?.filter((m) => m.confirmed)
-      ?.filter((m) => m?.age >= 5 && m?.monster_id && allAvailIds.includes(m?.monster_id))
-      ?.filter((m) => !pockestState?.eggId || m?.eggIds?.includes(pockestState?.eggId))
-      ?.sort((a, b) => {
-        if (!a.name_en && !b.name_en) return 0;
-        if (!a.name_en || a.name_en < (b.name_en ?? '')) return -1;
-        if (!b.name_en || b.name_en < a.name_en) return 1;
-        return 0;
-      });
-  }, [acquiredMementos, pockestState]);
+  const targetableMonsters = React.useMemo(() => pockestGetters.getCurrentTargetableMonsters(pockestState), [pockestState]);
   const curMonsterNonHatchLogs = React.useMemo(
     () => getCurrentMonsterLogs(pockestState).filter((l) => l.logType !== 'hatching'),
     [pockestState],
   );
-  if (!pockestState?.allMonsters?.length) return '';
+  if (!targetableMonsters?.length) return '';
   return (
     <select
       className="PockestSelect"
@@ -89,17 +39,17 @@ const TargetMonsterSelect: React.FC<TargetMonsterSelectProps> = ({ disabled }) =
           monsterId,
         }));
       }}
-      defaultValue={`${pockestState?.monsterId}`}
-      disabled={disabled ?? (!pockestState?.autoPlan || !pockestState?.paused)}
+      value={`${pockestState?.monsterId}`}
+      disabled={disabled ?? (!pockestState?.autoPlan || !pockestState?.paused || pockestState?.autoQueue)}
     >
-      <option key="default" value="-1">
+      <option key="custom" value="-1">
         [Custom Plan]
       </option>
-      {availableMonsters.map((monster) => (
+      {targetableMonsters.map((monster) => (
         <option key={monster?.monster_id} value={monster?.monster_id}>
           {monster?.name_en || monster?.monster_id}
-          {monster?.memento_flg ? ' ✓' : ''}
           {monster?.unlock ? ' ✓' : ''}
+          {monster?.memento_flg ? ' ✓' : ''}
         </option>
       ))}
     </select>
