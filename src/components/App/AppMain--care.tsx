@@ -7,6 +7,7 @@ import CureControls from '../CureControls';
 import PauseBtn from '../PauseBtn';
 import AppMainTemplate from './AppMain';
 import StatusTimers from '../StatusTimers';
+import QueueControls from '../QueueControls';
 
 function AppMain() {
   return (
@@ -14,6 +15,8 @@ function AppMain() {
       className="AppMain--care"
       content={(
         <>
+          <QueueControls />
+          <hr />
           <AutoPlanControls />
           <StatusTimers />
           <hr />

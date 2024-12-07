@@ -28,30 +28,18 @@ export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData
   };
 }
 
-export async function fetchMatchList() {
-  const url = 'https://www.streetfighter.com/6/buckler/api/minigame/exchange/list';
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-  const { data } = await response.json();
-  return data;
-}
-
-export async function fetchPockestStatus() {
-  const url = 'https://www.streetfighter.com/6/buckler/api/minigame/status';
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`API ${response.status} response (${url})`);
-  const resJson = await response.json();
-  const data = {
-    event: resJson?.event || resJson?.message || resJson?.data?.message,
-    ...resJson?.data,
-  };
-  return data;
-}
-
 export function getMonsterId(state: PockestState) {
   const hashId = state?.data?.monster?.hash;
   if (!hashId) return null;
   return parseInt(hashId.slice(0, 4), 10);
+}
+
+export function getQueueLabels(state: PockestState) {
+  return state?.queue?.map((q) => {
+    const monster = state.allMonsters.find((m) => q.monsterId && m.monster_id === q.monsterId);
+    const label = monster?.name_en || `${q.planId}${q.statPlanId ? `-${q.statPlanId}` : ''}`;
+    return label;
+  });
 }
 
 export async function getBestMatch(state: PockestState, exchangeList: BucklerPotentialMatch[]) {

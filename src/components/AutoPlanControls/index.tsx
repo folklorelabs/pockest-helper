@@ -28,7 +28,7 @@ function AutoPlanControls() {
               autoPlan: e.target.checked,
             }))}
             checked={autoPlan}
-            disabled={!paused}
+            disabled={!paused || pockestState.autoQueue}
           />
           <span className="PockestCheck-text">Preset</span>
         </label>

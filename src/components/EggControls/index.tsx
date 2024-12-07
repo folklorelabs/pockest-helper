@@ -4,6 +4,7 @@ import {
 } from '../../contexts/PockestContext';
 import usePlanEgg from '../../hooks/usePlanEgg';
 import AutoPlanControlsSimple from '../AutoPlanControlsSimple';
+import QueueControls from '../QueueControls';
 import './index.css';
 
 function EggControls() {
@@ -17,6 +18,7 @@ function EggControls() {
   } = usePlanEgg(pockestState);
   return (
     <div className="EggControls">
+      <QueueControls />
       <AutoPlanControlsSimple />
       <div className="PockestLine">
         <span className="PockestText">Egg</span>

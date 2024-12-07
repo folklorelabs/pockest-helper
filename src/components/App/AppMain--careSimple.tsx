@@ -2,6 +2,7 @@ import PauseBtn from '../PauseBtn';
 import AppMainTemplate from './AppMain';
 import SimplePlan from '../SimplePlan';
 import AutoPlanControlsSimple from '../AutoPlanControlsSimple';
+import QueueControls from '../QueueControls';
 
 function AppMain() {
   return (
@@ -9,6 +10,8 @@ function AppMain() {
       className="AppMain--careSimple"
       content={(
         <>
+          <QueueControls />
+          <hr />
           <AutoPlanControlsSimple />
           <hr />
           <SimplePlan rows={45} />

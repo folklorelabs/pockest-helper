@@ -90,9 +90,9 @@ const TargetMonsterSelect: React.FC<TargetMonsterSelectProps> = ({ disabled }) =
         }));
       }}
       defaultValue={`${pockestState?.monsterId}`}
-      disabled={disabled ?? (!pockestState?.autoPlan || !pockestState?.paused)}
+      disabled={disabled ?? (!pockestState?.autoPlan || !pockestState?.paused || pockestState?.autoQueue)}
     >
-      <option key="default" value="-1">
+      <option key="custom" value="-1">
         [Custom Plan]
       </option>
       {availableMonsters.map((monster) => (

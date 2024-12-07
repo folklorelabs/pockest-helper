@@ -121,7 +121,7 @@ function AutoPlanControlsSimple() {
       )}
       <div className="PockestLine">
         <span className="PockestText">Target Age</span>
-        <TargetAgeSelect disabled={pockestState?.data?.monster?.live_time ? true : false} />
+        <TargetAgeSelect disabled={pockestState?.data?.monster?.live_time ? true : null} />
       </div>
     </div>
   );

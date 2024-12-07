@@ -6,7 +6,7 @@ import {
 
 // TYPES
 interface TargetAgeSelectProps {
-  disabled?: boolean;
+  disabled?: boolean | null;
 }
 
 // CONSTS
@@ -44,7 +44,7 @@ function TargetAgeSelect({ disabled }: TargetAgeSelectProps) {
         }
       }}
       value={planAge}
-      disabled={disabled ?? (!paused || !targetMonster)}
+      disabled={disabled ?? (!paused || !targetMonster || pockestState.autoQueue)}
     >
       {Object.keys(AGE_INTERVAL).map((k) => (
         <option key={k} value={k}>
