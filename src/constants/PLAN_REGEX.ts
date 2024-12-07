@@ -1,0 +1,1 @@
+export default /^(\d*)([A|B|C][L|R])([T|S|P])([1-6])$/;
