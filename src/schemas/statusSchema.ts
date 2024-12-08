@@ -7,8 +7,8 @@ import statusMonsterSchema from "./statusMonsterSchema";
 export const baseStatusSchema = z.object({
   event: z.literal(''),
   monster: statusMonsterSchema.optional(),
-  next_big_event_timer: timestampSchema.optional(),
-  next_small_event_timer: timestampSchema.optional(),
+  next_big_event_timer: timestampSchema.nullable().optional(),
+  next_small_event_timer: timestampSchema.nullable().optional(),
   stamp: z.boolean().optional(),
   message: z.string().optional(),
 });
