@@ -26,10 +26,10 @@ function QueueItem({ queueIndex }: QueueItemProps) {
     [pockestState?.autoQueue, pockestState?.paused],
   );
   const canAffordEgg = React.useMemo(() => {
-    const monsterEgg = pockestGetters.getMonsterEgg(pockestState, planQueueItem?.monsterId);
-    if (monsterEgg && (monsterEgg.unlock || (monsterEgg?.buckler_point && monsterEgg?.buckler_point <= (pockestState?.bucklerBalance || 0)))) return true;
-    const planIdEgg = pockestGetters.getPlanIdEgg(pockestState, planQueueItem?.planId);
-    if (planIdEgg && (planIdEgg.unlock || (planIdEgg?.buckler_point && planIdEgg?.buckler_point <= (pockestState?.bucklerBalance || 0)))) return true;
+    const planEgg = planQueueItem?.monsterId === -1
+      ? pockestGetters.getPlanIdEgg(pockestState, planQueueItem?.planId)
+      : pockestGetters.getMonsterEgg(pockestState, planQueueItem?.monsterId);
+    if (planEgg && (planEgg.unlock || (planEgg?.buckler_point && planEgg?.buckler_point <= (pockestState?.bucklerBalance || 0)))) return true;
     return false;
   }, [pockestState, planQueueItem?.monsterId, planQueueItem?.planId]);
   React.useEffect(() => {
