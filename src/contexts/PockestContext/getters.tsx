@@ -40,7 +40,8 @@ export function getPlanQueueItemLabel(state: PockestState, planQueueItem?: PlanQ
   if (!planQueueItem) return '';
   const monster = state.allMonsters.find((m) => planQueueItem.monsterId && m.monster_id === planQueueItem.monsterId);
   const name = monster?.name_en || `${planQueueItem.planId}${planQueueItem.statPlanId ? `-${planQueueItem.statPlanId}` : ''}`;
-  return `${name} (Age ${planQueueItem.planAge})`;
+  const planAge = planQueueItem.monsterId !== -1 ? planQueueItem.planAge : parsePlanId(planQueueItem.planId)?.planAge
+  return `${name} (Age ${planAge})`;
 }
 
 export function getTargetableMonsters(state: PockestState, targetAge?: number | null) {
