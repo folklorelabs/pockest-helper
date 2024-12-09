@@ -21,10 +21,10 @@ function QueueItemEditor() {
   const isDirty = React.useMemo(() => JSON.stringify(planQueueItem) === JSON.stringify(queueItem), [planQueueItem, queueItem]);
   return (
     <div className="QueueItemEditor">
+      <QueueItemMonsterSelect />
       {queueItem?.monsterId !== -1 && (
         <QueueItemAgeSelect />
       )}
-      <QueueItemMonsterSelect />
       {queueItem?.monsterId === -1 && (
         <>
           <input
