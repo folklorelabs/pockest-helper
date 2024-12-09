@@ -14,16 +14,6 @@ function QueueList() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  React.useEffect(() => {
-    // TODO: delete me after rc version. this is a fix for shill since he used before id was added.
-    const fixRequired = !!pockestState?.planQueue?.find((planQueueItem) => !planQueueItem.id);
-    if (!fixRequired) return;
-    const fixedPlanQueue = pockestState?.planQueue?.map((planQueueItem) => ({
-      ...planQueueItem,
-      id: planQueueItem.id || window.crypto.randomUUID(),
-    }), []);
-    pockestDispatch?.(pockestActions.pockestSettings({ planQueue: fixedPlanQueue }));
-  }, [pockestDispatch, pockestState?.planQueue]);
   const affordableMonsterIds = React.useMemo(() => pockestGetters.getAffordableMonsters(pockestState).map((m) => m.monster_id), [pockestState]);
   return (
     <div className="QueueList">
