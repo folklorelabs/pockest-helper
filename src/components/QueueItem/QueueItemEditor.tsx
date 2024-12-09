@@ -19,8 +19,11 @@ function QueueItemEditor() {
   } = React.useContext(QueueItemContext);
   return (
     <div className="QueueItemEditor">
+      {queueItem?.monsterId !== -1 && (
+        <QueueItemAgeSelect />
+      )}
       <QueueItemMonsterSelect />
-      {queueItem?.monsterId === -1 ? (
+      {queueItem?.monsterId === -1 && (
         <>
           <input
             className="PockestInput"
@@ -49,8 +52,6 @@ function QueueItemEditor() {
             required={false}
           />
         </>
-      ) : (
-        <QueueItemAgeSelect />
       )}
       <button
         type="button"
