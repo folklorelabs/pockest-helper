@@ -13,10 +13,12 @@ function QueueItemEditor() {
     pockestDispatch,
   } = usePockestContext();
   const {
+    planQueueItem,
     queueItem,
     updateQueueItem,
     saveQueueItemToPockestState,
   } = React.useContext(QueueItemContext);
+  const isDirty = React.useMemo(() => JSON.stringify(planQueueItem) === JSON.stringify(queueItem), [planQueueItem, queueItem]);
   return (
     <div className="QueueItemEditor">
       {queueItem?.monsterId !== -1 && (
@@ -55,6 +57,7 @@ function QueueItemEditor() {
         type="button"
         className="PockestLink"
         onClick={saveQueueItemToPockestState}
+        disabled={isDirty}
       >
         Save
       </button>

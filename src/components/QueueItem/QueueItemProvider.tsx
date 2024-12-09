@@ -55,11 +55,18 @@ export function QueueItemProvider({
 
   // wrap value in memo so we only re-render when necessary
   const providerValue = React.useMemo(() => ({
+    planQueueItem,
     planQueueItemIndex,
     queueItem: localPlanQueueItem,
     updateQueueItem,
     saveQueueItemToPockestState,
-  }), [localPlanQueueItem, planQueueItemIndex, setLocalPlanQueueItem, saveQueueItemToPockestState]);
+  }), [
+    planQueueItem,
+    planQueueItemIndex,
+    localPlanQueueItem,
+    updateQueueItem,
+    saveQueueItemToPockestState,
+  ]);
 
   return (
     <QueueItemContext.Provider value={providerValue}>

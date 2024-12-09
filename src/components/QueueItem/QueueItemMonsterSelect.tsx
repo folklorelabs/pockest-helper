@@ -19,10 +19,13 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
     planQueueItemIndex,
     updateQueueItem,
   } = React.useContext(QueueItemContext);
+  const planQueueMonsterIds = React.useMemo(() => {
+    return pockestState?.planQueue?.filter((q) => q.id !== queueItem?.id).map((q) => q.monsterId);
+  }, [pockestState?.planQueue, queueItem?.id]);
   const targetableMonsters = React.useMemo(
     () => !queueItem ? [] : pockestGetters.getTargetableMonsters(pockestState, queueItem?.planAge)
-      .filter((m) => (queueItem.monsterId && queueItem.monsterId === m.monster_id) || !pockestState?.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id)),
-    [queueItem, pockestState],
+      .filter((m) => !planQueueMonsterIds.includes(m.monster_id)),
+    [queueItem, pockestState, planQueueMonsterIds],
   );
   const estimatedBalance = React.useMemo(
     () => {
