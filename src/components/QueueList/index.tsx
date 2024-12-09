@@ -6,7 +6,7 @@ import {
   pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import QueueItemControls from '../QueueItemControls';
+import QueueItem from '../QueueItem';
 import './index.css';
 
 function QueueList() {
@@ -14,12 +14,22 @@ function QueueList() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  React.useEffect(() => {
+    // TODO: delete me after rc version. this is a fix for shill since he used before id was added.
+    const fixRequired = !!pockestState?.planQueue?.find((planQueueItem) => !planQueueItem.id);
+    if (!fixRequired) return;
+    const fixedPlanQueue = pockestState?.planQueue?.map((planQueueItem) => ({
+      ...planQueueItem,
+      id: planQueueItem.id || window.crypto.randomUUID(),
+    }), []);
+    pockestDispatch?.(pockestActions.pockestSettings({ planQueue: fixedPlanQueue }));
+  }, [pockestDispatch, pockestState?.planQueue]);
   const affordableMonsterIds = React.useMemo(() => pockestGetters.getAffordableMonsters(pockestState).map((m) => m.monster_id), [pockestState]);
   return (
     <div className="QueueList">
       <div className="QueueList-main">
         {pockestState?.planQueue?.length ? pockestState?.planQueue?.map((planQueueItem, index) => (
-          <QueueItemControls key={`${pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}`} queueIndex={index} />
+          <QueueItem key={`${pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}`} queueIndex={index} />
         )) : 'Nothing queued'}
       </div>
       <div
@@ -38,6 +48,7 @@ function QueueList() {
             const planQueue = [
               ...(pockestState.planQueue || []),
               {
+                id: window.crypto.randomUUID(),
                 planAge,
                 monsterId: targetableMonsters[0]?.monster_id || -1,
                 planId: '',

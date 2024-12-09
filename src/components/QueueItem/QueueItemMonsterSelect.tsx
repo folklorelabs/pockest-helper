@@ -1,47 +1,41 @@
 import React from 'react';
 import {
   pockestGetters,
-  pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import { QueueItemContext } from './QueueItemContext';
 
 interface QueueMonsterSelectProps {
   disabled?: boolean | null;
-  queueIndex: number;
 }
 
-const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled, queueIndex }) => {
+const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => {
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const planQueueItem = pockestState?.planQueue?.[queueIndex];
+  const {
+    queueItem,
+    setQueueItem,
+  } = React.useContext(QueueItemContext);
   const targetableMonsters = React.useMemo(
-    () => pockestGetters.getTargetableMonsters(pockestState, planQueueItem?.planAge)
-      .filter((m) => (planQueueItem.monsterId && planQueueItem.monsterId === m.monster_id) || !pockestState?.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id)),
-    [planQueueItem.monsterId, planQueueItem?.planAge, pockestState],
+    () => !queueItem ? [] : pockestGetters.getTargetableMonsters(pockestState, queueItem?.planAge)
+      .filter((m) => (queueItem.monsterId && queueItem.monsterId === m.monster_id) || !pockestState?.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id)),
+    [queueItem, pockestState],
   );
   if (!targetableMonsters?.length) return '';
   return (
     <select
       className="PockestSelect"
       onChange={(e) => {
-        if (!pockestDispatch) return;
+        if (!pockestDispatch || !queueItem) return;
         const monsterId = e.target.value ? parseInt(e.target.value, 10) : -1;
-        const planQueue: PlanQueueItem[] = [
-          ...pockestState.planQueue.slice(0, queueIndex),
-          {
-            ...planQueueItem,
-            monsterId,
-          },
-          ...pockestState.planQueue.slice(queueIndex + 1),
-        ];
-        pockestDispatch(pockestActions.pockestPlanSettings({
-          planQueue,
-        }));
+        setQueueItem({
+          ...queueItem,
+          monsterId,
+        });
       }}
-      value={`${planQueueItem?.monsterId}`}
+      value={`${queueItem?.monsterId}`}
       disabled={!!disabled}
     >
       <option key="custom" value="-1">
