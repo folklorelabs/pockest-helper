@@ -21,31 +21,6 @@ async function zip(srcDir, fileName) {
 async function cleanUpManfiest(dir) {
   const newManifest = JSON.parse(JSON.stringify(manifest));
   delete newManifest.browser_specific_settings;
-
-  // Janky CSP fix (TODO: upgrade @crxjs/vite-plugin once there is a fix)
-  // manually strip out "content-script-loader."
-  // and the loader script hash (eg ".6894df4c") from cs file refs
-  // so the extension loads the script statically instead of dynamically
-  const fixedContentScripts = newManifest?.content_scripts?.map((cs) => {
-    const js = cs?.js?.map((csPath) => {
-      const csMatch = /(.+\/)*(content-script-loader.)([^.]+\.(js|jsx|ts|tsx)\.[^.]+)(\.[^.]+)(\.js)/.exec(csPath);
-      if (!csMatch) return csPath;
-      const [
-        ,
-        fileDir,,
-        rfileName,
-        ,,
-        fileExt,
-      ] = csMatch;
-      return `${fileDir}${rfileName}${fileExt}`;
-    });
-    return {
-      ...cs,
-      js,
-    };
-  });
-  newManifest.content_scripts = fixedContentScripts;
-
   await fs.writeFileSync(`${dir}/manifest.json`, JSON.stringify(newManifest));
 }
 
@@ -70,6 +45,5 @@ async function cleanUpManfiest(dir) {
   await fs.rmSync(EXT_WD, { recursive: true, force: true });
 
   // print abs file path
-  // eslint-disable-next-line no-console
   console.log(destFilePath);
 })();
