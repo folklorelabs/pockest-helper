@@ -4,6 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build:zip": "node ./scripts/zipExtension.cjs",
+    "build:xpi": "node ./scripts/xpiExtension.cjs",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
