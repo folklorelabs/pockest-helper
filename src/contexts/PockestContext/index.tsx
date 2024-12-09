@@ -196,26 +196,23 @@ export function PockestProvider({
       // Buy egg if autoQueueing and no existing monster!
       if (autoQueue && !pockestState?.data?.monster) {
         const nextQueueItem = pockestState?.planQueue[0];
-        const parsedPlanId = parsePlanId(nextQueueItem?.planId);
-        if (typeof parsedPlanId?.planEgg !== 'number') {
+        const planEgg = nextQueueItem?.planId
+          ? pockestGetters.getPlanIdEgg(pockestState, nextQueueItem?.planId)
+          : pockestGetters.getMonsterEgg(pockestState, nextQueueItem?.monsterId);
+        if (!planEgg) {
           pockestDispatch(pockestActions.pockestPause(true));
           pockestDispatch([ACTION_TYPES.ERROR, `Unable to identify the correct egg to purchase in planId (${nextQueueItem?.planId}). Stopping queue.`]);
           return;
         }
-        const eggToPurchase = pockestState?.allEggs?.find((e) => e?.id === parsedPlanId?.planEgg);
-        if (!eggToPurchase) {
-          pockestDispatch([ACTION_TYPES.ERROR, 'Unable to retreive necessary egg info to queue the next monster.']);
-          return;
-        }
-        const eggPrice = eggToPurchase?.buckler_point || Infinity;
-        const canAfford = eggToPurchase?.unlock || (pockestState?.bucklerBalance && pockestState?.bucklerBalance >= eggPrice);
+        const eggPrice = planEgg?.buckler_point || Infinity;
+        const canAfford = planEgg?.unlock || (pockestState?.bucklerBalance && pockestState?.bucklerBalance >= eggPrice);
         if (!canAfford) {
           pockestDispatch(pockestActions.pockestPause(true));
           pockestDispatch([ACTION_TYPES.ERROR, 'Cannot afford egg. Stopping queue.']);
           return;
         }
         pockestDispatch(pockestActions.pockestLoading());
-        pockestDispatch(await pockestActions.pockestSelectEgg(eggToPurchase.id));
+        pockestDispatch(await pockestActions.pockestSelectEgg(planEgg.id));
         return;
       }
 
