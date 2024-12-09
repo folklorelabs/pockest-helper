@@ -91,6 +91,18 @@ function QueueItem({ queueIndex }: QueueItemProps) {
         >
           ⬇️
         </button>
+        {!canAffordEgg && (
+          <>
+            <span className="PockestToolTip PockestToolTip--right PockestToolTip--bottom">
+              <span className="QueueItemLabel-cantAfford">❗</span>
+              <span className="PockestToolTip-text">
+                Your <em>Buckler point</em> balance may be insufficient to cover this egg purchase ({planEgg?.buckler_point}) once it is reached in the queue.<br />
+                This is based on your estimated balance at this point in the queue ({Math.max(0, estimatedBalance ?? 0)}).
+              </span>
+            </span>
+            {' '}
+          </>
+        )}
         {editMode ? (
           <>
             <QueueItemEditor />
@@ -104,18 +116,6 @@ function QueueItem({ queueIndex }: QueueItemProps) {
           </>
         ) : (
           <>
-            {!canAffordEgg && (
-              <>
-                <span className="PockestToolTip PockestToolTip--right PockestToolTip--bottom">
-                  <span className="QueueItemLabel-cantAfford">❗</span>
-                  <span className="PockestToolTip-text">
-                    Your <em>Buckler point</em> balance may be insufficient to cover this egg purchase ({planEgg?.buckler_point}) once it is reached in the queue.<br />
-                    This is based on your estimated balance at this point in the queue ({Math.max(0, estimatedBalance ?? 0)}).
-                  </span>
-                </span>
-                {' '}
-              </>
-            )}
             <span
               className="QueueItemLabel"
             >
