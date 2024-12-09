@@ -18,6 +18,7 @@ import Settings from './types/Settings';
 import BucklerMatchResults from '../../types/BucklerMatchResults';
 import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
 import PlanQueueItem from './types/PlanQueueItem';
+import Monster from '../../types/Monster';
 
 export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData) {
   const mergedData = data ?? pockestState?.data;
@@ -488,7 +489,7 @@ export function getAutoSettings(state: PockestState, data?: BucklerStatusData | 
   return newSettings;
 }
 
-export function getPlanEvolutions(state: PockestState) {
+export function getPlanEvolutions(state: PockestState): Record<string, Monster> {
   if (!state?.planId) return {};
   const parsedPlanId = parsePlanId(state.planId);
   if (!parsedPlanId) return {};
