@@ -8,6 +8,7 @@ import {
 } from '../../contexts/PockestContext';
 import QueueItem from '../QueueItem';
 import './index.css';
+import parsePlanId from '../../utils/parsePlanId';
 
 function QueueList() {
   const {
@@ -45,6 +46,9 @@ function QueueList() {
                 return (a.monster_id || 0) - (b.monster_id || 0);
               });
             const monsterToAdd = targetableMonsters[0];
+            const planId = monsterToAdd?.planId || '1BRP6';
+            const monsterToAddParsedPlanId = parsePlanId(planId);
+            const statPlanId = monsterToAdd?.statPlan || monsterToAddParsedPlanId?.primaryStatLetter.repeat(6) || '';
             const planQueue = [
               ...(pockestState.planQueue || []),
               {
@@ -52,7 +56,7 @@ function QueueList() {
                 monsterId: monsterToAdd?.monster_id || -1,
                 planAge: monsterToAdd?.unlock ? 6 : 5,
                 planId: monsterToAdd?.planId || '1BRP6',
-                statPlanId: monsterToAdd?.statPlan || 'PPPPPP',
+                statPlanId,
               },
             ];
             pockestDispatch(pockestActions.pockestSettings({ planQueue }));
