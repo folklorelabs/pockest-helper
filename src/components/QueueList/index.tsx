@@ -31,18 +31,28 @@ function QueueList() {
           aria-label={`Add Plan Queue`}
           onClick={() => {
             if (!pockestDispatch) return;
-            const planAge = 5;
-            const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState, planAge)
-              .filter((m) => affordableMonsterIds.includes(m.monster_id))
-              .filter((m) => !pockestState.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id));
+            const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState, 6)
+              .filter((m) => !pockestState.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id))
+              .sort((a, b) => {
+                if (!a.unlock && b.unlock) return -1;
+                if (a.unlock && !b.unlock) return 1;
+                const aAffordable = affordableMonsterIds.includes(a.monster_id);
+                const bAffordable = affordableMonsterIds.includes(b.monster_id);
+                if (aAffordable && !bAffordable) return -1;
+                if (!aAffordable && bAffordable) return 1;
+                if ((a.eggIds?.[0] || 0) < (b.eggIds?.[0] || 0)) return -1;
+                if ((a.eggIds?.[0] || 0) > (b.eggIds?.[0] || 0)) return 1;
+                return (a.monster_id || 0) - (b.monster_id || 0);
+              });
+            const monsterToAdd = targetableMonsters[0];
             const planQueue = [
               ...(pockestState.planQueue || []),
               {
                 id: window.crypto.randomUUID(),
-                planAge,
-                monsterId: targetableMonsters[0]?.monster_id || -1,
-                planId: '',
-                statPlanId: '',
+                monsterId: monsterToAdd?.monster_id || -1,
+                planAge: monsterToAdd?.unlock ? 6 : 5,
+                planId: monsterToAdd?.planId || '1BRP6',
+                statPlanId: monsterToAdd?.statPlan || 'PPPPPP',
               },
             ];
             pockestDispatch(pockestActions.pockestSettings({ planQueue }));
