@@ -25,7 +25,6 @@ import Action from './types/Action';
 import PockestState from './types/PockestState';
 import REDUCER from './reducer';
 import ACTION_TYPES from './constants/ACTION_TYPES';
-import parsePlanId from '../../utils/parsePlanId';
 
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
