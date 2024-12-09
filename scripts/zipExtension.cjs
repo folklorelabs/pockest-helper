@@ -45,6 +45,5 @@ async function cleanUpManfiest(dir) {
   await fs.rmSync(EXT_WD, { recursive: true, force: true });
 
   // print abs file path
-   
   console.log(destFilePath);
 })();
