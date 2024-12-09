@@ -4,15 +4,15 @@ import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
 // STATE
 export interface QueueItemContextState {
   queueItem?: PlanQueueItem | null;
-  setQueueItem: React.Dispatch<React.SetStateAction<PlanQueueItem>>;
-  resetQueueItem: () => void;
+  planQueueItemIndex?: number;
+  updateQueueItem: (newQueueItem: Partial<PlanQueueItem>) => void;
   saveQueueItemToPockestState: () => void;
 };
 
 export const QUEUE_ITEM_CONTEXT_INITIAL_STATE: QueueItemContextState = {
   queueItem: null,
-  setQueueItem: () => { },
-  resetQueueItem: () => { },
+  planQueueItemIndex: -1,
+  updateQueueItem: () => { },
   saveQueueItemToPockestState: () => { },
 };
 

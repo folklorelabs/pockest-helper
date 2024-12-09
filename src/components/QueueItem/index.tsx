@@ -1,5 +1,4 @@
 import React from 'react';
-import classNames from 'classnames';
 import {
   pockestActions,
   pockestGetters,
@@ -25,13 +24,29 @@ function QueueItem({ queueIndex }: QueueItemProps) {
     () => pockestState?.autoQueue && !pockestState?.paused ? 1 : 0,
     [pockestState?.autoQueue, pockestState?.paused],
   );
-  const canAffordEgg = React.useMemo(() => {
-    const planEgg = planQueueItem?.monsterId === -1
+  const planEgg = React.useMemo(
+    () => planQueueItem?.monsterId === -1
       ? pockestGetters.getPlanIdEgg(pockestState, planQueueItem?.planId)
-      : pockestGetters.getMonsterEgg(pockestState, planQueueItem?.monsterId);
-    if (planEgg && (planEgg.unlock || (planEgg?.buckler_point && planEgg?.buckler_point <= (pockestState?.bucklerBalance || 0)))) return true;
-    return false;
-  }, [pockestState, planQueueItem?.monsterId, planQueueItem?.planId]);
+      : pockestGetters.getMonsterEgg(pockestState, planQueueItem?.monsterId),
+    [pockestState, planQueueItem],
+  );
+  const estimatedBalance = React.useMemo(
+    () => {
+      const previousCosts = pockestState?.planQueue?.slice(0, queueIndex).reduce((sum, item) => {
+        const egg = item.monsterId === -1
+          ? pockestGetters.getPlanIdEgg(pockestState, item.planId)
+          : pockestGetters.getMonsterEgg(pockestState, item.monsterId);
+        const eggCost = egg?.unlock ? 0 : (egg?.buckler_point || Infinity);
+        return sum + eggCost;
+      }, 0);
+      return pockestState?.bucklerBalance - previousCosts;
+    },
+    [pockestState, queueIndex],
+  );
+  const canAffordEgg = React.useMemo(
+    () => planEgg && (planEgg.unlock || ((planEgg?.buckler_point || Infinity) <= estimatedBalance)),
+    [planEgg, estimatedBalance],
+  );
   React.useEffect(() => {
     if (queueIndex <= editableStartIndex) setEditMode(false);
   }, [editableStartIndex, queueIndex]);
@@ -89,13 +104,22 @@ function QueueItem({ queueIndex }: QueueItemProps) {
           </>
         ) : (
           <>
+            {!canAffordEgg && (
+              <>
+                <span className="PockestToolTip PockestToolTip--right PockestToolTip--bottom">
+                  <span className="QueueItemLabel-cantAfford">❗</span>
+                  <span className="PockestToolTip-text">
+                    Your <em>Buckler point</em> balance may be insufficient to cover this egg purchase ({planEgg?.buckler_point}) once it is reached in the queue.<br />
+                    This is based on your estimated balance at this point in the queue ({Math.max(0, estimatedBalance ?? 0)}).
+                  </span>
+                </span>
+                {' '}
+              </>
+            )}
             <span
-              className={classNames('QueueItemLabel', {
-                'QueueItemLabel--cantAfford': !canAffordEgg,
-              })}
+              className="QueueItemLabel"
             >
               {pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}
-              {!canAffordEgg && ('💰')}
             </span>
             <button
               type="button"
@@ -127,7 +151,7 @@ function QueueItem({ queueIndex }: QueueItemProps) {
           </>
         )}
       </div>
-    </QueueItemProvider>
+    </QueueItemProvider >
   );
 }
 

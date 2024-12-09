@@ -14,7 +14,7 @@ function QueueItemEditor() {
   } = usePockestContext();
   const {
     queueItem,
-    setQueueItem,
+    updateQueueItem,
     saveQueueItemToPockestState,
   } = React.useContext(QueueItemContext);
   return (
@@ -29,8 +29,7 @@ function QueueItemEditor() {
             className="PockestInput"
             onChange={(e) => {
               if (!pockestDispatch || !queueItem) return;
-              setQueueItem({
-                ...queueItem,
+              updateQueueItem({
                 planId: e.target.value,
               });
             }}
@@ -42,8 +41,7 @@ function QueueItemEditor() {
             className="PockestInput"
             onChange={(e) => {
               if (!pockestDispatch || !queueItem) return;
-              setQueueItem({
-                ...queueItem,
+              updateQueueItem({
                 statPlanId: e.target.value,
               });
             }}

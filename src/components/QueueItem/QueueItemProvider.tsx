@@ -3,6 +3,7 @@ import React from 'react';
 import { QueueItemContext } from './QueueItemContext';
 import { pockestActions, usePockestContext } from '../../contexts/PockestContext';
 import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import parsePlanId from '../../utils/parsePlanId';
 
 // TYPES
 interface QueueItemProviderProps {
@@ -23,7 +24,23 @@ export function QueueItemProvider({
     () => pockestState.planQueue.findIndex((item) => item.id === planQueueItem.id),
     [pockestState.planQueue, planQueueItem],
   );
-
+  const updateQueueItem = React.useCallback((newQueueItem: Partial<PlanQueueItem>) => {
+    const item = {
+      ...localPlanQueueItem,
+      ...newQueueItem,
+      id: localPlanQueueItem.id,
+    }
+    const monster = pockestState.allMonsters.find((m) => m.monster_id === item.monsterId);
+    if ((item.planAge === 5 && monster?.unlock) || (item.planAge === 6 && monster?.memento_flg)) {
+      item.monsterId = -1;
+    }
+    if (newQueueItem.monsterId) {
+      item.planId = monster?.planId || '';
+      const parsedPlanId = parsePlanId(item.planId);
+      item.statPlanId = monster?.statPlan || parsedPlanId?.primaryStatLetter.repeat(6) || '';
+    }
+    return setLocalPlanQueueItem(item);
+  }, [localPlanQueueItem, pockestState.allMonsters]);
   const saveQueueItemToPockestState = React.useCallback(() => {
     if (!pockestDispatch) return;
     const planQueue: PlanQueueItem[] = [
@@ -38,11 +55,11 @@ export function QueueItemProvider({
 
   // wrap value in memo so we only re-render when necessary
   const providerValue = React.useMemo(() => ({
+    planQueueItemIndex,
     queueItem: localPlanQueueItem,
-    setQueueItem: setLocalPlanQueueItem,
-    resetQueueItem: () => setLocalPlanQueueItem(planQueueItem),
+    updateQueueItem,
     saveQueueItemToPockestState,
-  }), [planQueueItem, localPlanQueueItem, setLocalPlanQueueItem, saveQueueItemToPockestState]);
+  }), [localPlanQueueItem, planQueueItemIndex, setLocalPlanQueueItem, saveQueueItemToPockestState]);
 
   return (
     <QueueItemContext.Provider value={providerValue}>

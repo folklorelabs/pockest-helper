@@ -16,7 +16,7 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
   } = usePockestContext();
   const {
     queueItem,
-    setQueueItem,
+    updateQueueItem,
   } = React.useContext(QueueItemContext);
   const targetableMonsters = React.useMemo(
     () => !queueItem ? [] : pockestGetters.getTargetableMonsters(pockestState, queueItem?.planAge)
@@ -30,8 +30,7 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
       onChange={(e) => {
         if (!pockestDispatch || !queueItem) return;
         const monsterId = e.target.value ? parseInt(e.target.value, 10) : -1;
-        setQueueItem({
-          ...queueItem,
+        updateQueueItem({
           monsterId,
         });
       }}

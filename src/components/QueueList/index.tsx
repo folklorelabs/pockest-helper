@@ -7,8 +7,8 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import QueueItem from '../QueueItem';
-import './index.css';
 import parsePlanId from '../../utils/parsePlanId';
+import './index.css';
 
 function QueueList() {
   const {

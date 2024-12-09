@@ -25,15 +25,14 @@ function QueueItemAgeSelect({ disabled }: QueueItemAgeSelectProps) {
   } = usePockestContext();
   const {
     queueItem,
-    setQueueItem,
+    updateQueueItem,
   } = React.useContext(QueueItemContext);
   return (
     <select
       className="PockestSelect"
       onChange={(e) => {
         if (!pockestDispatch || !queueItem) return;
-        setQueueItem({
-          ...queueItem,
+        updateQueueItem({
           planAge: parseInt(e.target.value, 10),
         })
       }}
