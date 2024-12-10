@@ -176,7 +176,6 @@ export function PockestProvider({
 
       // Buy egg if autoQueueing and no existing monster!
       if (autoQueue && !pockestState?.data?.monster) {
-        const nextQueueItem = pockestState?.planQueue[0];
 
         // remove stale queue items
         const filteredPlanQueue = pockestState?.planQueue.filter((queueItem) => {
@@ -190,6 +189,7 @@ export function PockestProvider({
         }
 
         // identify egg to buy
+        const nextQueueItem = pockestState?.planQueue[0];
         const planEgg = nextQueueItem?.monsterId === -1
           ? pockestGetters.getPlanIdEgg(pockestState, nextQueueItem?.planId)
           : pockestGetters.getMonsterEgg(pockestState, nextQueueItem?.monsterId);
