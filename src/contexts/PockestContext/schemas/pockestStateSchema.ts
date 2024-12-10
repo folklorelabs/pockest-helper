@@ -14,7 +14,6 @@ const pockestStateSchema = z.object({
   statPlanId: statPlanIdSchema,
   planAge: z.number().max(6).min(1),
   planQueue: z.array(planQueueItemSchema),
-  planQueueItemId: z.string().nullable().optional(),
   data: statusSchema.nullable().optional(),
   allMonsters: z.array(monsterSchema),
   allHashes: z.array(sheetHashSchema),
