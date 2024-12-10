@@ -174,8 +174,11 @@ export function PockestProvider({
         pockestDispatch(pockestActions.pockestPause(true));
       }
 
-      // Remove stale queue items
-      if (pockestState?.planQueue?.length) {
+      // Buy egg if autoQueueing and no existing monster!
+      if (autoQueue && !pockestState?.data?.monster) {
+        const nextQueueItem = pockestState?.planQueue[0];
+
+        // remove stale queue items
         const filteredPlanQueue = pockestState?.planQueue.filter((queueItem) => {
           const queueItemMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === queueItem?.monsterId);
           return !(queueItemMonster?.unlock && queueItem?.planAge === 5)
@@ -185,11 +188,6 @@ export function PockestProvider({
           pockestDispatch(pockestActions.pockestSettings({ planQueue: filteredPlanQueue }));
           return;
         }
-      }
-
-      // Buy egg if autoQueueing and no existing monster!
-      if (autoQueue && !pockestState?.data?.monster) {
-        const nextQueueItem = pockestState?.planQueue[0];
 
         // identify egg to buy
         const planEgg = nextQueueItem?.monsterId === -1
