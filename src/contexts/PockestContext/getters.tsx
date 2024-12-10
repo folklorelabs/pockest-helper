@@ -468,10 +468,9 @@ export function getAutoSettings(state: PockestState, data?: BucklerStatusData | 
   const isMonsterGone = isMonsterDead(state, data)
     || isMonsterDeparted(state, data)
     || isMonsterMissing(state, data);
-  const shouldReset = isMonsterGone && !isAutoQueue;
-  if (shouldReset) {
+  if (isMonsterGone) {
     newSettings.autoPlan = true;
-    newSettings.paused = true;
+    newSettings.paused = !isAutoQueue;
     newSettings.statLog = [];
     newSettings.eggId = null;
     newSettings.eggTimestamp = null;
