@@ -54,9 +54,9 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
       value={`${queueItem?.monsterId}`}
       disabled={!!disabled}
     >
-      <option key="custom" value="-1">
+      {/* <option key="custom" value="-1">
         [Custom Plan]
-      </option>
+      </option> */}
       {targetableMonsters.map((monster) => {
         const targetEgg = pockestGetters.getMonsterEgg(pockestState, monster?.monster_id);
         return (
