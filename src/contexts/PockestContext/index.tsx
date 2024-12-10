@@ -147,24 +147,6 @@ export function PockestProvider({
     };
   }, [pockestState?.loading, refreshStatus]);
 
-  // Queue manager
-  React.useEffect(() => {
-    if (!pockestState?.initialized
-      || pockestState?.loading
-      || pockestState?.error
-      || pockestState?.invalidSession
-    ) return;
-    if (!pockestState?.planQueue?.length) return;
-    const curQueueItem = pockestState?.planQueue[0];
-    const curQueueItemMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === curQueueItem?.monsterId);
-    const completedQueueItem = (curQueueItemMonster?.unlock && curQueueItem?.planAge === 5)
-      || (curQueueItemMonster?.memento_flg && curQueueItem?.planAge === 6);
-    if (completedQueueItem) {
-      // remove this item from queue
-      pockestDispatch(pockestActions.pockestSettings({ planQueue: pockestState?.planQueue.slice(1) }));
-    }
-  }, [pockestState]);
-
   // Lifecycle loop
   React.useEffect(() => {
     if (!pockestState?.initialized
@@ -192,9 +174,24 @@ export function PockestProvider({
         pockestDispatch(pockestActions.pockestPause(true));
       }
 
+      // Remove stale queue items
+      if (pockestState?.planQueue?.length) {
+        const filteredPlanQueue = pockestState?.planQueue.filter((queueItem) => {
+          const queueItemMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === queueItem?.monsterId);
+          return !(queueItemMonster?.unlock && queueItem?.planAge === 5)
+            && !(queueItemMonster?.memento_flg && queueItem?.planAge === 6);
+        });
+        if (filteredPlanQueue.length !== pockestState?.planQueue.length) {
+          pockestDispatch(pockestActions.pockestSettings({ planQueue: filteredPlanQueue }));
+          return;
+        }
+      }
+
       // Buy egg if autoQueueing and no existing monster!
       if (autoQueue && !pockestState?.data?.monster) {
         const nextQueueItem = pockestState?.planQueue[0];
+
+        // identify egg to buy
         const planEgg = nextQueueItem?.monsterId === -1
           ? pockestGetters.getPlanIdEgg(pockestState, nextQueueItem?.planId)
           : pockestGetters.getMonsterEgg(pockestState, nextQueueItem?.monsterId);
@@ -203,6 +200,8 @@ export function PockestProvider({
           pockestDispatch([ACTION_TYPES.ERROR, `Unable to identify the correct egg to purchase in planId (${nextQueueItem?.planId}). Stopping queue.`]);
           return;
         }
+
+        // check if we can afford the egg
         const eggPrice = planEgg?.buckler_point || Infinity;
         const canAfford = planEgg?.unlock || (pockestState?.bucklerBalance && pockestState?.bucklerBalance >= eggPrice);
         if (!canAfford) {
@@ -210,6 +209,8 @@ export function PockestProvider({
           pockestDispatch([ACTION_TYPES.ERROR, 'Cannot afford egg. Stopping queue.']);
           return;
         }
+
+        // buy the egg
         pockestDispatch(pockestActions.pockestLoading());
         pockestDispatch(await pockestActions.pockestSelectEgg(planEgg.id));
         return;
