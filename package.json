@@ -1,6 +1,7 @@
 {
   "name": "pockest-helper",
   "version": "1.2.7-rc.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build:zip": "node ./scripts/zipExtension.cjs",
