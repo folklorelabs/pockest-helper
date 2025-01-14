@@ -49,7 +49,7 @@ export default function getActionResultString({ pockestState, result, isRelTime 
     if (logType === 'cleaning') return [`💩${result?.garbageBefore || 0} → 0`];
     if (logType === 'meal') return [`❤️${(result?.stomach || 0) - 1} → ${result?.stomach || 0}`];
     if (logType === 'training') return [`+${result?.up_status}${STAT_ICON[result?.type]}`];
-    if (logType === 'evolution_failure') return [`${result?.planId}`, `P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`, `MEMS: ${result?.mementosOwned.map((mId) => pockestState?.allMonsters.find((m) => m.monster_id === mId)).join('/')}`];
+    if (logType === 'evolution_failure') return [`${result?.planId}`, `P: ${result?.power}`, `S: ${result?.speed}`, `T: ${result?.technic}`, `MEMS: ${result?.mementosOwned.map((mId) => pockestState?.allMonsters.find((m) => m.monster_id === mId)?.name_en).join('/')}`];
     if (logType === 'exchange') {
       return [
         result?.is_spmatch && '🔥fever',
