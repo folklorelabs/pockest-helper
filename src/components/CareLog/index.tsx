@@ -19,7 +19,7 @@ interface CareLogProps {
 
 const CareLog: React.FC<CareLogProps> = ({
   title = 'Log',
-  logTypes = ['cleaning', 'meal', 'training', 'exchange', 'age', 'evolution', 'departure', 'death', 'hatching', 'cure', 'error', 'evolution_failure'],
+  logTypes = ['cleaning', 'meal', 'training', 'trainingSkip', 'exchange', 'age', 'evolution', 'departure', 'death', 'hatching', 'cure', 'error', 'evolution_failure'],
   rows = 12,
   allowClear = true,
   onlyDiscoveries = false,

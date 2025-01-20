@@ -41,6 +41,7 @@ const actionSchema = z.union([
   z.tuple([z.literal(ACTION_TYPES.EVENT_CURE), statusPayloadSchema.extend({
     data: cureStatusSchema,
   })]),
+  z.tuple([z.literal(ACTION_TYPES.SKIP_TRAINING)]),
   z.tuple([z.literal(ACTION_TYPES.REFRESH_STATUS), statusRefreshPayloadSchema]),
   z.tuple([z.literal(ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS), statusRefreshPayloadSchema.extend({
     data: evolutionStatusSchema,

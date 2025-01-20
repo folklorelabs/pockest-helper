@@ -148,6 +148,21 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
         ],
         ...getAutoSettings(state, payload?.data),
       };
+    case ACTION_TYPES.SKIP_TRAINING:
+      return {
+        ...state,
+        statLog: [
+          ...state.statLog,
+          0,
+        ],
+        log: [
+          ...state.log,
+          {
+            ...getLogEntry(state),
+            logType: 'trainingSkip',
+          }
+        ],
+      }
     case ACTION_TYPES.REFRESH_EVOLUTION_SUCCESS:
       return {
         ...state,

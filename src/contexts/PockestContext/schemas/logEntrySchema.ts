@@ -63,6 +63,9 @@ const logEntrySchema = z.discriminatedUnion('logType', [
     type: z.number().min(1).max(3),
     up_status: z.number(),
   }),
+  baseLogEntrySchema.extend({
+    logType: z.literal('trainingSkip'),
+  }),
   exchangeLogEntrySchema,
   baseLogEntrySchema.extend({
     logType: z.literal('evolution'),

@@ -191,6 +191,7 @@ export async function pockestClean(): Promise<Action> {
 }
 export async function pockestTrain(type: number): Promise<Action> {
   try {
+    if (type === 0) return [ACTION_TYPES.SKIP_TRAINING];
     const data = await postTrain(type);
     const payload = {
       data,

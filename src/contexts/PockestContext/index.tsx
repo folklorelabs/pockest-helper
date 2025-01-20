@@ -282,7 +282,8 @@ export function PockestProvider({
       }
 
       // Train
-      const attemptToTrain = (autoTrain || autoPlan) && monster && stat && !isStunned;
+      const targetMonsterStat = pockestGetters.getTargetMonsterCurrentStat(pockestState);
+      const attemptToTrain = !isStunned && stat && (autoTrain || (autoPlan && targetMonsterStat));
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
       const willTrain = attemptToTrain && nextTrainingTime && now >= nextTrainingTime;

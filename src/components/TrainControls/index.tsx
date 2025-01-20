@@ -71,7 +71,7 @@ function TrainControls() {
       <Timer label="Next Training" timestamp={trainingTimer} />
       <LogCountLine
         title="Trainings"
-        logTypes={['training']}
+        logTypes={['training', 'trainingSkip']}
       />
     </div>
   );

@@ -1,1 +1,1 @@
-export default /^[TSP]{0,14}$/;
+export default /^[TSPX]{0,14}$/;
