@@ -466,6 +466,8 @@ export function getAutoPlanSettings(state: PockestState) {
 export function getAutoSettings(state: PockestState, data?: BucklerStatusData | null, settingsOverride: Settings = {}) {
   let newSettings: Partial<PockestState> = {
     ...settingsOverride,
+    // TODO: re-enable autoQueue
+    autoQueue: false,
   };
   if (newSettings.simpleMode ?? state.simpleMode) {
     newSettings.autoPlan = true;
