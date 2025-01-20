@@ -151,6 +151,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
     case ACTION_TYPES.SKIP_TRAINING:
       return {
         ...state,
+        loading: false,
         statLog: [
           ...state.statLog,
           0,
