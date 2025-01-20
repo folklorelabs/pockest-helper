@@ -131,8 +131,7 @@ function App() {
       {(showLog && !minimized) ? (
         <LogPanel>
           <CareLog title="Care Log" rows={22} />
-          {/* // TODO: re-enable autoQueue
-          <QueueLogEditor /> */}
+          <QueueLogEditor />
           <MatchDiscoveryLog title="Newly Discovered Fever Matches" rows={3} />
           {pockestState?.autoPlan ? (<PlanLog title="Preset Plan" rows={10} />) : ''}
           <CompletionLog />
