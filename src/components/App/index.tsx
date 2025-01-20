@@ -20,7 +20,7 @@ import { IconChevronDown, IconChevronUp, IconLog } from '../icons';
 import SimpleModeToggle from '../SimpleModeToggle';
 import './index.css';
 import AppErrorAlert from '../AppErrorAlert';
-// import QueueLogEditor from '../QueueLogEditor';
+import QueueLogEditor from '../QueueLogEditor';
 
 function App() {
   const {
