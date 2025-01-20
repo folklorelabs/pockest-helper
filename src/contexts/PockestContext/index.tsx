@@ -64,6 +64,11 @@ export function PockestProvider({
     [pockestState],
   );
 
+  const targetMonsterStat = React.useMemo(
+    () => pockestGetters.getTargetMonsterCurrentStat(pockestState),
+    [pockestState],
+  );
+
   // invalidate session if need be
   React.useEffect(() => {
     if (!pockestState?.initialized || pockestState?.invalidSession) return;
@@ -282,11 +287,19 @@ export function PockestProvider({
       }
 
       // Train
-      const targetMonsterStat = pockestGetters.getTargetMonsterCurrentStat(pockestState);
-      const attemptToTrain = !isStunned && stat && (autoTrain || (autoPlan && targetMonsterStat));
+      const attemptToTrain = !isStunned && typeof stat === 'number' && ((!autoPlan && autoTrain) || (autoPlan && typeof targetMonsterStat === 'number'));
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
       const willTrain = attemptToTrain && nextTrainingTime && now >= nextTrainingTime;
+      console.log({
+        isStunned,
+        stat,
+        statIs: typeof stat === 'number',
+        autoTrain,
+        autoPlan,
+        targetMonsterStat,
+        targetMonsterStatIs: typeof targetMonsterStat === 'number',
+      });
       if (willTrain) {
         log(`TRAIN, stat=${STAT_ID[stat]}`);
         pockestDispatch(pockestActions.pockestLoading());
@@ -324,6 +337,7 @@ export function PockestProvider({
       window.clearInterval(interval);
     };
   }, [
+    targetMonsterStat,
     stat,
     cleanFrequency,
     currentCleanWindow,
