@@ -106,7 +106,7 @@ function AutoPlanControls() {
               <br />
               <em>Training Period (0-14):</em>
               {' '}
-              P, S, T
+              P, S, T, X
               <br />
               <br />
               <em>Example:</em>
