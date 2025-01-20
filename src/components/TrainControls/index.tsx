@@ -42,7 +42,7 @@ function TrainControls() {
           />
           <span className="PockestCheck-text">Train</span>
         </label>
-        {Object.keys(STAT_ID).map((k) => (
+        {Object.keys(STAT_ID).map((k) => k !== '0' && (
           <span key={k} className={`PockestStat PockestStat--${STAT_ID[k]}`}>
             <span className="PockestStat-label">
               {STAT_ID[k].slice(0, 1)}
