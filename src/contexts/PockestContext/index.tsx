@@ -291,15 +291,6 @@ export function PockestProvider({
       const nextTrainingTime = monster?.training_time
         && new Date(monster?.training_time);
       const willTrain = attemptToTrain && nextTrainingTime && now >= nextTrainingTime;
-      console.log({
-        isStunned,
-        stat,
-        statIs: typeof stat === 'number',
-        autoTrain,
-        autoPlan,
-        targetMonsterStat,
-        targetMonsterStatIs: typeof targetMonsterStat === 'number',
-      });
       if (willTrain) {
         log(`TRAIN, stat=${STAT_ID[stat]}`);
         pockestDispatch(pockestActions.pockestLoading());
