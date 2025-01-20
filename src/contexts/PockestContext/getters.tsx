@@ -262,7 +262,7 @@ export function getTargetMonsterNextStat(state: PockestState) {
 
 export function getCareSettings(state: PockestState) {
   if (state?.autoPlan) {
-    const stat = getTargetMonsterCurrentStat(state);
+    const stat = getTargetMonsterCurrentStat(state) || getTargetMonsterNextStat(state) || state.stat;
     const routeSpec = getTargetMonsterCurrentRouteSpec(state);
     if (!routeSpec) return { stat };
     const {
