@@ -239,11 +239,25 @@ export function getTargetMonsterCurrentRouteSpec(state: PockestState) {
 export function getTargetMonsterCurrentStat(state: PockestState) {
   const targetPlan = getTargetMonsterPlan(state);
   const stat = (() => {
-    const curTrainings = state?.log?.filter((entry) => state?.data?.monster?.live_time && entry.timestamp > state?.data?.monster?.live_time && entry.logType === 'training');
+    if (!state?.data?.monster?.live_time) return null;
+    const curTrainings = state?.log?.filter((entry) => state?.data?.monster?.live_time && entry.timestamp > state?.data?.monster?.live_time && entry.logType.includes('training'));
     const numTrains = Math.max(state?.statLog?.length, curTrainings?.length);
-    return targetPlan?.statPlan?.[numTrains] || targetPlan?.primaryStat;
+    const curTrainIndex = Math.floor((Date.now() - state?.data?.monster?.live_time) / (12 * 1000 * 60 * 60));
+    if (numTrains > curTrainIndex) return null;
+    return parseInt(targetPlan?.statPlan?.[curTrainIndex] ?? targetPlan?.primaryStat, 10);
   })();
-  return stat ? parseInt(stat, 10) : state?.stat;
+  return stat;
+}
+
+export function getTargetMonsterNextStat(state: PockestState) {
+  const targetPlan = getTargetMonsterPlan(state);
+  const stat = (() => {
+    if (!state?.data?.monster?.live_time) return null;
+    const curTrainings = state?.log?.filter((entry) => state?.data?.monster?.live_time && entry.timestamp > state?.data?.monster?.live_time && entry.logType.includes('training'));
+    const numTrains = Math.max(state?.statLog?.length, curTrainings?.length);
+    return parseInt(targetPlan?.statPlan?.[numTrains] ?? targetPlan?.primaryStat, 10);
+  })();
+  return stat;
 }
 
 export function getCareSettings(state: PockestState) {
@@ -429,7 +443,7 @@ export function getAutoPlanSettings(state: PockestState) {
   const statPlanId = getTargetMonsterStatPlanId(state);
   const targetPlan = getTargetMonsterPlan(state);
   const targetPlanSpecs = getTargetMonsterCurrentRouteSpec(state);
-  const stat = getTargetMonsterCurrentStat(state);
+  const stat = getTargetMonsterCurrentStat(state) ?? getTargetMonsterNextStat(state) ?? state.stat;
   return {
     autoPlan: true,
     autoClean: true,

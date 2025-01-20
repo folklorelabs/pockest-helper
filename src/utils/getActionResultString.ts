@@ -30,6 +30,7 @@ export default function getActionResultString({ pockestState, result, isRelTime 
     if (logType === 'cleaning') return 'cleaned';
     if (logType === 'meal') return 'fed';
     if (logType === 'training') return `trained ${STAT_ID[result?.type]}`;
+    if (logType === 'trainingSkip') return `skipped training`;
     if (logType === 'exchange') {
       const b = pockestState?.allMonsters.find((m) => m.monster_id === result?.target_monster_id);
       return `vs ${result?.target_monster_name_en || b?.name_en}`;

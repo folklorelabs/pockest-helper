@@ -11,7 +11,7 @@ interface LogCountLineProps {
   logTypes?: string[];
 }
 
-const LogCountLine: React.FC<LogCountLineProps> = ({ title = 'Log', logTypes = ['cleaning', 'meal', 'training', 'exchange'] }) => {
+const LogCountLine: React.FC<LogCountLineProps> = ({ title = 'Log', logTypes = ['cleaning', 'meal', 'training', 'trainingSkip', 'exchange', 'age', 'evolution', 'departure', 'death', 'hatching', 'cure', 'error', 'evolution_failure'] }) => {
   const {
     pockestState,
   } = usePockestContext();
