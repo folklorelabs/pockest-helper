@@ -361,16 +361,20 @@ export function getCurrentPlanSchedule(state: PockestState) {
     0,
   ) || []);
   interface TrainInterval extends TimeInterval {
+    statId?: string;
     stat?: number;
   }
   const trainSchedule: TrainInterval[] = (Array.from(new Array(14))).reduce((fullSchedule, _unused, index) => {
     const startOffset = (12 * 60 * 60 * 1000) * index;
     if (startOffset > neglectOffset) return fullSchedule;
+    const statId = state?.statPlanId?.split('')?.[index] || state?.planId?.slice(-2, -1);
+    const stat = typeof statId === 'string' ? parseInt(Object.keys(STAT_ID_ABBR)[Object.values(STAT_ID_ABBR).indexOf(statId)], 10) : null;
     return [
       ...fullSchedule,
       {
         start: birth + startOffset,
-        stat: state?.statPlanId?.split('')?.[index] || state?.planId?.slice(-2, -1),
+        statId,
+        stat,
       },
     ];
   }, []);
@@ -632,9 +636,9 @@ export function getPlanLog(state: PockestState) {
       ...w,
     })) ?? []),
     ...(trainSchedule?.map((w) => ({
-      logType: 'training',
+      logType: w.stat === 0 ? 'trainingSkip' : 'training',
       logGrace: 1000 * 60 * 60 * 12,
-      label: `Train ${w.stat}`,
+      label: w.stat === 0 ? 'Training skip' : `Train ${w.statId}`,
       ...w,
     })) ?? []),
     ...(matchSchedule?.map((w) => ({
