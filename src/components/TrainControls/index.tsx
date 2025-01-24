@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   pockestActions,
-  pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { STAT_ID } from '../../constants/stats';
@@ -21,19 +20,12 @@ function TrainControls() {
     if (typeof timer !== 'number' || typeof ageTimer !== 'number' || typeof pockestState?.data?.monster?.age !== 'number') return null;
     return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
-
-  const trainingIntervals = React.useMemo(() => pockestGetters.training.getTrainingIntervals(pockestState), [pockestState]);
-  const curInterval = trainingIntervals.find((interval) => {
-    const now = Date.now();
-    return now >= interval.start && now < interval.end;
-  });
-  const nextInterval = trainingIntervals.find((interval) => curInterval && interval.start === curInterval.end);
-  const shownInterval = curInterval?.trainingLogs?.length ? nextInterval : curInterval;
   const {
     data,
     autoPlan,
     autoTrain,
     paused,
+    stat,
   } = pockestState;
   return (
     <div className="TrainControls">
@@ -64,7 +56,7 @@ function TrainControls() {
         <span className="PockestText">Train Stat</span>
         <select
           className="PockestSelect"
-          value={shownInterval?.stat}
+          value={stat}
           onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({ stat: parseInt(e.target.value, 10) }))}
           disabled={!paused || autoPlan}
         >
