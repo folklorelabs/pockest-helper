@@ -96,9 +96,8 @@ export const departureStatusSchema = baseStatusSchema.extend({
   event: z.literal('departure'),
   memento: z.object({
     hash: z.string(),
-    id: z.number(),
-    name: z.string(),
-    name_en: z.string(),
+    memento_name: z.string(),
+    memento_name_en: z.string(),
   }),
 });
 
