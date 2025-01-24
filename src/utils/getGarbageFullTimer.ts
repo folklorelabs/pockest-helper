@@ -5,7 +5,7 @@ export default function getGarbageFullTimer(pockestState: PockestState) {
   const garbageTimer = getGarbageTimer(pockestState);
   if (!garbageTimer) return null;
   const garbage = pockestState?.data?.monster?.garbage;
-  const garbageLeftFromSmall = garbage ? Math.max(0, 12 - garbage - 1) : 0;
+  const garbageLeftFromSmall = typeof garbage === 'number' ? Math.max(0, 12 - garbage - 1) : 0;
   const poopTimerDiff = garbageLeftFromSmall * GARBAGE_TIME;
   return garbageTimer + poopTimerDiff;
 }
