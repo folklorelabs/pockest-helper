@@ -138,7 +138,7 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
     const isEvoFailureEvent = (() => {
       if (data?.monster?.age && data.monster.age >= 5) return false; // successful evolution already
       if (typeof data?.monster?.live_time === 'number' && Date.now() <= data.monster.live_time + daysToMs(3)) return false; // not evo time yet
-      if (pockestState.evolutionFailed || getCurrentMonsterLogs(pockestState, 'evolution_failure')?.length) return false; // logged already
+      if (pockestState.evolutionFailed || getCurrentMonsterLogs(pockestState, ['evolution_failure'])?.length) return false; // logged already
       return true;
     })();
     if (isEvoFailureEvent) {
@@ -189,8 +189,9 @@ export async function pockestClean(): Promise<Action> {
     return [ACTION_TYPES.ERROR, `[pockestClean] ${error instanceof Error ? error?.message : error}`];
   }
 }
-export async function pockestTrain(type: number): Promise<Action> {
+export async function pockestTrain(type?: number): Promise<Action> {
   try {
+    if (typeof type !== 'number') throw new Error(`Invalid stat type ${type} (${typeof type})`);
     if (type === 0) return [ACTION_TYPES.SKIP_TRAINING];
     const data = await postTrain(type);
     const payload = {
