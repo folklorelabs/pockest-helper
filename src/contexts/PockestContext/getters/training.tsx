@@ -46,3 +46,14 @@ export function getTrainingInterval(pockestState: PockestState, timestamp: numbe
   const matchingInterval = trainingIntervals.find((interval) => interval.start <= timestamp && interval.end > timestamp);
   return matchingInterval;
 }
+
+export function getUpcomingTrainingInterval(pockestState: PockestState) {
+  const trainingIntervals = getTrainingIntervals(pockestState);
+  const curInterval = trainingIntervals.find((interval) => {
+    const now = Date.now();
+    return now >= interval.start && now < interval.end;
+  });
+  const nextInterval = trainingIntervals.find((interval) => curInterval && interval.start === curInterval.end);
+  const upcomingInterval = curInterval?.trainingLogs?.length ? nextInterval : curInterval;
+  return upcomingInterval;
+}

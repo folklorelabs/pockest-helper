@@ -19,7 +19,7 @@ import BucklerMatchResults from '../../../types/BucklerMatchResults';
 import BucklerPotentialMatch from '../../../types/BucklerPotentialMatch';
 import PlanQueueItem from '../types/PlanQueueItem';
 import Monster from '../../../types/Monster';
-import { getTrainingInterval, getTrainingIntervals } from './training';
+import { getTrainingIntervals, getUpcomingTrainingInterval } from './training';
 
 export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData) {
   const mergedData = data ?? pockestState?.data;
@@ -414,7 +414,7 @@ export function getAutoPlanSettings(state: PockestState) {
   const statPlanId = getTargetMonsterStatPlanId(state);
   const targetPlan = getTargetMonsterPlan(state);
   const targetPlanSpecs = getTargetMonsterCurrentRouteSpec(state);
-  const curTrainingInterval = getTrainingInterval(state, Date.now());
+  const upcomingTrainingInterval = getUpcomingTrainingInterval(state);
   return {
     autoPlan: true,
     autoClean: true,
@@ -425,7 +425,7 @@ export function getAutoPlanSettings(state: PockestState) {
     planId: targetPlan?.planId,
     statPlanId,
     planAge: targetPlan?.planAge,
-    stat: curTrainingInterval?.stat,
+    stat: upcomingTrainingInterval?.stat,
     cleanOffset: targetPlanSpecs?.cleanOffset,
     feedOffset: targetPlanSpecs?.feedOffset,
     cleanFrequency: targetPlanSpecs?.cleanFrequency,
