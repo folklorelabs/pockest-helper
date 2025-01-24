@@ -1,24 +1,24 @@
-import { STAT_ABBR, STAT_ID_ABBR } from '../../constants/stats';
-import MONSTER_AGE from '../../constants/MONSTER_AGE';
-import getTimeIntervals, { TimeInterval } from '../../utils/getTimeIntervals';
-import getTotalStats from '../../utils/getTotalStats';
-import getDeathTimer, { STUN_DEATH_OFFSET } from '../../utils/getDeathTimer';
-import { parsePlanId, LEGACY_PLAN_REGEX } from '../../utils/parsePlanId';
-import daysToMs from '../../utils/daysToMs';
-import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
-import getFirstMatchTime from '../../utils/getFirstMatchTime';
-import toDataUrl from '../../utils/toDataUrl';
-import fetchCharSprites from '../../api/fetchCharSprites';
-import { GARBAGE_TIME } from '../../utils/getGarbageTimer';
-import { STOMACH_TIME } from '../../utils/getStomachTimer';
-import { STUN_OFFSET } from '../../utils/getStunTimer';
-import PockestState from './types/PockestState';
-import BucklerStatusData from '../../types/BucklerStatusData';
-import Settings from './types/Settings';
-import BucklerMatchResults from '../../types/BucklerMatchResults';
-import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
-import PlanQueueItem from './types/PlanQueueItem';
-import Monster from '../../types/Monster';
+import { STAT_ABBR, STAT_ID_ABBR } from '../../../constants/stats';
+import MONSTER_AGE from '../../../constants/MONSTER_AGE';
+import getTimeIntervals, { TimeInterval } from '../../../utils/getTimeIntervals';
+import getTotalStats from '../../../utils/getTotalStats';
+import getDeathTimer, { STUN_DEATH_OFFSET } from '../../../utils/getDeathTimer';
+import { parsePlanId, LEGACY_PLAN_REGEX } from '../../../utils/parsePlanId';
+import daysToMs from '../../../utils/daysToMs';
+import getMonsterIdFromHash from '../../../utils/getMonsterIdFromHash';
+import getFirstMatchTime from '../../../utils/getFirstMatchTime';
+import toDataUrl from '../../../utils/toDataUrl';
+import fetchCharSprites from '../../../api/fetchCharSprites';
+import { GARBAGE_TIME } from '../../../utils/getGarbageTimer';
+import { STOMACH_TIME } from '../../../utils/getStomachTimer';
+import { STUN_OFFSET } from '../../../utils/getStunTimer';
+import PockestState from '../types/PockestState';
+import BucklerStatusData from '../../../types/BucklerStatusData';
+import Settings from '../types/Settings';
+import BucklerMatchResults from '../../../types/BucklerMatchResults';
+import BucklerPotentialMatch from '../../../types/BucklerPotentialMatch';
+import PlanQueueItem from '../types/PlanQueueItem';
+import Monster from '../../../types/Monster';
 
 export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData) {
   const mergedData = data ?? pockestState?.data;
@@ -156,10 +156,10 @@ export function getOwnedMementoMonsterNames(state: PockestState) {
     ?.find((m) => m.monster_id === id)?.name_en);
 }
 
-export function getCurrentMonsterLogs(state: PockestState, logType?: string) {
+export function getCurrentMonsterLogs(state: PockestState, logType?: string[]) {
   return state?.log.filter((entry) => {
     if (!state?.data?.monster) return false;
-    if (logType && entry?.logType !== logType) return false;
+    if (!logType?.includes(entry?.logType)) return false;
     return entry.timestamp >= state?.data?.monster?.live_time;
   });
 }
@@ -621,7 +621,7 @@ export function getPlanLog(state: PockestState) {
         logGrace: 1000 * 60 * 60,
         label: `Evolve (${planEvolutions?.[age]?.name_en || '???'})`,
         start: birth + MONSTER_AGE[age],
-        completion: planEvolutions ? !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions?.[age]?.monster_id) : null,
+        completion: planEvolutions ? !!getCurrentMonsterLogs(state, ['evolution']).find((l) => l.monsterId === planEvolutions?.[age]?.monster_id) : null,
       }))),
     ...(cleanSchedule?.map((w) => ({
       logType: 'cleaning',
@@ -650,7 +650,7 @@ export function getPlanLog(state: PockestState) {
   ].map((w: PlanLogEntry) => {
     const completion = w.completion
       ?? !!(
-        getCurrentMonsterLogs(state, w.logType || '').find((l) => l?.timestamp >= w.start
+        getCurrentMonsterLogs(state, [w.logType || '']).find((l) => l?.timestamp >= w.start
           && l?.timestamp < (w.start + (w.logGrace || 0)))
       );
     return {
