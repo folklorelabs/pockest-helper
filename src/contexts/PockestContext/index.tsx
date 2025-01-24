@@ -10,6 +10,7 @@ import {
   getRefreshTimeout,
   setRefreshTimeout,
   REFRESH_TIMEOUT,
+  sessionStateFixes,
 } from './state';
 
 import { STAT_ID } from '../../constants/stats';
@@ -26,6 +27,7 @@ import PockestState from './types/PockestState';
 import REDUCER from './reducer';
 import ACTION_TYPES from './constants/ACTION_TYPES';
 
+sessionStateFixes();
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
 const initialState = initialStateFromStorage || getStateFromLocalStorage();
@@ -48,7 +50,6 @@ export function PockestProvider({
 }: PockestProviderProps) {
   const [pockestState, pockestDispatch] = React.useReducer(REDUCER, initialState);
   const {
-    stat,
     cleanFrequency,
     feedFrequency,
     feedTarget,
@@ -61,11 +62,6 @@ export function PockestProvider({
     currentFeedWindow,
   } = React.useMemo(
     () => pockestGetters.getCurrentPlanScheduleWindows(pockestState),
-    [pockestState],
-  );
-
-  const targetMonsterStat = React.useMemo(
-    () => pockestGetters.getTargetMonsterCurrentStat(pockestState),
     [pockestState],
   );
 
@@ -287,14 +283,14 @@ export function PockestProvider({
       }
 
       // Train
-      const attemptToTrain = !isStunned && typeof stat === 'number' && ((!autoPlan && autoTrain) || (autoPlan && typeof targetMonsterStat === 'number'));
-      const nextTrainingTime = monster?.training_time
-        && new Date(monster?.training_time);
-      const willTrain = attemptToTrain && nextTrainingTime && now >= nextTrainingTime;
+      const curTrainingInterval = pockestGetters.training.getTrainingInterval(pockestState, now.getTime());
+      const alreadyTrained = !!curTrainingInterval?.trainingLogs.length;
+      const bucklerReadyForTraining = monster?.training_time && now.getTime() >= monster?.training_time;
+      const willTrain = autoTrain && !alreadyTrained && !isStunned && curTrainingInterval?.stat && bucklerReadyForTraining;
       if (willTrain) {
-        log(`TRAIN, stat=${STAT_ID[stat]}`);
+        log(`TRAIN, stat=${curTrainingInterval?.stat ? STAT_ID[curTrainingInterval.stat] : null}`);
         pockestDispatch(pockestActions.pockestLoading());
-        pockestDispatch(await pockestActions.pockestTrain(stat));
+        pockestDispatch(await pockestActions.pockestTrain(curTrainingInterval?.stat));
         return;
       }
 
@@ -328,8 +324,6 @@ export function PockestProvider({
       window.clearInterval(interval);
     };
   }, [
-    targetMonsterStat,
-    stat,
     cleanFrequency,
     currentCleanWindow,
     currentFeedWindow,

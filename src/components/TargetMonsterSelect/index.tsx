@@ -4,7 +4,6 @@ import {
   pockestActions,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import { getCurrentMonsterLogs } from '../../contexts/PockestContext/getters';
 
 interface TargetMonsterSelectProps {
   disabled?: boolean | null;
@@ -17,7 +16,7 @@ const TargetMonsterSelect: React.FC<TargetMonsterSelectProps> = ({ disabled }) =
   } = usePockestContext();
   const targetableMonsters = React.useMemo(() => pockestGetters.getCurrentTargetableMonsters(pockestState), [pockestState]);
   const curMonsterNonHatchLogs = React.useMemo(
-    () => getCurrentMonsterLogs(pockestState).filter((l) => l.logType !== 'hatching'),
+    () => pockestGetters.getCurrentMonsterLogs(pockestState).filter((l) => l.logType !== 'hatching'),
     [pockestState],
   );
   if (!targetableMonsters?.length) return '';

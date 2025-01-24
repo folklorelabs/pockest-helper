@@ -1,24 +1,25 @@
-import { STAT_ABBR, STAT_ID_ABBR } from '../../constants/stats';
-import MONSTER_AGE from '../../constants/MONSTER_AGE';
-import getTimeIntervals, { TimeInterval } from '../../utils/getTimeIntervals';
-import getTotalStats from '../../utils/getTotalStats';
-import getDeathTimer, { STUN_DEATH_OFFSET } from '../../utils/getDeathTimer';
-import { parsePlanId, LEGACY_PLAN_REGEX } from '../../utils/parsePlanId';
-import daysToMs from '../../utils/daysToMs';
-import getMonsterIdFromHash from '../../utils/getMonsterIdFromHash';
-import getFirstMatchTime from '../../utils/getFirstMatchTime';
-import toDataUrl from '../../utils/toDataUrl';
-import fetchCharSprites from '../../api/fetchCharSprites';
-import { GARBAGE_TIME } from '../../utils/getGarbageTimer';
-import { STOMACH_TIME } from '../../utils/getStomachTimer';
-import { STUN_OFFSET } from '../../utils/getStunTimer';
-import PockestState from './types/PockestState';
-import BucklerStatusData from '../../types/BucklerStatusData';
-import Settings from './types/Settings';
-import BucklerMatchResults from '../../types/BucklerMatchResults';
-import BucklerPotentialMatch from '../../types/BucklerPotentialMatch';
-import PlanQueueItem from './types/PlanQueueItem';
-import Monster from '../../types/Monster';
+import { STAT_ABBR, STAT_ID_ABBR } from '../../../constants/stats';
+import MONSTER_AGE from '../../../constants/MONSTER_AGE';
+import getTimeIntervals, { TimeInterval } from '../../../utils/getTimeIntervals';
+import getTotalStats from '../../../utils/getTotalStats';
+import getDeathTimer, { STUN_DEATH_OFFSET } from '../../../utils/getDeathTimer';
+import { parsePlanId, LEGACY_PLAN_REGEX } from '../../../utils/parsePlanId';
+import daysToMs from '../../../utils/daysToMs';
+import getMonsterIdFromHash from '../../../utils/getMonsterIdFromHash';
+import getFirstMatchTime from '../../../utils/getFirstMatchTime';
+import toDataUrl from '../../../utils/toDataUrl';
+import fetchCharSprites from '../../../api/fetchCharSprites';
+import { GARBAGE_TIME } from '../../../utils/getGarbageTimer';
+import { STOMACH_TIME } from '../../../utils/getStomachTimer';
+import { STUN_OFFSET } from '../../../utils/getStunTimer';
+import PockestState from '../types/PockestState';
+import BucklerStatusData from '../../../types/BucklerStatusData';
+import Settings from '../types/Settings';
+import BucklerMatchResults from '../../../types/BucklerMatchResults';
+import BucklerPotentialMatch from '../../../types/BucklerPotentialMatch';
+import PlanQueueItem from '../types/PlanQueueItem';
+import Monster from '../../../types/Monster';
+import { getTrainingIntervals, getUpcomingTrainingInterval } from './training';
 
 export function getLogEntry(pockestState: PockestState, data?: BucklerStatusData) {
   const mergedData = data ?? pockestState?.data;
@@ -156,10 +157,10 @@ export function getOwnedMementoMonsterNames(state: PockestState) {
     ?.find((m) => m.monster_id === id)?.name_en);
 }
 
-export function getCurrentMonsterLogs(state: PockestState, logType?: string) {
+export function getCurrentMonsterLogs(state: PockestState, logType?: string[]) {
   return state?.log.filter((entry) => {
     if (!state?.data?.monster) return false;
-    if (logType && entry?.logType !== logType) return false;
+    if (!logType?.includes(entry?.logType)) return false;
     return entry.timestamp >= state?.data?.monster?.live_time;
   });
 }
@@ -236,19 +237,6 @@ export function getTargetMonsterCurrentRouteSpec(state: PockestState) {
   return currentRouteSpec;
 }
 
-export function getTargetMonsterCurrentStat(state: PockestState) {
-  const targetPlan = getTargetMonsterPlan(state);
-  const stat = (() => {
-    if (!state?.data?.monster?.live_time) return null;
-    const curTrainings = state?.log?.filter((entry) => state?.data?.monster?.live_time && entry.timestamp > state?.data?.monster?.live_time && entry.logType.includes('training'));
-    const numTrains = Math.max(state?.statLog?.length, curTrainings?.length);
-    const curTrainIndex = Math.floor((Date.now() - state?.data?.monster?.live_time) / (12 * 1000 * 60 * 60));
-    if (numTrains > curTrainIndex) return null;
-    return parseInt(targetPlan?.statPlan?.[curTrainIndex] ?? targetPlan?.primaryStat, 10);
-  })();
-  return stat;
-}
-
 export function getTargetMonsterNextStat(state: PockestState) {
   const targetPlan = getTargetMonsterPlan(state);
   const stat = (() => {
@@ -262,16 +250,14 @@ export function getTargetMonsterNextStat(state: PockestState) {
 
 export function getCareSettings(state: PockestState) {
   if (state?.autoPlan) {
-    const stat = getTargetMonsterCurrentStat(state) || getTargetMonsterNextStat(state) || state.stat;
     const routeSpec = getTargetMonsterCurrentRouteSpec(state);
-    if (!routeSpec) return { stat };
+    if (!routeSpec) return {};
     const {
       cleanFrequency,
       feedFrequency,
       feedTarget,
     } = routeSpec;
     return {
-      stat,
       cleanFrequency,
       feedFrequency,
       feedTarget,
@@ -360,24 +346,9 @@ export function getCurrentPlanSchedule(state: PockestState) {
     state?.feedFrequency,
     0,
   ) || []);
-  interface TrainInterval extends TimeInterval {
-    stat?: number;
-  }
-  const trainSchedule: TrainInterval[] = (Array.from(new Array(14))).reduce((fullSchedule, _unused, index) => {
-    const startOffset = (12 * 60 * 60 * 1000) * index;
-    if (startOffset > neglectOffset) return fullSchedule;
-    return [
-      ...fullSchedule,
-      {
-        start: birth + startOffset,
-        stat: state?.statPlanId?.split('')?.[index] || state?.planId?.slice(-2, -1),
-      },
-    ];
-  }, []);
   return {
     cleanSchedule,
     feedSchedule,
-    trainSchedule,
   };
 }
 
@@ -443,7 +414,7 @@ export function getAutoPlanSettings(state: PockestState) {
   const statPlanId = getTargetMonsterStatPlanId(state);
   const targetPlan = getTargetMonsterPlan(state);
   const targetPlanSpecs = getTargetMonsterCurrentRouteSpec(state);
-  const stat = getTargetMonsterCurrentStat(state) ?? getTargetMonsterNextStat(state) ?? state.stat;
+  const upcomingTrainingInterval = getUpcomingTrainingInterval(state);
   return {
     autoPlan: true,
     autoClean: true,
@@ -454,7 +425,7 @@ export function getAutoPlanSettings(state: PockestState) {
     planId: targetPlan?.planId,
     statPlanId,
     planAge: targetPlan?.planAge,
-    stat,
+    stat: upcomingTrainingInterval?.stat,
     cleanOffset: targetPlanSpecs?.cleanOffset,
     feedOffset: targetPlanSpecs?.feedOffset,
     cleanFrequency: targetPlanSpecs?.cleanFrequency,
@@ -543,12 +514,12 @@ export function getPlanEvolutions(state: PockestState): Record<string, Monster> 
 export function getPlanLog(state: PockestState) {
   const birth = state?.data?.monster?.live_time;
   if (!birth) return [];
+  const trainSchedule = getTrainingIntervals(state);
   const planSchedule = getCurrentPlanSchedule(state);
   if (!planSchedule) return [];
   const {
     cleanSchedule,
     feedSchedule,
-    trainSchedule,
   } = planSchedule;
   const matchSchedule = getMatchSchedule(state);
   type PlanLogEntry = {
@@ -615,7 +586,7 @@ export function getPlanLog(state: PockestState) {
         logGrace: 1000 * 60 * 60,
         label: `Evolve (${planEvolutions?.[age]?.name_en || '???'})`,
         start: birth + MONSTER_AGE[age],
-        completion: planEvolutions ? !!getCurrentMonsterLogs(state, 'evolution').find((l) => l.monsterId === planEvolutions?.[age]?.monster_id) : null,
+        completion: planEvolutions ? !!getCurrentMonsterLogs(state, ['evolution']).find((l) => l.monsterId === planEvolutions?.[age]?.monster_id) : null,
       }))),
     ...(cleanSchedule?.map((w) => ({
       logType: 'cleaning',
@@ -630,9 +601,9 @@ export function getPlanLog(state: PockestState) {
       ...w,
     })) ?? []),
     ...(trainSchedule?.map((w) => ({
-      logType: 'training',
+      logType: w.stat === 0 ? 'trainingSkip' : 'training',
       logGrace: 1000 * 60 * 60 * 12,
-      label: `Train ${w.stat}`,
+      label: w.stat === 0 ? 'Training skip' : `Train ${w.statId}`,
       ...w,
     })) ?? []),
     ...(matchSchedule?.map((w) => ({
@@ -644,7 +615,7 @@ export function getPlanLog(state: PockestState) {
   ].map((w: PlanLogEntry) => {
     const completion = w.completion
       ?? !!(
-        getCurrentMonsterLogs(state, w.logType || '').find((l) => l?.timestamp >= w.start
+        getCurrentMonsterLogs(state, [w.logType || '']).find((l) => l?.timestamp >= w.start
           && l?.timestamp < (w.start + (w.logGrace || 0)))
       );
     return {

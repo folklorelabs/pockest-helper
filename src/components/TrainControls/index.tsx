@@ -20,13 +20,12 @@ function TrainControls() {
     if (typeof timer !== 'number' || typeof ageTimer !== 'number' || typeof pockestState?.data?.monster?.age !== 'number') return null;
     return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
   }, [pockestState, ageTimer]);
-
   const {
     data,
     autoPlan,
     autoTrain,
-    stat,
     paused,
+    stat,
   } = pockestState;
   return (
     <div className="TrainControls">

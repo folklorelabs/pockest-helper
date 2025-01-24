@@ -143,7 +143,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
             ...getLogEntry(state, payload?.data),
             logType: 'training',
             ...payload?.data?.training,
-            is_ferver: payload?.data?.training?.is_fever,
+            is_fever: payload?.data?.training?.is_fever,
           },
         ],
         ...getAutoSettings(state, payload?.data),

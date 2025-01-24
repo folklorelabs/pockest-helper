@@ -31,6 +31,17 @@ export const exchangeLogEntrySchema = baseLogEntrySchema.extend({
   get_egg_point: z.number(),
 })
 
+export const trainingLogSchema = baseLogEntrySchema.extend({
+  logType: z.literal('training'),
+  is_fever: z.boolean(),
+  type: z.number().min(1).max(3),
+  up_status: z.number(),
+});
+
+export const trainingSkipLogSchema = baseLogEntrySchema.extend({
+  logType: z.literal('trainingSkip'),
+});
+
 const logEntrySchema = z.discriminatedUnion('logType', [
   baseLogEntrySchema.extend({
     logType: z.literal('error'),
@@ -57,15 +68,8 @@ const logEntrySchema = z.discriminatedUnion('logType', [
     result: z.number(),
     type: z.number(),
   }),
-  baseLogEntrySchema.extend({
-    logType: z.literal('training'),
-    is_ferver: z.boolean(),
-    type: z.number().min(1).max(3),
-    up_status: z.number(),
-  }),
-  baseLogEntrySchema.extend({
-    logType: z.literal('trainingSkip'),
-  }),
+  trainingLogSchema,
+  trainingSkipLogSchema,
   exchangeLogEntrySchema,
   baseLogEntrySchema.extend({
     logType: z.literal('evolution'),
