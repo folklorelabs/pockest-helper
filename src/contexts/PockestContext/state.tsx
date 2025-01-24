@@ -39,6 +39,18 @@ const INITIAL_STATE: PockestState = {
   simpleMode: true,
 };
 
+export function sessionStateFixes() {
+  const sessionState = JSON.parse(window.sessionStorage.PockestHelperState);
+  const fixedSessionLog = sessionState.log.map((entry: { logType: string; is_ferver: boolean; }) => entry.logType !== 'training' ? entry : {
+    ...entry,
+    is_fever: entry.is_ferver || false,
+  });
+  window.sessionStorage.setItem('PockestHelperState', JSON.stringify({
+    ...sessionState,
+    log: fixedSessionLog,
+  }));
+}
+
 export function startStorageSession() {
   const sessionId = window.crypto.randomUUID();
   window.sessionStorage.setItem('PockestHelperSession', sessionId);
