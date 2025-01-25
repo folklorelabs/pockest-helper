@@ -39,8 +39,17 @@ const INITIAL_STATE: PockestState = {
   simpleMode: true,
 };
 
-export function sessionStateFixes() {
-  const sessionState = JSON.parse(window.sessionStorage.PockestHelperState);
+export function fixHelperLogFeverBug() {
+  const stateLog = window.localStorage.PockestHelperLog && JSON.parse(window.localStorage.PockestHelperLog);
+  if (!stateLog) return;
+  const fixedStateLog = stateLog.map((entry: { logType: string; is_ferver: boolean; }) => entry.logType !== 'training' ? entry : {
+    ...entry,
+    is_fever: entry.is_ferver || false,
+  });
+  window.localStorage.setItem('PockestHelperLog', JSON.stringify(fixedStateLog));
+
+  const sessionState = window.sessionStorage.PockestHelperState && JSON.parse(window.sessionStorage.PockestHelperState);
+  if (!sessionState) return;
   const fixedSessionLog = sessionState.log.map((entry: { logType: string; is_ferver: boolean; }) => entry.logType !== 'training' ? entry : {
     ...entry,
     is_fever: entry.is_ferver || false,
