@@ -19,7 +19,6 @@ const TargetMonsterSelect: React.FC<TargetMonsterSelectProps> = ({ disabled }) =
     () => pockestGetters.getCurrentMonsterLogs(pockestState).filter((l) => l.logType !== 'hatching'),
     [pockestState],
   );
-  if (!targetableMonsters?.length) return '';
   return (
     <select
       className="PockestSelect"
