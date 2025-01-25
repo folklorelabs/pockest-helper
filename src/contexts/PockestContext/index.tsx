@@ -10,7 +10,7 @@ import {
   getRefreshTimeout,
   setRefreshTimeout,
   REFRESH_TIMEOUT,
-  sessionStateFixes,
+  fixHelperLogFeverBug,
 } from './state';
 
 import { STAT_ID } from '../../constants/stats';
@@ -27,7 +27,7 @@ import PockestState from './types/PockestState';
 import REDUCER from './reducer';
 import ACTION_TYPES from './constants/ACTION_TYPES';
 
-sessionStateFixes();
+fixHelperLogFeverBug();
 startStorageSession();
 const initialStateFromStorage = getStateFromSessionStorage();
 const initialState = initialStateFromStorage || getStateFromLocalStorage();
