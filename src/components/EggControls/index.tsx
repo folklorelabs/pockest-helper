@@ -46,11 +46,11 @@ function EggControls() {
             <em>{userBucklerPointBalance ?? 0}</em>
             .
           </span>
-          {planEgg?.unlock ? 0 : (planEgg?.buckler_point ?? 0)}
+          {userBucklerPointBalance ?? 0}
           {' '}
           /
           {' '}
-          {userBucklerPointBalance ?? 0}
+          {planEgg?.unlock ? 0 : (planEgg?.buckler_point ?? 0)}
         </span>
       </div>
     </div>
