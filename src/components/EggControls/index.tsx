@@ -50,7 +50,7 @@ function EggControls() {
           {' '}
           /
           {' '}
-          {planEgg?.unlock ? 0 : (planEgg?.buckler_point ?? 0)}
+          {planEgg?.unlock ? 'free (unlocked)' : (planEgg?.buckler_point ?? 0)}
         </span>
       </div>
     </div>
