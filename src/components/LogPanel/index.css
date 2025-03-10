@@ -52,3 +52,12 @@
 .LogPanel-close:hover {
   opacity: 0.6;
 }
+
+.LogPanel-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: calc(100vw - var(--App-pockestHelperWidth));
+  height: 100vh;
+  /* background: rgba(0, 0, 0, 0.5) */
+}

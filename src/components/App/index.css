@@ -4,7 +4,7 @@
   font-size: 1rem;
   line-height: 1.2;
   font-family: "Noto Sans", sans-serif;
-  width: 284px;
+  width: var(--App-pockestHelperWidth);
   transition: 0.5s transform;
   border-top: 4px solid #d5a613;
 }
@@ -17,6 +17,7 @@
   --App-modeToggleOffset: calc(24px + 0.4rem);
   --App-updateOffset: 0rem;
   --App-errorOffset: 0rem;
+  --App-pockestHelperWidth: 284px;
 }
 
 .App--hasUpdate {
