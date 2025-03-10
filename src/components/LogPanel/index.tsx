@@ -15,16 +15,19 @@ function LogPanel({ children }: LogPanelProps) {
     logStyle,
   } = React.useContext(AppContext);
   return (
-    <div className={cx('LogPanel', `LogPanel--${logStyle}`)}>
-      <button
-        className="LogPanel-close"
-        type="button"
-        onClick={() => setShowLog && setShowLog(false)}
-      >
-        «
-      </button>
-      {children}
-    </div>
+    <>
+      <div onClick={() => setShowLog && setShowLog(false)} className="LogPanel-overlay" />
+      <div className={cx('LogPanel', `LogPanel--${logStyle}`)}>
+        <button
+          className="LogPanel-close"
+          type="button"
+          onClick={() => setShowLog && setShowLog(false)}
+        >
+          «
+        </button>
+        {children}
+      </div>
+    </>
   );
 }
 
