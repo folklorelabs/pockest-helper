@@ -46,6 +46,7 @@ const TargetMonsterSelect: React.FC<TargetMonsterSelectProps> = ({ disabled }) =
       {targetableMonsters.map((monster) => (
         <option key={monster?.monster_id} value={monster?.monster_id}>
           {monster?.name_en || monster?.monster_id}
+          {monster?.showMsg ? ` (${monster.showMsg})` : ''}
           {monster?.unlock ? ' ✓' : ''}
           {monster?.memento_flg ? ' ✓' : ''}
         </option>
