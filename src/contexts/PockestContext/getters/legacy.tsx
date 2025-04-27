@@ -49,7 +49,7 @@ export function getTargetableMonsters(state: PockestState, targetAge?: number | 
   const acquiredMementos = getOwnedMementoMonsterIds(state);
   return state?.allMonsters
     ?.filter((m) => {
-      if (!m.confirmed) return false;
+      if (!m.show) return false;
       if (m?.requiredMemento && !acquiredMementos.includes(m.requiredMemento)) return false;
       if (m.age < 5) return false;
       if (targetAge === 5 && m.unlock) return false;

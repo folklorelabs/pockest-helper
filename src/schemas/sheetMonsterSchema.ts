@@ -13,6 +13,8 @@ const sheetMonsterSchema = z.object({
   matchSusNormal: z.array(z.number()).optional(),
   matchUnknown: z.array(z.number()).optional(),
   confirmed: z.number().optional(),
+  show: z.number().optional(),
+  showMsg: z.string().optional(),
 });
 
 export default sheetMonsterSchema;
