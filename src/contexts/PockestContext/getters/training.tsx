@@ -4,6 +4,7 @@ import PockestState from '../types/PockestState';
 import { getCurrentMonsterLogs } from './legacy';
 import parsePlanId from '../../../utils/parsePlanId';
 import { STAT_ID_ABBR } from '../../../constants/stats';
+import MONSTER_AGE from '../../../constants/MONSTER_AGE';
 
 type TrainingInterval = {
   start: number;
@@ -16,7 +17,7 @@ type TrainingInterval = {
 export function getTrainingIntervals(pockestState: PockestState): TrainingInterval[] {
   if (!pockestState?.data?.monster) return [];
   const trainingWindow = 12 * 60 * 60 * 1000;
-  const monsterLifetime = 7 * 24 * 60 * 60 * 1000;
+  const monsterLifetime = MONSTER_AGE[pockestState?.planAge ?? 6];
   const numTrainings = monsterLifetime / trainingWindow;
   const monsterBirth = pockestState?.data?.monster.live_time;
   const allTrainingLogs = getCurrentMonsterLogs(pockestState, ['training', 'trainingSkip']);
