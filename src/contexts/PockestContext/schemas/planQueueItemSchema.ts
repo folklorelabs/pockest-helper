@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import planIdSchema from '../../../schemas/planIdSchema';
 import statPlanIdSchema from '../../../schemas/statPlanIdSchema';
+import PlanQueueFailBehavior from '../types/PlanQueueFailBehavior';
+import PlanQueueSuccessBehavior from '../types/PlanQueueSuccessBehavior';
 
 const planQueueItemSchema = z.object({
   id: z.string().uuid(),
@@ -8,8 +10,8 @@ const planQueueItemSchema = z.object({
   planId: planIdSchema,
   statPlanId: statPlanIdSchema,
   planAge: z.number().max(6).min(1),
-  onFail: z.enum(['retry', 'skip'] as const).default('retry'),
-  onSuccess: z.enum(['continue', 'pause'] as const).default('continue'),
+  onFail: z.nativeEnum(PlanQueueFailBehavior).default(PlanQueueFailBehavior.Retry),
+  onSuccess: z.nativeEnum(PlanQueueSuccessBehavior).default(PlanQueueSuccessBehavior.Continue),
 });
 
 export default planQueueItemSchema;

@@ -7,19 +7,21 @@ import {
 import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
 import { QueueItemProvider } from './QueueItemProvider';
 import QueueItemEditor from './QueueItemEditor';
+import { SortableItem } from '../SortableItem';
 import './index.css';
 
 interface QueueItemProps {
-  queueIndex: number;
+  item: SortableItem;
 }
 
-function QueueItem({ queueIndex }: QueueItemProps) {
+function QueueItem({ item }: QueueItemProps) {
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const planQueueItem = item as PlanQueueItem;
+  const queueIndex = pockestState.planQueue.findIndex(({ id }) => id === planQueueItem.id);
   const [editMode, setEditMode] = React.useState(false);
-  const planQueueItem = pockestState?.planQueue?.[queueIndex];
   const editableStartIndex = React.useMemo(
     () => pockestState?.autoQueue && !pockestState?.paused ? 1 : 0,
     [pockestState?.autoQueue, pockestState?.paused],
