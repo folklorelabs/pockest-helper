@@ -2,7 +2,7 @@ import React from 'react';
 import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
 import { getMonsterById } from '../../contexts/PockestContext/getters/monster';
 import { usePockestContext } from '../../contexts/PockestContext';
-import { SortableItem } from '../PresetQueue/SortableItem';
+import { SortableItem } from '../SortableItem';
 
 type PresetQueueItemProps = {
     item: SortableItem;

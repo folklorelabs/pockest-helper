@@ -8,6 +8,8 @@ const planQueueItemSchema = z.object({
   planId: planIdSchema,
   statPlanId: statPlanIdSchema,
   planAge: z.number().max(6).min(1),
+  onFail: z.enum(['retry', 'skip'] as const).default('retry'),
+  onSuccess: z.enum(['continue', 'pause'] as const).default('continue'),
 });
 
 export default planQueueItemSchema;
