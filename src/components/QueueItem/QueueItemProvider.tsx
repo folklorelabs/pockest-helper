@@ -31,10 +31,7 @@ export function QueueItemProvider({
       id: localPlanQueueItem.id,
     }
     const monster = pockestState.allMonsters.find((m) => m.monster_id === item.monsterId);
-    if ((item.planAge === 5 && monster?.unlock) || (item.planAge === 6 && monster?.memento_flg)) {
-      item.monsterId = -1;
-    }
-    if (newQueueItem.monsterId) {
+    if (newQueueItem?.monsterId && newQueueItem.monsterId >= 0) {
       item.planId = monster?.planId || '';
       const parsedPlanId = parsePlanId(item.planId);
       item.statPlanId = monster?.statPlan || parsedPlanId?.primaryStatLetter.repeat(6) || '';

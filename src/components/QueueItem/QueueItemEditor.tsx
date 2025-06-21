@@ -19,6 +19,7 @@ function QueueItemEditor() {
     saveQueueItemToPockestState,
   } = React.useContext(QueueItemContext);
   const isDirty = React.useMemo(() => JSON.stringify(planQueueItem) === JSON.stringify(queueItem), [planQueueItem, queueItem]);
+  console.log({queueItem});
   return (
     <div className="QueueItemEditor">
       <QueueItemMonsterSelect />
@@ -36,7 +37,7 @@ function QueueItemEditor() {
               });
             }}
             value={queueItem?.planId}
-            pattern={`^[\\d*][ABC][LR][${Object.keys(STAT_ABBR).join('')}][1-6]$`}
+            pattern={`^[\\d]*[ABC][LR][${Object.keys(STAT_ABBR).join('')}][1-6]$`}
             required={true}
           />
           <input

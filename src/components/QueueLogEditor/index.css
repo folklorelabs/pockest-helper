@@ -25,6 +25,10 @@
   text-decoration: none;
   background: transparent;
   line-height: 1em;
+  padding: 0 0.1rem;
+}
+
+.QueueLogEditor .QueueItemLabel {
   padding: 0 0.4rem;
 }
 
