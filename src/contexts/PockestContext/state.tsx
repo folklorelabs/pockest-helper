@@ -8,6 +8,7 @@ const INITIAL_STATE: PockestState = {
   statPlanId: '',
   planAge: 6,
   planQueue: [],
+  planQueueCompletion: [],
   data: null,
   allMonsters: [],
   allHashes: [],
@@ -97,7 +98,7 @@ export function saveStateToLocalStorage(state: PockestState) {
   window.localStorage.setItem('PockestHelperLog', JSON.stringify(state?.log));
 }
 
-export function getStateFromSessionStorage(): PockestState {
+export function getStateFromSessionStorage(): PockestState | null {
   const stateStrFromStorage = window.sessionStorage.getItem('PockestHelperState');
   const stateFromStorage = stateStrFromStorage && JSON.parse(stateStrFromStorage);
   return !stateFromStorage?.invalidSession ? stateFromStorage : null;
