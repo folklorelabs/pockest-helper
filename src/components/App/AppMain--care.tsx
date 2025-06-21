@@ -1,4 +1,3 @@
-import PresetQueue from '../PresetQueue';
 import CleanControls from '../CleanControls';
 import FeedControls from '../FeedControls';
 import MatchControls from '../MatchControls';
@@ -16,7 +15,6 @@ function AppMain() {
       content={(
         <>
           <AutoPlanControls />
-          <PresetQueue />
           <hr />
           <StatusTimers />
           <hr />

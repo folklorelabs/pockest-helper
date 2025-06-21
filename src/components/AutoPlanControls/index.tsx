@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   usePockestContext,
   pockestActions,
@@ -7,6 +8,7 @@ import AutoPlanSettingInput from '../AutoPlanSettingInput';
 import TargetAgeSelect from '../TargetAgeSelect';
 import AutoPlanControlsPlanLabel from './AutoPlanControls-planLabel';
 import AutoPlanControlsStatPlanLabel from './AutoPlanControls-statPlanLabel';
+import { AppContext } from '../../contexts/AppContext';
 import './index.css';
 
 function AutoPlanControls() {
@@ -14,6 +16,7 @@ function AutoPlanControls() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const { setShowLog } = React.useContext(AppContext);
   const {
     autoPlan,
     paused,
@@ -51,6 +54,18 @@ function AutoPlanControls() {
       <div className="PockestLine">
         <span className="PockestText">Target Age</span>
         <TargetAgeSelect />
+      </div>
+      <div className="LogCountLine PockestLine">
+        <span className="PockestText">
+          Preset Queue
+        </span>
+        <button
+          type="button"
+          className="PockestText PockestLine-value PockestLink"
+          onClick={() => setShowLog && setShowLog(true)}
+        >
+          {pockestState.planQueue.length ?? '--'}
+        </button>
       </div>
     </div>
   );

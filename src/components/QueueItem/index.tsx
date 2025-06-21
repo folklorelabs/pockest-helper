@@ -7,20 +7,26 @@ import {
 import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
 import { QueueItemProvider } from './QueueItemProvider';
 import QueueItemEditor from './QueueItemEditor';
-import { SortableItem } from '../SortableItem';
+import { SortableItemComponent } from '../SortableItem';
 import './index.css';
 
-interface QueueItemProps {
-  item: SortableItem;
-}
+type ComponentProps = React.ComponentProps<SortableItemComponent>;
+type ComponentReturn = ReturnType<SortableItemComponent>;
 
-function QueueItem({ item }: QueueItemProps) {
+function QueueItem({
+  item,
+  dragAttributes,
+  dragListeners,
+}: ComponentProps): ComponentReturn {
+  const planQueueItem = item as PlanQueueItem;
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const planQueueItem = item as PlanQueueItem;
-  const queueIndex = pockestState.planQueue.findIndex(({ id }) => id === planQueueItem.id);
+  const queueIndex = React.useMemo(
+    () => pockestState.planQueue.findIndex(({ id }) => id === planQueueItem.id),
+    [pockestState],
+  );
   const [editMode, setEditMode] = React.useState(false);
   const editableStartIndex = React.useMemo(
     () => pockestState?.autoQueue && !pockestState?.paused ? 1 : 0,
@@ -55,6 +61,9 @@ function QueueItem({ item }: QueueItemProps) {
   return (
     <QueueItemProvider planQueueItem={planQueueItem}>
       <div className="QueueItem">
+        <button className="QueueItem-dragHandle" {...dragAttributes} {...dragListeners}>
+          ⠿
+        </button>
         <button
           type="button"
           className="PockestLink QueueItem-moveUp"
@@ -142,6 +151,7 @@ function QueueItem({ item }: QueueItemProps) {
                   ...pockestState.planQueue.slice(0, queueIndex),
                   ...pockestState.planQueue.slice(queueIndex + 1),
                 ];
+                console.log({planQueue, queueIndex});
                 pockestDispatch(pockestActions.pockestPlanSettings({
                   planQueue,
                 }));

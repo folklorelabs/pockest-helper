@@ -6,13 +6,11 @@ import {
   pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import QueueItem from '../QueueItem';
 import parsePlanId from '../../utils/parsePlanId';
-import SortableList from '../SortableList';
-import './index.css';
-import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
 import PlanQueueFailBehavior from '../../contexts/PockestContext/types/PlanQueueFailBehavior';
 import PlanQueueSuccessBehavior from '../../contexts/PockestContext/types/PlanQueueSuccessBehavior';
+import SortableQueueList from './SortableQueueList';
+import './index.css';
 
 function QueueList() {
   const {
@@ -23,28 +21,7 @@ function QueueList() {
   return (
     <div className="QueueList">
       <div className="QueueList-main">
-        <SortableList
-          items={pockestState.planQueue}
-          ItemComponent={QueueItem}
-          onDragEnd={(event) => {
-            const {active, over} = event;
-            if (!over) return;
-            if (active.id === over.id) return;
-            if (over.disabled) return;
-            const curIndex = active?.data?.current?.sortable.index;
-            const newIndex = over?.data?.current?.sortable.index;
-            if (typeof newIndex !== 'number' || typeof curIndex !== 'number') return;
-            const planQueue: PlanQueueItem[] = [
-              ...pockestState.planQueue.slice(0, curIndex),
-              ...pockestState.planQueue.slice(curIndex + 1),
-            ];
-            const itemToMove = pockestState.planQueue[curIndex];
-            planQueue.splice(newIndex, 0, itemToMove);
-            pockestDispatch?.(pockestActions.pockestPlanSettings({
-              planQueue,
-            }));
-          }}
-        />
+        <SortableQueueList />
       </div>
       <div
         className="QueueList-buttons"

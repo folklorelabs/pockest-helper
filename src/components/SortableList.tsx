@@ -13,11 +13,12 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { SortableItem } from './SortableItem';
+import { SortableItem, SortableItemComponent } from './SortableItem';
+
 
 type SortableListProps = {
   items: SortableItem[];
-  ItemComponent: React.ComponentType<{ item: SortableItem; }>;
+  ItemComponent: SortableItemComponent;
   onDragEnd: (event: DragEndEvent) => void,
 }
 function SortableList({
