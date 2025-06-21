@@ -8,7 +8,6 @@ const INITIAL_STATE: PockestState = {
   statPlanId: '',
   planAge: 6,
   planQueue: [],
-  planQueueCompletion: [],
   data: null,
   allMonsters: [],
   allHashes: [],

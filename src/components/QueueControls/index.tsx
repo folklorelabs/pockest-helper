@@ -1,8 +1,9 @@
+import React from 'react';
 import {
   usePockestContext,
   pockestActions,
 } from '../../contexts/PockestContext';
-import QueueNextLine from '../QueueNextLine';
+import { AppContext } from '../../contexts/AppContext';
 import './index.css';
 
 function QueueControls() {
@@ -10,6 +11,7 @@ function QueueControls() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const { setShowLog } = React.useContext(AppContext);
   const {
     autoQueue,
     paused,
@@ -31,8 +33,18 @@ function QueueControls() {
           <span className="PockestCheck-text">Queue</span>
         </label>
       </div>
-      <QueueNextLine label="Current" queueIndex={0} />
-      <QueueNextLine label="Next" queueIndex={1} />
+      <div className="LogCountLine PockestLine">
+        <span className="PockestText">
+          Presets Queued
+        </span>
+        <button
+          type="button"
+          className="PockestText PockestLine-value PockestLink"
+          onClick={() => setShowLog && setShowLog(true)}
+        >
+          {pockestState.planQueue.length ?? '--'}
+        </button>
+      </div>
     </div>
   );
 }

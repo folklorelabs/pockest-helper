@@ -7,10 +7,11 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import parsePlanId from '../../utils/parsePlanId';
-import PlanQueueFailBehavior from '../../contexts/PockestContext/types/PlanQueueFailBehavior';
-import PlanQueueSuccessBehavior from '../../contexts/PockestContext/types/PlanQueueSuccessBehavior';
+import PlanQueueItemFailBehavior from '../../contexts/PockestContext/types/PlanQueueItemFailBehavior';
+import PlanQueueItemSuccessBehavior from '../../contexts/PockestContext/types/PlanQueueItemSuccessBehavior';
 import SortableQueueList from './SortableQueueList';
 import './index.css';
+import PlanQueueItemStatus from '../../contexts/PockestContext/types/PlanQueueItemStatus';
 
 function QueueList() {
   const {
@@ -57,8 +58,9 @@ function QueueList() {
                 planAge: monsterToAdd?.unlock ? 6 : 5,
                 planId: monsterToAdd?.planId || '1BRP6',
                 statPlanId,
-                onFail: PlanQueueFailBehavior.Retry,
-                onSuccess: PlanQueueSuccessBehavior.Continue,
+                status: PlanQueueItemStatus.Idle,
+                onFail: PlanQueueItemFailBehavior.Retry,
+                onSuccess: PlanQueueItemSuccessBehavior.Continue,
               },
             ];
             pockestDispatch(pockestActions.pockestSettings({ planQueue }));

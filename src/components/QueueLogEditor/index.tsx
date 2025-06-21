@@ -15,7 +15,7 @@ const QueueLogEditor: React.FC = () => {
     <div className="QueueLogEditor">
       <header className="QueueLogEditor-header">
         <p className="QueueLogEditor-title">
-          Preset Queue
+          Queue
           {' '}
           (
           {pockestState?.planQueue?.length || 0}
