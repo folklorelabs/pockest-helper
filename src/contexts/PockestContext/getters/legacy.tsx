@@ -441,14 +441,16 @@ export function getAutoSettings(state: PockestState, data?: BucklerStatusData | 
   if (newSettings.simpleMode ?? state.simpleMode) {
     newSettings.autoPlan = true;
   }
-  const presetQueue = newSettings.presetQueue ?? state.presetQueue;
-  const isAutoQueue = presetQueue?.length && (newSettings.autoQueue ?? state.autoQueue);
+  const presetQueueId = newSettings.presetQueueId ?? state.presetQueueId;
+  const isAutoQueue = presetQueueId && (newSettings.autoQueue ?? state.autoQueue);
   if (isAutoQueue) {
     newSettings.autoPlan = true;
-    newSettings.monsterId = presetQueue[0].monsterId;
-    newSettings.planId = presetQueue[0].planId;
-    newSettings.statPlanId = presetQueue[0].statPlanId;
-    newSettings.planAge = presetQueue[0].planAge;
+    const presetQueue = newSettings.presetQueue ?? state.presetQueue;
+    const queueItem = presetQueue.find((item) => item.id === presetQueueId);
+    newSettings.monsterId = queueItem?.monsterId;
+    newSettings.planId = queueItem?.planId;
+    newSettings.statPlanId = queueItem?.statPlanId;
+    newSettings.planAge = queueItem?.planAge;
   }
   const isMonsterGone = isMonsterDead(state, data)
     || isMonsterDeparted(state, data)

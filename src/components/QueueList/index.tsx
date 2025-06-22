@@ -7,11 +7,8 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import parsePlanId from '../../utils/parsePlanId';
-import PresetQueueItemFailBehavior from '../../contexts/PockestContext/types/PresetQueueItemFailBehavior';
-import PresetQueueItemSuccessBehavior from '../../contexts/PockestContext/types/PresetQueueItemSuccessBehavior';
 import SortableQueueList from './SortableQueueList';
 import './index.css';
-import PresetQueueItemStatus from '../../contexts/PockestContext/types/PresetQueueItemStatus';
 
 function QueueList() {
   const {
@@ -58,9 +55,6 @@ function QueueList() {
                 planAge: monsterToAdd?.unlock ? 6 : 5,
                 planId: monsterToAdd?.planId || '1BRP6',
                 statPlanId,
-                status: PresetQueueItemStatus.Idle,
-                onFail: PresetQueueItemFailBehavior.Retry,
-                onSuccess: PresetQueueItemSuccessBehavior.Continue,
               },
             ];
             pockestDispatch(pockestActions.pockestSettings({ presetQueue }));

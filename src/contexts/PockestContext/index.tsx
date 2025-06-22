@@ -26,7 +26,6 @@ import Action from './types/Action';
 import PockestState from './types/PockestState';
 import REDUCER from './reducer';
 import ACTION_TYPES from './constants/ACTION_TYPES';
-import PresetQueueItemStatus from './types/PresetQueueItemStatus';
 
 fixHelperLogFeverBug();
 startStorageSession();
@@ -174,22 +173,20 @@ export function PockestProvider({
       // Pause if autoQueueing and presetQueue is empty
       if (autoQueue && !pockestState?.presetQueue?.length) {
         pockestDispatch(pockestActions.pockestPause(true));
+        return;
+      }
+
+      // Clean up autoQueue stale items
+      if (autoQueue && !pockestState?.data?.monster && pockestState?.presetQueueId) {
+        const filteredPresetQueue = pockestState?.presetQueue.filter((queueItem) => queueItem.id === pockestState?.presetQueueId);
+        pockestDispatch(pockestActions.pockestSettings({
+          presetQueue: filteredPresetQueue,
+        }));
+        return;
       }
 
       // Buy egg if autoQueueing and no existing monster!
-      if (autoQueue && !pockestState?.data?.monster) {
-        const activeQueueItem = pockestState.presetQueue.find((item) => item.status === PresetQueueItemStatus.Active);
-
-        // remove stale queue items
-        const filteredPresetQueue = pockestState?.presetQueue.filter((queueItem) => {
-          const queueItemMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === queueItem?.monsterId);
-          return !(queueItemMonster?.unlock && queueItem?.planAge === 5)
-            && !(queueItemMonster?.memento_flg && queueItem?.planAge === 6);
-        });
-        if (filteredPresetQueue.length !== pockestState?.presetQueue.length) {
-          pockestDispatch(pockestActions.pockestSettings({ presetQueue: filteredPresetQueue }));
-          return;
-        }
+      if (autoQueue && !pockestState?.data?.monster && !pockestState?.presetQueueId) {
 
         // identify egg to buy
         const nextQueueItem = pockestState?.presetQueue[0];
@@ -214,6 +211,9 @@ export function PockestProvider({
         // buy the egg
         pockestDispatch(pockestActions.pockestLoading());
         pockestDispatch(await pockestActions.pockestSelectEgg(planEgg.id));
+        pockestDispatch(pockestActions.pockestSettings({
+          presetQueueId: nextQueueItem.id,
+        }));
         return;
       }
 
