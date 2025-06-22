@@ -151,7 +151,6 @@ function QueueItem({
                   ...pockestState.presetQueue.slice(0, queueIndex),
                   ...pockestState.presetQueue.slice(queueIndex + 1),
                 ];
-                console.log({presetQueue, queueIndex});
                 pockestDispatch(pockestActions.pockestPlanSettings({
                   presetQueue,
                 }));

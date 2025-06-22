@@ -5,7 +5,7 @@ import {
 } from '../../contexts/PockestContext';
 import './index.css';
 
-function AutoPlanControls() {
+function Memento() {
   const {
     pockestState,
   } = usePockestContext();
@@ -34,4 +34,4 @@ function AutoPlanControls() {
   );
 }
 
-export default AutoPlanControls;
+export default Memento;

@@ -40,9 +40,9 @@ export function getMonsterId(state: PockestState) {
 export function getPresetQueueItemLabel(state: PockestState, presetQueueItem?: PresetQueueItem | null) {
   if (!presetQueueItem) return '';
   const monster = state.allMonsters.find((m) => presetQueueItem.monsterId && m.monster_id === presetQueueItem.monsterId);
-  const name = monster?.name_en || `${presetQueueItem.planId}${presetQueueItem.statPlanId ? `-${presetQueueItem.statPlanId}` : ''}`;
-  const planAge = presetQueueItem.monsterId !== -1 ? presetQueueItem.planAge : parsePlanId(presetQueueItem.planId)?.planAge
-  return `${name} (Age ${planAge})`;
+  if (!monster?.name_en) return `${presetQueueItem.planId}${presetQueueItem.statPlanId ? `-${presetQueueItem.statPlanId}` : ''}`;
+  const planAge = presetQueueItem.monsterId !== -1 ? presetQueueItem.planAge : parsePlanId(presetQueueItem.planId)?.planAge;
+  return `${monster?.name_en} (Age ${planAge})`;
 }
 
 export function getTargetableMonsters(state: PockestState, targetAge?: number | null) {

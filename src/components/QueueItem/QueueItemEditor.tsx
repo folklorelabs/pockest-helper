@@ -19,7 +19,6 @@ function QueueItemEditor() {
     saveQueueItemToPockestState,
   } = React.useContext(QueueItemContext);
   const isDirty = React.useMemo(() => JSON.stringify(presetQueueItem) === JSON.stringify(queueItem), [presetQueueItem, queueItem]);
-  console.log({queueItem});
   return (
     <div className="QueueItemEditor">
       <QueueItemMonsterSelect />
