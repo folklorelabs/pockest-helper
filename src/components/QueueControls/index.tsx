@@ -42,7 +42,7 @@ function QueueControls() {
           className="PockestText PockestLine-value PockestLink"
           onClick={() => setShowLog && setShowLog(true)}
         >
-          {pockestState.planQueue.length ?? '--'}
+          {pockestState.presetQueue.length ?? '--'}
         </button>
       </div>
     </div>

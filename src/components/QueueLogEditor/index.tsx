@@ -18,7 +18,7 @@ const QueueLogEditor: React.FC = () => {
           Queue
           {' '}
           (
-          {pockestState?.planQueue?.length || 0}
+          {pockestState?.presetQueue?.length || 0}
           )
         </p>
         {/* <label className="PockestCheck" htmlFor="PockestHelper_QueueLogEditorAutoQueue">

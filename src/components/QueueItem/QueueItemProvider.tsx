@@ -2,33 +2,33 @@ import React from 'react';
 
 import { QueueItemContext } from './QueueItemContext';
 import { pockestActions, usePockestContext } from '../../contexts/PockestContext';
-import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import PresetQueueItem from '../../contexts/PockestContext/types/PresetQueueItem';
 import parsePlanId from '../../utils/parsePlanId';
 
 // TYPES
 interface QueueItemProviderProps {
   children: React.ReactNode;
-  planQueueItem: PlanQueueItem;
+  presetQueueItem: PresetQueueItem;
 }
 
 export function QueueItemProvider({
-  planQueueItem,
+  presetQueueItem,
   children,
 }: QueueItemProviderProps) {
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
-  const [localPlanQueueItem, setLocalPlanQueueItem] = React.useState<PlanQueueItem>(planQueueItem);
-  const planQueueItemIndex = React.useMemo(
-    () => pockestState.planQueue.findIndex((item) => item.id === planQueueItem.id),
-    [pockestState.planQueue, planQueueItem],
+  const [localPresetQueueItem, setLocalPresetQueueItem] = React.useState<PresetQueueItem>(presetQueueItem);
+  const presetQueueItemIndex = React.useMemo(
+    () => pockestState.presetQueue.findIndex((item) => item.id === presetQueueItem.id),
+    [pockestState.presetQueue, presetQueueItem],
   );
-  const updateQueueItem = React.useCallback((newQueueItem: Partial<PlanQueueItem>) => {
+  const updateQueueItem = React.useCallback((newQueueItem: Partial<PresetQueueItem>) => {
     const item = {
-      ...localPlanQueueItem,
+      ...localPresetQueueItem,
       ...newQueueItem,
-      id: localPlanQueueItem.id,
+      id: localPresetQueueItem.id,
     }
     const monster = pockestState.allMonsters.find((m) => m.monster_id === item.monsterId);
     if (newQueueItem?.monsterId && newQueueItem.monsterId >= 0) {
@@ -36,31 +36,31 @@ export function QueueItemProvider({
       const parsedPlanId = parsePlanId(item.planId);
       item.statPlanId = monster?.statPlan || parsedPlanId?.primaryStatLetter.repeat(6) || '';
     }
-    return setLocalPlanQueueItem(item);
-  }, [localPlanQueueItem, pockestState.allMonsters]);
+    return setLocalPresetQueueItem(item);
+  }, [localPresetQueueItem, pockestState.allMonsters]);
   const saveQueueItemToPockestState = React.useCallback(() => {
     if (!pockestDispatch) return;
-    const planQueue: PlanQueueItem[] = [
-      ...pockestState.planQueue.slice(0, planQueueItemIndex),
-      localPlanQueueItem,
-      ...pockestState.planQueue.slice(planQueueItemIndex + 1),
+    const presetQueue: PresetQueueItem[] = [
+      ...pockestState.presetQueue.slice(0, presetQueueItemIndex),
+      localPresetQueueItem,
+      ...pockestState.presetQueue.slice(presetQueueItemIndex + 1),
     ];
     pockestDispatch(pockestActions.pockestPlanSettings({
-      planQueue,
+      presetQueue,
     }));
-  }, [pockestDispatch, pockestState.planQueue, planQueueItemIndex, localPlanQueueItem]);
+  }, [pockestDispatch, pockestState.presetQueue, presetQueueItemIndex, localPresetQueueItem]);
 
   // wrap value in memo so we only re-render when necessary
   const providerValue = React.useMemo(() => ({
-    planQueueItem,
-    planQueueItemIndex,
-    queueItem: localPlanQueueItem,
+    presetQueueItem,
+    presetQueueItemIndex,
+    queueItem: localPresetQueueItem,
     updateQueueItem,
     saveQueueItemToPockestState,
   }), [
-    planQueueItem,
-    planQueueItemIndex,
-    localPlanQueueItem,
+    presetQueueItem,
+    presetQueueItemIndex,
+    localPresetQueueItem,
     updateQueueItem,
     saveQueueItemToPockestState,
   ]);

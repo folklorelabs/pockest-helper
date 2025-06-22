@@ -16,7 +16,7 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
   } = usePockestContext();
   const {
     queueItem,
-    planQueueItemIndex,
+    presetQueueItemIndex,
     updateQueueItem,
   } = React.useContext(QueueItemContext);
   const targetableMonsters = React.useMemo(
@@ -25,7 +25,7 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
   );
   const estimatedBalance = React.useMemo(
     () => {
-      const previousCosts = pockestState?.planQueue?.slice(0, planQueueItemIndex).reduce((sum, item) => {
+      const previousCosts = pockestState?.presetQueue?.slice(0, presetQueueItemIndex).reduce((sum, item) => {
         const egg = item.monsterId === -1
           ? pockestGetters.getPlanIdEgg(pockestState, item.planId)
           : pockestGetters.getMonsterEgg(pockestState, item.monsterId);
@@ -34,7 +34,7 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
       }, 0);
       return pockestState?.bucklerBalance - previousCosts;
     },
-    [pockestState, planQueueItemIndex],
+    [pockestState, presetQueueItemIndex],
   );
   if (!targetableMonsters?.length) return '';
   return (

@@ -7,11 +7,11 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import parsePlanId from '../../utils/parsePlanId';
-import PlanQueueItemFailBehavior from '../../contexts/PockestContext/types/PlanQueueItemFailBehavior';
-import PlanQueueItemSuccessBehavior from '../../contexts/PockestContext/types/PlanQueueItemSuccessBehavior';
+import PresetQueueItemFailBehavior from '../../contexts/PockestContext/types/PresetQueueItemFailBehavior';
+import PresetQueueItemSuccessBehavior from '../../contexts/PockestContext/types/PresetQueueItemSuccessBehavior';
 import SortableQueueList from './SortableQueueList';
 import './index.css';
-import PlanQueueItemStatus from '../../contexts/PockestContext/types/PlanQueueItemStatus';
+import PresetQueueItemStatus from '../../contexts/PockestContext/types/PresetQueueItemStatus';
 
 function QueueList() {
   const {
@@ -34,7 +34,7 @@ function QueueList() {
           onClick={() => {
             if (!pockestDispatch) return;
             const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState, 6)
-              .filter((m) => !pockestState.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id))
+              .filter((m) => !pockestState.presetQueue?.map((qm) => qm.monsterId).includes(m.monster_id))
               .sort((a, b) => {
                 if (!a.unlock && b.unlock) return -1;
                 if (a.unlock && !b.unlock) return 1;
@@ -50,20 +50,20 @@ function QueueList() {
             const planId = monsterToAdd?.planId || '1BRP6';
             const monsterToAddParsedPlanId = parsePlanId(planId);
             const statPlanId = monsterToAdd?.statPlan || monsterToAddParsedPlanId?.primaryStatLetter.repeat(6) || '';
-            const planQueue = [
-              ...(pockestState.planQueue || []),
+            const presetQueue = [
+              ...(pockestState.presetQueue || []),
               {
                 id: window.crypto.randomUUID(),
                 monsterId: monsterToAdd?.monster_id || -1,
                 planAge: monsterToAdd?.unlock ? 6 : 5,
                 planId: monsterToAdd?.planId || '1BRP6',
                 statPlanId,
-                status: PlanQueueItemStatus.Idle,
-                onFail: PlanQueueItemFailBehavior.Retry,
-                onSuccess: PlanQueueItemSuccessBehavior.Continue,
+                status: PresetQueueItemStatus.Idle,
+                onFail: PresetQueueItemFailBehavior.Retry,
+                onSuccess: PresetQueueItemSuccessBehavior.Continue,
               },
             ];
-            pockestDispatch(pockestActions.pockestSettings({ planQueue }));
+            pockestDispatch(pockestActions.pockestSettings({ presetQueue }));
           }}
         >
           ➕ Add

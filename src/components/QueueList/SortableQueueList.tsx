@@ -5,7 +5,7 @@ import {
 import QueueItem from '../QueueItem';
 import SortableList from '../SortableList';
 import './index.css';
-import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import PresetQueueItem from '../../contexts/PockestContext/types/PresetQueueItem';
 
 function SortableQueueList() {
   const {
@@ -14,7 +14,7 @@ function SortableQueueList() {
   } = usePockestContext();
   return (
     <SortableList
-        items={pockestState.planQueue}
+        items={pockestState.presetQueue}
         ItemComponent={QueueItem}
         onDragEnd={(event) => {
         const {active, over} = event;
@@ -24,14 +24,14 @@ function SortableQueueList() {
         const curIndex = active?.data?.current?.sortable.index;
         const newIndex = over?.data?.current?.sortable.index;
         if (typeof newIndex !== 'number' || typeof curIndex !== 'number') return;
-        const planQueue: PlanQueueItem[] = [
-            ...pockestState.planQueue.slice(0, curIndex),
-            ...pockestState.planQueue.slice(curIndex + 1),
+        const presetQueue: PresetQueueItem[] = [
+            ...pockestState.presetQueue.slice(0, curIndex),
+            ...pockestState.presetQueue.slice(curIndex + 1),
         ];
-        const itemToMove = pockestState.planQueue[curIndex];
-        planQueue.splice(newIndex, 0, itemToMove);
+        const itemToMove = pockestState.presetQueue[curIndex];
+        presetQueue.splice(newIndex, 0, itemToMove);
         pockestDispatch?.(pockestActions.pockestPlanSettings({
-            planQueue,
+            presetQueue,
         }));
         }}
     />

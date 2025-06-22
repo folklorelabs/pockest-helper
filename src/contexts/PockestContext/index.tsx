@@ -26,6 +26,7 @@ import Action from './types/Action';
 import PockestState from './types/PockestState';
 import REDUCER from './reducer';
 import ACTION_TYPES from './constants/ACTION_TYPES';
+import PresetQueueItemStatus from './types/PresetQueueItemStatus';
 
 fixHelperLogFeverBug();
 startStorageSession();
@@ -170,27 +171,28 @@ export function PockestProvider({
       } = pockestState;
       const now = new Date();
 
-      // Pause if autoQueueing and planQueue is empty
-      if (autoQueue && !pockestState?.planQueue?.length) {
+      // Pause if autoQueueing and presetQueue is empty
+      if (autoQueue && !pockestState?.presetQueue?.length) {
         pockestDispatch(pockestActions.pockestPause(true));
       }
 
       // Buy egg if autoQueueing and no existing monster!
       if (autoQueue && !pockestState?.data?.monster) {
+        const activeQueueItem = pockestState.presetQueue.find((item) => item.status === PresetQueueItemStatus.Active);
 
         // remove stale queue items
-        const filteredPlanQueue = pockestState?.planQueue.filter((queueItem) => {
+        const filteredPresetQueue = pockestState?.presetQueue.filter((queueItem) => {
           const queueItemMonster = pockestState?.allMonsters?.find((m) => m?.monster_id === queueItem?.monsterId);
           return !(queueItemMonster?.unlock && queueItem?.planAge === 5)
             && !(queueItemMonster?.memento_flg && queueItem?.planAge === 6);
         });
-        if (filteredPlanQueue.length !== pockestState?.planQueue.length) {
-          pockestDispatch(pockestActions.pockestSettings({ planQueue: filteredPlanQueue }));
+        if (filteredPresetQueue.length !== pockestState?.presetQueue.length) {
+          pockestDispatch(pockestActions.pockestSettings({ presetQueue: filteredPresetQueue }));
           return;
         }
 
         // identify egg to buy
-        const nextQueueItem = pockestState?.planQueue[0];
+        const nextQueueItem = pockestState?.presetQueue[0];
         const planEgg = nextQueueItem?.monsterId === -1
           ? pockestGetters.getPlanIdEgg(pockestState, nextQueueItem?.planId)
           : pockestGetters.getMonsterEgg(pockestState, nextQueueItem?.monsterId);
