@@ -25,6 +25,10 @@ const actionSchema = z.union([
     data: hatchingStatusSchema,
     args: z.object({ id: z.number() }),
   })]),
+  z.tuple([z.literal(ACTION_TYPES.EVENT_HATCHING_QUEUE), statusPayloadSchema.extend({
+    data: hatchingStatusSchema,
+    args: z.object({ eggId: z.number(), presetQueueId: z.string() }),
+  })]),
   z.tuple([z.literal(ACTION_TYPES.EVENT_CLEANING), statusPayloadSchema.extend({
     data: cleaningStatusSchema,
   })]),
