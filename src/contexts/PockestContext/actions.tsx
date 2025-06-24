@@ -11,6 +11,8 @@ import {
   getDiscordReportEvoFailure,
   getDiscordReportMatch,
   isMatchDiscovery,
+  getPlanIdEgg,
+  getMonsterEgg,
 } from './getters';
 import daysToMs from '../../utils/daysToMs';
 import { getRefreshTimeout, REFRESH_TIMEOUT, setRefreshTimeout } from './state';
@@ -228,6 +230,35 @@ export async function pockestMatch(pockestState: PockestState, match: BucklerPot
     return [ACTION_TYPES.EVENT_EXCHANGE, payload];
   } catch (error) {
     return [ACTION_TYPES.ERROR, `[pockestMatch] ${error instanceof Error ? error?.message : error}`];
+  }
+}
+export async function pockestRunQueue(pockestState: PockestState): Promise<Action> {
+  try {
+    // identify egg to buy
+    const nextQueueItem = pockestState?.presetQueue[0];
+    const planEgg = nextQueueItem?.monsterId === -1
+      ? getPlanIdEgg(pockestState, nextQueueItem?.planId)
+      : getMonsterEgg(pockestState, nextQueueItem?.monsterId);
+    if (!planEgg) {
+      return [ACTION_TYPES.ERROR, `Unable to identify the correct egg to purchase in planId (${nextQueueItem?.planId}). Stopping queue.`];
+    }
+
+    // check if we can afford the egg
+    const eggPrice = planEgg?.buckler_point || Infinity;
+    const canAfford = planEgg?.unlock || (pockestState?.bucklerBalance && pockestState?.bucklerBalance >= eggPrice);
+    if (!canAfford) {
+      return [ACTION_TYPES.ERROR, 'Cannot afford egg. Stopping queue.'];
+    }
+
+    // buy the egg
+    const data = await postHatch(planEgg.id);
+    const payload = {
+      data,
+      args: { eggId: planEgg.id, presetQueueId: nextQueueItem.id },
+    };
+    return [ACTION_TYPES.EVENT_HATCHING_QUEUE, payload];
+  } catch (error) {
+    return [ACTION_TYPES.ERROR, `[pockestRunQueue] ${error instanceof Error ? error?.message : error}`];
   }
 }
 export async function pockestSelectEgg(id: number): Promise<Action> {

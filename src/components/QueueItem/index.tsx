@@ -4,35 +4,47 @@ import {
   pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import PresetQueueItem from '../../contexts/PockestContext/types/PresetQueueItem';
 import { QueueItemProvider } from './QueueItemProvider';
 import QueueItemEditor from './QueueItemEditor';
+import { SortableItemComponent } from '../SortableItem';
 import './index.css';
 
-interface QueueItemProps {
-  queueIndex: number;
-}
+type ComponentProps = React.ComponentProps<SortableItemComponent>;
+type ComponentReturn = ReturnType<SortableItemComponent>;
 
-function QueueItem({ queueIndex }: QueueItemProps) {
+function QueueItem({
+  item,
+  dragAttributes,
+  dragListeners,
+}: ComponentProps): ComponentReturn {
+  const presetQueueItem = item as PresetQueueItem;
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const queueIndex = React.useMemo(
+    () => pockestState.presetQueue.findIndex(({ id }) => id === presetQueueItem.id),
+    [pockestState],
+  );
+  const isPresetQueueItem = React.useMemo(
+    () => pockestState?.presetQueueId === item.id,
+    [pockestState, item],
+  );
   const [editMode, setEditMode] = React.useState(false);
-  const planQueueItem = pockestState?.planQueue?.[queueIndex];
   const editableStartIndex = React.useMemo(
-    () => pockestState?.autoQueue && !pockestState?.paused ? 1 : 0,
-    [pockestState?.autoQueue, pockestState?.paused],
+    () => !!pockestState?.presetQueueId ? 1 : 0,
+    [isPresetQueueItem],
   );
   const planEgg = React.useMemo(
-    () => planQueueItem?.monsterId === -1
-      ? pockestGetters.getPlanIdEgg(pockestState, planQueueItem?.planId)
-      : pockestGetters.getMonsterEgg(pockestState, planQueueItem?.monsterId),
-    [pockestState, planQueueItem],
+    () => presetQueueItem?.monsterId === -1
+      ? pockestGetters.getPlanIdEgg(pockestState, presetQueueItem?.planId)
+      : pockestGetters.getMonsterEgg(pockestState, presetQueueItem?.monsterId),
+    [pockestState, presetQueueItem],
   );
   const estimatedBalance = React.useMemo(
     () => {
-      const previousCosts = pockestState?.planQueue?.slice(0, queueIndex).reduce((sum, item) => {
+      const previousCosts = pockestState?.presetQueue?.slice(0, queueIndex).reduce((sum, item) => {
         const egg = item.monsterId === -1
           ? pockestGetters.getPlanIdEgg(pockestState, item.planId)
           : pockestGetters.getMonsterEgg(pockestState, item.monsterId);
@@ -51,8 +63,17 @@ function QueueItem({ queueIndex }: QueueItemProps) {
     if (queueIndex <= editableStartIndex) setEditMode(false);
   }, [editableStartIndex, queueIndex]);
   return (
-    <QueueItemProvider planQueueItem={planQueueItem}>
+    <QueueItemProvider presetQueueItem={presetQueueItem}>
       <div className="QueueItem">
+        <button
+          className="QueueItem-dragHandle"
+          {...dragAttributes}
+          {...dragListeners}
+          disabled={isPresetQueueItem}
+          aria-disabled={isPresetQueueItem}
+        >
+          ⠿
+        </button>
         <button
           type="button"
           className="PockestLink QueueItem-moveUp"
@@ -60,13 +81,13 @@ function QueueItem({ queueIndex }: QueueItemProps) {
           disabled={queueIndex <= editableStartIndex}
           onClick={() => {
             if (!pockestDispatch) return;
-            const planQueue: PlanQueueItem[] = [
-              ...pockestState.planQueue.slice(0, queueIndex),
-              ...pockestState.planQueue.slice(queueIndex + 1),
+            const presetQueue: PresetQueueItem[] = [
+              ...pockestState.presetQueue.slice(0, queueIndex),
+              ...pockestState.presetQueue.slice(queueIndex + 1),
             ];
-            planQueue.splice(queueIndex - 1, 0, planQueueItem);
+            presetQueue.splice(queueIndex - 1, 0, presetQueueItem);
             pockestDispatch(pockestActions.pockestPlanSettings({
-              planQueue,
+              presetQueue,
             }));
           }}
         >
@@ -76,16 +97,16 @@ function QueueItem({ queueIndex }: QueueItemProps) {
           type="button"
           className="PockestLink QueueItem-moveDown"
           aria-label={`Move Plan Queue Item Down`}
-          disabled={queueIndex < editableStartIndex || queueIndex >= pockestState?.planQueue?.length - 1}
+          disabled={queueIndex < editableStartIndex || queueIndex >= pockestState?.presetQueue?.length - 1}
           onClick={() => {
             if (!pockestDispatch) return;
-            const planQueue: PlanQueueItem[] = [
-              ...pockestState.planQueue.slice(0, queueIndex),
-              ...pockestState.planQueue.slice(queueIndex + 1),
+            const presetQueue: PresetQueueItem[] = [
+              ...pockestState.presetQueue.slice(0, queueIndex),
+              ...pockestState.presetQueue.slice(queueIndex + 1),
             ];
-            planQueue.splice(queueIndex + 1, 0, planQueueItem);
+            presetQueue.splice(queueIndex + 1, 0, presetQueueItem);
             pockestDispatch(pockestActions.pockestPlanSettings({
-              planQueue,
+              presetQueue,
             }));
           }}
         >
@@ -119,7 +140,7 @@ function QueueItem({ queueIndex }: QueueItemProps) {
             <span
               className="QueueItemLabel"
             >
-              {pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}
+              {pockestGetters.getPresetQueueItemLabel(pockestState, presetQueueItem)}
             </span>
             <button
               type="button"
@@ -136,12 +157,12 @@ function QueueItem({ queueIndex }: QueueItemProps) {
               aria-label={`Delete Plan Queue Item`}
               onClick={() => {
                 if (!pockestDispatch) return;
-                const planQueue: PlanQueueItem[] = [
-                  ...pockestState.planQueue.slice(0, queueIndex),
-                  ...pockestState.planQueue.slice(queueIndex + 1),
+                const presetQueue: PresetQueueItem[] = [
+                  ...pockestState.presetQueue.slice(0, queueIndex),
+                  ...pockestState.presetQueue.slice(queueIndex + 1),
                 ];
                 pockestDispatch(pockestActions.pockestPlanSettings({
-                  planQueue,
+                  presetQueue,
                 }));
               }}
               disabled={queueIndex < editableStartIndex}

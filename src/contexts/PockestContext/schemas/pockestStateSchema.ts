@@ -5,7 +5,7 @@ import sheetHashSchema from '../../../schemas/sheetHashSchema';
 import planIdSchema from '../../../schemas/planIdSchema';
 import statPlanIdSchema from '../../../schemas/statPlanIdSchema';
 import logEntrySchema from './logEntrySchema';
-import planQueueItemSchema from './planQueueItemSchema';
+import presetQueueItemSchema from './presetQueueItemSchema';
 import eggSchema from '../../../schemas/eggSchema';
 
 const pockestStateSchema = z.object({
@@ -13,7 +13,8 @@ const pockestStateSchema = z.object({
   planId: planIdSchema,
   statPlanId: statPlanIdSchema,
   planAge: z.number().max(6).min(1),
-  planQueue: z.array(planQueueItemSchema),
+  presetQueue: z.array(presetQueueItemSchema),
+  presetQueueId: presetQueueItemSchema.shape.id.nullable().optional(),
   data: statusSchema.nullable().optional(),
   allMonsters: z.array(monsterSchema),
   allHashes: z.array(sheetHashSchema),

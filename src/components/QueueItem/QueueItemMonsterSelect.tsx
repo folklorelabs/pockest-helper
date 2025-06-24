@@ -16,20 +16,16 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
   } = usePockestContext();
   const {
     queueItem,
-    planQueueItemIndex,
+    presetQueueItemIndex,
     updateQueueItem,
   } = React.useContext(QueueItemContext);
-  const planQueueMonsterIds = React.useMemo(() => {
-    return pockestState?.planQueue?.filter((q) => q.id !== queueItem?.id).map((q) => q.monsterId);
-  }, [pockestState?.planQueue, queueItem?.id]);
   const targetableMonsters = React.useMemo(
-    () => !queueItem ? [] : pockestGetters.getTargetableMonsters(pockestState, queueItem?.planAge)
-      .filter((m) => !planQueueMonsterIds.includes(m.monster_id)),
-    [queueItem, pockestState, planQueueMonsterIds],
+    () => !queueItem ? [] : pockestGetters.getTargetableMonsters(pockestState),
+    [queueItem, pockestState],
   );
   const estimatedBalance = React.useMemo(
     () => {
-      const previousCosts = pockestState?.planQueue?.slice(0, planQueueItemIndex).reduce((sum, item) => {
+      const previousCosts = pockestState?.presetQueue?.slice(0, presetQueueItemIndex).reduce((sum, item) => {
         const egg = item.monsterId === -1
           ? pockestGetters.getPlanIdEgg(pockestState, item.planId)
           : pockestGetters.getMonsterEgg(pockestState, item.monsterId);
@@ -38,7 +34,7 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
       }, 0);
       return pockestState?.bucklerBalance - previousCosts;
     },
-    [pockestState, planQueueItemIndex],
+    [pockestState, presetQueueItemIndex],
   );
   if (!targetableMonsters?.length) return '';
   return (
@@ -54,9 +50,9 @@ const QueueMonsterSelect: React.FC<QueueMonsterSelectProps> = ({ disabled }) => 
       value={`${queueItem?.monsterId}`}
       disabled={!!disabled}
     >
-      {/* <option key="custom" value="-1">
+      <option key="custom" value="-1">
         [Custom Plan]
-      </option> */}
+      </option>
       {targetableMonsters.map((monster) => {
         const targetEgg = pockestGetters.getMonsterEgg(pockestState, monster?.monster_id);
         return (

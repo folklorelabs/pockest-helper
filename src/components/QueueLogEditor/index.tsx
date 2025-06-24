@@ -15,10 +15,10 @@ const QueueLogEditor: React.FC = () => {
     <div className="QueueLogEditor">
       <header className="QueueLogEditor-header">
         <p className="QueueLogEditor-title">
-          Queue Editor
+          Queue
           {' '}
           (
-          {pockestState?.planQueue?.length || 0}
+          {pockestState?.presetQueue?.length || 0}
           )
         </p>
         {/* <label className="PockestCheck" htmlFor="PockestHelper_QueueLogEditorAutoQueue">

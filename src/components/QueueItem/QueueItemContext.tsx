@@ -1,19 +1,19 @@
 import React from 'react';
-import PlanQueueItem from '../../contexts/PockestContext/types/PlanQueueItem';
+import PresetQueueItem from '../../contexts/PockestContext/types/PresetQueueItem';
 
 // STATE
 export interface QueueItemContextState {
-  planQueueItem: PlanQueueItem | null;
-  queueItem: PlanQueueItem | null;
-  planQueueItemIndex?: number;
-  updateQueueItem: (newQueueItem: Partial<PlanQueueItem>) => void;
+  presetQueueItem: PresetQueueItem | null;
+  queueItem: PresetQueueItem | null;
+  presetQueueItemIndex?: number;
+  updateQueueItem: (newQueueItem: Partial<PresetQueueItem>) => void;
   saveQueueItemToPockestState: () => void;
 };
 
 export const QUEUE_ITEM_CONTEXT_INITIAL_STATE: QueueItemContextState = {
-  planQueueItem: null,
+  presetQueueItem: null,
   queueItem: null,
-  planQueueItemIndex: -1,
+  presetQueueItemIndex: -1,
   updateQueueItem: () => { },
   saveQueueItemToPockestState: () => { },
 };

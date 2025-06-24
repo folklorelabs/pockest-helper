@@ -5,3 +5,23 @@
 .QueueItemEditor {
   display: inline;
 }
+
+.QueueItem-dragHandle {
+  color: #fff;
+  background: transparent;
+  outline: none;
+  box-shadow: none;
+  margin: 0;
+  padding: 0 0.25em;
+  border: 0;
+  cursor: grab;
+}
+
+.QueueItem-dragHandle[aria-pressed="true"] {
+  cursor: grabbing;
+}
+
+.QueueItem-dragHandle:disabled {
+  opacity: 0.25;
+  cursor: default;
+}

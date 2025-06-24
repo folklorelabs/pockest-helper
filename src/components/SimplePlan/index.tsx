@@ -6,6 +6,7 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import './index.css';
+import Memento from '../Memento';
 
 interface SimplePlanProps {
   rows?: number;
@@ -77,6 +78,7 @@ const SimplePlan: React.FC<SimplePlanProps> = ({
                   {d.icon}
                   {' '}
                   {d.label}
+                  {d.label === 'Departure' ? <Memento /> : ''}
                 </p>
                 <p className="SimplePlanEventTime PockestToolTip PockestToolTip--left PockestToolTip--bottom">
                   {d.timeStr}

@@ -44,7 +44,7 @@ function TargetAgeSelect({ disabled }: TargetAgeSelectProps) {
         }
       }}
       value={planAge}
-      disabled={disabled ?? (!paused || !targetMonster || pockestState.autoQueue)}
+      disabled={disabled ?? (!pockestState?.autoPlan || !paused || !targetMonster || pockestState.autoQueue)}
     >
       {Object.keys(AGE_INTERVAL).map((k) => (
         <option key={k} value={k}>

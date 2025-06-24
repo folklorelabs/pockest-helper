@@ -17,7 +17,7 @@ import BucklerStatusData from '../../../types/BucklerStatusData';
 import Settings from '../types/Settings';
 import BucklerMatchResults from '../../../types/BucklerMatchResults';
 import BucklerPotentialMatch from '../../../types/BucklerPotentialMatch';
-import PlanQueueItem from '../types/PlanQueueItem';
+import PresetQueueItem from '../types/PresetQueueItem';
 import Monster from '../../../types/Monster';
 import { getTrainingIntervals, getUpcomingTrainingInterval } from './training';
 
@@ -37,12 +37,12 @@ export function getMonsterId(state: PockestState) {
   return parseInt(hashId.slice(0, 4), 10);
 }
 
-export function getPlanQueueItemLabel(state: PockestState, planQueueItem?: PlanQueueItem | null) {
-  if (!planQueueItem) return '';
-  const monster = state.allMonsters.find((m) => planQueueItem.monsterId && m.monster_id === planQueueItem.monsterId);
-  const name = monster?.name_en || `${planQueueItem.planId}${planQueueItem.statPlanId ? `-${planQueueItem.statPlanId}` : ''}`;
-  const planAge = planQueueItem.monsterId !== -1 ? planQueueItem.planAge : parsePlanId(planQueueItem.planId)?.planAge
-  return `${name} (Age ${planAge})`;
+export function getPresetQueueItemLabel(state: PockestState, presetQueueItem?: PresetQueueItem | null) {
+  if (!presetQueueItem) return '';
+  const monster = state.allMonsters.find((m) => presetQueueItem.monsterId && m.monster_id === presetQueueItem.monsterId);
+  if (!monster?.name_en) return `${presetQueueItem.planId}${presetQueueItem.statPlanId ? `-${presetQueueItem.statPlanId}` : ''}`;
+  const planAge = presetQueueItem.monsterId !== -1 ? presetQueueItem.planAge : parsePlanId(presetQueueItem.planId)?.planAge;
+  return `${monster?.name_en} (Age ${planAge})`;
 }
 
 export function getTargetableMonsters(state: PockestState, targetAge?: number | null) {
@@ -441,14 +441,16 @@ export function getAutoSettings(state: PockestState, data?: BucklerStatusData | 
   if (newSettings.simpleMode ?? state.simpleMode) {
     newSettings.autoPlan = true;
   }
-  const planQueue = newSettings.planQueue ?? state.planQueue;
-  const isAutoQueue = planQueue?.length && (newSettings.autoQueue ?? state.autoQueue);
+  const presetQueueId = newSettings.presetQueueId ?? state.presetQueueId;
+  const isAutoQueue = presetQueueId && (newSettings.autoQueue ?? state.autoQueue);
   if (isAutoQueue) {
     newSettings.autoPlan = true;
-    newSettings.monsterId = planQueue[0].monsterId;
-    newSettings.planId = planQueue[0].planId;
-    newSettings.statPlanId = planQueue[0].statPlanId;
-    newSettings.planAge = planQueue[0].planAge;
+    const presetQueue = newSettings.presetQueue ?? state.presetQueue;
+    const queueItem = presetQueue.find((item) => item.id === presetQueueId);
+    newSettings.monsterId = queueItem?.monsterId;
+    newSettings.planId = queueItem?.planId;
+    newSettings.statPlanId = queueItem?.statPlanId;
+    newSettings.planAge = queueItem?.planAge;
   }
   const isMonsterGone = isMonsterDead(state, data)
     || isMonsterDeparted(state, data)

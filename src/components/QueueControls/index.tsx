@@ -1,8 +1,10 @@
+import React from 'react';
 import {
   usePockestContext,
   pockestActions,
+  pockestGetters,
 } from '../../contexts/PockestContext';
-import QueueNextLine from '../QueueNextLine';
+import { AppContext } from '../../contexts/AppContext';
 import './index.css';
 
 function QueueControls() {
@@ -10,10 +12,15 @@ function QueueControls() {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const { setShowLog } = React.useContext(AppContext);
   const {
     autoQueue,
-    paused,
+    // paused,
   } = pockestState;
+  const nextTargetItem = React.useMemo(() => {
+    const nextItem = pockestState?.presetQueueId ? pockestState?.presetQueue?.[1] : pockestState?.presetQueue?.[0];
+    return nextItem;
+  }, [pockestState]);
   return (
     <div className="QueueControls">
       <div className="PockestLine">
@@ -26,13 +33,35 @@ function QueueControls() {
               autoQueue: e.target.checked,
             }))}
             checked={autoQueue}
-            disabled={!paused || (pockestState?.simpleMode && !!pockestState?.data?.monster?.live_time)}
+            // disabled={!paused}
           />
           <span className="PockestCheck-text">Queue</span>
         </label>
       </div>
-      <QueueNextLine label="Current" queueIndex={0} />
-      <QueueNextLine label="Next" queueIndex={1} />
+      <div className="LogCountLine PockestLine">
+        <span className="PockestText">
+          Next
+        </span>
+        <button
+          type="button"
+          className="PockestText PockestLine-value PockestLink"
+          onClick={() => setShowLog && setShowLog(true)}
+        >
+          {pockestGetters.getPresetQueueItemLabel(pockestState, nextTargetItem)}
+        </button>
+      </div>
+      <div className="LogCountLine PockestLine">
+        <span className="PockestText">
+          Total Queued
+        </span>
+        <button
+          type="button"
+          className="PockestText PockestLine-value PockestLink"
+          onClick={() => setShowLog && setShowLog(true)}
+        >
+          {pockestState?.presetQueue?.length ?? '--'}
+        </button>
+      </div>
     </div>
   );
 }

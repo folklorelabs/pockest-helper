@@ -1,12 +1,13 @@
 import { z } from "zod";
-import planQueueItemSchema from "./planQueueItemSchema";
+import presetQueueItemSchema from "./presetQueueItemSchema";
 
 const settingsSchema = z.object({
   monsterId: z.number().optional(),
   planId: z.string().optional(),
   statPlanId: z.string().optional(),
   planAge: z.number().optional(),
-  planQueue: z.array(planQueueItemSchema).optional(),
+  presetQueue: z.array(presetQueueItemSchema).optional(),
+  presetQueueId: presetQueueItemSchema.shape.id.optional(),
   autoPlan: z.boolean().optional(),
   autoQueue: z.boolean().optional(),
   autoFeed: z.boolean().optional(),

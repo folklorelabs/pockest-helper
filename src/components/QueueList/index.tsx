@@ -6,8 +6,8 @@ import {
   pockestGetters,
   usePockestContext,
 } from '../../contexts/PockestContext';
-import QueueItem from '../QueueItem';
 import parsePlanId from '../../utils/parsePlanId';
+import SortableQueueList from './SortableQueueList';
 import './index.css';
 
 function QueueList() {
@@ -19,9 +19,7 @@ function QueueList() {
   return (
     <div className="QueueList">
       <div className="QueueList-main">
-        {pockestState?.planQueue?.length ? pockestState?.planQueue?.map((planQueueItem, index) => (
-          <QueueItem key={`${pockestGetters.getPlanQueueItemLabel(pockestState, planQueueItem)}`} queueIndex={index} />
-        )) : 'Nothing queued'}
+        <SortableQueueList />
       </div>
       <div
         className="QueueList-buttons"
@@ -33,7 +31,7 @@ function QueueList() {
           onClick={() => {
             if (!pockestDispatch) return;
             const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState, 6)
-              .filter((m) => !pockestState.planQueue?.map((qm) => qm.monsterId).includes(m.monster_id))
+              .filter((m) => !pockestState.presetQueue?.map((qm) => qm.monsterId).includes(m.monster_id))
               .sort((a, b) => {
                 if (!a.unlock && b.unlock) return -1;
                 if (a.unlock && !b.unlock) return 1;
@@ -49,8 +47,8 @@ function QueueList() {
             const planId = monsterToAdd?.planId || '1BRP6';
             const monsterToAddParsedPlanId = parsePlanId(planId);
             const statPlanId = monsterToAdd?.statPlan || monsterToAddParsedPlanId?.primaryStatLetter.repeat(6) || '';
-            const planQueue = [
-              ...(pockestState.planQueue || []),
+            const presetQueue = [
+              ...(pockestState.presetQueue || []),
               {
                 id: window.crypto.randomUUID(),
                 monsterId: monsterToAdd?.monster_id || -1,
@@ -59,7 +57,7 @@ function QueueList() {
                 statPlanId,
               },
             ];
-            pockestDispatch(pockestActions.pockestSettings({ planQueue }));
+            pockestDispatch(pockestActions.pockestSettings({ presetQueue }));
           }}
         >
           ➕ Add
