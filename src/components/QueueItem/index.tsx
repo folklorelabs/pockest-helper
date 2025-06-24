@@ -27,10 +27,14 @@ function QueueItem({
     () => pockestState.presetQueue.findIndex(({ id }) => id === presetQueueItem.id),
     [pockestState],
   );
+  const isPresetQueueItem = React.useMemo(
+    () => pockestState?.presetQueueId === item.id,
+    [pockestState, item],
+  );
   const [editMode, setEditMode] = React.useState(false);
   const editableStartIndex = React.useMemo(
-    () => pockestState?.autoQueue && !pockestState?.paused ? 1 : 0,
-    [pockestState?.autoQueue, pockestState?.paused],
+    () => !!pockestState?.presetQueueId ? 1 : 0,
+    [isPresetQueueItem],
   );
   const planEgg = React.useMemo(
     () => presetQueueItem?.monsterId === -1
@@ -61,7 +65,13 @@ function QueueItem({
   return (
     <QueueItemProvider presetQueueItem={presetQueueItem}>
       <div className="QueueItem">
-        <button className="QueueItem-dragHandle" {...dragAttributes} {...dragListeners}>
+        <button
+          className="QueueItem-dragHandle"
+          {...dragAttributes}
+          {...dragListeners}
+          disabled={isPresetQueueItem}
+          aria-disabled={isPresetQueueItem}
+        >
           ⠿
         </button>
         <button

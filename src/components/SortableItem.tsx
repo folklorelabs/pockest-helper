@@ -2,15 +2,16 @@ import React from 'react';
 import {useSortable} from '@dnd-kit/sortable';
 import {CSS} from '@dnd-kit/utilities';
 
+export type SortableItem = {
+  id: string;
+  disabled?: boolean;
+  [key: string]: unknown;
+};
 export type SortableItemComponent = React.FC<{
   item: SortableItem;
   dragAttributes: ReturnType<typeof useSortable>['attributes'];
   dragListeners: ReturnType<typeof useSortable>['listeners'];
 }>;
-export type SortableItem = {
-  id: string;
-  [key: string]: unknown;
-};
 type SortableItemProps = {
   item: SortableItem;
   ItemComponent: SortableItemComponent;
@@ -34,7 +35,7 @@ export function SortableItem({
   };
 
   return (
-    <div ref={setNodeRef} style={style}>
+    <div ref={item.disabled ? undefined : setNodeRef} style={style}>
       <ItemComponent
         item={item}
         dragAttributes={attributes}

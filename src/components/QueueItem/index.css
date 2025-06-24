@@ -20,3 +20,8 @@
 .QueueItem-dragHandle[aria-pressed="true"] {
   cursor: grabbing;
 }
+
+.QueueItem-dragHandle:disabled {
+  opacity: 0.25;
+  cursor: default;
+}

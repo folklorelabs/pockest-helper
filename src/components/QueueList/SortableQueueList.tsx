@@ -14,7 +14,13 @@ function SortableQueueList() {
   } = usePockestContext();
   return (
     <SortableList
-        items={pockestState.presetQueue}
+        items={pockestState.presetQueue.map((item) => {
+          const disabled = pockestState?.presetQueueId === item.id;
+          return {
+            disabled,
+            ...item,
+          };
+        })}
         ItemComponent={QueueItem}
         onDragEnd={(event) => {
           const {active, over} = event;
