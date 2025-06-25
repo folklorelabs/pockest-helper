@@ -441,12 +441,12 @@ export function getAutoSettings(state: PockestState, data?: BucklerStatusData | 
   if (newSettings.simpleMode ?? state.simpleMode) {
     newSettings.autoPlan = true;
   }
-  const presetQueueId = newSettings.presetQueueId ?? state.presetQueueId;
-  const isAutoQueue = presetQueueId && (newSettings.autoQueue ?? state.autoQueue);
+  const isAutoQueue = newSettings.autoQueue ?? state.autoQueue;
   if (isAutoQueue) {
-    newSettings.autoPlan = true;
+    const presetQueueId = newSettings.presetQueueId ?? state.presetQueueId;
     const presetQueue = newSettings.presetQueue ?? state.presetQueue;
     const queueItem = presetQueue.find((item) => item.id === presetQueueId);
+    newSettings.autoPlan = true;
     newSettings.monsterId = queueItem?.monsterId;
     newSettings.planId = queueItem?.planId;
     newSettings.statPlanId = queueItem?.statPlanId;

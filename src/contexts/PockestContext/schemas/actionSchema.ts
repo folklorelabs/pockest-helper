@@ -23,11 +23,7 @@ const actionSchema = z.union([
   z.tuple([z.literal(ACTION_TYPES.INVALIDATE_SESSION)]),
   z.tuple([z.literal(ACTION_TYPES.EVENT_HATCHING), statusPayloadSchema.extend({
     data: hatchingStatusSchema,
-    args: z.object({ id: z.number() }),
-  })]),
-  z.tuple([z.literal(ACTION_TYPES.EVENT_HATCHING_QUEUE), statusPayloadSchema.extend({
-    data: hatchingStatusSchema,
-    args: z.object({ eggId: z.number(), presetQueueId: z.string() }),
+    args: z.object({ id: z.number(), settings: settingsSchema.optional() }),
   })]),
   z.tuple([z.literal(ACTION_TYPES.EVENT_CLEANING), statusPayloadSchema.extend({
     data: cleaningStatusSchema,

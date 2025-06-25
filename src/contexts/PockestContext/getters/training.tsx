@@ -29,7 +29,7 @@ export function getTrainingIntervals(pockestState: PockestState): TrainingInterv
   const trainingIntervals = Array.from(Array(numTrainings), (_, index) => {
     const start = monsterBirth + index * trainingWindow;
     const end = monsterBirth + (index + 1) * trainingWindow;
-    const statId = !pockestState?.autoPlan ? STAT_ID_ABBR[pockestState?.stat] : pockestState?.statPlanId.split('')[index] || plan?.primaryStatLetter;
+    const statId = !pockestState?.autoPlan ? STAT_ID_ABBR[pockestState?.stat] : pockestState?.statPlanId?.split('')[index] || plan?.primaryStatLetter;
     const stat = !statId ? undefined : parseInt(Object.keys(STAT_ID_ABBR)[Object.values(STAT_ID_ABBR).indexOf(statId)], 10);
     const trainingLogs = parsedTrainingLogs.data?.filter((log) => log.timestamp >= start && log.timestamp < end) || [];
     return {

@@ -254,9 +254,9 @@ export async function pockestRunQueue(pockestState: PockestState): Promise<Actio
     const data = await postHatch(planEgg.id);
     const payload = {
       data,
-      args: { eggId: planEgg.id, presetQueueId: nextQueueItem.id },
+      args: { id: planEgg.id, settings: { presetQueueId: nextQueueItem.id }},
     };
-    return [ACTION_TYPES.EVENT_HATCHING_QUEUE, payload];
+    return [ACTION_TYPES.EVENT_HATCHING, payload];
   } catch (error) {
     return [ACTION_TYPES.ERROR, `[pockestRunQueue] ${error instanceof Error ? error?.message : error}`];
   }

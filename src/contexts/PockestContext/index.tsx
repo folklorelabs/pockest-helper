@@ -178,8 +178,9 @@ export function PockestProvider({
 
       // Clean up autoQueue stale items
       if (autoQueue && !pockestState?.data?.monster && pockestState?.presetQueueId) {
-        const filteredPresetQueue = pockestState?.presetQueue.filter((queueItem) => queueItem.id === pockestState?.presetQueueId);
+        const filteredPresetQueue = pockestState?.presetQueue.filter((queueItem) => queueItem.id !== pockestState?.presetQueueId);
         pockestDispatch(pockestActions.pockestSettings({
+          presetQueueId: undefined,
           presetQueue: filteredPresetQueue,
         }));
         return;

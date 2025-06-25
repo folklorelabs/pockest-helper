@@ -61,7 +61,7 @@ export default function REDUCER(state: PockestState, [type, payload]: Action): P
             timestamp: payload?.data?.monster?.live_time || Date.now(),
           },
         ],
-        ...getAutoSettings(state, payload?.data),
+        ...getAutoSettings(state, payload?.data, payload?.args?.settings || {}),
       };
     case ACTION_TYPES.EVENT_CLEANING:
       return {
