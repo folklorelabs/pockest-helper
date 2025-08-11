@@ -137,7 +137,10 @@ export async function pockestRefresh(pockestState: PockestState): Promise<Action
     }
     const isEvoFailureEvent = (() => {
       if (data?.monster?.age && data.monster.age >= 5) return false; // successful evolution already
-      if (typeof data?.monster?.live_time === 'number' && Date.now() <= data.monster.live_time + daysToMs(3)) return false; // not evo time yet
+      if (
+        typeof data?.monster?.live_time === 'number'
+        && Date.now() <= data.monster.live_time + daysToMs(3) + (1000 * 60) // birth + 3 days + 1 min (extra min to account for round trip delays to server)
+      ) return false; // not evo time yet
       if (pockestState.evolutionFailed || getCurrentMonsterLogs(pockestState, ['evolution_failure'])?.length) return false; // logged already
       return true;
     })();
