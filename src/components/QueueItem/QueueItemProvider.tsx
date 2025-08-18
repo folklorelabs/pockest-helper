@@ -24,6 +24,7 @@ export function QueueItemProvider({
     () => pockestState.presetQueue.findIndex((item) => item.id === presetQueueItem.id),
     [pockestState.presetQueue, presetQueueItem],
   );
+  const [editMode, setEditMode] = React.useState(false);
   const updateQueueItem = React.useCallback((newQueueItem: Partial<PresetQueueItem>) => {
     const item = {
       ...localPresetQueueItem,
@@ -55,12 +56,16 @@ export function QueueItemProvider({
     presetQueueItem,
     presetQueueItemIndex,
     queueItem: localPresetQueueItem,
+    editMode,
+    setEditMode,
     updateQueueItem,
     saveQueueItemToPockestState,
   }), [
     presetQueueItem,
     presetQueueItemIndex,
     localPresetQueueItem,
+    editMode,
+    setEditMode,
     updateQueueItem,
     saveQueueItemToPockestState,
   ]);
