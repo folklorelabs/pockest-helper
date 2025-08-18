@@ -35,3 +35,7 @@
   border-right-width: 1px;
   border-bottom-width: 1px;
 }
+
+.QueueList-ageSelect {
+  margin: 0.4em;
+}
