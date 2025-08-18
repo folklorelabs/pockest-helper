@@ -3,21 +3,12 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import { QueueItemContext } from './QueueItemContext';
+import { AGE_INTERVAL } from './constants/AGE_INTERVAL';
 
 // TYPES
 interface QueueItemAgeSelectProps {
   disabled?: boolean | null;
 }
-
-// CONSTS
-const AGE_INTERVAL = {
-  6: '6 (Memento + Sticker)',
-  5: '5 (Sticker)',
-  // 4: '4',
-  // 3: '3',
-  // 2: '2',
-  // 1: '1 (Do nothing)',
-};
 
 function QueueItemAgeSelect({ disabled }: QueueItemAgeSelectProps) {
   const {
@@ -32,9 +23,10 @@ function QueueItemAgeSelect({ disabled }: QueueItemAgeSelectProps) {
       className="PockestSelect"
       onChange={(e) => {
         if (!pockestDispatch || !queueItem) return;
+        const newAge = parseInt(e.target.value, 10);
         updateQueueItem({
-          planAge: parseInt(e.target.value, 10),
-        })
+          planAge: newAge,
+        });
       }}
       value={queueItem?.planAge}
       disabled={!!disabled}

@@ -8,6 +8,7 @@ import {
 } from '../../contexts/PockestContext';
 import parsePlanId from '../../utils/parsePlanId';
 import SortableQueueList from './SortableQueueList';
+import { AGE_INTERVAL } from '../QueueItem/constants/AGE_INTERVAL';
 import './index.css';
 
 function QueueList() {
@@ -52,7 +53,7 @@ function QueueList() {
               {
                 id: window.crypto.randomUUID(),
                 monsterId: monsterToAdd?.monster_id || -1,
-                planAge: monsterToAdd?.unlock ? 6 : 5,
+                planAge: pockestState?.presetQueueAgePref || (monsterToAdd?.unlock ? 6 : 5),
                 planId: monsterToAdd?.planId || '1BRP6',
                 statPlanId,
               },
@@ -62,6 +63,25 @@ function QueueList() {
         >
           ➕ Add
         </button>
+        <select
+          className="PockestSelect QueueList-ageSelect"
+          id="QueueList-ageSelect"
+          onChange={(e) => {
+            if (!pockestDispatch) return;
+            const newAge = parseInt(e.target.value, 10);
+            pockestDispatch(pockestActions.pockestSettings({
+              presetQueueAgePref: newAge,
+            }));
+          }}
+          value={pockestState?.presetQueueAgePref}
+        >
+          <option value=""></option>
+          {Object.keys(AGE_INTERVAL).map((k) => (
+            <option key={k} value={k}>
+              {AGE_INTERVAL[k as unknown as keyof typeof AGE_INTERVAL]}
+            </option>
+          ))}
+        </select>
       </div>
     </div >
   );

@@ -8,6 +8,7 @@ const settingsSchema = z.object({
   planAge: z.number().optional(),
   presetQueue: z.array(presetQueueItemSchema).optional(),
   presetQueueId: presetQueueItemSchema.shape.id.optional(),
+  presetQueueAgePref: z.number().max(6).min(1).optional(),
   autoPlan: z.boolean().optional(),
   autoQueue: z.boolean().optional(),
   autoFeed: z.boolean().optional(),
