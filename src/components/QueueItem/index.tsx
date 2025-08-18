@@ -6,6 +6,7 @@ import {
 } from '../../contexts/PockestContext';
 import PresetQueueItem from '../../contexts/PockestContext/types/PresetQueueItem';
 import { QueueItemProvider } from './QueueItemProvider';
+import { QueueItemContext } from './QueueItemContext';
 import QueueItemEditor from './QueueItemEditor';
 import { SortableItemComponent } from '../SortableItem';
 import './index.css';
@@ -13,16 +14,20 @@ import './index.css';
 type ComponentProps = React.ComponentProps<SortableItemComponent>;
 type ComponentReturn = ReturnType<SortableItemComponent>;
 
-function QueueItem({
+function QueueItemInner({
   item,
   dragAttributes,
   dragListeners,
 }: ComponentProps): ComponentReturn {
-  const presetQueueItem = item as PresetQueueItem;
+const presetQueueItem = item as PresetQueueItem;
   const {
     pockestState,
     pockestDispatch,
   } = usePockestContext();
+  const {
+    editMode,
+    setEditMode,
+  } = React.useContext(QueueItemContext);
   const queueIndex = React.useMemo(
     () => pockestState.presetQueue.findIndex(({ id }) => id === presetQueueItem.id),
     [pockestState],
@@ -31,7 +36,6 @@ function QueueItem({
     () => pockestState?.presetQueueId === item.id,
     [pockestState, item],
   );
-  const [editMode, setEditMode] = React.useState(false);
   const editableStartIndex = React.useMemo(
     () => !!pockestState?.presetQueueId ? 1 : 0,
     [isPresetQueueItem],
@@ -63,7 +67,6 @@ function QueueItem({
     if (queueIndex <= editableStartIndex) setEditMode(false);
   }, [editableStartIndex, queueIndex]);
   return (
-    <QueueItemProvider presetQueueItem={presetQueueItem}>
       <div className="QueueItem">
         <button
           className="QueueItem-dragHandle"
@@ -172,6 +175,22 @@ function QueueItem({
           </>
         )}
       </div>
+  );
+}
+
+function QueueItem({
+  item,
+  dragAttributes,
+  dragListeners,
+}: ComponentProps): ComponentReturn {
+  const presetQueueItem = item as PresetQueueItem;
+  return (
+    <QueueItemProvider presetQueueItem={presetQueueItem}>
+      <QueueItemInner
+        item={item}
+        dragAttributes={dragAttributes}
+        dragListeners={dragListeners}
+      />
     </QueueItemProvider >
   );
 }

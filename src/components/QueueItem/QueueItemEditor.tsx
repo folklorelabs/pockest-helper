@@ -17,6 +17,7 @@ function QueueItemEditor() {
     queueItem,
     updateQueueItem,
     saveQueueItemToPockestState,
+    setEditMode,
   } = React.useContext(QueueItemContext);
   const isDirty = React.useMemo(() => JSON.stringify(presetQueueItem) === JSON.stringify(queueItem), [presetQueueItem, queueItem]);
   return (
@@ -56,7 +57,10 @@ function QueueItemEditor() {
       <button
         type="button"
         className="PockestLink"
-        onClick={saveQueueItemToPockestState}
+        onClick={async () => {
+          await saveQueueItemToPockestState();
+          setEditMode(false);
+        }}
         disabled={isDirty}
       >
         Save
