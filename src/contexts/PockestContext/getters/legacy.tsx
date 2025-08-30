@@ -1,3 +1,4 @@
+import { boolean } from 'zod';
 import fetchCharSprites from '../../../api/fetchCharSprites';
 import MONSTER_AGE from '../../../constants/MONSTER_AGE';
 import { STAT_ABBR, STAT_ID_ABBR } from '../../../constants/stats';
@@ -65,12 +66,13 @@ export function getPresetQueueItemLabel(
 export function getTargetableMonsters(
   state: PockestState,
   targetAge?: number | null,
+  ignoreMementos?: boolean,
 ) {
   const acquiredMementos = getOwnedMementoMonsterIds(state);
   return state?.allMonsters
     ?.filter((m) => {
       if (!m.show) return false;
-      if (m?.requiredMemento && !acquiredMementos.includes(m.requiredMemento))
+      if ((m?.requiredMemento && !ignoreMementos)  && !acquiredMementos.includes(m.requiredMemento))
         return false;
       if (m.age < 5) return false;
       if (targetAge === 5 && m.unlock) return false;
@@ -185,6 +187,16 @@ export function getOwnedMementoMonsterIds(state: PockestState) {
     state?.allMonsters
       ?.filter((m) => m?.memento_flg)
       .map((m) => m?.monster_id)
+      .filter((m) => typeof m === 'number') ?? []
+  );
+}
+
+export function getRequiredMementoMonsterIds(state: PockestState, excludeAcquired?: boolean) {
+  const excludedIds = excludeAcquired ? getOwnedMementoMonsterIds(state) : [];
+  return (
+    state?.allMonsters
+      ?.filter((m) => m?.requiredMemento && !excludedIds.includes(m?.requiredMemento))
+      .map((m) => m?.requiredMemento)
       .filter((m) => typeof m === 'number') ?? []
   );
 }
