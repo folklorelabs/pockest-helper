@@ -563,7 +563,9 @@ export function getAutoSettings(
     isMonsterMissing(state, data);
   if (isMonsterGone) {
     newSettings.autoPlan = true;
-    newSettings.paused = !isAutoQueue;
+    if (!isAutoQueue) {
+      newSettings.paused = true;
+    }
     newSettings.statLog = [];
     newSettings.eggId = null;
     newSettings.eggTimestamp = null;
