@@ -9,6 +9,7 @@ import SortableQueueList from './SortableQueueList';
 import './index.css';
 
 function QueueList() {
+  const uniqueId = React.useId();
   const { pockestState, pockestDispatch } = usePockestContext();
   return (
     <div className="QueueList">
@@ -76,7 +77,7 @@ function QueueList() {
         </button>
         <select
           className="PockestSelect QueueList-ageSelect"
-          id="QueueList-ageSelect"
+          id={`QueueList-ageSelect${uniqueId}`}
           onChange={(e) => {
             if (!pockestDispatch) return;
             const newAge = parseInt(e.target.value, 10);
