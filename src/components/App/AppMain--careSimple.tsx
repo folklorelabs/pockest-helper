@@ -1,14 +1,14 @@
-import PauseBtn from '../PauseBtn';
-import AppMainTemplate from './AppMain';
-import SimplePlan from '../SimplePlan';
 import AutoPlanControlsSimple from '../AutoPlanControlsSimple';
+import PauseBtn from '../PauseBtn';
 import QueueControls from '../QueueControls';
+import SimplePlan from '../SimplePlan';
+import AppMainTemplate from './AppMain';
 
 function AppMain() {
   return (
     <AppMainTemplate
       className="AppMain--careSimple"
-      content={(
+      content={
         <>
           <QueueControls />
           <hr />
@@ -16,12 +16,12 @@ function AppMain() {
           <hr />
           <SimplePlan rows={45} />
         </>
-      )}
-      footer={(
+      }
+      footer={
         <div className="App-button">
           <PauseBtn />
         </div>
-      )}
+      }
     />
   );
 }

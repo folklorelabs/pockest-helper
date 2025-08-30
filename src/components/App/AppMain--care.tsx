@@ -1,19 +1,19 @@
+import AutoPlanControls from '../AutoPlanControls';
 import CleanControls from '../CleanControls';
+import CureControls from '../CureControls';
 import FeedControls from '../FeedControls';
 import MatchControls from '../MatchControls';
-import TrainControls from '../TrainControls';
-import CureControls from '../CureControls';
 import PauseBtn from '../PauseBtn';
-import AppMainTemplate from './AppMain';
-import StatusTimers from '../StatusTimers';
-import AutoPlanControls from '../AutoPlanControls';
 import QueueControls from '../QueueControls';
+import StatusTimers from '../StatusTimers';
+import TrainControls from '../TrainControls';
+import AppMainTemplate from './AppMain';
 
 function AppMain() {
   return (
     <AppMainTemplate
       className="AppMain--care"
-      content={(
+      content={
         <>
           <QueueControls />
           <hr />
@@ -30,12 +30,12 @@ function AppMain() {
           <hr />
           <CureControls />
         </>
-      )}
-      footer={(
+      }
+      footer={
         <div className="App-button">
           <PauseBtn />
         </div>
-      )}
+      }
     />
   );
 }

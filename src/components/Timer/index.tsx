@@ -1,7 +1,7 @@
 import React from 'react';
+import useNow from '../../hooks/useNow';
 import { parseDurationStr } from '../../utils/parseDuration';
 import TimerLine from './TimerLine';
-import useNow from '../../hooks/useNow';
 import './index.css';
 
 interface TimerProps {
@@ -17,9 +17,7 @@ function Timer({ label, timestamp = null, value = null }: TimerProps) {
     if (timestamp) return parseDurationStr(timestamp - now);
     return '--';
   })();
-  return (
-    <TimerLine label={label} value={v} />
-  );
+  return <TimerLine label={label} value={v} />;
 }
 
 export default Timer;

@@ -1,9 +1,7 @@
 import React from 'react';
-import {
-  usePockestContext,
-} from '../../contexts/PockestContext';
-import { QueueItemContext } from './QueueItemContext';
+import { usePockestContext } from '../../contexts/PockestContext';
 import { AGE_INTERVAL } from './constants/AGE_INTERVAL';
+import { QueueItemContext } from './QueueItemContext';
 
 // TYPES
 interface QueueItemAgeSelectProps {
@@ -11,13 +9,8 @@ interface QueueItemAgeSelectProps {
 }
 
 function QueueItemAgeSelect({ disabled }: QueueItemAgeSelectProps) {
-  const {
-    pockestDispatch,
-  } = usePockestContext();
-  const {
-    queueItem,
-    updateQueueItem,
-  } = React.useContext(QueueItemContext);
+  const { pockestDispatch } = usePockestContext();
+  const { queueItem, updateQueueItem } = React.useContext(QueueItemContext);
   return (
     <select
       className="PockestSelect"

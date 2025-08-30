@@ -1,5 +1,5 @@
-import React from 'react';
 import cx from 'classnames';
+import React from 'react';
 import toLocalIsoString from '../../utils/toLocalIsoString';
 import './index.css';
 
@@ -9,13 +9,21 @@ interface DateTimeInputProps {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-function DateTimeInput({ className = '', value = null, onChange = () => { } }: DateTimeInputProps) {
+function DateTimeInput({
+  className = '',
+  value = null,
+  onChange = () => {},
+}: DateTimeInputProps) {
   const [inputVal, setInputVal] = React.useState<string | null>();
   React.useEffect(() => {
     const date = value ? new Date(value) : null;
-    const newInputVal = date ? (toLocalIsoString(date) || '').slice(0, 19) : date;
+    const newInputVal = date
+      ? (toLocalIsoString(date) || '').slice(0, 19)
+      : date;
     setInputVal(newInputVal);
-  }, [value]);
+  }, [
+    value,
+  ]);
   return (
     <input
       className={cx('DateTimeInput', 'PockestInput', className)}

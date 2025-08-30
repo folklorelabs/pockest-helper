@@ -1,15 +1,17 @@
 import { z } from 'zod';
-import { pockestGetters } from '../contexts/PockestContext';
-import combineDiscordReports from './combineDiscordReports';
-import { postDiscordTest } from '../api/postDiscord';
 import fetchMatchList from '../api/fetchMatchList';
+import { postDiscordTest } from '../api/postDiscord';
+import { pockestGetters } from '../contexts/PockestContext';
 import PockestState from '../contexts/PockestContext/types/PockestState';
-import BucklerPotentialMatch from '../types/BucklerPotentialMatch';
 import { exchangeStatusSchema } from '../schemas/statusSchema';
-import BucklerStatusData from '../types/BucklerStatusData';
 import BucklerMatchResults from '../types/BucklerMatchResults';
+import BucklerPotentialMatch from '../types/BucklerPotentialMatch';
+import BucklerStatusData from '../types/BucklerStatusData';
+import combineDiscordReports from './combineDiscordReports';
 
-const pockestState: PockestState = JSON.parse(window.sessionStorage.PockestHelperState);
+const pockestState: PockestState = JSON.parse(
+  window.sessionStorage.PockestHelperState,
+);
 type MatchRes = z.infer<typeof exchangeStatusSchema>;
 const matchData: MatchRes = {
   event: 'exchange',
@@ -106,21 +108,36 @@ const chunData: BucklerStatusData = {
 };
 
 export async function testDiscordMatch() {
-  const isDisc = pockestGetters.isMatchDiscovery(pockestState, matchData?.exchangeResult);
+  const isDisc = pockestGetters.isMatchDiscovery(
+    pockestState,
+    matchData?.exchangeResult,
+  );
   if (isDisc) {
-    const report = pockestGetters
-      .getDiscordReportMatch(pockestState, matchData?.exchangeResult, matchArgs?.name_en);
+    const report = pockestGetters.getDiscordReportMatch(
+      pockestState,
+      matchData?.exchangeResult,
+      matchArgs?.name_en,
+    );
     postDiscordTest(report);
     return report;
   }
   return null;
 }
 
-export async function testDiscordMatchManual(monsterName = 'Evil Ryu', opponentName = 'Lucia') {
-  const monster = pockestState?.allMonsters?.find((m) => m.name_en === monsterName);
-  const monsterHash = pockestState?.allHashes?.find((h) => monster?.monster_id && h?.id?.includes(`${monster.monster_id}`))?.id;
-  const opponent = pockestState?.allMonsters?.find((m) => m.name_en === opponentName);
-  const state:PockestState = {
+export async function testDiscordMatchManual(
+  monsterName = 'Evil Ryu',
+  opponentName = 'Lucia',
+) {
+  const monster = pockestState?.allMonsters?.find(
+    (m) => m.name_en === monsterName,
+  );
+  const monsterHash = pockestState?.allHashes?.find(
+    (h) => monster?.monster_id && h?.id?.includes(`${monster.monster_id}`),
+  )?.id;
+  const opponent = pockestState?.allMonsters?.find(
+    (m) => m.name_en === opponentName,
+  );
+  const state: PockestState = {
     ...pockestState,
     data: {
       event: '',
@@ -155,26 +172,32 @@ export async function testDiscordMatchManual(monsterName = 'Evil Ryu', opponentN
     },
   };
   const result: BucklerMatchResults = {
-    'egg_get': false,
-    'egg_hash': '0003-qYaoQCHI',
-    'egg_id': 3,
-    'egg_name': '黄水玉のタマゴ',
-    'egg_name_en': 'Yellow Polka-dot Egg',
-    'egg_point_per_after': 56.43,
-    'egg_point_per_before': 45.93,
-    'get_egg_point': 1050,
-    'get_memento_point': 0,
-    'memento_get': false,
-    'memento_hash': '4012-mogpqmds',
-    'memento_point_per_after': 100,
-    'memento_point_per_before': 100,
-    'target_monster_hash': '4004-eJcEMJMX',
-    is_spmatch: (opponent?.monster_id && monster?.matchFever?.includes(opponent.monster_id)) || false,
+    egg_get: false,
+    egg_hash: '0003-qYaoQCHI',
+    egg_id: 3,
+    egg_name: '黄水玉のタマゴ',
+    egg_name_en: 'Yellow Polka-dot Egg',
+    egg_point_per_after: 56.43,
+    egg_point_per_before: 45.93,
+    get_egg_point: 1050,
+    get_memento_point: 0,
+    memento_get: false,
+    memento_hash: '4012-mogpqmds',
+    memento_point_per_after: 100,
+    memento_point_per_before: 100,
+    target_monster_hash: '4004-eJcEMJMX',
+    is_spmatch:
+      (opponent?.monster_id &&
+        monster?.matchFever?.includes(opponent.monster_id)) ||
+      false,
     target_monster_id: opponent?.monster_id || 4004,
   };
 
-  const report = pockestGetters
-    .getDiscordReportMatch(state, result, opponentName);
+  const report = pockestGetters.getDiscordReportMatch(
+    state,
+    result,
+    opponentName,
+  );
   postDiscordTest(report);
   return report;
 }
@@ -182,9 +205,15 @@ export async function testDiscordMatchManual(monsterName = 'Evil Ryu', opponentN
 export async function testDiscordEvo() {
   if (!pockestState?.data) return;
   const reports = [
-    await pockestGetters.getDiscordReportEvoSuccess(pockestState, pockestState?.data),
+    await pockestGetters.getDiscordReportEvoSuccess(
+      pockestState,
+      pockestState?.data,
+    ),
     pockestGetters.getDiscordReportEvoFailure(pockestState, pockestState?.data),
-    await pockestGetters.getDiscordReportMemento(pockestState, pockestState?.data),
+    await pockestGetters.getDiscordReportMemento(
+      pockestState,
+      pockestState?.data,
+    ),
   ];
   const report = combineDiscordReports(reports);
   await postDiscordTest(report);
@@ -203,7 +232,10 @@ export async function testDiscordEvoManual() {
 }
 
 export async function testDiscordEvoChun() {
-  const report = await pockestGetters.getDiscordReportMemento(pockestState, chunData);
+  const report = await pockestGetters.getDiscordReportMemento(
+    pockestState,
+    chunData,
+  );
   await postDiscordTest(report);
   return report;
 }
@@ -213,20 +245,28 @@ export async function testDiscordMatchList() {
   const monster = data?.monster;
   if (!monster) return;
   const { exchangeList } = await fetchMatchList();
-  console.log({ exchangeList });
+  console.log({
+    exchangeList,
+  });
   if (monster?.age >= 5) {
     // Report missing hashes, names, and stat vals to discord when found on opponents
     const missing = exchangeList.filter((m) => {
-      const matchingMonster = pockestState?.allMonsters
-        .find((m2) => m2?.monster_id === m?.monster_id);
+      const matchingMonster = pockestState?.allMonsters.find(
+        (m2) => m2?.monster_id === m?.monster_id,
+      );
       return !matchingMonster?.confirmed;
     });
-    console.log({ missing });
+    console.log({
+      missing,
+    });
     if (missing.length) {
-      const reportReqs = missing.map((match) => pockestGetters
-        .getDiscordReportSighting(pockestState, data, match));
+      const reportReqs = missing.map((match) =>
+        pockestGetters.getDiscordReportSighting(pockestState, data, match),
+      );
       const reports = await Promise.all(reportReqs);
-      console.log({ reports });
+      console.log({
+        reports,
+      });
       const report = combineDiscordReports(reports);
       await postDiscordTest(report);
       return report;
@@ -250,7 +290,11 @@ export async function testDiscordMatchListManual() {
     speed: 0,
     technic: 3076,
   };
-  const report = await pockestGetters.getDiscordReportSighting(pockestState, data, match);
+  const report = await pockestGetters.getDiscordReportSighting(
+    pockestState,
+    data,
+    match,
+  );
   await postDiscordTest(report);
   return report;
 }

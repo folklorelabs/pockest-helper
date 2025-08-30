@@ -7,32 +7,41 @@ import {
   usePockestContext,
 } from '../../contexts/PockestContext';
 import parsePlanId from '../../utils/parsePlanId';
-import SortableQueueList from './SortableQueueList';
 import { AGE_INTERVAL } from '../QueueItem/constants/AGE_INTERVAL';
+import SortableQueueList from './SortableQueueList';
 import './index.css';
 
 function QueueList() {
-  const {
-    pockestState,
-    pockestDispatch,
-  } = usePockestContext();
-  const affordableMonsterIds = React.useMemo(() => pockestGetters.getAffordableMonsters(pockestState).map((m) => m.monster_id), [pockestState]);
+  const { pockestState, pockestDispatch } = usePockestContext();
+  const affordableMonsterIds = React.useMemo(
+    () =>
+      pockestGetters
+        .getAffordableMonsters(pockestState)
+        .map((m) => m.monster_id),
+    [
+      pockestState,
+    ],
+  );
   return (
     <div className="QueueList">
       <div className="QueueList-main">
         <SortableQueueList />
       </div>
-      <div
-        className="QueueList-buttons"
-      >
+      <div className="QueueList-buttons">
         <button
           type="button"
           className="PockestLink QueueList-add"
           aria-label={`Add Plan Queue`}
           onClick={() => {
             if (!pockestDispatch) return;
-            const targetableMonsters = pockestGetters.getTargetableMonsters(pockestState, 6)
-              .filter((m) => !pockestState.presetQueue?.map((qm) => qm.monsterId).includes(m.monster_id))
+            const targetableMonsters = pockestGetters
+              .getTargetableMonsters(pockestState, 6)
+              .filter(
+                (m) =>
+                  !pockestState.presetQueue
+                    ?.map((qm) => qm.monsterId)
+                    .includes(m.monster_id),
+              )
               .sort((a, b) => {
                 if (!a.unlock && b.unlock) return -1;
                 if (a.unlock && !b.unlock) return 1;
@@ -47,18 +56,27 @@ function QueueList() {
             const monsterToAdd = targetableMonsters[0];
             const planId = monsterToAdd?.planId || '1BRP6';
             const monsterToAddParsedPlanId = parsePlanId(planId);
-            const statPlanId = monsterToAdd?.statPlan || monsterToAddParsedPlanId?.primaryStatLetter.repeat(6) || '';
+            const statPlanId =
+              monsterToAdd?.statPlan ||
+              monsterToAddParsedPlanId?.primaryStatLetter.repeat(6) ||
+              '';
             const presetQueue = [
               ...(pockestState.presetQueue || []),
               {
                 id: window.crypto.randomUUID(),
                 monsterId: monsterToAdd?.monster_id || -1,
-                planAge: pockestState?.presetQueueAgePref || (monsterToAdd?.unlock ? 6 : 5),
+                planAge:
+                  pockestState?.presetQueueAgePref ||
+                  (monsterToAdd?.unlock ? 6 : 5),
                 planId: monsterToAdd?.planId || '1BRP6',
                 statPlanId,
               },
             ];
-            pockestDispatch(pockestActions.pockestSettings({ presetQueue }));
+            pockestDispatch(
+              pockestActions.pockestSettings({
+                presetQueue,
+              }),
+            );
           }}
         >
           ➕ Add
@@ -69,9 +87,11 @@ function QueueList() {
           onChange={(e) => {
             if (!pockestDispatch) return;
             const newAge = parseInt(e.target.value, 10);
-            pockestDispatch(pockestActions.pockestSettings({
-              presetQueueAgePref: newAge,
-            }));
+            pockestDispatch(
+              pockestActions.pockestSettings({
+                presetQueueAgePref: newAge,
+              }),
+            );
           }}
           value={pockestState?.presetQueueAgePref}
         >
@@ -83,7 +103,7 @@ function QueueList() {
           ))}
         </select>
       </div>
-    </div >
+    </div>
   );
 }
 

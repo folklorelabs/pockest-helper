@@ -1,23 +1,23 @@
-import {
-  usePockestContext,
-} from '../../contexts/PockestContext';
-import TargetMonsterSelect from '../TargetMonsterSelect';
-import AutoPlanSettingInput from '../AutoPlanSettingInput';
-import TargetAgeSelect from '../TargetAgeSelect';
+import { usePockestContext } from '../../contexts/PockestContext';
 import AutoPlanControlsPlanLabel from '../AutoPlanControls/AutoPlanControls-planLabel';
 import AutoPlanControlsStatPlanLabel from '../AutoPlanControls/AutoPlanControls-statPlanLabel';
+import AutoPlanSettingInput from '../AutoPlanSettingInput';
+import TargetAgeSelect from '../TargetAgeSelect';
+import TargetMonsterSelect from '../TargetMonsterSelect';
 
 function AutoPlanControlsSimple() {
-  const {
-    pockestState,
-  } = usePockestContext();
+  const { pockestState } = usePockestContext();
   return (
     <div className="AutoPlanControls AutoPlanControls--simple">
       <div className="PockestLine">
         <span className="PockestText">Target</span>
-        <TargetMonsterSelect disabled={pockestState?.data?.monster?.live_time ? true : null} />
+        <TargetMonsterSelect
+          disabled={pockestState?.data?.monster?.live_time ? true : null}
+        />
       </div>
-      {pockestState?.simpleMode && pockestState?.monsterId !== -1 ? '' : (
+      {pockestState?.simpleMode && pockestState?.monsterId !== -1 ? (
+        ''
+      ) : (
         <>
           <div className="PockestLine">
             <AutoPlanControlsPlanLabel />
@@ -38,7 +38,9 @@ function AutoPlanControlsSimple() {
       )}
       <div className="PockestLine">
         <span className="PockestText">Target Age</span>
-        <TargetAgeSelect disabled={pockestState?.data?.monster?.live_time ? true : null} />
+        <TargetAgeSelect
+          disabled={pockestState?.data?.monster?.live_time ? true : null}
+        />
       </div>
     </div>
   );

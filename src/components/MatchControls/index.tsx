@@ -1,33 +1,40 @@
 import React from 'react';
 import {
-  usePockestContext,
   pockestActions,
+  usePockestContext,
 } from '../../contexts/PockestContext';
-import LogCountLine from '../LogCountLine';
-import { parseDurationStr } from '../../utils/parseDuration';
-import getMatchTimer from '../../utils/getMatchTimer';
 import useNow from '../../hooks/useNow';
 import getAgeTimer from '../../utils/getAgeTimer';
+import getMatchTimer from '../../utils/getMatchTimer';
+import { parseDurationStr } from '../../utils/parseDuration';
+import LogCountLine from '../LogCountLine';
 import './index.css';
 
 function MatchControls() {
-  const {
-    pockestState,
-    pockestDispatch,
-  } = usePockestContext();
+  const { pockestState, pockestDispatch } = usePockestContext();
   const now = useNow();
-  const {
-    autoMatch,
-    autoPlan,
-    paused,
-    matchPriority,
-  } = pockestState;
-  const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
+  const { autoMatch, autoPlan, paused, matchPriority } = pockestState;
+  const ageTimer = React.useMemo(
+    () => getAgeTimer(pockestState),
+    [
+      pockestState,
+    ],
+  );
   const nextMatchTimer = React.useMemo(() => {
     const timer = getMatchTimer(pockestState);
-    if (typeof timer !== 'number' || typeof ageTimer !== 'number' || typeof pockestState?.data?.monster?.age !== 'number') return null;
-    return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
-  }, [pockestState, ageTimer]);
+    if (
+      typeof timer !== 'number' ||
+      typeof ageTimer !== 'number' ||
+      typeof pockestState?.data?.monster?.age !== 'number'
+    )
+      return null;
+    return timer > ageTimer && pockestState?.data?.monster?.age >= 5
+      ? null
+      : timer;
+  }, [
+    pockestState,
+    ageTimer,
+  ]);
   return (
     <div className="MatchControls">
       <div className="PockestLine">
@@ -36,9 +43,14 @@ function MatchControls() {
             id="PockestHelper_AutoMatch"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
-              autoMatch: e.target.checked,
-            }))}
+            onChange={(e) =>
+              pockestDispatch &&
+              pockestDispatch(
+                pockestActions.pockestSettings({
+                  autoMatch: e.target.checked,
+                }),
+              )
+            }
             checked={autoMatch}
             disabled={!paused || autoPlan}
           />
@@ -46,14 +58,17 @@ function MatchControls() {
         </label>
       </div>
       <div className="PockestLine">
-        <span className="PockestText">
-          Priority
-        </span>
+        <span className="PockestText">Priority</span>
         <select
           className="PockestSelect"
-          onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
-            matchPriority: parseInt(e.target.value, 10),
-          }))}
+          onChange={(e) =>
+            pockestDispatch &&
+            pockestDispatch(
+              pockestActions.pockestSettings({
+                matchPriority: parseInt(e.target.value, 10),
+              }),
+            )
+          }
           value={matchPriority || ''}
           disabled={!paused}
         >
@@ -66,18 +81,18 @@ function MatchControls() {
         </select>
       </div>
       <div className="PockestLine">
-        <span className="PockestText">
-          Next Match
-        </span>
+        <span className="PockestText">Next Match</span>
         <span className="PockestText PockestLine-value">
           {nextMatchTimer ? parseDurationStr(nextMatchTimer - now) : '--'}
         </span>
       </div>
       <LogCountLine
         title="Matches"
-        logTypes={['exchange']}
+        logTypes={[
+          'exchange',
+        ]}
       />
-    </div >
+    </div>
   );
 }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { PockestProvider } from './contexts/PockestContext';
-import { AppProvider } from './contexts/AppProvider';
 import App from './components/App';
+import { AppProvider } from './contexts/AppProvider';
+import { PockestProvider } from './contexts/PockestContext';
 import log from './utils/log';
 import './reset.css';
 import './index.css';

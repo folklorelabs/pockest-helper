@@ -1,5 +1,5 @@
-import React from 'react';
 import cx from 'classnames';
+import React from 'react';
 
 interface AppMainProps {
   className?: string;
@@ -7,11 +7,7 @@ interface AppMainProps {
   footer?: React.ReactNode | React.ReactNode[];
 }
 
-function AppMain({
-  className = '',
-  content,
-  footer = null,
-}: AppMainProps) {
+function AppMain({ className = '', content, footer = null }: AppMainProps) {
   return (
     <>
       <div
@@ -25,11 +21,7 @@ function AppMain({
       >
         {content}
       </div>
-      {footer ? (
-        <div className="AppMain-footer">
-          {footer}
-        </div>
-      ) : ''}
+      {footer ? <div className="AppMain-footer">{footer}</div> : ''}
     </>
   );
 }

@@ -1,8 +1,6 @@
-import React, { ReactNode } from 'react';
 import cx from 'classnames';
-import {
-  AppContext,
-} from '../../contexts/AppContext';
+import React, { ReactNode } from 'react';
+import { AppContext } from '../../contexts/AppContext';
 import './index.css';
 
 interface LogPanelProps {
@@ -10,13 +8,13 @@ interface LogPanelProps {
 }
 
 function LogPanel({ children }: LogPanelProps) {
-  const {
-    setShowLog,
-    logStyle,
-  } = React.useContext(AppContext);
+  const { setShowLog, logStyle } = React.useContext(AppContext);
   return (
     <>
-      <div onClick={() => setShowLog && setShowLog(false)} className="LogPanel-overlay" />
+      <div
+        onClick={() => setShowLog && setShowLog(false)}
+        className="LogPanel-overlay"
+      />
       <div className={cx('LogPanel', `LogPanel--${logStyle}`)}>
         <button
           className="LogPanel-close"

@@ -1,7 +1,6 @@
 import { z } from 'zod';
-
-import { baseStatusSchema } from './statusSchema';
 import potentialMatchSchema from './potentialMatchSchema';
+import { baseStatusSchema } from './statusSchema';
 
 const matchListStatusSchema = baseStatusSchema.extend({
   exchangeList: z.array(potentialMatchSchema),

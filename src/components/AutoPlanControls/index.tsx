@@ -1,23 +1,17 @@
 import {
-  usePockestContext,
   pockestActions,
+  usePockestContext,
 } from '../../contexts/PockestContext';
-import TargetMonsterSelect from '../TargetMonsterSelect';
 import AutoPlanSettingInput from '../AutoPlanSettingInput';
 import TargetAgeSelect from '../TargetAgeSelect';
+import TargetMonsterSelect from '../TargetMonsterSelect';
 import AutoPlanControlsPlanLabel from './AutoPlanControls-planLabel';
 import AutoPlanControlsStatPlanLabel from './AutoPlanControls-statPlanLabel';
 import './index.css';
 
 function AutoPlanControls() {
-  const {
-    pockestState,
-    pockestDispatch,
-  } = usePockestContext();
-  const {
-    autoPlan,
-    paused,
-  } = pockestState;
+  const { pockestState, pockestDispatch } = usePockestContext();
+  const { autoPlan, paused } = pockestState;
   return (
     <div className="AutoPlanControls">
       <div className="PockestLine">
@@ -26,9 +20,14 @@ function AutoPlanControls() {
             id="PockestHelper_AutoPlan"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestPlanSettings({
-              autoPlan: e.target.checked,
-            }))}
+            onChange={(e) =>
+              pockestDispatch &&
+              pockestDispatch(
+                pockestActions.pockestPlanSettings({
+                  autoPlan: e.target.checked,
+                }),
+              )
+            }
             checked={autoPlan}
             disabled={!paused || pockestState.autoQueue}
           />
@@ -44,7 +43,6 @@ function AutoPlanControls() {
         <AutoPlanSettingInput settingName="planId" required />
       </div>
       <div className="PockestLine">
-
         <AutoPlanControlsStatPlanLabel />
         <AutoPlanSettingInput settingName="statPlanId" />
       </div>

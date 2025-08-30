@@ -1,13 +1,14 @@
-import logError from '../utils/logError';
-import LocalStorageCache from '../utils/LocalStorageCache';
 import eggListSchema from '../schemas/eggListSchema';
 import BucklerEggData from '../types/BucklerEggsData';
+import LocalStorageCache from '../utils/LocalStorageCache';
+import logError from '../utils/logError';
 
 const cache = new LocalStorageCache('PockestHelperBucklerEggs');
 
 export default async function fetchAllEggs(): Promise<BucklerEggData> {
   try {
-    const bucklerUrl = 'https://www.streetfighter.com/6/buckler/api/minigame/eggs';
+    const bucklerUrl =
+      'https://www.streetfighter.com/6/buckler/api/minigame/eggs';
     const response = await fetch(bucklerUrl);
     if (!response.ok) throw new Error(`API ${response.status} response`);
     const { data } = await response.json();

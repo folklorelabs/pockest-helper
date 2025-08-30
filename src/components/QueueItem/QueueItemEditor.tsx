@@ -1,17 +1,13 @@
 import React from 'react';
-import QueueItemMonsterSelect from './QueueItemMonsterSelect';
-import {
-  usePockestContext,
-} from '../../contexts/PockestContext';
-import QueueItemAgeSelect from './QueueItemAgeSelect';
 import { STAT_ABBR } from '../../constants/stats';
+import { usePockestContext } from '../../contexts/PockestContext';
+import QueueItemAgeSelect from './QueueItemAgeSelect';
 import { QueueItemContext } from './QueueItemContext';
+import QueueItemMonsterSelect from './QueueItemMonsterSelect';
 import './index.css';
 
 function QueueItemEditor() {
-  const {
-    pockestDispatch,
-  } = usePockestContext();
+  const { pockestDispatch } = usePockestContext();
   const {
     presetQueueItem,
     queueItem,
@@ -19,13 +15,17 @@ function QueueItemEditor() {
     saveQueueItemToPockestState,
     setEditMode,
   } = React.useContext(QueueItemContext);
-  const isDirty = React.useMemo(() => JSON.stringify(presetQueueItem) === JSON.stringify(queueItem), [presetQueueItem, queueItem]);
+  const isDirty = React.useMemo(
+    () => JSON.stringify(presetQueueItem) === JSON.stringify(queueItem),
+    [
+      presetQueueItem,
+      queueItem,
+    ],
+  );
   return (
     <div className="QueueItemEditor">
       <QueueItemMonsterSelect />
-      {queueItem?.monsterId !== -1 && (
-        <QueueItemAgeSelect />
-      )}
+      {queueItem?.monsterId !== -1 && <QueueItemAgeSelect />}
       {queueItem?.monsterId === -1 && (
         <>
           <input

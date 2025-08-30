@@ -1,9 +1,11 @@
 import React from 'react';
-
-import { QueueItemContext } from './QueueItemContext';
-import { pockestActions, usePockestContext } from '../../contexts/PockestContext';
+import {
+  pockestActions,
+  usePockestContext,
+} from '../../contexts/PockestContext';
 import PresetQueueItem from '../../contexts/PockestContext/types/PresetQueueItem';
 import parsePlanId from '../../utils/parsePlanId';
+import { QueueItemContext } from './QueueItemContext';
 
 // TYPES
 interface QueueItemProviderProps {
@@ -15,30 +17,43 @@ export function QueueItemProvider({
   presetQueueItem,
   children,
 }: QueueItemProviderProps) {
-  const {
-    pockestState,
-    pockestDispatch,
-  } = usePockestContext();
-  const [localPresetQueueItem, setLocalPresetQueueItem] = React.useState<PresetQueueItem>(presetQueueItem);
+  const { pockestState, pockestDispatch } = usePockestContext();
+  const [localPresetQueueItem, setLocalPresetQueueItem] =
+    React.useState<PresetQueueItem>(presetQueueItem);
   const presetQueueItemIndex = React.useMemo(
-    () => pockestState.presetQueue.findIndex((item) => item.id === presetQueueItem.id),
-    [pockestState.presetQueue, presetQueueItem],
+    () =>
+      pockestState.presetQueue.findIndex(
+        (item) => item.id === presetQueueItem.id,
+      ),
+    [
+      pockestState.presetQueue,
+      presetQueueItem,
+    ],
   );
   const [editMode, setEditMode] = React.useState(false);
-  const updateQueueItem = React.useCallback((newQueueItem: Partial<PresetQueueItem>) => {
-    const item = {
-      ...localPresetQueueItem,
-      ...newQueueItem,
-      id: localPresetQueueItem.id,
-    }
-    const monster = pockestState.allMonsters.find((m) => m.monster_id === item.monsterId);
-    if (newQueueItem?.monsterId && newQueueItem.monsterId >= 0) {
-      item.planId = monster?.planId || '';
-      const parsedPlanId = parsePlanId(item.planId);
-      item.statPlanId = monster?.statPlan || parsedPlanId?.primaryStatLetter.repeat(6) || '';
-    }
-    return setLocalPresetQueueItem(item);
-  }, [localPresetQueueItem, pockestState.allMonsters]);
+  const updateQueueItem = React.useCallback(
+    (newQueueItem: Partial<PresetQueueItem>) => {
+      const item = {
+        ...localPresetQueueItem,
+        ...newQueueItem,
+        id: localPresetQueueItem.id,
+      };
+      const monster = pockestState.allMonsters.find(
+        (m) => m.monster_id === item.monsterId,
+      );
+      if (newQueueItem?.monsterId && newQueueItem.monsterId >= 0) {
+        item.planId = monster?.planId || '';
+        const parsedPlanId = parsePlanId(item.planId);
+        item.statPlanId =
+          monster?.statPlan || parsedPlanId?.primaryStatLetter.repeat(6) || '';
+      }
+      return setLocalPresetQueueItem(item);
+    },
+    [
+      localPresetQueueItem,
+      pockestState.allMonsters,
+    ],
+  );
   const saveQueueItemToPockestState = React.useCallback(() => {
     if (!pockestDispatch) return;
     const presetQueue: PresetQueueItem[] = [
@@ -46,29 +61,39 @@ export function QueueItemProvider({
       localPresetQueueItem,
       ...pockestState.presetQueue.slice(presetQueueItemIndex + 1),
     ];
-    pockestDispatch(pockestActions.pockestPlanSettings({
-      presetQueue,
-    }));
-  }, [pockestDispatch, pockestState.presetQueue, presetQueueItemIndex, localPresetQueueItem]);
-
-  // wrap value in memo so we only re-render when necessary
-  const providerValue = React.useMemo(() => ({
-    presetQueueItem,
-    presetQueueItemIndex,
-    queueItem: localPresetQueueItem,
-    editMode,
-    setEditMode,
-    updateQueueItem,
-    saveQueueItemToPockestState,
-  }), [
-    presetQueueItem,
+    pockestDispatch(
+      pockestActions.pockestPlanSettings({
+        presetQueue,
+      }),
+    );
+  }, [
+    pockestDispatch,
+    pockestState.presetQueue,
     presetQueueItemIndex,
     localPresetQueueItem,
-    editMode,
-    setEditMode,
-    updateQueueItem,
-    saveQueueItemToPockestState,
   ]);
+
+  // wrap value in memo so we only re-render when necessary
+  const providerValue = React.useMemo(
+    () => ({
+      presetQueueItem,
+      presetQueueItemIndex,
+      queueItem: localPresetQueueItem,
+      editMode,
+      setEditMode,
+      updateQueueItem,
+      saveQueueItemToPockestState,
+    }),
+    [
+      presetQueueItem,
+      presetQueueItemIndex,
+      localPresetQueueItem,
+      editMode,
+      setEditMode,
+      updateQueueItem,
+      saveQueueItemToPockestState,
+    ],
+  );
 
   return (
     <QueueItemContext.Provider value={providerValue}>

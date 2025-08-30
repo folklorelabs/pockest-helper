@@ -1,7 +1,6 @@
 import { z } from 'zod';
-
-import timestampSchema from './timestampSchema';
 import flagSchema from './flagSchema';
+import timestampSchema from './timestampSchema';
 
 const bucklerDataMonsterSchema = z.object({
   age: z.number().int().positive().lte(5),

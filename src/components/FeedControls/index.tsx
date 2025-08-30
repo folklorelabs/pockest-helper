@@ -1,14 +1,14 @@
 import React from 'react';
 import {
   pockestActions,
-  usePockestContext,
   pockestGetters,
+  usePockestContext,
 } from '../../contexts/PockestContext';
 import useNow from '../../hooks/useNow';
-import { parseDurationStr } from '../../utils/parseDuration';
-import getStomachTimer from '../../utils/getStomachTimer';
-import LogCountLine from '../LogCountLine';
 import getAgeTimer from '../../utils/getAgeTimer';
+import getStomachTimer from '../../utils/getStomachTimer';
+import { parseDurationStr } from '../../utils/parseDuration';
+import LogCountLine from '../LogCountLine';
 import './index.css';
 
 // CONSTS
@@ -20,33 +20,38 @@ const FEED_INTERVAL: Record<number, string> = {
 };
 
 function FeedControls() {
-  const {
-    pockestState,
-    pockestDispatch,
-  } = usePockestContext();
+  const { pockestState, pockestDispatch } = usePockestContext();
   const now = useNow();
-  const {
-    currentFeedWindow,
-    nextFeedWindow,
-  } = React.useMemo(
+  const { currentFeedWindow, nextFeedWindow } = React.useMemo(
     () => pockestGetters.getCurrentPlanScheduleWindows(pockestState),
-    [pockestState],
+    [
+      pockestState,
+    ],
   );
-  const ageTimer = React.useMemo(() => getAgeTimer(pockestState), [pockestState]);
+  const ageTimer = React.useMemo(
+    () => getAgeTimer(pockestState),
+    [
+      pockestState,
+    ],
+  );
   const stomachTimer = React.useMemo(() => {
     const timer = getStomachTimer(pockestState);
-    if (typeof timer !== 'number' || typeof ageTimer !== 'number' || typeof pockestState?.data?.monster?.age !== 'number') return null;
-    return timer > ageTimer && pockestState?.data?.monster?.age >= 5 ? null : timer;
-  }, [pockestState, ageTimer]);
+    if (
+      typeof timer !== 'number' ||
+      typeof ageTimer !== 'number' ||
+      typeof pockestState?.data?.monster?.age !== 'number'
+    )
+      return null;
+    return timer > ageTimer && pockestState?.data?.monster?.age >= 5
+      ? null
+      : timer;
+  }, [
+    pockestState,
+    ageTimer,
+  ]);
 
-  const {
-    data,
-    autoPlan,
-    autoFeed,
-    paused,
-    feedFrequency,
-    feedTarget,
-  } = pockestState;
+  const { data, autoPlan, autoFeed, paused, feedFrequency, feedTarget } =
+    pockestState;
   return (
     <div className="FeedControls">
       <div className="PockestLine">
@@ -55,24 +60,28 @@ function FeedControls() {
             id="PockestHelper_AutoFeed"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
-              autoFeed: e.target.checked,
-            }))}
+            onChange={(e) =>
+              pockestDispatch &&
+              pockestDispatch(
+                pockestActions.pockestSettings({
+                  autoFeed: e.target.checked,
+                }),
+              )
+            }
             checked={autoFeed}
             disabled={!paused || autoPlan}
           />
           <span className="PockestCheck-text">Feed</span>
         </label>
         <span className="PockestText">
-          <span className="PockestIcon">❤️</span>
-          {' '}
-          {typeof data?.monster?.stomach === 'number' ? `${data?.monster?.stomach}/6` : '--'}
+          <span className="PockestIcon">❤️</span>{' '}
+          {typeof data?.monster?.stomach === 'number'
+            ? `${data?.monster?.stomach}/6`
+            : '--'}
         </span>
       </div>
       <div className="PockestLine">
-        <span className="PockestText">
-          Next Hunger
-        </span>
+        <span className="PockestText">Next Hunger</span>
         <span className="PockestText PockestLine-value">
           {stomachTimer ? parseDurationStr(stomachTimer - now) : '--'}
         </span>
@@ -81,9 +90,14 @@ function FeedControls() {
         <span className="PockestText">Meal Frequency</span>
         <select
           className="PockestSelect"
-          onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
-            feedFrequency: parseInt(e.target.value, 10),
-          }))}
+          onChange={(e) =>
+            pockestDispatch &&
+            pockestDispatch(
+              pockestActions.pockestSettings({
+                feedFrequency: parseInt(e.target.value, 10),
+              }),
+            )
+          }
           value={feedFrequency}
           disabled={!paused || autoPlan}
         >
@@ -98,13 +112,25 @@ function FeedControls() {
         <span className="PockestText">Meal Target</span>
         <select
           className="PockestSelect"
-          onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({
-            feedTarget: parseInt(e.target.value, 10),
-          }))}
+          onChange={(e) =>
+            pockestDispatch &&
+            pockestDispatch(
+              pockestActions.pockestSettings({
+                feedTarget: parseInt(e.target.value, 10),
+              }),
+            )
+          }
           value={feedTarget}
           disabled={!paused || autoPlan}
         >
-          {[1, 2, 3, 4, 5, 6].map((k) => (
+          {[
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+          ].map((k) => (
             <option key={k} value={k}>
               {`❤️ ${k}/6`}
             </option>
@@ -112,9 +138,7 @@ function FeedControls() {
         </select>
       </div>
       <div className="PockestLine">
-        <span className="PockestText">
-          Next Meal
-        </span>
+        <span className="PockestText">Next Meal</span>
         <span className="PockestText PockestLine-value">
           {(() => {
             if (feedFrequency === 4 || !nextFeedWindow) return '--';
@@ -123,9 +147,7 @@ function FeedControls() {
         </span>
       </div>
       <div className="PockestLine">
-        <span className="PockestText">
-          Current Meal
-        </span>
+        <span className="PockestText">Current Meal</span>
         <span className="PockestText PockestLine-value">
           {(() => {
             if (feedFrequency === 4) return '∞';
@@ -136,7 +158,9 @@ function FeedControls() {
       </div>
       <LogCountLine
         title="Meals"
-        logTypes={['meal']}
+        logTypes={[
+          'meal',
+        ]}
       />
     </div>
   );

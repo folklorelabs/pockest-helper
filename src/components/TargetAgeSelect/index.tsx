@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  usePockestContext,
   pockestActions,
+  usePockestContext,
 } from '../../contexts/PockestContext';
 
 // TYPES
@@ -20,31 +20,38 @@ const AGE_INTERVAL = {
 };
 
 function TargetAgeSelect({ disabled }: TargetAgeSelectProps) {
-  const {
-    pockestState,
-    pockestDispatch,
-  } = usePockestContext();
-  const {
-    paused,
-    planAge,
-  } = pockestState;
+  const { pockestState, pockestDispatch } = usePockestContext();
+  const { paused, planAge } = pockestState;
   const targetMonster = React.useMemo(
-    () => pockestState?.allMonsters
-      ?.find((m) => m.monster_id === pockestState?.monsterId),
-    [pockestState?.allMonsters, pockestState?.monsterId],
+    () =>
+      pockestState?.allMonsters?.find(
+        (m) => m.monster_id === pockestState?.monsterId,
+      ),
+    [
+      pockestState?.allMonsters,
+      pockestState?.monsterId,
+    ],
   );
   return (
     <select
       className="PockestSelect"
       onChange={(e) => {
         if (pockestDispatch) {
-          pockestDispatch(pockestActions.pockestPlanSettings({
-            planAge: parseInt(e.target.value, 10),
-          }));
+          pockestDispatch(
+            pockestActions.pockestPlanSettings({
+              planAge: parseInt(e.target.value, 10),
+            }),
+          );
         }
       }}
       value={planAge}
-      disabled={disabled ?? (!pockestState?.autoPlan || !paused || !targetMonster || pockestState.autoQueue)}
+      disabled={
+        disabled ??
+        (!pockestState?.autoPlan ||
+          !paused ||
+          !targetMonster ||
+          pockestState.autoQueue)
+      }
     >
       {Object.keys(AGE_INTERVAL).map((k) => (
         <option key={k} value={k}>

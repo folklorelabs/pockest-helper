@@ -1,21 +1,13 @@
 import {
-  usePockestContext,
   pockestActions,
+  usePockestContext,
 } from '../../contexts/PockestContext';
 import LogCountLine from '../LogCountLine';
 import './index.css';
 
 function CureControls() {
-  const {
-    pockestState,
-    pockestDispatch,
-  } = usePockestContext();
-  const {
-    data,
-    autoCure,
-    autoPlan,
-    paused,
-  } = pockestState;
+  const { pockestState, pockestDispatch } = usePockestContext();
+  const { data, autoCure, autoPlan, paused } = pockestState;
   return (
     <div className="CureControls">
       <div className="PockestLine">
@@ -24,7 +16,14 @@ function CureControls() {
             id="PockestHelper_AutoCure"
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) => pockestDispatch && pockestDispatch(pockestActions.pockestSettings({ autoCure: e.target.checked }))}
+            onChange={(e) =>
+              pockestDispatch &&
+              pockestDispatch(
+                pockestActions.pockestSettings({
+                  autoCure: e.target.checked,
+                }),
+              )
+            }
             checked={autoCure}
             disabled={!paused || autoPlan}
           />
@@ -32,9 +31,7 @@ function CureControls() {
         </label>
       </div>
       <div className="PockestLine">
-        <span className="PockestText">
-          Status
-        </span>
+        <span className="PockestText">Status</span>
         <span className="PockestText PockestLine-value">
           {(() => {
             const status = data?.monster?.status;
@@ -46,7 +43,9 @@ function CureControls() {
       </div>
       <LogCountLine
         title="Cures"
-        logTypes={['cure']}
+        logTypes={[
+          'cure',
+        ]}
       />
     </div>
   );

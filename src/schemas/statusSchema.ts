@@ -1,8 +1,7 @@
 import { z } from 'zod';
-
-import timestampSchema from './timestampSchema';
 import flagSchema from './flagSchema';
-import statusMonsterSchema from "./statusMonsterSchema";
+import statusMonsterSchema from './statusMonsterSchema';
+import timestampSchema from './timestampSchema';
 
 export const baseStatusSchema = z.object({
   event: z.literal(''),

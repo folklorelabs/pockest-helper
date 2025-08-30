@@ -1,7 +1,7 @@
-import getAgeTimer from './getAgeTimer';
-import getStomachTimer, { STOMACH_TIME } from './getStomachTimer';
-import getGarbageTimer, { GARBAGE_TIME } from './getGarbageTimer';
 import PockestState from '../contexts/PockestContext/types/PockestState';
+import getAgeTimer from './getAgeTimer';
+import getGarbageTimer, { GARBAGE_TIME } from './getGarbageTimer';
+import getStomachTimer, { STOMACH_TIME } from './getStomachTimer';
 
 export const BIG_EVENTS = {
   AGE: 'AGE',
@@ -12,8 +12,8 @@ export const BIG_EVENTS = {
   STOMACH_STUN: 'STOMACH_STUN',
   STOMACH_DEATH: 'STOMACH_DEATH',
 };
-export const STUN_OFFSET = (1 * 60 * 60 * 1000);
-export const DEATH_OFFSET = (7 * 60 * 60 * 1000);
+export const STUN_OFFSET = 1 * 60 * 60 * 1000;
+export const DEATH_OFFSET = 7 * 60 * 60 * 1000;
 
 export function getPoopFullTimer(pockestState: PockestState) {
   const garbageTimer = getGarbageTimer(pockestState);
@@ -41,8 +41,12 @@ export function getBigEventTypes(pockestState: PockestState) {
   const poopStunTimer = poopFullTimer ? poopFullTimer + STUN_OFFSET : null;
   const poopDeathTimer = poopFullTimer ? poopFullTimer + DEATH_OFFSET : null;
   const stomachEmptyTimer = getStomachEmptyTimer(pockestState);
-  const stomachStunTimer = stomachEmptyTimer ? stomachEmptyTimer + STUN_OFFSET : null;
-  const stomachDeathTimer = stomachEmptyTimer ? stomachEmptyTimer + DEATH_OFFSET : null;
+  const stomachStunTimer = stomachEmptyTimer
+    ? stomachEmptyTimer + STUN_OFFSET
+    : null;
+  const stomachDeathTimer = stomachEmptyTimer
+    ? stomachEmptyTimer + DEATH_OFFSET
+    : null;
   if (ageTimer === bigTimer) returnVal.push(BIG_EVENTS.AGE);
   if (poopFullTimer === bigTimer) returnVal.push(BIG_EVENTS.GARBAGE_FULL);
   if (poopStunTimer === bigTimer) returnVal.push(BIG_EVENTS.GARBAGE_STUN);
