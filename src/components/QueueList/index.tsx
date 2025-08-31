@@ -87,7 +87,7 @@ function QueueList() {
               }),
             );
           }}
-          value={pockestState?.presetQueueAgePref}
+          value={pockestState?.presetQueueAgePref || 0}
         >
           <option value="0">Sticker Completion</option>
           <option value="6">Memento Completion</option>
