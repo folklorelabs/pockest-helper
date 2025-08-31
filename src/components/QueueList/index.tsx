@@ -47,7 +47,7 @@ function QueueList() {
                 return 0;
               });
             const monsterToAdd = targetableMonsters[0];
-            const isMementoTarget = monsterToAdd.monster_id ? targetableMementoMonsters.includes(monsterToAdd.monster_id) : false;
+            const isMementoTarget = monsterToAdd?.monster_id ? targetableMementoMonsters.includes(monsterToAdd?.monster_id) : false;
             const planId = monsterToAdd?.planId || '1BRP6';
             const monsterToAddParsedPlanId = parsePlanId(planId);
             const statPlanId =
