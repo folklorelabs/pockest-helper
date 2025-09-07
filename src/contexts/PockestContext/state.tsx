@@ -148,12 +148,7 @@ export function getStateFromSessionStorage(): PockestState | null {
 		return pockestState;
 	} catch (err) {
 		logError(err);
-		const c = confirm('Uh oh! Your Pockest Helper state appears to be invalid. Would you like to try resetting your data?');
-		if (c) {
-			return INITIAL_STATE;
-		} else {
-			return state as PockestState;
-		}
+		return state as PockestState;
 	}
 }
 
