@@ -546,15 +546,10 @@ export function getAutoSettings(
 	}
 	const presetQueue = newSettings.presetQueue ?? state.presetQueue;
 	const isAutoQueue = presetQueue?.length && (newSettings.autoQueue ?? state.autoQueue);
-	if (isAutoQueue) {
-		const presetQueueId = newSettings.presetQueueId ?? state.presetQueueId;
-		const queueItem = presetQueue.find((item) => item.id === presetQueueId);
-		newSettings.autoPlan = true;
-		newSettings.monsterId = queueItem?.monsterId;
-		newSettings.planId = queueItem?.planId;
-		newSettings.statPlanId = queueItem?.statPlanId;
-		newSettings.planAge = queueItem?.planAge;
+	if (!presetQueue?.length) {
+		newSettings.autoQueue = false;
 	}
+	console.log(presetQueue);
 	const isMonsterGone =
 		isMonsterDead(state, data) ||
 		isMonsterDeparted(state, data) ||
@@ -567,6 +562,18 @@ export function getAutoSettings(
 		newSettings.statLog = [];
 		newSettings.eggId = null;
 		newSettings.eggTimestamp = null;
+	}
+	if (isAutoQueue) {
+		newSettings.autoPlan = true;
+		const presetQueueId = newSettings.presetQueueId ?? state.presetQueueId;
+		const queueItem = presetQueueId ? presetQueue.find((item) => item.id === presetQueueId)
+			: (isMonsterGone ? presetQueue[0] : null);
+		if (queueItem) {
+			newSettings.monsterId = queueItem?.monsterId;
+			newSettings.planId = queueItem?.planId;
+			newSettings.statPlanId = queueItem?.statPlanId;
+			newSettings.planAge = queueItem?.planAge;
+		}
 	}
 	if (newSettings.autoPlan ?? state.autoPlan) {
 		const autoPlanSettings = getAutoPlanSettings({
