@@ -133,9 +133,11 @@ export function saveStateToLocalStorage(state: PockestState) {
 export function getStateFromSessionStorage(): PockestState | null {
 	const stateStrFromStorage =
 		window.sessionStorage.getItem("PockestHelperState");
+	const logStrFromStorage = window.localStorage.getItem("PockestHelperLog");
 	const stateFromStorage = stateStrFromStorage && {
 		...INITIAL_STATE,
 		...JSON.parse(stateStrFromStorage),
+		log: logStrFromStorage ? JSON.parse(logStrFromStorage) : INITIAL_STATE.log,
 	};
 	if (!stateFromStorage || stateFromStorage?.invalidSession) return null;
 	try {

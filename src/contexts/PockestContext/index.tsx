@@ -26,8 +26,7 @@ import type PockestState from "./types/PockestState";
 
 fixHelperLogFeverBug();
 startStorageSession();
-const initialStateFromStorage = getStateFromSessionStorage();
-const initialState = initialStateFromStorage || getStateFromLocalStorage();
+const initialState = getStateFromSessionStorage() || getStateFromLocalStorage();
 
 interface PockestContextInitialState {
 	pockestState: PockestState;
