@@ -268,6 +268,9 @@ export async function testDiscordMatchList() {
 				reports,
 			});
 			const report = combineDiscordReports(reports);
+			console.log({
+				report,
+			});
 			await postDiscordTest(report);
 			return report;
 		}
@@ -313,5 +316,5 @@ declare global {
   }
 }
 export default async function testDiscord() {
-  
+	// add discord tests here
 }

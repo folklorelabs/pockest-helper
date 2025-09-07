@@ -16,6 +16,7 @@ import getTimeIntervals, {
 	type TimeInterval,
 } from "../../../utils/getTimeIntervals";
 import getTotalStats from "../../../utils/getTotalStats";
+import getUniqueId from "../../../utils/getUniqueId";
 import { LEGACY_PLAN_REGEX, parsePlanId } from "../../../utils/parsePlanId";
 import toDataUrl from "../../../utils/toDataUrl";
 import type PockestState from "../types/PockestState";
@@ -768,6 +769,7 @@ export async function getDiscordReportEvoSuccess(
 	state: PockestState,
 	data: BucklerStatusData,
 ) {
+	const uniqueId = getUniqueId();
 	const encycloData = state?.allMonsters?.find(
 		(m) =>
 			data?.monster?.hash &&
@@ -808,7 +810,7 @@ export async function getDiscordReportEvoSuccess(
 		thumbnail: {
 			url: `attachment://${idle1Sprite?.fileName}`,
 		},
-		url: `https://folklorelabs.io/pockest-helper-data/v2/monsters.json?hash=${data?.monster?.hash}`, // hack for grouping files into embed
+		url: `https://folklorelabs.io/pockest-helper-data/v2/monsters.json?hash=${uniqueId}`, // so embeds are unique
 	};
 	const files = [
 		{
@@ -867,6 +869,7 @@ export async function getDiscordReportMemento(
 		encycloData?.memento_hash && encycloData?.memento_hash !== "???"
 			? encycloData
 			: data?.monster;
+	if (!newMementoData?.memento_hash) throw new Error(`Unable to generate Memento Discord Report for ${data?.monster?.name_en} because there was no memento data found.`);
 	const nameEnStr = `\nName (EN): **${newMementoData?.memento_name_en}**`;
 	const nameStr = `\nName: **${newMementoData?.memento_name}**`;
 	const descEnStr = `\nDescription (EN): **${encycloData?.memento_description_en?.replace(/\n/g, " ") || "???"}**`;
@@ -876,6 +879,7 @@ export async function getDiscordReportMemento(
 	const base64 = await toDataUrl(
 		`https://www.streetfighter.com/6/buckler/assets/minigame/img/memento/${newMementoData?.memento_hash}_memento.png`,
 	);
+
 	return {
 		files: [
 			{
@@ -942,6 +946,7 @@ export async function getDiscordReportSighting(
 	_data: BucklerStatusData,
 	matchResults: BucklerPotentialMatch,
 ) {
+	const uniqueId = getUniqueId();
 	const nameEnStr = `\nName (EN): **${matchResults?.name_en}**`;
 	const nameStr = `\nName: **${matchResults?.name}**`;
 	const hashStr = `\nHash: **${matchResults?.hash}**`;
@@ -963,7 +968,7 @@ export async function getDiscordReportSighting(
 		thumbnail: {
 			url: `attachment://${idle1Sprite?.fileName}`,
 		},
-		url: `https://folklorelabs.io/pockest-helper-data/v2/hashes.json?hash=${matchResults?.hash}`, // hack for grouping files into embed
+		url: `https://folklorelabs.io/pockest-helper-data/v2/hashes.json?hash=${uniqueId}`, // so embeds are unique
 	};
 	const files = [
 		{
