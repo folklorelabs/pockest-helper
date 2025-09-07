@@ -1,5 +1,7 @@
 import getRandomMinutes from "../../utils/getRandomMinutes";
 import log from "../../utils/log";
+import logError from "../../utils/logError";
+import pockestStateSchema from "./schemas/pockestStateSchema";
 import type PockestState from "./types/PockestState";
 
 const INITIAL_STATE: PockestState = {
@@ -96,14 +98,21 @@ export function validateStorageSession() {
 	return sessionIdSession === sessionIdLocal;
 }
 
-export function getStateFromLocalStorage(): PockestState {
-	const stateFromStorage = window.localStorage.getItem("PockestHelper");
-	const logFromStorage = window.localStorage.getItem("PockestHelperLog");
-	return {
+export function getStateFromLocalStorage() {
+	const stateStrFromStorage = window.localStorage.getItem("PockestHelper");
+	const logStrFromStorage = window.localStorage.getItem("PockestHelperLog");
+	const state = {
 		...INITIAL_STATE,
-		...(stateFromStorage ? JSON.parse(stateFromStorage) : {}),
-		log: logFromStorage ? JSON.parse(logFromStorage) : INITIAL_STATE.log,
+		...(stateStrFromStorage ? JSON.parse(stateStrFromStorage) : {}),
+		log: logStrFromStorage ? JSON.parse(logStrFromStorage) : INITIAL_STATE.log,
 	};
+	try {
+		const pockestState = pockestStateSchema.parse(state);
+		return pockestState;
+	} catch (err) {
+		logError(err);
+		return state as PockestState;
+	}
 }
 
 export function saveStateToLocalStorage(state: PockestState) {
