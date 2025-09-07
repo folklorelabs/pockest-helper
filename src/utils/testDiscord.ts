@@ -2,6 +2,10 @@ import type { z } from "zod";
 import fetchMatchList from "../api/fetchMatchList";
 import { postDiscordTest } from "../api/postDiscord";
 import { pockestGetters } from "../contexts/PockestContext";
+import {
+	getStateFromLocalStorage,
+	getStateFromSessionStorage,
+} from "../contexts/PockestContext/state";
 import type PockestState from "../contexts/PockestContext/types/PockestState";
 import type { exchangeStatusSchema } from "../schemas/statusSchema";
 import type BucklerMatchResults from "../types/BucklerMatchResults";
@@ -10,15 +14,14 @@ import type BucklerStatusData from "../types/BucklerStatusData";
 import combineDiscordReports from "./combineDiscordReports";
 
 declare global {
-  interface Window {
-	pockestState: PockestState;
-    pockestTest: Record<string, () => void>;
-  }
+	interface Window {
+		pockestState: PockestState;
+		pockestTest: Record<string, () => void>;
+	}
 }
 export default async function testDiscord() {
-	const pockestState: PockestState = JSON.parse(
-		window.sessionStorage.PockestHelperState,
-	);
+	const pockestState =
+		getStateFromSessionStorage() || getStateFromLocalStorage();
 	type MatchRes = z.infer<typeof exchangeStatusSchema>;
 	const matchData: MatchRes = {
 		event: "exchange",
@@ -82,7 +85,7 @@ export default async function testDiscord() {
 		technic: 700,
 	};
 	const chunData: BucklerStatusData = {
-		...pockestState.data,
+		...pockestState?.data,
 		event: "",
 		monster: {
 			...pockestState.data?.monster,
@@ -216,7 +219,10 @@ export default async function testDiscord() {
 				pockestState,
 				pockestState?.data,
 			),
-			pockestGetters.getDiscordReportEvoFailure(pockestState, pockestState?.data),
+			pockestGetters.getDiscordReportEvoFailure(
+				pockestState,
+				pockestState?.data,
+			),
 			await pockestGetters.getDiscordReportMemento(
 				pockestState,
 				pockestState?.data,
@@ -316,7 +322,6 @@ export default async function testDiscord() {
 		await testDiscordMatchListManual();
 	}
 
-
 	// ADD TEST STUFF BELOW. MAKE SURE IT'S DELETED BEFORE COMMITTING.
 	const pockestTest = {
 		testDiscordMatch,
@@ -327,5 +332,7 @@ export default async function testDiscord() {
 	};
 	window.pockestState = pockestState;
 	window.pockestTest = pockestTest;
-	console.log(`Discord debug mode enabled! (${Object.keys(pockestTest).length} available functions)`);
+	console.log(
+		`Discord debug mode enabled! (${Object.keys(pockestTest).length} available functions)`,
+	);
 }
