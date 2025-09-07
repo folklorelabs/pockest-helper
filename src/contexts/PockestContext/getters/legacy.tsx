@@ -549,7 +549,6 @@ export function getAutoSettings(
 	if (!presetQueue?.length) {
 		newSettings.autoQueue = false;
 	}
-	console.log(presetQueue);
 	const isMonsterGone =
 		isMonsterDead(state, data) ||
 		isMonsterDeparted(state, data) ||
