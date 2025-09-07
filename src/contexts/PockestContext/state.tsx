@@ -133,9 +133,23 @@ export function saveStateToLocalStorage(state: PockestState) {
 export function getStateFromSessionStorage(): PockestState | null {
 	const stateStrFromStorage =
 		window.sessionStorage.getItem("PockestHelperState");
-	const stateFromStorage =
-		stateStrFromStorage && JSON.parse(stateStrFromStorage);
-	return !stateFromStorage?.invalidSession ? stateFromStorage : null;
+	const stateFromStorage = stateStrFromStorage && {
+		...INITIAL_STATE,
+		...JSON.parse(stateStrFromStorage),
+	};
+	if (!stateFromStorage || stateFromStorage?.invalidSession) return null;
+	try {
+		const pockestState = pockestStateSchema.parse(stateFromStorage);
+		return pockestState;
+	} catch (err) {
+		logError(err);
+		const c = confirm('Uh oh! Your Pockest Helper state appears to be invalid. Would you like to try resetting your data?');
+		if (c) {
+			return INITIAL_STATE;
+		} else {
+			return stateFromStorage as PockestState;
+		}
+	}
 }
 
 export function saveStateToSessionStorage(state: PockestState) {

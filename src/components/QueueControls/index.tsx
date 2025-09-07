@@ -8,6 +8,7 @@ import {
 import './index.css';
 
 function QueueControls() {
+  const uniqueId = React.useId();
   const { pockestState, pockestDispatch } = usePockestContext();
   const { setShowLog } = React.useContext(AppContext);
   const {
@@ -25,21 +26,24 @@ function QueueControls() {
   return (
     <div className="QueueControls">
       <div className="PockestLine">
-        <label className="PockestCheck" htmlFor="PockestHelper_AutoQueue">
+        <label
+          className="PockestCheck"
+          htmlFor={`PockestHelper_AutoQueue${uniqueId}`}
+          title={!pockestState?.presetQueue.length ? 'Your queue is empty. Please add a monster to your queue to enable the option.' : undefined}
+        >
           <input
-            id="PockestHelper_AutoQueue"
+            id={`PockestHelper_AutoQueue${uniqueId}`}
             className="PockestCheck-input"
             type="checkbox"
-            onChange={(e) =>
-              pockestDispatch &&
-              pockestDispatch(
+            onChange={(e) => {
+              pockestDispatch?.(
                 pockestActions.pockestPlanSettings({
                   autoQueue: e.target.checked,
                 }),
               )
-            }
+            }}
             checked={autoQueue}
-            // disabled={!paused}
+            disabled={!pockestState?.presetQueue.length}
           />
           <span className="PockestCheck-text">Queue</span>
         </label>
@@ -49,9 +53,10 @@ function QueueControls() {
         <button
           type="button"
           className="PockestText PockestLine-value PockestLink"
-          onClick={() => setShowLog && setShowLog(true)}
+          onClick={() => setShowLog?.(true)}
+          title="See and modify your queue"
         >
-          {pockestGetters.getPresetQueueItemLabel(pockestState, nextTargetItem)}
+          {pockestGetters.getPresetQueueItemLabel(pockestState, nextTargetItem) || '--'}
         </button>
       </div>
       <div className="LogCountLine PockestLine">
@@ -59,7 +64,8 @@ function QueueControls() {
         <button
           type="button"
           className="PockestText PockestLine-value PockestLink"
-          onClick={() => setShowLog && setShowLog(true)}
+          onClick={() => setShowLog?.(true)}
+          title="See and modify your queue"
         >
           {pockestState?.presetQueue?.length ?? '--'}
         </button>
