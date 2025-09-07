@@ -11,8 +11,8 @@ import combineDiscordReports from "./combineDiscordReports";
 
 declare global {
   interface Window {
-    test: string;
-    testDiscord: Record<string, () => void>;
+	pockestState: PockestState;
+    pockestTest: Record<string, () => void>;
   }
 }
 export default async function testDiscord() {
@@ -318,12 +318,14 @@ export default async function testDiscord() {
 
 
 	// ADD TEST STUFF BELOW. MAKE SURE IT'S DELETED BEFORE COMMITTING.
-	const testFns = {
+	const pockestTest = {
 		testDiscordMatch,
 		testDiscordEvo,
 		testDiscordEvoChun,
 		testDiscordMatchList,
 		testDiscordStyles,
 	};
-	console.log(`Discord debug mode enabled! (${Object.keys(testFns).length} available functions)`);
+	window.pockestState = pockestState;
+	window.pockestTest = pockestTest;
+	console.log(`Discord debug mode enabled! (${Object.keys(pockestTest).length} available functions)`);
 }
