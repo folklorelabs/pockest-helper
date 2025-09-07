@@ -136,12 +136,15 @@ export function getStateFromSessionStorage(): PockestState | null {
 	const logStrFromStorage = window.localStorage.getItem("PockestHelperLog");
 	const stateFromStorage = stateStrFromStorage && {
 		...INITIAL_STATE,
-		...JSON.parse(stateStrFromStorage),
-		log: logStrFromStorage ? JSON.parse(logStrFromStorage) : INITIAL_STATE.log,
+		...JSON.parse(stateStrFromStorage)
 	};
 	if (!stateFromStorage || stateFromStorage?.invalidSession) return null;
+	const state = {
+		...stateFromStorage,
+		log: logStrFromStorage ? JSON.parse(logStrFromStorage) : INITIAL_STATE.log,
+	};
 	try {
-		const pockestState = pockestStateSchema.parse(stateFromStorage);
+		const pockestState = pockestStateSchema.parse(state);
 		return pockestState;
 	} catch (err) {
 		logError(err);
@@ -149,7 +152,7 @@ export function getStateFromSessionStorage(): PockestState | null {
 		if (c) {
 			return INITIAL_STATE;
 		} else {
-			return stateFromStorage as PockestState;
+			return state as PockestState;
 		}
 	}
 }
