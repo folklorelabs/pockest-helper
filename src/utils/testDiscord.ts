@@ -318,4 +318,12 @@ export default async function testDiscord() {
 
 
 	// ADD TEST STUFF BELOW. MAKE SURE IT'S DELETED BEFORE COMMITTING.
+	const testFns = {
+		testDiscordMatch,
+		testDiscordEvo,
+		testDiscordEvoChun,
+		testDiscordMatchList,
+		testDiscordStyles,
+	};
+	console.log(`Discord debug mode enabled! (${Object.keys(testFns).length} available functions)`);
 }
