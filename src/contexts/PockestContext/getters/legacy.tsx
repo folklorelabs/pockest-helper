@@ -615,13 +615,7 @@ export function getPlanEvolutions(
 					return ["L", "R"].indexOf(planRouteId.split("")[1]);
 				}
 				if (age === 5) {
-					return matchingMonsters.findIndex(
-						(m) =>
-							m.planId &&
-							new RegExp(
-								`^${planEgg}${planRouteId}${primaryStatLetter}\\d$`,
-							).test(m.planId),
-					);
+					return matchingMonsters.findIndex((m) => m.planId && new RegExp(`^${planEgg}${planRouteId}${primaryStatLetter}\\d$`).test(m.planId) && state.statPlanId === m.statPlan);
 				}
 				return 0;
 			})();
