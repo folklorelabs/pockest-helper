@@ -165,7 +165,7 @@ export function PockestProvider({ children }: PockestProviderProps) {
 			pockestState?.paused ||
 			pockestState?.error ||
 			pockestState?.invalidSession ||
-			(pockestState?.autoPlan && pockestState?.evolutionFailed)
+			(pockestState?.autoPlan && pockestState?.evolutionFailed && pockestState?.data?.monster)
 		)
 			return () => {};
 		const interval = window.setInterval(async () => {
